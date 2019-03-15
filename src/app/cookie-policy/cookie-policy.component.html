@@ -1,0 +1,29 @@
+<div class="mat-app-background basic-container" id="cookie-policy-container" [ngStyle]="{'opacity': !isMobile ? 1 : 0}">
+  
+  <div class="form-field-container">
+
+    <div class="form-field-legend">Cookie Policy</div>
+
+    <div class="form-field-text" id="cookiePolicyText" #cookiePolicyText>
+        <p class="blockquote">Cookies from this website, are primarily created to build a secure environment, through which a user can navigate safely, without the loss of any personal data.</p>
+
+        The following cookies are set:
+        
+        <ol>
+          <li><strong>User Token:</strong> this allows the app to track a user and deliver a personalized experience</li>
+          <li><strong>Cookie Acceptance:</strong> this allows the website to store the 'cookie policy' agreement outcome</li>
+          <li><strong>Port:</strong> this allows the website to store the system port value, which enables the app to pass data from the front end of the website to the server. This is only used for technical development purposes.</li>
+          <li><strong>Theme:</strong> this allows the website to store the current visual styles theme, which is either 'light' or 'dark'</li>
+        </ol>
+        
+        <p>The data stored in a cookie is never passed on to any Third Parties.</p>
+        
+        <p>When an account is deleted, all cookies are permanently deleted and no user data is persisted in the database.</p>
+    </div>
+
+  </div>
+
+</div>
+
+<mat-icon class="cookie-policy-close" (click)="closeCookiePolicyDialog()" ngbTooltip="Close" [disableTooltip]="disableArticleTooltip" [container]="'body'">close</mat-icon>
+  

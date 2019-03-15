@@ -1,0 +1,54 @@
+<ng-template class="dialog-comments" #dialogComments>
+</ng-template>
+
+<ng-template class="dialog-comments-profanity-notification" #dialogCommentsProfanityNotification>
+    <div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
+      <h1 mat-dialog-title>Profanity Alert</h1>
+      <mat-dialog-content fxFlex>
+        <p>
+          <strong>This comment has been rejected because it contains a profanity</strong>
+        </p>
+      </mat-dialog-content>
+      <mat-dialog-actions class="actions">
+        <button mat-raised-button mat-dialog-close data-role="cancel" color="primary">Close</button>
+      </mat-dialog-actions>
+    </div>
+  </ng-template>
+
+<mat-card-content class="comments" id="comments-{{ image.id }}" [@commentsFadeInOutAnimation]="{value: commentsState}" (@commentsFadeInOutAnimation.start)="commentsFadeInOutAnimationStart($event)" (@commentsFadeInOutAnimation.done)="commentsFadeInOutAnimationDone($event)">
+  <div class="comments" id="infinite-scroller-comments-{{ image.id }}" #infiniteScrollerCommentsContainer infiniteScroller scrollPerecnt="70" immediateCallback="true" [scrollCallback]="scrollCallbackComments" style="height:250px;" [ngStyle]="{'display': !commentsArrayIsEmpty ? 'block' : 'none'}">
+    <div *ngFor="let comment of image.comments" id="comment-{{ comment.commentid }}" [ngClass]="{'comment-parent': comment.commentid == comment.replyToCommentid,'comment-child': comment.commentid != comment.replyToCommentid}" class="comment-replytocommentid-{{ comment.replyToCommentid }}">
+      <mat-icon class="comment-deletecommentid" id="comment-deletecommentid-{{ comment.commentid }}" (click)="deleteComment($event,comment.commentid)" *ngIf="comment.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput" ngbTooltip="Delete Comment" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">delete_outline</mat-icon>
+      <div class="comment-date">{{ comment.createdAt | date:'medium' }}</div>
+      <div class="avatar-container">
+        <div class="avatar-scale-container" [ngStyle]="{'background-image':'url(' + comment.avatarSrc + ')'}" *ngIf="comment.avatarSrc != '' && comment.avatarSrc != null"></div>
+        <div class="avatar-scale-container" *ngIf="comment.avatarSrc == '' || comment.avatarSrc == null"><mat-icon>person</mat-icon></div>
+      </div>
+      <div class="comment-container">
+        <div class="comment-author">{{ comment.forename }} {{ comment.surname }}</div>
+        <span [innerHTML]="comment.comment | keepHtml"></span>
+      </div>
+      <div style="clear:both;"></div>
+      <mat-icon class="comment-replytocommentid" id="comment-replytocommentid-{{ comment.commentid }}" (click)="replyToComment($event,comment.commentid)" [ngStyle]="{'color': !themeTypeLight ? 'white' : 'rgba(0,0,0,0.75)'}" *ngIf="comment.commentid == comment.replyToCommentid && !hideCommentInput && currentUser.authenticated != 0" ngbTooltip="Reply To Comment" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">keyboard_return</mat-icon>
+      <div style="clear:both;"></div>
+    </div>
+  </div>
+  <div class="comment" [ngStyle]="{'display': !hideCommentInput && currentUser.authenticated != 0 ? 'block' : 'none'}">
+    <form novalidate [formGroup]="commentForm">
+      <div class="form-field-container">
+        <div class="form-field-text">
+          <mat-form-field class="example-full-width">
+            <textarea matInput placeholder="Comment" value="" required  formControlName="commentInput" maxlength="{{ maxCommentInputLength }}" appCharCount appCharCountDisplayId="comment-char-counter-{{ image.id }}" style="resize:none;"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="comments-actions">
+    <mat-icon class="comments-expand" (click)="openCommentsDialog()" *ngIf="!commentsDialogIsOpen && !hideCommentInput" ngbTooltip="Expand Comments" [disableTooltip]="disableCommentExpandTooltip">select_all</mat-icon>
+    <mat-icon class="comments-close" (click)="closeCommentsDialog()" *ngIf="commentsDialogIsOpen" ngbTooltip="Close" [disableTooltip]="disableCommentExpandTooltip">close</mat-icon>
+    <div class="comment-char-counter" id="comment-char-counter-{{ image.id }}" *ngIf="!hideCommentInput && currentUser.authenticated != 0"></div>
+    <mat-icon class="comments-add" (click)="addComment($event,image.id)" *ngIf="!hideCommentInput && currentUser.authenticated != 0" ngbTooltip="Send Comment" [disableTooltip]="disableCommentGeneralTooltip">send</mat-icon>
+    <div style="clear:both;"></div>
+  </div>
+</mat-card-content>

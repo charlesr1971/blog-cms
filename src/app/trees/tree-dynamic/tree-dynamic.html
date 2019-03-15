@@ -1,0 +1,248 @@
+
+<ng-template class="dialog-submit-article-notification" #dialogSubmitArticleNotification>
+  <form novalidate [formGroup]="submitArticleNotificationForm">
+    <div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
+      <h1 mat-dialog-title>Submit Article Alert</h1>
+      <mat-dialog-content fxFlex>
+        <p>
+          <strong>You are about to submit changes, not only to the article, but also to the image title, description and tags</strong><br /><br />
+          <mat-checkbox formControlName="submitArticleNotification">Do you wish to see this alert again?</mat-checkbox>
+        </p>
+      </mat-dialog-content>
+      <mat-dialog-actions class="actions">
+        <button mat-raised-button mat-dialog-close data-role="cancel" color="primary">Cancel</button>
+        <button mat-raised-button data-role="submit" [mat-dialog-close]="true" cdkFocusInitial color="accent">Submit</button>
+      </mat-dialog-actions>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template class="dialog-article-max-word-count-notification" #dialogArticleMaxWordCountNotification>
+  <div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
+    <h1 mat-dialog-title>Article Maximum Word Count Alert</h1>
+    <mat-dialog-content fxFlex>
+      <p>
+        <strong>Article maximum word count of {{ tinyMceArticleMaxWordCount }} has been reached</strong>
+      </p>
+    </mat-dialog-content>
+    <mat-dialog-actions class="actions">
+      <button mat-raised-button mat-dialog-close data-role="cancel" color="primary">Close</button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>
+
+<ng-template class="dialog-article" #dialogArticle>
+  <div class="dialog-article-container">
+    <app-tinymce [tinyMceArticleElementId]="tinyMceArticleElementId" [tinyMceArticleContent]="tinyMceArticleContent" [fileImageId]="fileImageId" [tinymceArticleImageCount]="tinymceArticleImageCount" [tinymceArticleImages]="tinymceArticleImages" [isMobile]="isMobile" [tinyMceArticleMaxWordCount]="tinyMceArticleMaxWordCount" (onEditorChange)="tinyMceArticleKeyupHandler($event)"></app-tinymce>
+    <div class="button-actions" *ngIf="!isMobile">
+      <button mat-raised-button data-role="submit" (click)="deferEditImage(editImageId)" *ngIf="mode == 'edit'" color="accent">Submit</button>
+      <div class="dialog-article-footer-data" *ngIf="tinyMceArticleMaxWordCount > 0"><i class="fa fa-bolt"></i>Maximum word count: {{ tinyMceArticleMaxWordCount }}</div>
+      <div class="dialog-article-footer-data">
+        <i class="fa fa-bolt"></i>
+        <span *ngIf="hasUnsavedChanges" class="dialog-article-footer-data-warn">Unsaved changes</span>
+        <span *ngIf="!hasUnsavedChanges">Changes up-to-date</span>
+      </div>
+      <mat-icon class="article-close" (click)="closeArticleDialog()" ngbTooltip="Close" [disableTooltip]="disableArticleTooltip" [container]="'body'">close</mat-icon>
+    </div>
+    <div class="mobile-dialog-article-footer-data-container" *ngIf="isMobile">
+      <div class="dialog-article-footer-data" *ngIf="tinyMceArticleMaxWordCount > 0"><i class="fa fa-bolt"></i>Maximum word count: {{ tinyMceArticleMaxWordCount }}</div>
+      <div class="dialog-article-footer-data">
+        <i class="fa fa-bolt"></i>
+        <span *ngIf="hasUnsavedChanges" class="dialog-article-footer-data-warn">Unsaved changes</span>
+        <!-- <i class="fa fa-bolt" *ngIf="!hasUnsavedChanges"></i> -->
+        <span *ngIf="!hasUnsavedChanges">Changes up-to-date</span>
+      </div>
+    </div>
+    <div class="button-actions" *ngIf="isMobile">
+      <button mat-raised-button data-role="submit" (click)="deferEditImage(editImageId)" *ngIf="mode == 'edit'" color="accent">Submit</button>
+      <mat-icon class="article-close" (click)="closeArticleDialog()" ngbTooltip="Close" [disableTooltip]="disableArticleTooltip" [container]="'body'">close</mat-icon>
+    </div>
+  </div>
+</ng-template>
+
+<form novalidate [formGroup]="treeForm" *ngIf="userid > 0">
+
+  <div class="form-field-container">
+
+    <div class="form-field-legend">Personal details<div *ngIf="mode == 'edit'" (click)="previous()"><mat-icon>arrow_left</mat-icon></div><div *ngIf="mode == 'edit'" (click)="next()"><mat-icon>arrow_right</mat-icon></div></div>
+
+    <div class="form-field-text">
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Author" value="" formControlName="name" id="name" required>
+      </mat-form-field><br />
+      <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+        Author is required and must be less than {{maxNameLength}} characters
+      </div><br />
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Image Title" value="" formControlName="title" id="title" required>
+      </mat-form-field><br />
+      <div [hidden]="title.valid || title.pristine" class="alert alert-danger">
+        Image title is required and must be less than {{maxTitleLength}} characters
+      </div><br />
+
+      <mat-form-field class="example-full-width">
+        <textarea matInput placeholder="Image Description" formControlName="description" id="description"></textarea>
+      </mat-form-field><br /><br /><br />
+
+      <tag-input formControlName="tags" [animationDuration]="{enter: '0ms', leave: '0ms'}" [maxItems]="5" [separatorKeyCodes]="[13,32]" [errorMessages]="errorMessages" [validators]="validators" (onRemove)="onTagRemoved($event)" (onTextChange)="onTagInputTextChange($event)" (onAdd)="onTagAdded($event)">
+        <tag-input-dropdown [autocompleteObservable]="fetchAutocompleteItems" [appendToBody]="false" [dynamicUpdate]="false">
+        </tag-input-dropdown>
+      </tag-input><br />
+
+      <div class="form-button-container" [ngStyle]="{'display': fileImageId > 0 ? 'block' : 'none'}">
+        <button mat-raised-button (click)="openArticleDialog()">Write Article</button>
+        <button mat-raised-button (click)="previewArticle()" [ngStyle]="{'display': formData['article'] !== '' ? 'block' : 'none'}">Preview Article</button>
+        <div style="clear:both;"></div>
+      </div>
+
+      <p [ngStyle]="{'display': formData['article'] !== '' && fileImageId > 0 ? 'block' : 'none'}">
+        <br />
+        <mat-form-field>
+          <input matInput [matDatepicker]="dp3" placeholder="Article Publish Date" readonly formControlName="publishArticleDate">
+          <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+          <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+        </mat-form-field><br />
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="form-field-container">
+
+    <div class="form-field-legend" *ngIf="!isMobile">Please choose a category for your image</div>
+    <div class="form-field-legend" *ngIf="isMobile">Please choose a category</div>
+
+    <div class="form-field-text">
+
+      <div [hidden]="!hasError" class="alert alert-danger" [innerHtml]="safeHtml">
+      </div>
+      
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+          <button mat-icon-button disabled></button>
+          <!-- {{node.item}} -->
+          <a (click)="addPath($event,node.item)">{{node.item | pathFormat}}</a>
+          <mat-icon class="mat-icon-rtl-mirror grade" [attr.id]="'directory-' + (node.item | pathFormat)" color="accent">
+            {{directorySelected == node.item ? 'grade' : ''}}
+          </mat-icon>
+        </mat-tree-node>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+          <button mat-icon-button
+                  [attr.aria-label]="'toggle ' + node.filename" matTreeNodeToggle>
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+          </button>
+          {{node.item | pathFormat}}
+          <mat-progress-bar *ngIf="node.isLoading"
+                            mode="indeterminate"
+                            class="tree-progress-bar"></mat-progress-bar>
+        </mat-tree-node>
+      </mat-tree>
+
+      <div class="uploaded-image-container" #uploadedImageContainer *ngIf="isEditImageValid" [innerHTML]="htmlStr"></div>
+
+      <div style="clear:both;"></div>
+
+      <div class="form-button-container">
+        <button mat-raised-button data-role="submit" (click)="editImage(editImageId)" *ngIf="mode == 'edit'" color="accent">Submit</button>
+        <button mat-raised-button (click)="back(editImageId)" *ngIf="mode == 'edit'">Back</button>
+      </div>
+
+      <app-upload *ngIf="userid > 0 && mode == 'add'"></app-upload>
+
+    </div>
+
+  </div>
+
+</form>
+
+
+
+<form novalidate [formGroup]="signUpForm" *ngIf="userid == 0 && signUpValidated == 0">
+
+  <div class="form-field-container">
+
+    <div class="form-field-legend">Sign up</div>
+
+    <div class="form-field-text">
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="First Name" value="" formControlName="forename" id="forename" required>
+      </mat-form-field><br />
+      <div [hidden]="forename.valid || forename.pristine" class="alert alert-danger">
+        First name is required
+      </div><br />
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Last Name" value="" formControlName="surname" id="surname" required>
+      </mat-form-field><br />
+      <div [hidden]="surname.valid || surname.pristine" class="alert alert-danger">
+        Last name is required
+      </div><br />
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>
+      </mat-form-field><br />
+      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+        E-mail is required
+      </div><br />
+
+      <mat-form-field class="example-full-width">
+        <div class="app-password-container">
+          <mat-icon id="app-password">visibility</mat-icon>
+          <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
+        </div>
+      </mat-form-field><br />
+      <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+        Password is required
+      </div><br />
+
+      <button mat-raised-button data-role="submit" (click)="signUpFormSubmit()" [disabled]="!isSignUpValid" color="accent">Submit</button>
+
+    </div>
+
+  </div>
+
+</form>
+
+<form novalidate [formGroup]="loginForm" *ngIf="userid == 0 && signUpValidated == 1">
+
+  <div class="form-field-container">
+
+    <div class="form-field-legend">Login</div>
+
+    <div class="form-field-text">
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>
+      </mat-form-field><br />
+      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+        E-mail is required
+      </div><br />
+
+      <mat-form-field class="example-full-width">
+        <div class="app-password-container">
+          <mat-icon id="app-password">visibility</mat-icon>
+          <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
+        </div>
+      </mat-form-field><br />
+      <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+        Password is required
+      </div><br />
+
+      <mat-checkbox formControlName="keeploggedin">Keep me logged in</mat-checkbox><br /><br />
+
+      <button mat-raised-button data-role="submit" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
+
+    </div>
+
+  </div>
+
+</form>
+
+
+

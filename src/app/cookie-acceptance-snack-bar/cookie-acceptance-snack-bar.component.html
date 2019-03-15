@@ -1,0 +1,28 @@
+<ng-template #cookieAcceptanceSnackBarTemplate>
+
+  <div class="cookie-acceptance-snack-bar-container">
+
+    <form novalidate [formGroup]="cookieAcceptanceForm" autocomplete="off">
+
+        <div class="form-field-container">
+
+          <div class="form-field-text">
+    
+            <mat-checkbox formControlName="cookieAcceptance" *ngIf="!isMobile"></mat-checkbox><span *ngIf="!isMobile">Please check the box to agree to our <a class="cookie-policy" (click)="openCookiePolicyDialog($event);">cookie policy</a></span>
+            <mat-checkbox formControlName="cookieAcceptance" *ngIf="isMobile"></mat-checkbox><span *ngIf="isMobile"><a class="cookie-policy" (click)="openCookiePolicyDialog($event);">Cookie policy</a> acceptance</span>
+    
+          </div>
+    
+        </div>
+    
+      </form>
+
+      <a class="snack-bar-close" (click)="dismissSnackbar($event);">
+        <mat-icon>close</mat-icon>
+      </a>
+
+      <div style="clear:both;"></div>
+
+    </div>
+
+</ng-template>

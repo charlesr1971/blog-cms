@@ -1,0 +1,54 @@
+.mat-form-field {
+    width: 100%;
+}
+  
+.form-field-container {
+    margin: 30px 30px 0px;
+}
+  
+.form-field-container .form-field-legend {
+    position: relative;
+    padding: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.form-field-container .form-field-legend .mat-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+  
+.form-field-container .form-field-text {
+    padding: 20px;
+}
+
+#search-icon {
+    position: absolute;
+    top: -10px;
+    padding: 0px;
+    right: 0px;
+    cursor: pointer;
+}
+
+#infinite-scroller-images {
+    height: 100%;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .mat-form-field {
+      width: 100%;
+    }
+
+    .form-field-container {
+        width: initial;
+        margin: 30px 30px 0px;
+    }
+
+    .mat-select {
+        width: 100%;
+    }
+    
+  }

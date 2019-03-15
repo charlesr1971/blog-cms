@@ -1,0 +1,225 @@
+.mat-card-content.comments {
+    height: auto;
+    padding: 16px;
+}
+
+.mat-card-content.comments > div.comments {
+    padding-right: 16px;
+    margin-bottom: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.mat-card-content.comments > div.comment .form-field-container .form-field-text {
+    background: none;
+}
+
+.mat-card-content.comments > div.comment .mat-form-field {
+    width: 100%;
+}
+
+.mat-button span.comment {
+    display: inline-block;
+    width: 25px;
+    text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+div.comment-parent {
+    position: relative;
+    margin-top: 10px;
+    padding: 10px 10px 40px 10px;
+}
+
+div.comment-parent:nth-of-type(1) {
+    margin-top: 0px;
+}
+
+div.comment-parent .mat-icon.comment-replytocommentid, div.comment-parent .mat-icon.comment-replytocommentid-in {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    margin-top: 10px;
+    -webkit-user-select: none;       
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+div.comment-parent .mat-icon.comment-deletecommentid {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+div.comment-parent div.comment-date {
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+div.comment-parent div.avatar-container {
+    float: left;
+    width: 15%;
+}
+
+div.comment-parent div.avatar-container div.avatar-scale-container {
+    position: relative;
+    float: left;
+    width:100%;
+    padding-bottom:100%;
+    border-radius: 50%;
+    background-size: cover;
+    overflow: hidden;
+}
+
+div.comment-parent div.avatar-container div.avatar-scale-container .mat-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+div.comment-parent div.comment-container {
+    float: right;
+    width: 80%;
+}
+
+div.comment-parent div.comment-container div.comment-author {
+    width: 100%;
+    margin-bottom: 5px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+div.comment-parent div.comment-container span {
+    font-size: 14px;
+}
+
+div.comment-child {
+    position: relative;
+    /* border-top: 5px solid rgba(255,255,255,0.025); */
+    border-top: 5px solid rgba(0,0,0,0);
+    padding: 10px;
+}
+
+div.comment-child .mat-icon.comment-deletecommentid {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+div.comment-child .mat-icon.comment-replytocommentid {
+    display: none;
+}
+
+div.comment-child div.comment-date {
+    margin-bottom: 10px;
+    font-size: 12px;
+    text-align: right;
+}
+
+div.comment-child div.avatar-container {
+    float: right;
+    width: 15%;
+}
+
+div.comment-child div.avatar-container div.avatar-scale-container {
+    position: relative;
+    float: right;
+    width:100%;
+    padding-bottom:100%;
+    border-radius: 50%;
+    background-size: cover;
+    overflow: hidden;
+}
+
+div.comment-child div.avatar-container div.avatar-scale-container .mat-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.mat-dialog-container div.avatar-container div.avatar-scale-container .mat-icon {
+    transform: scale(2);
+    transform-origin: 100% 100%;
+}
+
+div.comment-child div.comment-container {
+    float: left;
+    width: 80%;
+    text-align: right;
+}
+
+div.comment-child div.comment-container div.comment-author {
+    width: 100%;
+    margin-bottom: 5px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+div.comment-child div.comment-container span {
+    font-size: 14px;
+}
+
+.comments-actions {
+    position: relative;
+}
+
+.mat-icon.comments-expand, .mat-icon.comments-close {
+    float: left;
+    cursor: pointer;
+}
+
+.comment-char-counter {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mat-icon.comments-add {
+    float: right;
+    cursor: pointer;
+}
+
+/* media queries */
+
+/* tablets */
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
+
+    .mat-card-content.comments > div.comments {
+        padding-right: 10px;
+    }
+
+}
+
+/* smart phones */
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .mat-card-content.comments > div.comments {
+        padding-right: 10px;
+    }
+
+}
+
+@media only screen and (min-device-width : 481px) and (max-device-width : 667px) {
+
+    .mat-card-content.comments > div.comments {
+        padding-right: 10px;
+    }
+  
+}

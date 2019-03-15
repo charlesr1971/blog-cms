@@ -1,0 +1,104 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div class="mat-app-background basic-container">
+
+  <form novalidate [formGroup]="editProfileForm" *ngIf="userid > 0" autocomplete="off">
+
+    <div class="form-field-container">
+
+      <div class="form-field-legend">Profile<span #avatarContainer></span><!-- <span><img src="assets/images/IMG_0576.JPG" /></span> --></div>
+
+      <div class="form-field-text">
+
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="First Name" value="" formControlName="forename" id="forename" required>
+        </mat-form-field><br />
+        <div [hidden]="forename.valid || forename.pristine" class="alert alert-danger">
+          First name is required
+        </div><br />
+
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Last Name" value="" formControlName="surname" id="surname" required>
+        </mat-form-field><br />
+        <div [hidden]="surname.valid || surname.pristine" class="alert alert-danger">
+          Last name is required
+        </div><br />
+
+        <mat-form-field class="example-full-width">
+          <div class="app-password-container">
+            <mat-icon id="app-password">visibility</mat-icon>
+            <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
+          </div>
+        </mat-form-field><br />
+        <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+          Password is required
+        </div><br />
+
+        <mat-checkbox formControlName="emailNotification">Notify me about photo comments</mat-checkbox><br /><br />
+
+        <mat-checkbox formControlName="theme">Switch on light theme</mat-checkbox>
+
+        <div class="panel">
+          <h2 class="panel-legend">
+            <span>API Dashboard</span><mat-icon (click)="openProfileApiDashboard($event)">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileApiDashboardFadeInOutAnimation]="{value: profileApiDashboardState}" style="padding-bottom:0px;">
+            <mat-form-field class="example-full-width">
+              <textarea matInput placeholder="API Token" formControlName="jwtToken" id="jwtToken" [readonly]="true"></textarea>
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="User ID" value="" formControlName="useridFC" id="useridFC" [readonly]="true">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="User Token" value="" formControlName="userToken" id="userToken" [readonly]="true">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <textarea matInput placeholder="API Documentation" formControlName="apiDocumentation" id="apiDocumentation" [readonly]="true" (click)="goToApiDocumentation($event)"></textarea>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" style="margin-bottom:0px;">
+              <textarea matInput placeholder="API Endpoint" formControlName="apiEndpoint" id="apiEndpoint" [readonly]="true"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="panel unapproved-images" *ngIf="pages.length > 0">
+          <mat-select class="panel-legend" placeholder="Unapproved Images" floatLabel="never" (selectionChange)="onChange($event)">
+            <mat-select-trigger>Images Awaiting Approval</mat-select-trigger>
+            <mat-option *ngFor="let page of pages; let i = index" [value]="(i + 1)">
+              {{ page.title }}
+            </mat-option>
+          </mat-select>
+        </div>
+
+        <div class="image-thumbnail-container" *ngIf="images.length > 0">
+          <ul class="image-thumbnail-list">
+            <li *ngFor="let image of images" class="image-thumbnail-list-item">
+              <div class="image-thumbnail-list-item-image">
+                <img class="image-thumbnail-list-item-image-img" src="{{ image.src }}" />
+              </div>
+              <div class="image-thumbnail-list-item-title" ngbTooltip="{{ image.title }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">
+                  {{ image.title }}
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="upload-container">
+          <app-upload></app-upload>
+        </div>
+
+        <div style="clear:both;"></div>
+
+        <div class="form-button-container">
+          <button mat-raised-button data-role="submit" (click)="editProfileFormSubmit()" [disabled]="!isEditProfileValid" color="accent">Submit</button>
+          <button mat-raised-button data-role="warning" (click)="deleteProfileFormSubmit()" color="warn">Delete Account</button>
+          <div style="clear:both;"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </form>
+
+</div>

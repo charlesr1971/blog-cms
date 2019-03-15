@@ -1,0 +1,105 @@
+<!doctype html>
+
+<html lang="en">
+
+  <head>
+
+    <title>Photo Gallery S.P.A</title>
+
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@charlesr1971" />
+    <meta name="twitter:creator" content="@charlesr1971" />
+    <meta property="og:url" content="http://playground.application.me.uk/photo-gallery/" />
+    <meta property="og:title" content="Photo Gallery S.P.A" />
+    <meta property="og:description" content="This website allows users to upload their favourite photos to the gallery. The following technologies power this website. An Angular 7x front-end with a Google Material UI. An Adobe Coldfusion back-end, using a Lucee 5 Application server with a MySQL database." />
+    <meta property="og:image" content="http://playground.application.me.uk/photo-gallery/assets/cfm/categories/objects/seascape/b01fd6e5-d776-bd93-d819a286238e6f50.jpeg" />
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link href="https://unpkg.com/bootstrap@4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
+    <link href="assets/font/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <base href="/">
+
+    <style type="text/css">
+
+      body, html {
+        height: 100%;
+      }
+
+      .app-loading {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .app-loading .spinner {
+        height: 125px;
+        width: 125px;
+        animation: rotate 2s linear infinite;
+        transform-origin: center center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
+
+      .app-loading .spinner .path {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+        animation: dash 1.5s ease-in-out infinite;
+        stroke-linecap: square;
+        stroke: #7F7F7F;
+      }
+
+      @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes dash {
+        0% {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+        }
+        50% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -35px;
+        }
+        100% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -124px;
+        }
+
+      }
+
+    </style>
+
+  </head>
+
+  <body scroll>
+
+    <app-root>
+
+      <div class="app-loading">
+        <svg class="spinner" viewBox="25 25 50 50">
+          <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="5"/>
+        </svg>
+      </div>
+      
+    </app-root>
+
+  </body>
+
+</html>

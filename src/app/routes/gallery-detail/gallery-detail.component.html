@@ -1,0 +1,74 @@
+
+<div *ngIf="(image | async) as image" class="mat-app-background basic-container gallery-detail">
+
+  <div class="gallery-detail-container">
+
+    <div class="gallery-detail-title-container">
+      <div class="gallery-detail-title">
+        {{ image.title }}
+      </div>
+    </div>
+
+    <div class="gallery-detail-author-container">
+
+      <table class="gallery-detail-author">
+        <tr>
+          <td>
+            <div class="gallery-detail-avatar">
+              <div class="gallery-detail-avatar-scale-container" *ngIf="(user | async) as user;else noavatar" [ngStyle]="{'background-image':'url(' + user.avatarSrc + ')'}"></div>
+              <ng-template #noavatar>
+                <div class="gallery-detail-avatar-scale-container"></div>
+              </ng-template>
+            </div>
+          </td>
+          <td>
+            <div class="gallery-detail-author-data">
+              <div class="gallery-detail-author-name">
+                <span *ngIf="(user | async) as user">{{ user.forename }} {{ user.surname }}</span>
+              </div>
+              <div class="gallery-detail-author-date">
+                {{ image.createdAt | date:'mediumDate' }}
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+
+
+    <div class="gallery-detail-image" [ngStyle]="{'background-image':'url(' + image.src + ')'}" *ngIf="image.src != '' && image.src != null"></div>
+    <div class="gallery-detail-description">
+      {{ image.description }}
+    </div>
+    <div class="gallery-detail-divider"><span>...</span></div>
+    <div class="gallery-detail-article" [innerHTML]="image.article | keepHtml"></div>
+    <div *ngIf="isMobile">
+      <div *ngIf="(currentUser | async) as currentUser">
+        <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">
+          <app-toolbar [image]="image" [commentsState]="commentsState" [currentUser]="currentUser" (_openComments)="openComments($event)" [commentsTotal]="commentsTotal" [disableCommentTooltip]="disableCommentTooltip"></app-toolbar>
+          <div id="gallery-detail-comments-ref-{{ image.id }}"></div>
+          <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [scrollToCommentsPanel]="scrollToCommentsPanel" [commentElementsPrefix]="commentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <app-my-footer></app-my-footer> 
+
+</div>
+
+<aside *ngIf="!isMobile" class="gallery-detail-aside">
+  <div *ngIf="(image | async) as image">
+    <div *ngIf="(currentUser | async) as currentUser">
+      <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">
+        <app-toolbar [image]="image" [commentsState]="commentsState" [currentUser]="currentUser" (_openComments)="openComments($event)" [commentsTotal]="commentsTotal" [disableCommentTooltip]="disableCommentTooltip"></app-toolbar>
+        <div id="gallery-detail-comments-ref-{{ image.id }}"></div>
+        <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [commentElementsPrefix]="commentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
+      </div>
+    </div>
+  </div>
+</aside>
+
+

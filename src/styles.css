@@ -1,0 +1,290 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '~angular2-lightbox/lightbox.css';
+@import '~@ngx-share/button/styles/share-buttons.css';
+@import '~@ngx-share/button/styles/themes/default/default-theme.css';
+
+html, body { 
+    height: 100%; 
+}
+
+body { 
+    margin: 0; 
+    font-family: 'Roboto', sans-serif; 
+}
+
+body.gallery {
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
+body.gallery mat-sidenav-container {
+    overflow: hidden !important;
+    height: initial !important;
+}
+
+body.gallery mat-sidenav-content {
+    overflow: auto !important;
+    height: initial !important;
+}
+
+body.gallery app-my-nav {
+    overflow: hidden !important; 
+}
+
+.sidenav {
+    width: 225px !important;
+}
+
+.basic-container {
+    padding: 30px;
+}
+
+.mat-toolbar.mat-primary {
+    z-index: 2;
+}
+
+.mat-dialog-container {
+    position: relative;
+}
+
+.mat-dialog-actions {
+    padding-bottom: 39px !important;
+}
+
+.app-password-container, icon-container {
+    position: relative;
+}
+
+#app-password {
+    position: absolute;
+    top: -10px;
+    padding: 0px;
+    right: 0px;
+    cursor: pointer;
+}
+
+.alert {
+    width: 50%;
+}
+
+body.upload-photo .alert {
+    width: 48% !important;
+}
+
+.modal-alert .modal-header {
+    background-color: rgba(255,0,0,0.25);
+}
+
+.modal-alert .modal-body {
+    background-color: rgba(255,0,0,0.05);
+}
+
+input:-webkit-autofill {
+    box-shadow: none;
+}
+
+input:-webkit-autofill:focus {
+    box-shadow: none;
+}
+
+tag-input {
+    width: 50%;
+}
+  
+tag-input > div {
+    border-bottom: none !important;
+}
+
+tag-input > div tag-input-form input {
+    width: 130px !important;
+    padding: 0px !important;
+}
+
+tag-input > div div tag {
+    width: 110px !important;
+    padding: 0px 20px !important;
+    color: white !important;
+    cursor: default !important;
+    margin-bottom: .5rem !important;
+}
+
+tag-input > div div tag > div {
+    margin: 0 auto !important;
+}
+
+tag-input > div div tag:hover, tag-input > div div tag:active, tag-input > div div tag:focus {
+    box-shadow: none !important;
+    color: white !important;
+}
+
+tag-input > div div tag delete-icon {
+    cursor: pointer !important;
+}
+
+tag-input > div div tag delete-icon path {
+    fill: #FFF !important;
+}
+
+tag-input > div div tag delete-icon path:hover {
+    fill: #FFF !important;
+}
+
+tag-input > div div tag delete-icon:hover {
+    transform: scale(1) translateY(0px) !important;
+}
+
+body.gallery .mat-card .mat-select-placeholder, body.gallery .mat-card .mat-select-trigger {
+    font-family: Roboto,"Helvetica Neue",sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+body.gallery .mat-card .mat-select-placeholder {
+    font-size: 20px !important;
+    vertical-align: middle !important;
+}
+
+body.gallery .mat-card .mat-select-trigger {
+    vertical-align: text-top !important;
+}
+
+.error-message span {
+    display: block;
+    padding: .75rem 1.25rem;
+    background-color: #f5c6cb;
+    color: #721c24;
+    border-radius: .25rem;
+    border: 1px solid #f5c6cb;
+    font-size: 16px;
+}
+
+.ng2-dropdown-container {
+    position: relative !important;
+}
+
+.ng2-dropdown-menu[style] {
+    position: absolute !important;
+    top: 0px !important;
+    left: 0px !important;
+}
+
+.ng2-dropdown-menu {
+    box-shadow: 0 5px 5px -3px rgba(0,0,0,.2),0 8px 10px 1px rgba(0,0,0,.14),0 3px 14px 2px rgba(0,0,0,.12) !important;
+    padding: 0px !important;
+}
+
+.ng2-menu-item {
+    height: 28px !important;
+    font-size: 16px !important;
+    padding: 24px !important;
+    line-height: 1px !important;
+}
+
+.ng2-menu-item b {
+    font-weight: normal !important;
+}
+
+.tooltip-inner {
+    white-space: nowrap !important;
+}
+
+.mat-dialog-container div.avatar-container div.avatar-scale-container .mat-icon {
+    transform: scale(2) !important;
+    transform-origin: 100% 100% !important;
+}
+
+.mat-checkbox-label {
+    white-space: normal !important; 
+}
+
+blockquote {
+    border-left: 10px solid rgb(229, 229, 229);
+    padding-left: 20px;
+    margin-left: 0px;
+}
+
+.tinymce-divider-plugin {
+    margin: 20px 0px;
+    text-align: center !important;
+}
+
+.tinymce-divider-plugin span {
+    display: inline-block;
+    height: 36px;
+    line-height: 0px;
+    font-size: 64px;
+    color: rgb(229,229,229);
+}
+
+.tinymce-divider-plugin-paragraph {
+    margin: 0px;
+    height: 0px;
+}
+
+div.tinymce-divider-after-plugin {
+    height: 36px;
+    margin: 20px 0px;
+    text-align: center;
+    line-height: 0px;
+    font-size: 64px;
+    color: rgb(229,229,229);
+}
+  
+div.tinymce-divider-after-plugin:after {
+    content: "...";
+}
+
+.gallery-detail-article img {
+    margin: 20px 0px;
+}
+
+.gallery-detail-comments-container .social-media-container share-button button {
+    position: relative;
+    top: 2px;
+}
+
+.gallery-detail-comments-container .mat-select-trigger {
+    vertical-align: -moz-middle-with-baseline !important;
+    vertical-align: -webkit-baseline-middle !important;
+}
+
+app-images .mat-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -50px;
+}
+
+/* media queries */
+
+/* smart phones */
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .alert {
+        width: 100%;
+    }
+
+    body.upload-photo .alert {
+        width: 100% !important;
+    }
+
+    #dialog-article {
+        overflow: visible !important;
+    }
+
+    .gallery-detail-article img {
+        width: 100%;
+        height: auto;
+        margin: 20px 0px;
+    }
+
+    .gallery-detail-comments-container .mat-card-content.comments {
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
+
+}
+
+

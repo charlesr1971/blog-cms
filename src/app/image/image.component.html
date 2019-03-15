@@ -1,0 +1,70 @@
+<ng-container *ngIf="(currentUser | async) as currentUser">
+
+  <mat-card id="image-{{ image.id }}" class="multiple-image-display" [ngClass]="{'mat-card-unapproved':image.approved == 0 && image.userid == currentUser.userid}" *ngIf="image.approved == 1 || (image.approved == 0 && image.userid == currentUser.userid)">
+    <mat-card-header>
+      <div>
+        <mat-card-title>{{ image.title }}</mat-card-title>
+        <mat-card-subtitle>{{ image.author }}</mat-card-subtitle>
+      </div>
+    </mat-card-header>
+    <div class="image-category">
+        {{ image.category | titlecase }}<mat-icon (click)="deleteFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput">delete_outline</mat-icon><mat-icon (click)="editFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput">create</mat-icon>
+    </div>
+    <div class="image-container">
+      <img class="image" appLazyLoad mat-card-image src="{{ image.src }}" alt="{{ image.title }}" (click)="openFile(image.src)" />
+    </div>
+    <div class="image-data">
+      <div class="image-created-at">
+        {{ image.createdAt | date:'mediumDate' }}
+      </div>
+      <div class="image-size">
+        {{ image.size | fileSize | number:'1.2-2' }} MB
+      </div>
+      <div style="clear:both;"></div>
+    </div>
+    <mat-card-content class="description" id="image-description-{{ image.id }}">
+      <p>
+        {{ image.description }}
+      </p>
+    </mat-card-content>
+    <mat-card-content class="article" id="image-article-{{ image.id }}" [ngStyle]="{'visibility': isPublished && image.article != '' && image.article != null ? 'visible' : 'hidden'}">
+      <p>
+        <a class="read-more-link" routerLink="/{{ catalogRouterAliasLower }}/{{ image.fileid }}/{{ image.title | seoTitleFormat }}">Read more</a>
+      </p>
+    </mat-card-content>
+    <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [scrollToCommentsPanel]="scrollToCommentsPanel" [commentElementsPrefix]="commentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
+    <mat-card-actions id="mat-card-actions-{{ image.id }}" *ngIf="!hideCommentInput" color="accent">
+      <div class="social-media-container" id="social-media-{{ image.id }}" [@shareFadeInOutAnimation]="{value: shareState}">
+        <mat-icon class="mat-icon-rtl-mirror close" id="close-{{ image.id }}"  (click)="share($event,image.id)">
+          clear
+        </mat-icon>
+        <share-button button="facebook" [icon]="fbIcon"></share-button>
+        <share-button button="twitter" [icon]="tweetIcon"></share-button>
+        <share-button button="tumblr" [icon]="tbrIcon"></share-button>
+      </div>
+      <button mat-button (click)="addLike()" placement="top" ngbTooltip="{{ image.likes }}" [disableTooltip]="disableFavouriteTooltip" *ngIf="currentUser.authenticated != 0">
+        <mat-icon class="favorite" id="favourite-{{ image.id }}" [style.color]="likeColorDefault">favorite</mat-icon><span class="favorite">{{ image.likes }}</span>
+      </button>
+      <button mat-button  placement="top" ngbTooltip="{{ image.likes }}" [disableTooltip]="disableFavouriteTooltip" *ngIf="currentUser.authenticated == 0" style="cursor:default;">
+        <mat-icon class="favorite" id="favourite-{{ image.id }}" [style.color]="likeColorDefault">favorite</mat-icon><span class="favorite">{{ image.likes }}</span>
+      </button>
+      <button mat-button (click)="share($event,image.id)">
+        <mat-icon>share</mat-icon>
+      </button>
+      <mat-select class="gallery-sections" placeholder="#" floatLabel="never" (selectionChange)="onTagChange($event)" *ngIf="tagDisplay">
+        <mat-select-trigger>#</mat-select-trigger>
+        <mat-option *ngFor="let tag of tags; let i = index" [value]="tag.value">
+          #{{ tag.display }}
+        </mat-option>
+      </mat-select>
+      <!-- <button mat-button (click)="openComments($event)" *ngIf="currentUser.authenticated != 0" placement="top" ngbTooltip="{{ commentsTotal }}" [disableTooltip]="disableCommentTooltip">
+        <mat-icon class="comment">comment</mat-icon><span class="comment">{{ commentsTotal }}</span>
+      </button> -->
+      <button mat-button (click)="openComments($event)" placement="top" ngbTooltip="{{ commentsTotal }}" [disableTooltip]="disableCommentTooltip">
+        <mat-icon class="comment">comment</mat-icon><span class="comment">{{ commentsTotal }}</span>
+      </button>
+    </mat-card-actions>
+
+  </mat-card>
+
+</ng-container>

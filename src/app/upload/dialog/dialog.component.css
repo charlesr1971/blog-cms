@@ -1,0 +1,65 @@
+.add-files-btn {
+    float: right;
+  }
+  
+  :host {
+    height: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+  
+  .actions {
+    justify-content: flex-end;
+  }
+  
+  .container {
+    height: 100%;
+  }
+
+  .dialog-content-mobile {
+    position: relative;
+    margin: 0px;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .text-mobile {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 30px;
+  }
+
+  .button-1-mobile {
+    position: absolute;
+    float: none;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  .button-container-mobile{
+    position: relative;
+  }
+
+  .button-2-mobile {
+    position: absolute;
+    float: none;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0px !important;
+    z-index: 2;
+  }
+
+  .button-3-mobile {
+    position: absolute;
+    float: none;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 0px !important;
+    z-index: 2;
+  }

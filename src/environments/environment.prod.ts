@@ -1,0 +1,21 @@
+export const environment = {
+  production: true,
+  ajax_dir: 'http://playground.application.me.uk/photo-gallery/assets/cfm',
+  host: 'http://playground.application.me.uk',
+  cf_dir: 'photo-gallery/assets/cfm',
+  allowMultipleLikesPerUser: 0,
+  title: 'Photo Gallery',
+  logoSrc: 'assets/images/logo.png',
+  debugComponentLoadingOrder: true,
+  port: '',
+  maxcontentlength: 500000,
+  tinymcearticlemaximages: 2,
+  tinymcearticlemaxwordcount: 250,
+  openToolbarCommentsPanel: true,
+  useRestApi: true,
+  restApiURLReWrite: true,
+  apiDocumentationUrl: 'http://playground.application.me.uk/photo-gallery/assets/cfm/components/restAPiService.cfm',
+  apiEndpointUrl: 'http://playground.application.me.uk/photo-gallery/assets/cfm/rest/api/v1/',
+  maxCommentInputLength: 140,
+  catalogRouterAlias: 'gallery'
+};

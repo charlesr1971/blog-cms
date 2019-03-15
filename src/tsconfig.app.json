@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "types": []
+  },
+  "exclude": [
+    "src/test.ts",
+    "**/*.spec.ts",
+    "src/assets/js/jquery-ui-1.10.3.custom/**",
+    "src/assets/js/perfect-scrollbar/**",
+    "src/assets/js/greensock-js/**",
+    "src/assets/js/tagify/**",
+    "src/assets/js/mobile-detect/**",
+    "src/assets/js/js-cookie/**",
+    "src/assets/js/highlight.js/**",
+    "src/assets/js/lightgallery.js/**",
+    "src/assets/js/jquery.js",
+    "src/assets/tinymce/**",
+    "src/assets/cfm/**"
+  ]
+}

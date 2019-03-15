@@ -1,0 +1,10 @@
+<div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
+  <h1 mat-dialog-title>Account Deletion Alert</h1>
+  <mat-dialog-content fxFlex>
+    <p><strong>Do you wish to continue to delete your account?</strong><br />This will remove all your data, including any images that have been uploaded...</p>
+  </mat-dialog-content>
+  <mat-dialog-actions class="actions">
+    <button mat-raised-button mat-dialog-close data-role="cancel" color="primary">Cancel</button>
+    <button mat-raised-button data-role="warning" [mat-dialog-close]="true" cdkFocusInitial color="warn">Delete Account</button>
+  </mat-dialog-actions>
+</div>

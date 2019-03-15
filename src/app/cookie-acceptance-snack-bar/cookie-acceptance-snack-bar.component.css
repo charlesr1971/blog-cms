@@ -1,0 +1,59 @@
+::ng-deep snack-bar-container.custom-class {
+    width: 500px !important;
+    min-width: 500px !important;
+    max-width: 500px !important;
+}
+
+::ng-deep snack-bar-container.custom-class .mat-checkbox-inner-container {
+    margin-right: 15px !important;
+}
+
+div.cookie-acceptance-snack-bar-container {
+    position: relative;
+    top: 5px;
+}
+
+form {
+    float: left;
+}
+
+.form-field-container .form-field-text {
+    padding: 0px;
+}
+
+.form-field-container .form-field-text label {
+    margin: 0px !important;
+}
+
+a {
+    cursor: pointer;
+}
+
+a.cookie-policy {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+a.snack-bar-close {
+    float: right; 
+    color: rgba (0,0,0,1);
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 16px;
+}
+
+a.snack-bar-close:hover, a.snack-bar-close:visited, a.snack-bar-close:active {
+    color: rgba (0,0,0,1);
+}
+
+ /* media queries */
+
+/* smart phones */
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+     ::ng-deep snack-bar-container.custom-class {
+        min-width: initial !important;
+        max-width: initial !important;
+    }
+    
+}

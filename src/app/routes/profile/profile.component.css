@@ -1,0 +1,191 @@
+.mat-form-field {
+    width: 50%;
+}
+  
+.tree-progress-bar {
+    margin-left: 30px;
+}
+
+.form-field-container {
+    margin-bottom: 20px;
+}
+
+.form-field-container .form-field-legend {
+    position: relative;
+    padding: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.form-field-container .form-field-legend span {
+    position: absolute;
+    top: 13px;
+    right: 20px;
+}
+
+.form-field-container .form-field-legend span img{
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.form-field-container .form-field-text {
+    padding: 20px;
+}
+
+.form-field-container .form-field-text textarea {
+    height: 250px;
+}
+
+.form-field-container .form-field-text .form-button-container {
+    width: 50%;
+    margin-top: 20px;
+}
+
+.form-field-container .form-field-text .form-button-container button {
+    width: 125px;
+}
+
+.form-field-container .form-field-text .form-button-container button:nth-of-type(2) {
+    float: right;
+}
+
+.form-field-container .form-field-text div.panel {
+    width: 50%;
+    font-size: 16px;
+    margin: 30px 0px 40px;
+}
+
+.form-field-container .form-field-text div.panel.unapproved-images {
+    margin: 30px 0px 40px;
+}
+
+.form-field-container .form-field-text div.panel h2.panel-legend, .form-field-container .form-field-text div.panel mat-select.panel-legend {
+    position: relative;
+    padding: 15px;
+    margin: 0px;
+    font-size: 16px;
+}
+
+.form-field-container .form-field-text div.panel mat-select.panel-legend {
+    font-weight: 500;
+}
+
+.form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.form-field-container .form-field-text div.panel div.panel-content {
+    padding: 30px 0px;
+    font-size: 16px;
+}
+
+.form-field-container .form-field-text div.panel div.panel-content .mat-form-field {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.form-field-container .form-field-text div.panel div.panel-content .mat-form-field:last-child {
+    margin-bottom: 0px !important;
+}
+
+#apiDocumentation {
+    height: 25px;
+    cursor: pointer;
+}
+
+#apiEndpoint {
+    height: 40px;
+}
+
+div.image-thumbnail-container {
+    width: 50%;
+    margin: 0px 0px 20px;
+}
+
+div.image-thumbnail-container ul.image-thumbnail-list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0px;
+    margin: 0px -20px 0px 0px;
+}
+
+div.image-thumbnail-container ul.image-thumbnail-list li {
+    width: 100px;
+    height: 100%;
+    margin: 0px 20px 20px 0px;
+    flex-grow: 1;
+}
+
+div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-image {
+    margin-bottom: 20px;
+}
+
+div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-image img {
+    width: 100%;
+}
+
+div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+.upload-container {
+    padding: 20px 0px 0px;
+}
+
+/* media queries */
+
+/* smart phones */
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .mat-form-field {
+      width: 100%;
+    }
+
+    .form-field-container .form-field-text .form-button-container {
+        width: 100%;
+    }
+
+    .form-field-container .form-field-text div.panel {
+        width: 100%;
+    }
+
+    #apiDocumentation {
+        height: 40px;
+    }
+
+    #apiEndpoint {
+        height: 58px;
+    }
+
+    div.image-thumbnail-container {
+        width: 100%;
+    }
+
+    div.image-thumbnail-container ul.image-thumbnail-list {
+        margin: 0px 0px 0px 0px;
+    }
+
+    div.image-thumbnail-container ul.image-thumbnail-list li {
+        width: 100%;
+        height: auto;
+        margin: 0px 0px 20px 0px;
+    }
+
+    
+}

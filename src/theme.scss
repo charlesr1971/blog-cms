@@ -1,0 +1,1443 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+// Typography
+$custom-typography: mat-typography-config(
+    $font-family: Roboto,
+    $headline: mat-typography-level(24px, 48px, 400),
+    $body-1: mat-typography-level(16px, 24px, 400)
+);
+@include angular-material-typography($custom-typography);
+
+@function url-friendly-colour($colour) {
+    @return '%23' + str-slice('#{$colour}', 2, -1)
+}
+
+// Dark theme 1
+
+$dark-primary: mat-palette($mat-blue-grey, 500, 100, 800);
+$dark-accent:  mat-palette($mat-blue, 500, A100);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+$dark-foreground-palette: map-get($dark-theme, foreground);
+$dark-background-palette: map-get($dark-theme, background);
+
+@mixin dark-mat-nav-list-after {
+
+    .mat-nav-list-container:after {
+        position: absolute;
+        width: 100%;
+        height: 4em;
+        bottom : 0;
+        left: 0;
+        pointer-events: none;
+        background-image: linear-gradient(to bottom, mat-color($dark-background-palette, card, 0), mat-color($dark-background-palette, card, 1) 90%);
+        content: "";
+        z-index: 3;
+    }
+
+}
+
+@mixin dark {  
+
+    .mat-card.mat-card-unapproved {
+        background: mat-color($dark-primary, 800, 0.5);
+    }
+
+    .mat-card-actions {
+        background: mat-color($dark-background-palette, background);
+    }
+
+    .mat-card > .mat-card-actions {
+        background: mat-color($dark-background-palette, background, 0.35);
+    }
+
+    .social-media-container {
+        background: mat-color($dark-background-palette, background);
+    }
+
+    .mat-card .social-media-container {
+        background: mat-color($dark-background-palette, background);
+    }
+
+    .social-media-container .mat-icon.close {
+        color: mat-color($dark-foreground-palette, text, 0.5) !important;
+    }
+
+    .mat-card .image-category {
+        background: mat-color($dark-primary, default, 0.5);
+    }
+
+    .mat-card-content.article a.read-more-link, .mat-card-content.article a.read-more-link:active, .mat-card-content.article a.read-more-link:visited {
+        color: mat-color($dark-accent, lighter, 0.75) !important;
+    }
+
+    .mat-card-content.article a.read-more-link:hover {
+        color: mat-color($dark-accent, lighter, 1) !important;
+    }
+
+    snack-bar-container.custom-class {
+        background: mat-color($dark-accent);
+    }
+
+    .form-field-container .form-field-legend {
+        background: mat-color($dark-foreground-palette, text, 0.05);
+    }
+
+    .form-field-container .form-field-legend div .mat-icon {
+        color: mat-color($dark-foreground-palette, text, 0.25);
+    }
+
+    .form-field-container .form-field-text {
+        background: mat-color($dark-foreground-palette, text, 0.025);
+    }
+
+    tag-input > div tag-input-form input {
+        background: mat-color($dark-foreground-palette, text, 0);
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    tag-input > div div tag {
+        background: mat-color($dark-primary);
+    }
+
+    tag-input > div div tag:hover, tag-input > div div tag:active, tag-input > div div tag:focus {
+        background: mat-color($dark-primary, darker) !important;
+    }
+
+    .uploaded-image-container {
+        background: mat-color($dark-foreground-palette, text, 0.035);
+    }
+
+    .form-field-container .form-field-text div.panel h2.panel-legend, .form-field-container .form-field-text div.panel mat-select.panel-legend {
+        background: mat-color($dark-foreground-palette, text, 0.035);
+    }
+
+    .form-field-container .form-field-text div.panel mat-select.panel-legend .mat-select-placeholder {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+        color: mat-color($dark-foreground-palette, text, 0.7);
+    }
+
+    .mat-tree {
+        background: mat-color($dark-foreground-palette, text, 0.035);
+    }
+
+    .mat-tree-node a {
+        color: mat-color($dark-foreground-palette, text, 0.5);
+    }
+
+    .mat-tree-node a:hover {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .mat-card-content.comments {
+        background: mat-color($dark-background-palette, background);
+    }
+
+    div.comment-parent {
+        background: mat-color($dark-foreground-palette, text, 0.035);
+    }
+
+    .gallery-detail-comments-container .mat-card-content.comments {
+        border-top: solid 20px mat-color($dark-foreground-palette, text, 0.035);
+    }
+
+    div.comment-child {
+        background: mat-color($dark-foreground-palette, text, 0.16);
+    }
+
+    div.comment-parent div.comment-date, div.comment-child div.comment-date {
+        color: mat-color($dark-foreground-palette, text, 0.35);
+    }
+
+    div.comment-parent div.comment-container div.comment-author, div.comment-child div.comment-container div.comment-author {
+        color: mat-color($dark-foreground-palette, text, 0.2);
+    }
+
+    div.comment-parent div.comment-container span, div.comment-child div.comment-container span {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .mat-card-content.comments > div.comment {
+        background: mat-color($dark-background-palette, background);
+    }
+
+    div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .mat-icon.favorite {
+        color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+    .mat-icon.favorite-in {
+        color: mat-color($dark-accent, A100) !important;
+    }
+
+    div.comment-parent .mat-icon.comment-replytocommentid {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    div.comment-parent .mat-icon.comment-replytocommentid-in {
+        color: mat-color($dark-accent, A100) !important;
+    }
+
+    div.comment-parent div.avatar-container div.avatar-scale-container, div.comment-child div.avatar-container div.avatar-scale-container {
+        background-color: mat-color($dark-foreground-palette, text, 0.05);
+    }
+
+    div.comment-parent div.avatar-container div.avatar-scale-container .mat-icon, div.comment-child div.avatar-container div.avatar-scale-container .mat-icon {
+        color: mat-color($dark-foreground-palette, text, 0.1);
+    }
+
+    .mat-sidenav div.credits {
+        color: mat-color($dark-foreground-palette, text, 0.25);
+    }
+
+    .mat-app-background.basic-container.gallery-detail {
+        background: mat-color($dark-background-palette, app-bar);
+    }
+
+    .gallery-detail-title:after {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='512' height='512' xmlns='http://www.w3.org/2000/svg'%3E%3Cg%3E%3Ctitle%3Ebackground%3C/title%3E%3Crect fill='none' id='canvas_background' height='402' width='582' y='-1' x='-1'/%3E%3C/g%3E%3Cg%3E%3Ctitle%3ELayer 1%3C/title%3E%3Cpath fill='#{url-friendly-colour(mat-color($dark-accent,lighter))}' id='svg_1' d='m480,207l-171.399994,0l-52.600006,-159.099998l-52.600006,159.099998l-171.399994,0l140.199997,97.899994l-54.599998,159.100006l138.400002,-98.600006l138.399994,98.600006l-54.700012,-159.100006l140.300018,-97.899994z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .gallery-detail-author-data .gallery-detail-author-name {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .gallery-detail-author-data .gallery-detail-author-date {
+        color: mat-color($dark-foreground-palette, text, 0.5);
+    }
+
+    .gallery-detail-description {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .gallery-detail-article {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    footer {
+        color: mat-color($dark-foreground-palette, text, 0.25);
+    }
+
+    aside.gallery-detail-aside {
+        background: mat-color($dark-foreground-palette, text, 0.03);
+    }
+
+    .ng2-dropdown-menu {
+        background: mat-color($dark-background-palette, card) !important;
+    }
+
+    .ng2-menu-item {
+        background: mat-color($dark-background-palette, card) !important;
+        color: mat-color($dark-foreground-palette, text, 0.75) !important;
+    }
+
+    .ng2-menu-item:hover {
+        background: mat-color($dark-foreground-palette, text, 0.05) !important;
+        color: mat-color($dark-foreground-palette, text, 1) !important;
+    }
+
+    .dialog-article-footer-data {
+        color: mat-color($dark-accent, lighter);
+        border: 1px dotted mat-color($dark-primary, lighter);
+        background: mat-color($dark-foreground-palette, text, 0.075) !important;
+    }
+      
+    .dialog-article-footer-data i {
+        color: mat-color($dark-foreground-palette, text);
+    }
+
+    .dialog-article-footer-data-warn {
+        color: mat-color($dark-warn);
+    }
+
+    .char-counter-warn {
+        color: mat-color($dark-warn);
+    }
+
+    div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title {
+        background: mat-color($dark-foreground-palette, text, 0.025);
+    }
+
+    app-images .mat-progress-spinner circle, app-images .mat-spinner circle{
+        stroke: mat-color($dark-foreground-palette, text, 0.5) !important;
+    }
+
+    @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+        @include dark-mat-nav-list-after;
+
+    }
+
+    @media only screen and (max-device-height : 480px) {
+
+        @include dark-mat-nav-list-after;
+    
+    }
+    
+    @media only screen and (min-device-height : 481px) and (max-device-height : 667px) {
+    
+        @include dark-mat-nav-list-after;
+    
+    }
+    
+    @media only screen and (min-device-height :  668px) and (max-device-height : 736px) {
+    
+        @include dark-mat-nav-list-after;
+    
+    }
+    
+    @media only screen 
+    and (max-device-width : 812px) 
+    and (orientation : landscape) {
+    
+        @include dark-mat-nav-list-after;
+    
+    }
+
+}
+
+.theme-1-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+        -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 1
+
+$light-primary: mat-palette($mat-blue-grey, 500, 100, 800);
+$light-accent: mat-palette($mat-blue, 500, A100);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+$light-foreground-palette: map-get($light-theme, foreground);
+$light-background-palette: map-get($light-theme, background);
+
+@mixin light-mat-nav-list-after {
+
+    .mat-nav-list-container:after {
+        position: absolute;
+        width: 100%;
+        height: 4em;
+        bottom : 0;
+        left: 0;
+        pointer-events: none;
+        background-image: linear-gradient(to bottom, mat-color($light-background-palette, card, 0), mat-color($light-background-palette, card, 1) 90%);
+        content: "";
+        z-index: 3;
+    }
+
+}
+
+@mixin light {
+
+    .mat-card.mat-card-unapproved {
+        background: mat-color($light-primary, lighter, 0.75);
+    }
+
+    .mat-card .image-created-at {
+        background: mat-color($light-primary, lighter, 0.125) !important;
+    }
+
+    .mat-card .image-size {
+        background: mat-color($light-primary, lighter, 0.2) !important;
+    }
+
+    .mat-card.mat-card-unapproved .image-created-at {
+        background: mat-color($light-background-palette, background, 0.25) !important;
+    }
+
+    .mat-card.mat-card-unapproved .image-size {
+        background: mat-color($light-background-palette, background, 0.5) !important;
+    }
+
+    .mat-card-actions {
+        background: mat-color($light-background-palette, background);
+    }
+
+    .mat-card.mat-card-unapproved > .mat-card-actions {
+        background: mat-color($light-background-palette, background, 0.25);
+    }
+    
+    .social-media-container {
+        background: mat-color($light-background-palette, background);
+    }
+
+    .social-media-container .mat-icon.close {
+        color: mat-color($light-foreground-palette, text, 0.5) !important;
+    }
+
+    .mat-card .social-media-container {
+        background: mat-color($light-background-palette, background);
+    }
+
+    .mat-card .image-category {
+        background: mat-color($light-primary, default, 0.5);
+    }
+
+    .mat-card-content.article a.read-more-link, .mat-card-content.article a.read-more-link:active, .mat-card-content.article a.read-more-link:visited {
+        color: mat-color($light-accent, lighter, 0.75) !important;
+    }
+
+    .mat-card-content.article a.read-more-link:hover {
+        color: mat-color($light-accent, lighter, 1) !important;
+    }
+
+    snack-bar-container.custom-class {
+        background: mat-color($light-accent);
+    }
+
+    .form-field-container .form-field-legend {
+        background: mat-color($light-primary, default, 0.125);
+    }
+
+    .form-field-container .form-field-legend div .mat-icon {
+        color: mat-color($light-foreground-palette, text, 0.25);
+    }
+
+    .form-field-container .form-field-text {
+        background: mat-color($light-primary, default, 0.075);
+    }
+
+    tag-input > div tag-input-form input {
+        background: mat-color($light-primary, default, 0);
+        color: mat-color($light-foreground-palette, text);
+    }
+
+    tag-input > div div tag {
+        background: mat-color($light-primary);
+    }
+
+    tag-input > div div tag:hover, tag-input > div div tag:active, tag-input > div div tag:focus {
+        background: mat-color($light-primary, darker) !important;
+    }
+
+    .uploaded-image-container {
+        background: mat-color($light-primary, default, 0.075);
+    }
+
+    .form-field-container .form-field-text div.panel h2.panel-legend, .form-field-container .form-field-text div.panel mat-select.panel-legend {
+        background: mat-color($light-primary, default, 0.075);
+    }
+
+    .form-field-container .form-field-text div.panel mat-select.panel-legend .mat-select-placeholder {
+        color: mat-color($light-foreground-palette, text);
+    }
+
+    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+        color: mat-color($light-foreground-palette, text, 0.7);
+    }
+
+    .mat-tree {
+        background: mat-color($light-primary, default, 0.075);
+    }
+
+    .mat-tree-node a {
+        color: mat-color($light-foreground-palette, text, 0.5);
+    }
+
+    .mat-tree-node a:hover {
+        color: mat-color($light-foreground-palette, text);
+    }
+
+    .mat-card-content.comments {
+        background: mat-color($light-background-palette, background);
+    }
+
+    div.comment-parent {
+        background: mat-color($light-primary, default, 0.05);
+    }
+
+    .gallery-detail-comments-container .mat-card-content.comments {
+        border-top: solid 20px mat-color($light-primary, default, 0.05);
+    }
+
+    div.comment-child {
+        background: mat-color($light-primary, default, 0.1);
+    }
+
+    div.comment-parent div.comment-date, div.comment-child div.comment-date {
+        color: mat-color($light-foreground-palette, text, 0.35);
+    }
+
+    div.comment-parent div.comment-container div.comment-author, div.comment-child div.comment-container div.comment-author {
+        color: mat-color($light-foreground-palette, text, 0.2);
+    }
+
+    div.comment-parent div.comment-container span, div.comment-child div.comment-container span {
+        color: mat-color($light-foreground-palette, text, 0.75);
+    }
+
+    .mat-card-content.comments > div.comment {
+        background: mat-color($light-background-palette, background);
+    }
+
+    .mat-card.mat-card-unapproved .mat-card-content.comments {
+        background: mat-color($light-background-palette, background, 0.25);
+    }
+
+    .mat-card.mat-card-unapproved .mat-card-content.comments > div.comment {
+        background: none !important;
+    }
+
+    div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid {
+        color: mat-color($light-foreground-palette, text, 0.75);
+    }
+
+    .mat-icon.favorite {
+        color: mat-color($light-foreground-palette, text) !important;
+    }
+
+    .mat-icon.favorite-in {
+        color: mat-color($light-accent, A100) !important;
+    }
+
+    div.comment-parent .mat-icon.comment-replytocommentid {
+        color: mat-color($light-foreground-palette, text, 0.75);
+    }
+
+    div.comment-parent .mat-icon.comment-replytocommentid-in {
+        color: mat-color($light-accent, A100) !important;
+    }
+
+    div.comment-parent div.avatar-container div.avatar-scale-container, div.comment-child div.avatar-container div.avatar-scale-container {
+        background-color: mat-color($light-foreground-palette, text, 0.05);
+    }
+
+    div.comment-parent div.avatar-container div.avatar-scale-container .mat-icon, div.comment-child div.avatar-container div.avatar-scale-container .mat-icon {
+        color: mat-color($light-foreground-palette, text, 0.05);
+    }
+
+    .mat-sidenav div.credits {
+        color: mat-color($light-foreground-palette, text, 0.25);
+    }
+
+    .mat-app-background.basic-container.gallery-detail {
+        background: mat-color($light-background-palette, app-bar);
+    }
+
+    .gallery-detail-title:after {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='512' height='512' xmlns='http://www.w3.org/2000/svg'%3E%3Cg%3E%3Ctitle%3Ebackground%3C/title%3E%3Crect fill='none' id='canvas_background' height='402' width='582' y='-1' x='-1'/%3E%3C/g%3E%3Cg%3E%3Ctitle%3ELayer 1%3C/title%3E%3Cpath fill='#{url-friendly-colour(mat-color($light-accent,lighter))}' id='svg_1' d='m480,207l-171.399994,0l-52.600006,-159.099998l-52.600006,159.099998l-171.399994,0l140.199997,97.899994l-54.599998,159.100006l138.400002,-98.600006l138.399994,98.600006l-54.700012,-159.100006l140.300018,-97.899994z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .gallery-detail-author-data .gallery-detail-author-name {
+        color: mat-color($light-foreground-palette, text, 0.65);
+    }
+
+    .gallery-detail-author-data .gallery-detail-author-date {
+        color: mat-color($light-foreground-palette, text, 0.35);
+    }
+
+    .gallery-detail-description {
+        color: mat-color($light-foreground-palette, text, 0.85);
+    }
+
+    .gallery-detail-article {
+        color: mat-color($light-foreground-palette, text, 0.85);
+    }
+
+    footer {
+        color: mat-color($light-foreground-palette, text, 0.5);
+    }
+
+    aside.gallery-detail-aside {
+        background: mat-color($light-primary, default, 0.26);
+    }
+
+    .ng2-dropdown-menu {
+        background: mat-color($light-background-palette, card) !important;
+    }
+
+    .ng2-menu-item {
+        background: mat-color($light-background-palette, card) !important;
+        color: mat-color($light-foreground-palette, text, 0.75) !important;
+    }
+
+    .ng2-menu-item:hover {
+        background: mat-color($light-foreground-palette, text, 0.04) !important;
+        color: mat-color($light-foreground-palette, text, 1) !important;
+    }
+
+    .dialog-article-footer-data {
+        color: mat-color($light-accent, lighter);
+        border: 1px dotted mat-color($light-primary, lighter);
+        background: mat-color($light-foreground-palette, text, 0.025) !important;
+    }
+      
+    .dialog-article-footer-data i {
+        color: mat-color($light-foreground-palette, text);
+    }
+
+    .dialog-article-footer-data-warn {
+        color: mat-color($light-warn);
+    }
+
+    .char-counter-warn {
+        color: mat-color($light-warn);
+    }
+
+    div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title {
+        background: mat-color($light-foreground-palette, text, 0.025);
+    }
+
+    app-images .mat-progress-spinner circle, app-images .mat-spinner circle{
+        stroke: mat-color($light-foreground-palette, text, 0.5) !important;
+    }
+
+    @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+        @include light-mat-nav-list-after;
+
+    }
+
+    @media only screen and (max-device-height : 480px) {
+
+        @include light-mat-nav-list-after;
+    
+    }
+    
+    @media only screen and (min-device-height : 481px) and (max-device-height : 667px) {
+    
+        @include light-mat-nav-list-after;
+    
+    }
+    
+    @media only screen and (min-device-height :  668px) and (max-device-height : 736px) {
+    
+        @include light-mat-nav-list-after;
+    
+    }
+    
+    @media only screen 
+    and (max-device-width : 812px) 
+    and (orientation : landscape) {
+    
+        @include light-mat-nav-list-after;
+    
+    }
+
+}
+
+.theme-1-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(238, 240, 241) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+
+// Dark theme 2
+
+$dark-primary: mat-palette($mat-red);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-2-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 2
+
+$light-primary: mat-palette($mat-red);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-2-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(250, 236, 235) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 3
+
+$dark-primary: mat-palette($mat-pink);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-3-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 3
+
+$light-primary: mat-palette($mat-pink);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-3-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(249, 233, 238) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 4
+
+$dark-primary: mat-palette($mat-purple);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-4-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 4
+
+$light-primary: mat-palette($mat-purple);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-4-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(243, 234, 244) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 5
+
+$dark-primary: mat-palette($mat-deep-purple);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-5-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 5
+
+$light-primary: mat-palette($mat-deep-purple);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-5-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(239, 235, 245) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 6
+
+$dark-primary: mat-palette($mat-indigo);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-6-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 6
+
+$light-primary: mat-palette($mat-indigo);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-6-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(235, 237, 245) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 7
+
+$dark-primary: mat-palette($mat-blue);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-7-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 7
+
+$light-primary: mat-palette($mat-blue);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-7-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(233, 242, 249) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 8
+
+$dark-primary: mat-palette($mat-light-blue);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-8-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 8
+
+$light-primary: mat-palette($mat-light-blue);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-8-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(231, 244, 250) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 9
+
+$dark-primary: mat-palette($mat-cyan);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-9-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 9
+
+$light-primary: mat-palette($mat-cyan);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-9-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(231, 245, 247) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 10
+
+$dark-primary: mat-palette($mat-teal);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-10-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 10
+
+$light-primary: mat-palette($mat-teal);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-10-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(231, 242, 241) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 11
+
+$dark-primary: mat-palette($mat-green);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-11-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 11
+
+$light-primary: mat-palette($mat-green);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-11-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(236, 244, 237) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 12
+
+$dark-primary: mat-palette($mat-light-green);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-12-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 12
+
+$light-primary: mat-palette($mat-light-green);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-12-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(241, 246, 236) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 13
+
+$dark-primary: mat-palette($mat-lime);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-13-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 13
+
+$light-primary: mat-palette($mat-lime);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-13-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(247, 248, 235) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 14
+
+$dark-primary: mat-palette($mat-yellow);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-14-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 14
+
+$light-primary: mat-palette($mat-yellow);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-14-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(250, 249, 235) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 15
+
+$dark-primary: mat-palette($mat-amber);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-15-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 15
+
+$light-primary: mat-palette($mat-amber);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-15-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(250, 246, 231) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 16
+
+$dark-primary: mat-palette($mat-orange);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-16-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 16
+
+$light-primary: mat-palette($mat-orange);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-16-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(250, 242, 231) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 17
+
+$dark-primary: mat-palette($mat-deep-orange);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-17-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 17
+
+$light-primary: mat-palette($mat-deep-orange);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-17-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(250, 237, 233) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 18
+
+$dark-primary: mat-palette($mat-brown);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-18-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 18
+
+$light-primary: mat-palette($mat-brown);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-18-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(240, 237, 236) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}
+
+// Dark theme 19
+
+$dark-primary: mat-palette($mat-gray);
+$dark-accent:  mat-palette($mat-blue);
+$dark-warn:    mat-palette($mat-deep-orange);
+
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+.theme-19-dark {
+
+    @include angular-material-theme($dark-theme);
+
+    @include dark;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+    box-shadow: none;
+    -webkit-box-shadow: inset 0 0 0px 9999px #353535 !important;
+    -webkit-text-fill-color: mat-color($dark-foreground-palette, text) !important;
+    }
+
+}
+
+// Light theme 19
+
+$light-primary: mat-palette($mat-gray);
+$light-accent: mat-palette($mat-blue);
+$light-warn: mat-palette($mat-deep-orange);
+
+$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+
+.theme-19-light {
+
+    @include angular-material-theme($light-theme);
+
+    @include light;
+
+    input:-webkit-autofill, input:-webkit-autofill:focus {
+        box-shadow: none;
+        -webkit-box-shadow: inset 0 0 0px 9999px rgb(243, 243, 243) !important;
+        -webkit-text-fill-color: mat-color($light-foreground-palette, text) !important;
+    }
+
+}

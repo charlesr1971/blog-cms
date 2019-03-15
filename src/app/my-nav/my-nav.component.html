@@ -1,0 +1,86 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    fixedInViewport="true" 
+    (openedChange)="onSideNavOpenedChange()" 
+    (closedStart)="onSideNavClosedStart()"
+    [attr.role]="(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async) ? 'over' : 'side'"
+    [opened]="!(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async)">
+    <mat-toolbar color="primary">Menu</mat-toolbar>
+    <div class="mat-nav-list-container">
+      <mat-nav-list>
+        <a mat-list-item routerLink="" [ngClass]="{'gallery-is-active': galleryIsActive}" (click)="toGallery()">{{ catalogRouterAliasUpper }}</a>
+        <a class="gallery-sections" mat-list-item routerLink="" (click)="toggleGallerySections()">{{ catalogRouterAliasUpper }} Sections</a>
+        <mat-select class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Pages" floatLabel="never" (selectionChange)="onChange($event)" *ngIf="gallerySectionsIsActive">
+          <mat-select-trigger>{{ catalogRouterAliasUpper }} by Pages</mat-select-trigger>
+          <mat-option *ngFor="let page of pages; let i = index" [value]="(i + 1)">
+            {{ page.title }}
+          </mat-option>
+        </mat-select>
+        <mat-select class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Author" floatLabel="never" (selectionChange)="onChangeAuthor($event)" *ngIf="gallerySectionsIsActive">
+          <mat-select-trigger>{{ catalogRouterAliasUpper }} by Author</mat-select-trigger>
+          <mat-optgroup *ngFor="let author of authors; let i = index" [label]="author.title">
+            <mat-option *ngFor="let page of author.pages; let ii = index" [value]="author.userid + '_' + (ii + 1)">
+              {{ page.title }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+        <mat-select class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Category" floatLabel="never" (selectionChange)="onChangeCategory($event)" *ngIf="gallerySectionsIsActive">
+          <mat-select-trigger>{{ catalogRouterAliasUpper }} by Category</mat-select-trigger>
+          <mat-optgroup *ngFor="let category of categories; let i = index" [label]="category.title">
+            <mat-option *ngFor="let page of category.pages; let ii = index" [value]="category.category + '_' + (ii + 1)">
+              {{ page.title }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+        <mat-select class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Date" floatLabel="never" (selectionChange)="onChangeDate($event)" *ngIf="gallerySectionsIsActive">
+          <mat-select-trigger>{{ catalogRouterAliasUpper }} by Date</mat-select-trigger>
+          <mat-optgroup *ngFor="let date of dates; let i = index" [label]="date.title">
+            <mat-option *ngFor="let page of date.pages; let ii = index" [value]="date.year + '_' + date.month + '_' + (ii + 1)">
+              {{ page.title }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+        <mat-select class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Tag" floatLabel="never" (selectionChange)="onChangeTag($event)" *ngIf="gallerySectionsIsActive">
+          <mat-select-trigger>{{ catalogRouterAliasUpper }} by Tag</mat-select-trigger>
+          <mat-option *ngFor="let tag of tags; let i = index" [value]="tag.value">
+            {{ tag.title }}
+          </mat-option>
+        </mat-select>
+        <a mat-list-item routerLink="" (click)="search()">Search</a>
+        <a mat-list-item routerLink="" (click)="toProfile()" *ngIf="userid > 0">Profile</a>
+        <a mat-list-item routerLink="" (click)="toUploadPhoto()">Upload Photo</a>
+        <a mat-list-item routerLink="" (click)="login()" *ngIf="userid == 0">Login</a>
+        <a mat-list-item routerLink="" (click)="logout()" *ngIf="userid > 0">Logout</a>
+      </mat-nav-list>
+    </div>
+    <div class="credits">
+      Written in Angular 7x
+      <div>
+          <img class="angular-logos" src="assets/images/angular-logo.png" />
+          <img class="angular-logos" src="assets/images/material-logo.png" />
+          <img class="angular-logos" src="assets/images/compiler-logo.png" />
+      </div>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content id="mat-sidenav-content">
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ || isTablet$ || isMedium$ || isLarge$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <div class="header-container">
+        <img id="logo" src="{{ logoSrc }}" /><span>{{ title }}</span>
+      </div>
+      <span id="avatarNavContainer" #avatarNavContainer></span>
+    </mat-toolbar>
+    <!-- Add Content Here -->
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

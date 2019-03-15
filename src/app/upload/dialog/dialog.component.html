@@ -1,0 +1,25 @@
+<input type="file" #file style="display: none" (change)="onFilesAdded()" />
+<div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch" [ngClass]="{'button-container-mobile': isMobile == true}">
+  <h1 mat-dialog-title [ngStyle]="{'text-align': isMobile ? 'center' : 'left'}">Upload</h1>
+  <div>
+    <button [disabled]="uploading || uploadSuccessful || maxfilelimitreached" mat-raised-button color="primary" class="add-files-btn" (click)="addFiles()" [ngClass]="{'button-1-mobile': isMobile == true}">
+      Add File
+    </button>
+  </div>
+
+  <!-- This is the content of the dialog, containing a list of the files to upload -->
+  <mat-dialog-content fxFlex [ngClass]="{'dialog-content-mobile': isMobile == true}">
+    <mat-list [ngClass]="{'text-mobile': isMobile == true}">
+      <mat-list-item *ngFor="let file of files">
+        <h4 mat-line #filename>{{file.name}}</h4>
+        <mat-progress-bar *ngIf="progress" mode="determinate" [value]="progress[file.name].progress | async"></mat-progress-bar>
+      </mat-list-item>
+    </mat-list>
+  </mat-dialog-content>
+
+  <!-- This are the actions of the dialog, containing the primary and the cancel button-->
+  <mat-dialog-actions class="actions" [ngClass]="{'button-container-mobile': isMobile == true}">
+    <button *ngIf="showCancelButton" mat-raised-button mat-dialog-close data-role="cancel" [ngClass]="{'button-2-mobile': isMobile == true}" color="primary">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="!canBeClosed" (click)="closeDialog()" [ngClass]="{'button-3-mobile': isMobile == true}" color="accent">{{primaryButtonText}}</button>
+  </mat-dialog-actions>
+</div>

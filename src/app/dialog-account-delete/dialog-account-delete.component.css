@@ -1,0 +1,11 @@
+.mat-dialog-actions {
+    place-content:space-evenly;
+}
+
+button {
+    padding: 0 10px;
+}
+
+button[data-role='warning'] {
+    margin-left: 10px;
+}

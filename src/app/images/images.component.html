@@ -1,0 +1,45 @@
+<div id="infinite-scroller-images" #infiniteScrollerImagesContainer infiniteScroller scrollPerecnt="70" immediateCallback="true" [scrollCallback]="scrollCallbackImages" style="overflow:auto;">
+    <form novalidate [formGroup]="searchForm" [ngStyle]="{'display': searchDo ? 'block' : 'none'}" #searchFormContainer>
+        <div class="form-field-container">
+            <div class="form-field-legend">Search<mat-icon (click)="closeSearch()">close</mat-icon></div>
+            <div class="form-field-text">
+                <mat-select class="gallery-sections" placeholder="Alpha Index" (selectionChange)="onSearchChange($event)">
+                    <mat-option *ngFor="let page of pages; let i = index" [value]="(i + 1)">
+                        {{ page.title }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="form-field-text">
+                <mat-form-field class="example-full-width">
+                    <div class="icon-container">
+                        <mat-icon id="search-icon" (click)="searchImage()">search</mat-icon>
+                        <input type="text" placeholder="Search title" aria-label="Search title" matInput [formControl]="search" [matAutocomplete]="auto" #autoCompleteInput>
+                    </div>
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.title}} <span style="color:rgba(255,255,255,0.1);">[{{option.directory}}]</span>
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <form novalidate [formGroup]="tagsForm" [ngStyle]="{'display': tagsDo ? 'block' : 'none'}" #tagsFormContainer>
+        <div class="form-field-container">
+            <div class="form-field-legend">Tags <span style="color:rgba(255,255,255,0.5);font-weight:normal;"> | {{ currentTag }}</span><mat-icon (click)="closeTags()">close</mat-icon></div>
+            <div class="form-field-text">
+                <mat-select class="gallery-sections" placeholder="Pages" floatLabel="never" [formControl]="tags" (selectionChange)="onTagChange($event)">
+                    <mat-select-trigger>Pages</mat-select-trigger>
+                    <mat-option *ngFor="let pagesTag of pagesTags; let i = index" [value]="(i + 1)">
+                        {{ pagesTag.title }}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+    </form>
+    <app-image *ngFor="let image of images" [image]="image" [singleImageId]="singleImageId"></app-image>
+</div>
+
+<ng-container *ngIf="images.length === 0 && !searchDo && !tagsDo">
+    <mat-spinner [diameter]="100"></mat-spinner>
+</ng-container>

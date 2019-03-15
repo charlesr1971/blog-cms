@@ -1,0 +1,87 @@
+.mat-card-actions {
+    position: relative;
+    display: block;
+    height: 52px;
+    margin: 0px 0px 0px 0px;
+    text-align: center;
+    margin-bottom: 16px;
+    padding: 8px 0;
+}
+
+.mat-button {
+    width: 60px !important;
+    min-width: initial !important;
+    padding: 0px 10px !important;
+}
+
+.mat-button .mat-icon {
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.social-media-container {
+    position: absolute;
+    width: 100%;
+    height: 52px;
+    /* bottom: 0px; */
+    top: 0px;
+    left: 0px;
+    text-align: center;
+    z-index: 1;
+}
+
+mat-icon.close {
+    position: absolute;
+    display: block;
+    top: 14px;
+    left: 20px;
+    color: #fff;
+    opacity: 1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	-moz-opacity: 1;
+	-khtml-opacity: 1;
+	opacity: 1;
+}
+
+.mat-select {
+    display: inline-block;
+    width: 60px;
+    height: 36px;
+    text-align: left;
+    padding: 0px 10px;
+    margin: 0px 4px;
+    vertical-align: top;
+}
+
+.mat-select:hover {
+    /* background: #434343; */
+    background: rgba(0,0,0,0.12);
+}
+
+.mat-select-placeholder {
+    font-family: Roboto,"Helvetica Neue",sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+/* media queries */
+
+/* smart phones */
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .mat-card-actions {
+         margin-bottom: 0px;
+    }
+
+    .mat-select {
+        width: 60px;
+        height: 36px;
+        text-align: left;
+        padding: 0px 10px;
+        margin: 0px 4px;
+        vertical-align: top;
+    }
+
+}

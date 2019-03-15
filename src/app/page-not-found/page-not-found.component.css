@@ -1,0 +1,10 @@
+
+.form-field-container {
+    margin-bottom: 20px;
+}
+
+.form-field-container .form-field-legend {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 18px;
+  }
