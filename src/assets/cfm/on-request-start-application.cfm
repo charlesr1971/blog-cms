@@ -127,8 +127,8 @@
 	  request.ngAccessControlAllowOrigin = "http://localhost";
 	}
 	request.ngIframeSrc = request.ngAccessControlAllowOrigin;
-	request.uploadfolder = request.absoluteBaseUrl & "/angular/material/ngMat02/src/assets/cfm";
-	request.tinymcearticleuploadfolder = request.absoluteBaseUrl & "/angular/material/ngMat02/src/assets/cfm/article-images";
+	request.uploadfolder = request.absoluteBaseUrl & "/community.establishmindfulness/material/ngMat02/src/assets/cfm";
+	request.tinymcearticleuploadfolder = request.absoluteBaseUrl & "/community.establishmindfulness/material/ngMat02/src/assets/cfm/article-images";
   }	
   
   request.restApiEndpoint = request.uploadfolder & "/rest/api/v1/index.cfm";
@@ -137,8 +137,8 @@
 	request.restApiEndpoint = request.uploadfolder & "/rest/api/v1";
   }
     
-  request.remoteuploadfolder = "http://playground.application.me.uk/" & request.websiteRootDirectory & "assets/cfm";
-  request.emailimagesrc = "http://playground.application.me.uk/" & request.websiteRootDirectory & "assets/images";
+  request.remoteuploadfolder = "https://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/cfm";
+  request.emailimagesrc = "https://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/images";
   request.emailimagealt = request.title & "S.P.A";  
   
   request.jwtexpiryminutes = 60;
@@ -247,7 +247,7 @@
   
   if(NOT StructKeyExists(application,"twittercard") OR request.appreloadValidated) {
 	cflock (name="twittercard", type="exclusive", timeout="30") {
-	  application.twittercard = "http://playground.application.me.uk/" & request.websiteRootDirectory & "assets/images/twitter-card.png";
+	  application.twittercard = "https://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/images/twitter-card.png";
 	}
   }
   
