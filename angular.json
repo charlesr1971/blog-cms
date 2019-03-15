@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ngMat01": {
+    "ngMat02": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ngMat01",
+            "outputPath": "dist/ngMat02",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -58,18 +58,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ngMat01:build"
+            "browserTarget": "ngMat02:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ngMat01:build:production"
+              "browserTarget": "ngMat02:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ngMat01:build"
+            "browserTarget": "ngMat02:build"
           }
         },
         "test": {
@@ -106,7 +106,7 @@
         }
       }
     },
-    "ngMat01-e2e": {
+    "ngMat02-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -114,11 +114,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "ngMat01:serve"
+            "devServerTarget": "ngMat02:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "ngMat01:serve:production"
+              "devServerTarget": "ngMat02:serve:production"
             }
           }
         },
@@ -134,5 +134,5 @@
       }
     }
   },
-  "defaultProject": "ngMat01"
+  "defaultProject": "ngMat02"
 }

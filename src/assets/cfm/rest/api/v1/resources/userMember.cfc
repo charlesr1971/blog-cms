@@ -122,7 +122,7 @@
               <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
               <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
               <td style="font-size:16px;">
-                <strong>Photo Gallery would like to welcome you to our community</strong><br /><br />
+                <strong>#request.title# would like to welcome you to our community</strong><br /><br />
                 Thank you for taking an interest.<br />
                 To complete the sign up process, please follow the link below:
               </td>
@@ -177,7 +177,7 @@
               <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
               <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
               <td style="font-size:16px;">
-                <strong>Photo Gallery would like to welcome you to our community</strong><br /><br />
+                <strong>#request.title# would like to welcome you to our community</strong><br /><br />
                 Thank you for taking an interest.<br />
                 To complete the sign up process, please follow the link below:
               </td>

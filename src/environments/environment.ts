@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  ajax_dir: 'http://localhost:8500/angular/material/ngMat01/src/assets/cfm',
+  ajax_dir: 'http://localhost:8500/angular/material/ngMat02/src/assets/cfm',
   host: 'http://localhost:',
-  cf_dir: 'angular/material/ngMat01/src/assets/cfm',
+  cf_dir: 'angular/material/ngMat02/src/assets/cfm',
   allowMultipleLikesPerUser: 0,
-  title: 'Photo Gallery',
+  title: 'Establish Mindfulness',
   logoSrc: 'assets/images/logo.png',
   debugComponentLoadingOrder: true,
   port: '8500',
@@ -18,8 +18,8 @@ export const environment = {
   openToolbarCommentsPanel: true,
   useRestApi: true,
   restApiURLReWrite: false,
-  apiDocumentationUrl: 'http://localhost:8500/angular/material/ngMat01/src/assets/cfm/components/restAPiService.cfm',
-  apiEndpointUrl: 'http://localhost:8500/angular/material/ngMat01/src/assets/cfm/rest/api/v1/index.cfm',
+  apiDocumentationUrl: 'http://localhost:8500/angular/material/ngMat02/src/assets/cfm/components/restAPiService.cfm',
+  apiEndpointUrl: 'http://localhost:8500/angular/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm',
   maxCommentInputLength: 140,
   catalogRouterAlias: 'gallery'
 };

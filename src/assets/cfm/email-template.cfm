@@ -210,7 +210,7 @@
                               <table cellpadding="20" cellspacing="0" border="0" width="190">
                                 <tr valign="middle">
                                   <td align="center" class="title" bgcolor="##f9f9f9">
-                                    Photo Gallery S.P.A
+                                    #request.title# S.P.A
                                   </td>
                                 </tr>
                               </table>

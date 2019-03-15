@@ -57,11 +57,11 @@
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@charlesr1971" />
       <meta name="twitter:creator" content="@charlesr1971" />
-      <meta property="og:url" content="http://playground.application.me.uk/photo-gallery/" />
-      <meta property="og:title" content="Photo Gallery S.P.A" />
+      <meta property="og:url" content="https://community.establishmindfulness.com/" />
+      <meta property="og:title" content="#request.title# S.P.A" />
       <meta property="og:description" content="This website allows users to upload their favourite photos to the gallery. The following technologies power this website. An Angular 7x front-end with a Google Material UI. An Adobe Coldfusion back-end, using a Lucee 5 Application server with a MySQL database." />
       <meta property="og:image" content="#request.twittercard#" />
-      <title>Photo Gallery S.P.A</title>
+      <title>#request.title# S.P.A</title>
       <script type="text/javascript">
 		location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#";
 	  </script>

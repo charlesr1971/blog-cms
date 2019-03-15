@@ -5,18 +5,18 @@
   
   <cfabort />--->
   
-  <!---<cfhttp url="http://localhost:8500/angular/material/ngMat01/src/assets/cfm/rest/api/v1/index.cfm/comment/134" method="delete" result="result" timeout="30">
+  <!---<cfhttp url="http://localhost:8500/angular/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm/comment/134" method="delete" result="result" timeout="30">
     <cfhttpparam type="header" name="Authorization" value="Bearer eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..IJld3L1FUHp_ndHp.jD8WbuEDLCBLtzdn4eLmifJjsBTOsm1Tf_KGfimsQoCvkKwNynt2kQ09q1p54-l825IrphT0H7tt8m1jr1UG6GtBrEO3T6XLMqbdpl5NowI-M2bGRMn8BZenLlfK5wYqJIlXHDBN9KTT_RuQJS0VBnihpZQZl_Vl-6u1oB7hO7wjw-TsrRGfJeyqxKfxhXJzGeZ_A9B5uOT3qobYoudtVPg5ijAw9rQ4UTt2YqPOHSte-W94YvRBPnV2-Wh94wx_WyW5kPUv7-93Pgj8eFSkbpqAzH9Oxvcgx7w-xqrJWR9xRhVs-oQrMcl24XeYAmKvROF-HIapJ7FWCY3r3gmj8vyCJkErC6ypLvcceRaDu5R39xWTt7GRaZY5_IqR-Aey31ADZPep3766OMXtbcEjU1Z9xt04q91zPuDvzreqZ3XQWF745870V4m2QMHTJUJ7bH02dBPX0Kg3zvo8aYZ-XsMpywCmWJuRc0Kij3SFKgRuG8MKVCBN5zjI8gYU0cevyhsYtYTvjmsI8fQWc6eD-tc.71EZJXQgjk1Ey9_VpPSkAQ" />
     <cfhttpparam type="header" name="userToken" value="e972341c-b08e-44c3-9667-42834e32e119" />
   </cfhttp>--->
   
-  <!---<cfhttp url="http://playground.application.me.uk/photo-gallery/assets/cfm/rest/api/v1/comment/51" method="post" result="result" timeout="30">
+  <!---<cfhttp url="https://community.establishmindfulness.com/assets/cfm/rest/api/v1/comment/51" method="post" result="result" timeout="30">
     <cfhttpparam type="header" name="Authorization" value="Bearer eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..r-sREPR-JFh0GtIO.Dpm60GnPierm3HZ4kxMXLO1mqw719mrI1Jl0MGLTYE1YdH8bGL6oFkgo1CA1rbt9WCVeP6-HHJ7ZeD_VyQ-rjH31Hg2RAYwUK5Qg4oC5WMhE6ndS62NJBK99HbqOkVockdT3gv7jsVq8obWD3xfn9XNdecsIPXoEUKx9_qfsKpiNN3uHFuaJYq_3rwuJcuGS-piA9YUJbz3lywOVql8i1EkQzfaDDsB8fVl9zoerjis3pnhjxc2PCX2Uq1yLaDh4JKjEVsfWvgvhwTFA0u8Nig7a0ynqJ9fA9h5IWwo1TmWnkMphFpFVa-xyfT9iSAAsXtzIWGUhm3zfy7YS7Uq1vXkYzj6Vo-CeIwLVyjOlpcVN9Vf2-8Yf2cvXNtWCeEIobSO9j5ijBoxAtLS-buMuRzS__OFV088SYnXjsrFX4Z7anmYhc5_Ojl3oVy9Z7hl-4WuVD6EjVs0h90Rngoq9EHN4oIC1kwkVyz6st_LK9mWyhE04cl1GarMAF4p-aaJAEokMFJmnrlSWZ6qo2XpWRjkKMwxGFeNnonfIQi4HNQE6dF7wZxBRaCiye1jrCvhLGeKd-URmtQ.n38BhsrL8GgmNkT1-j60qw" />
     <cfhttpparam type="header" name="userToken" value="1cc4192a-e090-462f-86d4-c3ecdc5758d5" />
     <cfhttpparam type="header" name="X-HTTP-METHOD-OVERRIDE" value="DELETE" />
   </cfhttp>--->
   
-  <!---<cfhttp url="http://localhost:8500/angular/material/ngMat01/src/assets/cfm/rest/api/v1/index.cfm/image/b01fd6e5-d776-bd93-d819a286238e6f50" method="post" result="result" timeout="30">
+  <!---<cfhttp url="http://localhost:8500/angular/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm/image/b01fd6e5-d776-bd93-d819a286238e6f50" method="post" result="result" timeout="30">
     <cfhttpparam type="header" name="Authorization" value="Bearer eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..zAbNxDkFlZPvwyJR.nGe0bqEGqA8xrs3wg2hYByEMbNUSeuhGq7Q-_o0GefMKyv6Gz_y_f6dpQz9WY826v80_dAcHLxzw3Mkw6S9n_bWEM0H2oIQPm-jxgUBUdwl8vZ3SY5g447BOwpXoNHGLYrpsMZV4rmWRUiTk3KHJyXbHxHsk3o8IDjePUqGqNklgkl9MNEIK8IJmTlEZ-iZtO9eWjTpSWyDFJwzlbW2h5UV9oiu-yQ3qVnpFIw3jYWtwMBywFUcQ1LQiqXcTxNKA7OMGpcuislKxVaRDX3quk8fBAtXrM9gl7S9ZRl5MtMsJF84yG4rXBcUR5kRAczp-5Nkeavx5brQsnKvv_exIHQAlydRceqBNNyMXp-BDXJtgPGFjhCFLQ9zcRD50MTb6bZtUQOU0JZG_l4DEdS0yJyfRgzhnlqFN1T_7k8iXd0JKNbBE2bcokNQ3denUu6NEfjBWQoBAC-flXLlRIEbzbDdLULokTRh0KNhMN4JLgXQSSIaog4eEl_oG4mmGo0UyltTlMRTMXqr17_4KFG32fl8.rKV3LPCG3DLOyz000s0JpQ" />
     <cfhttpparam type="header" name="userToken" value="163a996d-a742-4dcd-aeda-ef1ee2e46d72" />
     <cfhttpparam type="header" name="imagePath" value="categories/objects/seascape" />
@@ -29,7 +29,7 @@
     <cfhttpparam type="body" name="article" value='#ToBinary(ToBase64(SerializeJson({"article":"Test article"})))#' />
   </cfhttp>--->
   
-  <!---<cfhttp url="http://localhost:8500/angular/material/ngMat01/src/assets/cfm/rest/api/v1/index.cfm/image/b01fd6e5-d776-bd93-d819a286238e6f50" method="post" result="result" timeout="30">
+  <!---<cfhttp url="http://localhost:8500/angular/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm/image/b01fd6e5-d776-bd93-d819a286238e6f50" method="post" result="result" timeout="30">
     <cfhttpparam type="header" name="Authorization" value="Bearer eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..zAbNxDkFlZPvwyJR.nGe0bqEGqA8xrs3wg2hYByEMbNUSeuhGq7Q-_o0GefMKyv6Gz_y_f6dpQz9WY826v80_dAcHLxzw3Mkw6S9n_bWEM0H2oIQPm-jxgUBUdwl8vZ3SY5g447BOwpXoNHGLYrpsMZV4rmWRUiTk3KHJyXbHxHsk3o8IDjePUqGqNklgkl9MNEIK8IJmTlEZ-iZtO9eWjTpSWyDFJwzlbW2h5UV9oiu-yQ3qVnpFIw3jYWtwMBywFUcQ1LQiqXcTxNKA7OMGpcuislKxVaRDX3quk8fBAtXrM9gl7S9ZRl5MtMsJF84yG4rXBcUR5kRAczp-5Nkeavx5brQsnKvv_exIHQAlydRceqBNNyMXp-BDXJtgPGFjhCFLQ9zcRD50MTb6bZtUQOU0JZG_l4DEdS0yJyfRgzhnlqFN1T_7k8iXd0JKNbBE2bcokNQ3denUu6NEfjBWQoBAC-flXLlRIEbzbDdLULokTRh0KNhMN4JLgXQSSIaog4eEl_oG4mmGo0UyltTlMRTMXqr17_4KFG32fl8.rKV3LPCG3DLOyz000s0JpQ" />
     <cfhttpparam type="header" name="userToken" value="163a996d-a742-4dcd-aeda-ef1ee2e46d72" />
     <cfhttpparam type="header" name="X-HTTP-METHOD-OVERRIDE" value="DELETE" />
@@ -38,7 +38,7 @@
       
   <!---<cffile action="readBinary" file="C:\Users\Charles Robertson\Desktop\images\header.jpg" variable="aBinaryObj">
   <cfset  body = aBinaryObj>
-    <cfhttp url="http://localhost:8500/angular/material/ngMat01/src/assets/cfm/rest/api/v1/index.cfm/image/0" method="post" result="result" timeout="30">
+    <cfhttp url="http://localhost:8500/angular/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm/image/0" method="post" result="result" timeout="30">
     <cfhttpparam type="header" name="Authorization" value="Bearer eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..zAbNxDkFlZPvwyJR.nGe0bqEGqA8xrs3wg2hYByEMbNUSeuhGq7Q-_o0GefMKyv6Gz_y_f6dpQz9WY826v80_dAcHLxzw3Mkw6S9n_bWEM0H2oIQPm-jxgUBUdwl8vZ3SY5g447BOwpXoNHGLYrpsMZV4rmWRUiTk3KHJyXbHxHsk3o8IDjePUqGqNklgkl9MNEIK8IJmTlEZ-iZtO9eWjTpSWyDFJwzlbW2h5UV9oiu-yQ3qVnpFIw3jYWtwMBywFUcQ1LQiqXcTxNKA7OMGpcuislKxVaRDX3quk8fBAtXrM9gl7S9ZRl5MtMsJF84yG4rXBcUR5kRAczp-5Nkeavx5brQsnKvv_exIHQAlydRceqBNNyMXp-BDXJtgPGFjhCFLQ9zcRD50MTb6bZtUQOU0JZG_l4DEdS0yJyfRgzhnlqFN1T_7k8iXd0JKNbBE2bcokNQ3denUu6NEfjBWQoBAC-flXLlRIEbzbDdLULokTRh0KNhMN4JLgXQSSIaog4eEl_oG4mmGo0UyltTlMRTMXqr17_4KFG32fl8.rKV3LPCG3DLOyz000s0JpQ" />
     <cfhttpparam type="header" name="user-token" value="163a996d-a742-4dcd-aeda-ef1ee2e46d72" />
     <cfhttpparam type="header" name="file-name" value="header.jpg" />

@@ -22,7 +22,7 @@
   
   // START: Angular 7 config variables
   
-  request.title = "Photo Gallery";
+  request.title = "Establish Mindfulness";
   request.cfport = 0;
   request.maxcontentlength = 500000;
   request.tinymcearticlemaximages = 2;
@@ -30,8 +30,8 @@
   
   // END: Angular 7 config variables
   
-  request.domain_dsn = "ng-gallery";
-  request.websiteRootDirectory = "photo-gallery/";
+  request.domain_dsn = "community-establishmindfulness";
+  request.websiteRootDirectory = "";
   
   request.newline = Chr(13) & Chr(10);
   request.crptographyencoding = "Hex";
@@ -127,8 +127,8 @@
 	  request.ngAccessControlAllowOrigin = "http://localhost";
 	}
 	request.ngIframeSrc = request.ngAccessControlAllowOrigin;
-	request.uploadfolder = request.absoluteBaseUrl & "/angular/material/ngMat01/src/assets/cfm";
-	request.tinymcearticleuploadfolder = request.absoluteBaseUrl & "/angular/material/ngMat01/src/assets/cfm/article-images";
+	request.uploadfolder = request.absoluteBaseUrl & "/angular/material/ngMat02/src/assets/cfm";
+	request.tinymcearticleuploadfolder = request.absoluteBaseUrl & "/angular/material/ngMat02/src/assets/cfm/article-images";
   }	
   
   request.restApiEndpoint = request.uploadfolder & "/rest/api/v1/index.cfm";
@@ -139,7 +139,7 @@
     
   request.remoteuploadfolder = "http://playground.application.me.uk/" & request.websiteRootDirectory & "assets/cfm";
   request.emailimagesrc = "http://playground.application.me.uk/" & request.websiteRootDirectory & "assets/images";
-  request.emailimagealt = "Photo Gallery S.P.A";  
+  request.emailimagealt = request.title & "S.P.A";  
   
   request.jwtexpiryminutes = 60;
   request.refreshExpiredToken = true;
