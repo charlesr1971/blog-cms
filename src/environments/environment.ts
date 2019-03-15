@@ -21,7 +21,7 @@ export const environment = {
   apiDocumentationUrl: 'http://localhost:8500/community.establishmindfulness/material/ngMat02/src/assets/cfm/components/restAPiService.cfm',
   apiEndpointUrl: 'http://localhost:8500/community.establishmindfulness/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm',
   maxCommentInputLength: 140,
-  catalogRouterAlias: 'gallery'
+  catalogRouterAlias: 'stories'
 };
 
 /*

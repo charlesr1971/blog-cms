@@ -65,7 +65,7 @@ const appRoutes: Routes = [
   { path: environment.catalogRouterAlias + '/:id/:title', component: GalleryDetailComponent },
   { path: 'upload-photo', component: UploadPhotoComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: '',   redirectTo: '/gallery', pathMatch: 'prefix' },
+  { path: '',   redirectTo: '/' + environment.catalogRouterAlias, pathMatch: 'prefix' },
   { path: '**', component: PageNotFoundComponent }
 ];
 

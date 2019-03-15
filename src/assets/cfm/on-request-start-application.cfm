@@ -111,8 +111,13 @@
   //theme=#request.theme#
   
   local.ngport = 4200;
+  local.useSSL = true;
   local.host = ListFirst(CGI.HTTP_HOST,":");
-  request.absoluteBaseUrl = "http://" & CGI.HTTP_HOST;
+  request.protocol = "http";
+  if(!IsLocalHost(CGI.REMOTE_ADDR) AND local.useSSL){
+	request.protocol = "https";
+  }
+  request.absoluteBaseUrl = request.protocol & "://" & CGI.HTTP_HOST;
   request.domainToken = Hash(request.basePathFull);
   request.ngAccessControlAllowOrigin = request.absoluteBaseUrl;
   request.ngIframeSrc = request.ngAccessControlAllowOrigin & "/" & request.websiteRootDirectory;
@@ -122,9 +127,9 @@
   if(IsLocalHost(CGI.REMOTE_ADDR)){
 	local.host = ListAppend(local.host,local.ngport,":");
 	request.cfport = ListLast(CGI.HTTP_HOST,":");
-	request.ngAccessControlAllowOrigin = "http://" & local.host;
+	request.ngAccessControlAllowOrigin = request.protocol & "://" & local.host;
 	if(ListLen(local.host,":") EQ 1){
-	  request.ngAccessControlAllowOrigin = "http://localhost";
+	  request.ngAccessControlAllowOrigin = request.protocol & "://localhost";
 	}
 	request.ngIframeSrc = request.ngAccessControlAllowOrigin;
 	request.uploadfolder = request.absoluteBaseUrl & "/community.establishmindfulness/material/ngMat02/src/assets/cfm";
@@ -137,8 +142,8 @@
 	request.restApiEndpoint = request.uploadfolder & "/rest/api/v1";
   }
     
-  request.remoteuploadfolder = "https://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/cfm";
-  request.emailimagesrc = "https://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/images";
+  request.remoteuploadfolder = request.protocol & "://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/cfm";
+  request.emailimagesrc = request.protocol & "://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/images";
   request.emailimagealt = request.title & "S.P.A";  
   
   request.jwtexpiryminutes = 60;

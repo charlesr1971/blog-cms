@@ -45,22 +45,6 @@
 			include "../../../on-request-start-application.cfm";
 			
 			variables.framework.allowCrossDomain = request.ngAccessControlAllowOrigin;
-						
-			/*if(NOT StructKeyExists(application,"utils") OR request.appreloadValidated) {
-			  try{
-				cflock (name="utils", type="exclusive", timeout="30") {
-				  application.utils = createObject('component','components.Utils');
-				}
-			  }
-			  catch(any e) {
-				cflock (name="utils", type="exclusive", timeout="30") {
-				  application.utils = {};
-				}
-			  }
-			}
-			cflock (name="utils", type="readOnly", timeout="10") {
-				request.utils = application.utils;
-			}*/
 			
 			return super.onRequestStart(TARGETPATH);
 			

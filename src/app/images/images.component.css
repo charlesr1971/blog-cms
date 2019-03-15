@@ -13,6 +13,10 @@
     font-size: 18px;
 }
 
+.form-field-container .form-field-legend .form-field-legend-sub-title {
+    font-weight: normal;
+}
+
 .form-field-container .form-field-legend .mat-icon {
     position: absolute;
     top: 20px;

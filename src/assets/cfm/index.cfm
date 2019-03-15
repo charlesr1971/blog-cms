@@ -57,7 +57,7 @@
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@charlesr1971" />
       <meta name="twitter:creator" content="@charlesr1971" />
-      <meta property="og:url" content="https://community.establishmindfulness.com/" />
+      <meta property="og:url" content="#request.protocol#://community.establishmindfulness.com/" />
       <meta property="og:title" content="#request.title# S.P.A" />
       <meta property="og:description" content="This website allows users to upload their favourite photos to the gallery. The following technologies power this website. An Angular 7x front-end with a Google Material UI. An Adobe Coldfusion back-end, using a Lucee 5 Application server with a MySQL database." />
       <meta property="og:image" content="#request.twittercard#" />
@@ -67,7 +67,7 @@
 	  </script>
     </head>
     <body>
-    
+        
     </body>
   </html>
 

@@ -13,22 +13,22 @@ body {
     font-family: 'Roboto', sans-serif; 
 }
 
-body.gallery {
+body.stories {
     overflow: hidden !important;
     height: 100% !important;
 }
 
-body.gallery mat-sidenav-container {
+body.stories mat-sidenav-container {
     overflow: hidden !important;
     height: initial !important;
 }
 
-body.gallery mat-sidenav-content {
+body.stories mat-sidenav-content {
     overflow: auto !important;
     height: initial !important;
 }
 
-body.gallery app-my-nav {
+body.stories app-my-nav {
     overflow: hidden !important; 
 }
 
@@ -134,18 +134,18 @@ tag-input > div div tag delete-icon:hover {
     transform: scale(1) translateY(0px) !important;
 }
 
-body.gallery .mat-card .mat-select-placeholder, body.gallery .mat-card .mat-select-trigger {
+body.stories .mat-card .mat-select-placeholder, body.stories .mat-card .mat-select-trigger {
     font-family: Roboto,"Helvetica Neue",sans-serif !important;
     font-size: 14px !important;
     font-weight: 500 !important;
 }
 
-body.gallery .mat-card .mat-select-placeholder {
+body.stories .mat-card .mat-select-placeholder {
     font-size: 20px !important;
     vertical-align: middle !important;
 }
 
-body.gallery .mat-card .mat-select-trigger {
+body.stories .mat-card .mat-select-trigger {
     vertical-align: text-top !important;
 }
 
