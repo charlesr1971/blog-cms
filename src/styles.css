@@ -256,6 +256,22 @@ app-images .mat-spinner {
     margin: -50px 0 0 -50px;
 }
 
+#dialog-article-help-notification .mat-app-background.basic-container {
+    padding: 0px;
+}
+
+#dialog-article-help-notification .form-field-text ol {
+    padding: 0px 20px !important;
+}
+
+#dialog-article-help-notification .form-field-text ol li {
+    margin-bottom: 10px !important;
+}
+
+#dialog-article-help-notification .form-field-text ol li:last-child {
+    margin-bottom: 0px !important;
+}
+
 /* media queries */
 
 /* smart phones */

@@ -183,8 +183,11 @@ button[data-role='submit'] {
   margin-left: 10px;
 }
 
-.mat-dialog-content ol {
-  padding: 0px 10px;
+.mat-icon.dialog-article-help-notification-close {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  cursor: pointer;
 }
 
 /* media queries */
@@ -234,5 +237,9 @@ button[data-role='submit'] {
     width: 100%;
     margin-bottom: 10px;
   }
+
+  #dialogArticleHelpNotificationText {
+    overflow: auto;
+}
 
 }

@@ -32,26 +32,23 @@
 </ng-template>
 
 <ng-template class="dialog-article-help-notification" #dialogArticleHelpNotification>
-  <div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
-    <h1 mat-dialog-title>Help</h1>
-    <mat-dialog-content fxFlex>
-      <p>
-        <strong>How to use this page?</strong>
-      </p>
-      <ol>
-        <li>Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. Then choose a 'Category' &amp; an 'Image'. Finally submit your image details.</li>
-        <li>After submission of your image details, the 'Write Article' &amp; 'Article Publish Date' features will become available.</li>
-        <li>Add an article, making sure that you do not exceed the {{ tinyMceArticleMaxWordCount }} word limit. Then choose an optional 'Article Publish Date'. Finally submit your article.</li>
-        <li>New submissions and updates are subject to moderation. Please be patient whilst our moderation team assess your submission. We endeavour to approve submissions within 24 hours.</li>
-        <li>Immediately after submission, you will be able to see it in the '{{ catalogRouterAliasTitle }}' section. Other users will be unable to see your submission, during the approval phase. You can also edit your submission whilst approval is pending.</li>
-        <li>After approval has been granted, you may prevent other users from seeing your submission, by using the 'Article Publish Date' feature. Other users will be unable to see your submission until the 'Article Publish Date' has passed.</li>
-        <li>Please note that submissions, containing offensive language or imagery, will be rejected.</li>
-      </ol>
-    </mat-dialog-content>
-    <mat-dialog-actions class="actions">
-      <button mat-raised-button mat-dialog-close data-role="cancel" color="primary">Close</button>
-    </mat-dialog-actions>
+  <div id="dialog-article-help-notification-container" class="mat-app-background basic-container" [ngStyle]="{'opacity': !isMobile ? 1 : 0}">
+    <div class="form-field-container">
+      <div class="form-field-legend">How to use this page?</div>
+      <div class="form-field-text" id="dialogArticleHelpNotificationText" #dialogArticleHelpNotificationText>
+        <ol>
+          <li>Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. Then choose a 'Category' &amp; an 'Image'. Finally submit your image details.</li>
+          <li>After submission of your image details, the 'Write Article' &amp; 'Article Publish Date' features will become available.</li>
+          <li>Add an article, making sure that you do not exceed the {{ tinyMceArticleMaxWordCount }} word limit. Then choose an optional 'Article Publish Date'. Finally submit your article.</li>
+          <li>New submissions and updates are subject to moderation. Please be patient whilst our moderation team assess your submission. We endeavour to approve submissions within 24 hours.</li>
+          <li>Immediately after submission, you will be able to see it in the '{{ catalogRouterAliasTitle }}' section. Other users will be unable to see your submission, during the approval phase. You can also edit your submission whilst approval is pending.</li>
+          <li>After approval has been granted, you may prevent other users from seeing your submission, by using the 'Article Publish Date' feature. Other users will be unable to see your submission until the 'Article Publish Date' has passed.</li>
+          <li>Please note that submissions, containing offensive language or imagery, will be rejected.</li>
+        </ol>
+      </div>
+    </div>
   </div>
+  <mat-icon class="dialog-article-help-notification-close" (click)="closeArticleHelpNotificationDialog()" ngbTooltip="Close" [disableTooltip]="disableArticleTooltip" [container]="'body'">close</mat-icon>
 </ng-template>
 
 <ng-template class="dialog-article" #dialogArticle>

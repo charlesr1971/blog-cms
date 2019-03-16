@@ -217,6 +217,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   @ViewChild('dialogSubmitArticleNotification') private dialogSubmitArticleNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogArticleMaxWordCountNotification') private dialogArticleMaxWordCountNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogArticleHelpNotification') private dialogArticleHelpNotificationTpl: TemplateRef<any>;
+  @ViewChild('dialogArticleHelpNotificationText') dialogArticleHelpNotificationText: ElementRef;
 
 
   public tinyMceSettings = {
@@ -1265,7 +1266,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   openArticleHelpNotificationDialog(): void {
     const dialogRef = this.dialog.open(this.dialogArticleHelpNotificationTpl, {
-      width: this.isMobile ? '90%' :'50%',
+      width: this.isMobile ? '100%' :'50%',
+      height: this.isMobile ? '100%' :'75%',
+      maxWidth: this.isMobile ? '100%' :'50%',
       id: 'dialog-article-help-notification'
     });
     dialogRef.beforeClose().subscribe(result => {
@@ -1282,12 +1285,34 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if(this.debug) {
         console.log('tree-dynamic: dialog article help notification: after open');
       }
+      if(this.isMobile) {
+        const parent = document.querySelector('#dialog-article-help-notification');
+        let height = parent.clientHeight ? parent.clientHeight : 0;
+        const offsetHeight = 150;
+        if(!isNaN(height) && (height - offsetHeight) > 0) {
+          height = height - offsetHeight;
+        }
+        if(this.debug) {
+          console.log('tree-dynamic: dialog article help notification: height: ', height);
+        }
+        if(height > 0 ) {
+          this.renderer.setStyle(this.dialogArticleHelpNotificationText.nativeElement,'height',height + 'px');
+        }
+        const dialogarticlehelpnotificationcontainer = document.querySelector('#dialog-article-help-notification-container');
+        if(parent) {
+          TweenMax.fromTo(dialogarticlehelpnotificationcontainer, 1, {ease:Elastic.easeOut, opacity: 0}, {ease:Elastic.easeOut, opacity: 1});
+        }
+      }
       if(result) {
         if(this.debug) {
           console.log('tree-dynamic: dialog article help notification: after open: result: ', result);
         }
       }
     });
+  }
+
+  closeArticleHelpNotificationDialog() {
+    this.dialog.closeAll();
   }
 
   tinyMceArticleKeyupHandler(event: any): void {
