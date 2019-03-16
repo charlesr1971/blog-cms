@@ -55,10 +55,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @Input() profileApiDashboardState: string = 'out';
 
   themeObj = {};
-  images: Array<any> = [];
-  pageCache = {};
-  pages = [];
-  currentPage: number = 1;
+
+  imagesUnapproved: Array<any> = [];
+  pageCacheUnapproved = {};
+  pagesUnapproved = [];
+  currentPageUnapproved: number = 1;
+
+  imagesApproved: Array<any> = [];
+  pageCacheApproved = {};
+  pagesApproved = [];
+  currentPageApproved: number = 1;
   
   editProfileForm: FormGroup;
 
@@ -87,11 +93,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   editProfileSubscription: Subscription;
   deleteProfileSubscription: Subscription;
   imagesUnapprovedByUseridSubscription: Subscription;
+  imagesApprovedByUseridSubscription: Subscription;
   currentUser: User;
   closeResult: string;
   categoryImagesUrl: string = '';
   userid: number = 0;
   disableCommentGeneralTooltip: boolean = false;
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
 
   debug: boolean = false;
 
@@ -128,6 +136,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       this.categoryImagesUrl = this.httpService.categoryImagesUrl;
       this.fetchPagesUnapproved();
+      this.fetchPagesApproved();
 
       this.userService.currentUser.subscribe( (user: User) => {
         this.currentUser = user;
@@ -211,7 +220,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
           for(var i = 0; i < data['pagestitles'].length; i++) {
             const obj = {};
             obj['title'] = data['pagestitles'][i];
-            this.pages.push(obj);
+            this.pagesUnapproved.push(obj);
+          }
+        }
+      }
+    });
+  }
+
+  fetchPagesApproved(): void {
+    this.httpService.fetchPagesApproved().subscribe( (data) => {
+      if(this.debug) {
+        console.log('profile.component: fetchPagesApproved: data: ',data);
+      }
+      if(data) {
+        if(!this.utilsService.isEmpty(data) && 'pagestitles' in data && Array.isArray(data['pagestitles']) && data['pagestitles'].length) {
+          for(var i = 0; i < data['pagestitles'].length; i++) {
+            const obj = {};
+            obj['title'] = data['pagestitles'][i];
+            this.pagesApproved.push(obj);
           }
         }
       }
@@ -316,7 +342,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
         this.jwtService.removeJwtToken();
         this.currentUser['userToken'] = userToken;
-        this.router.navigate(['upload-photo', {formType: 'login'}]);
+        this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -334,7 +360,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       console.log('profile.component: imagesUnapprovedByUseridData: data',data);
     }
     if(data) {
-      this.images = [];
+      this.imagesUnapproved = [];
       data.map( (item: any) => {
         const image = new Image({
           id: item['fileUuid'],
@@ -353,23 +379,63 @@ export class ProfileComponent implements OnInit, OnDestroy {
           approved: item['approved'],
           createdAt: item['createdAt']
         });
-        this.images.push(image);
+        this.imagesUnapproved.push(image);
       });
       this.sortImages();
-      this.pageCacheEntryCreate(this.images, this.currentPage);
+      this.pageCacheUnapprovedEntryCreate(this.imagesUnapproved, this.currentPageUnapproved);
       if(this.debug) {
-        console.log('profile.component: imagesUnapprovedByUseridData: this.pageCache: ', this.pageCache);
+        console.log('profile.component: imagesUnapprovedByUseridData: this.pageCacheUnapproved: ', this.pageCacheUnapproved);
       }
       setTimeout( () => {
-        this.animateImages();
+        this.animateImages('unapproved');
       });
     }
   }
 
-  animateImages(): void {
-    const imagethumbnaillistitemimageimg = Array.prototype.slice.call(this.documentBody.querySelectorAll('.image-thumbnail-list-item-image-img'));
+  private imagesApprovedByUseridData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: imagesApprovedByUseridData: data',data);
+    }
+    if(data) {
+      this.imagesApproved = [];
+      data.map( (item: any) => {
+        const image = new Image({
+          id: item['fileUuid'],
+          fileid: item['fileid'],
+          userid: item['userid'],
+          category: item['category'],
+          src: this.categoryImagesUrl + '/' + item['src'],
+          author: item['author'],
+          title: item['title'],
+          description: item['description'],
+          article: item['article'],
+          size: item['size'],
+          likes: item['likes'],
+          tags: item['tags'],
+          publishArticleDate: item['publishArticleDate'],
+          approved: item['approved'],
+          createdAt: item['createdAt']
+        });
+        this.imagesApproved.push(image);
+      });
+      this.sortImages();
+      this.pageCacheApprovedEntryCreate(this.imagesApproved, this.currentPageApproved);
+      if(this.debug) {
+        console.log('profile.component: imagesApprovedByUseridData: this.pageCacheApproved: ', this.pageCacheApproved);
+      }
+      setTimeout( () => {
+        this.animateImages('approved');
+      });
+    }
+  }
+
+  animateImages(type: string): void {
+    const className1 = '.image-thumbnail-list-item-image-' + type + '-img';
+    const className2 = '.image-thumbnail-list-item-image-' + type;
+    const className3 = '.image-thumbnail-list-item-' + type;
+    const imagethumbnaillistitemimageimg = Array.prototype.slice.call(this.documentBody.querySelectorAll(className1));
     if(!this.isMobile && imagethumbnaillistitemimageimg.length > 1) {
-      const imagethumbnaillistitemimage = Array.prototype.slice.call(this.documentBody.querySelectorAll('.image-thumbnail-list-item-image'));
+      const imagethumbnaillistitemimage = Array.prototype.slice.call(this.documentBody.querySelectorAll(className2));
       let imgHeights = [];
       imagethumbnaillistitemimageimg.map( (element) => {
         const height = element.clientHeight ? element.clientHeight : 0;
@@ -379,8 +445,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
       const maxHeight = Math.max.apply(null,imgHeights);
       if(this.debug) {
-        console.log('images.component: imagesUnapprovedByUseridData: imgHeights: ', imgHeights);
-        console.log('images.component: imagesUnapprovedByUseridData: maxHeight: ', maxHeight);
+        console.log('images.component: animateImages: imgHeights: ', imgHeights);
+        console.log('images.component: animateImages: maxHeight: ', maxHeight);
       }
       if(!isNaN(maxHeight) && maxHeight > 0) {
         imagethumbnaillistitemimage.map( (element) => {
@@ -388,11 +454,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
         });
       }
     }
-    TweenMax.staggerFromTo('.image-thumbnail-list-item', 1, {scale:0, ease:Elastic.easeOut, opacity: 0}, {scale:1, ease:Elastic.easeOut, opacity: 1}, 0.1);
+    TweenMax.staggerFromTo(className3, 1, {scale:0, ease:Elastic.easeOut, opacity: 0}, {scale:1, ease:Elastic.easeOut, opacity: 1}, 0.1);
     if(this.debug) {
-      const imagethumbnaillistitem = this.documentBody.querySelector('.image-thumbnail-list-item');
-      console.log('images.component: imagesUnapprovedByUseridData: imagethumbnaillistitem: ', imagethumbnaillistitem);
-      console.log('images.component: imagesUnapprovedByUseridData: this.images: ', this.images);
+      const imagethumbnaillistitem = this.documentBody.querySelector(className3);
+      console.log('images.component: animateImages: imagethumbnaillistitem: ', imagethumbnaillistitem);
+      if(type === 'unapproved') {
+        console.log('images.component: animateImages: this.imagesUnapproved: ', this.imagesUnapproved);
+      }
+      else{
+        console.log('images.component: animateImages: this.imagesApproved: ', this.imagesApproved);
+      }
     }
   }
 
@@ -495,40 +566,78 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  pageCacheEntryRead(page: number): any {
-    const result = this.sortArrayObj(this.pageCache[page]);
+  pageCacheUnapprovedEntryRead(page: number): any {
+    const result = this.sortArrayObj(this.pageCacheUnapproved[page]);
     return result;
   }
 
-  pageCacheEntryCreate(arr: any, page: number): void {
-    this.pageCache[page] = arr;
+  pageCacheUnapprovedEntryCreate(arr: any, page: number): void {
+    this.pageCacheUnapproved[page] = arr;
   }
 
-  pageCacheEntryExists(page: number): boolean {
-    const bool = !this.utilsService.isEmpty(this.pageCache) && page in this.pageCache;
+  pageCacheUnapprovedEntryExists(page: number): boolean {
+    const bool = !this.utilsService.isEmpty(this.pageCacheUnapproved) && page in this.pageCacheUnapproved;
     if(this.debug) {
-      console.log('profile.component: pageCacheEntryExists: ', bool);
+      console.log('profile.component: pageCacheUnapprovedEntryExists: ', bool);
     }
     return bool;
   }
 
-  onChange(event): void {
+  pageCacheApprovedEntryRead(page: number): any {
+    const result = this.sortArrayObj(this.pageCacheApproved[page]);
+    return result;
+  }
+
+  pageCacheApprovedEntryCreate(arr: any, page: number): void {
+    this.pageCacheApproved[page] = arr;
+  }
+
+  pageCacheApprovedEntryExists(page: number): boolean {
+    const bool = !this.utilsService.isEmpty(this.pageCacheApproved) && page in this.pageCacheApproved;
+    if(this.debug) {
+      console.log('profile.component: pageCacheApprovedEntryExists: ', bool);
+    }
+    return bool;
+  }
+
+  onChangeUnapproved(event): void {
     const page = event.source.value;
-    this.currentPage = page;
+    this.currentPageUnapproved = page;
     if(this.debug) {
       console.log('profile.component: onChange: page: ', page);
     }
-    const pageCacheEntryExists = this.pageCacheEntryExists(this.currentPage);
+    const pageCacheUnapprovedEntryExists = this.pageCacheUnapprovedEntryExists(this.currentPageUnapproved);
     if(this.debug) {
-      console.log('profile.component: onChange: pageCacheEntryExists: ', pageCacheEntryExists);
+      console.log('profile.component: onChange: pageCacheUnapprovedEntryExists: ', pageCacheUnapprovedEntryExists);
     }
-    if(!pageCacheEntryExists) {
+    if(!pageCacheUnapprovedEntryExists) {
       this.imagesUnapprovedByUseridSubscription = this.httpService.fetchImagesUnapprovedByUserid(page).do(this.imagesUnapprovedByUseridData).subscribe();
     }
     else{
-      this.images = this.pageCacheEntryRead(this.currentPage);
+      this.imagesUnapproved = this.pageCacheUnapprovedEntryRead(this.currentPageUnapproved);
       setTimeout( () => {
-        this.animateImages();
+        this.animateImages('unapproved');
+      });
+    }
+  }
+
+  onChangeApproved(event): void {
+    const page = event.source.value;
+    this.currentPageApproved = page;
+    if(this.debug) {
+      console.log('profile.component: onChange: page: ', page);
+    }
+    const pageCacheApprovedEntryExists = this.pageCacheApprovedEntryExists(this.currentPageApproved);
+    if(this.debug) {
+      console.log('profile.component: onChange: pageCacheApprovedEntryExists: ', pageCacheApprovedEntryExists);
+    }
+    if(!pageCacheApprovedEntryExists) {
+      this.imagesApprovedByUseridSubscription = this.httpService.fetchImagesApproved(page).do(this.imagesApprovedByUseridData).subscribe();
+    }
+    else{
+      this.imagesApproved = this.pageCacheApprovedEntryRead(this.currentPageApproved);
+      setTimeout( () => {
+        this.animateImages('approved');
       });
     }
   }
@@ -553,7 +662,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   sortImages(): void {
-    this.images.sort(function(a, b) {
+    this.imagesUnapproved.sort(function(a, b) {
       const dateA: any = new Date(a.createdAt), dateB: any = new Date(b.createdAt);
       return dateB - dateA;
     });
@@ -603,6 +712,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if (this.imagesUnapprovedByUseridSubscription) {
       this.imagesUnapprovedByUseridSubscription.unsubscribe();
+    }
+
+    if (this.imagesApprovedByUseridSubscription) {
+      this.imagesApprovedByUseridSubscription.unsubscribe();
     }
 
   }

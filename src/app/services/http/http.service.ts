@@ -954,6 +954,17 @@ export class HttpService {
     );
   }
 
+  fetchImagesApproved(page: number = 1): Observable<any> {
+    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/images/approved/' + page) : new HttpRequest('GET', this.apiUrl + '/images-approved.cfm?page=' + page);
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   fetchImagesByCategory(category: string = '', page: number = 1): Observable<any> {
     const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/images/category/' + encodeURIComponent(category) + '/' + page) : new HttpRequest('GET', this.apiUrl + '/images-by-category.cfm?category=' + encodeURIComponent(category) + '&page=' + page);
     return this.http.request(req)
@@ -1035,6 +1046,18 @@ export class HttpService {
   fetchPagesUnapproved(): Observable<any> {
     const userToken = this.cookieService.get('userToken') !== '' ? this.cookieService.get('userToken') : 'empty';
     const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/pages/unapproved/userid/' + userToken) : new HttpRequest('GET', this.apiUrl + '/pages-unapproved.cfm');
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  fetchPagesApproved(): Observable<any> {
+    const userToken = this.cookieService.get('userToken') !== '' ? this.cookieService.get('userToken') : 'empty';
+    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/pages/approved/userid/' + userToken) : new HttpRequest('GET', this.apiUrl + '/pages-approved.cfm');
     return this.http.request(req)
     .map( (data) => {
       return 'body' in data ? data['body'] : null;

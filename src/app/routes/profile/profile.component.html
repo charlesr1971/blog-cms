@@ -61,23 +61,45 @@
           </div>
         </div>
 
-        <div class="panel unapproved-images" *ngIf="pages.length > 0">
-          <mat-select class="panel-legend" placeholder="Unapproved Images" floatLabel="never" (selectionChange)="onChange($event)">
+        <div class="panel unapproved-images" *ngIf="pagesUnapproved.length > 0">
+          <mat-select class="panel-legend" placeholder="Unapproved Images" floatLabel="never" (selectionChange)="onChangeUnapproved($event)">
             <mat-select-trigger>Images Awaiting Approval</mat-select-trigger>
-            <mat-option *ngFor="let page of pages; let i = index" [value]="(i + 1)">
-              {{ page.title }}
+            <mat-option *ngFor="let pageUnapproved of pagesUnapproved; let i = index" [value]="(i + 1)">
+              {{ pageUnapproved.title }}
             </mat-option>
           </mat-select>
         </div>
 
-        <div class="image-thumbnail-container" *ngIf="images.length > 0">
+        <div class="image-thumbnail-container" *ngIf="imagesUnapproved.length > 0">
           <ul class="image-thumbnail-list">
-            <li *ngFor="let image of images" class="image-thumbnail-list-item">
-              <div class="image-thumbnail-list-item-image">
-                <img class="image-thumbnail-list-item-image-img" src="{{ image.src }}" />
+            <li *ngFor="let imageUnapproved of imagesUnapproved" class="image-thumbnail-list-item image-thumbnail-list-item-unapproved">
+              <div class="image-thumbnail-list-item-image image-thumbnail-list-item-image-unapproved">
+                <img class="image-thumbnail-list-item-image-img image-thumbnail-list-item-image-unapproved-img" src="{{ imageUnapproved.src }}" />
               </div>
-              <div class="image-thumbnail-list-item-title" ngbTooltip="{{ image.title }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">
-                  {{ image.title }}
+              <div class="image-thumbnail-list-item-title" ngbTooltip="{{ imageUnapproved.title }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">
+                  {{ imageUnapproved.title }}
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="panel approved-images" *ngIf="pagesApproved.length > 0">
+          <mat-select class="panel-legend" placeholder="Approved Images" floatLabel="never" (selectionChange)="onChangeApproved($event)">
+            <mat-select-trigger>Images Approved</mat-select-trigger>
+            <mat-option *ngFor="let pageApproved of pagesApproved; let i = index" [value]="(i + 1)">
+              {{ pageApproved.title }}
+            </mat-option>
+          </mat-select>
+        </div>
+
+        <div class="image-thumbnail-container" *ngIf="imagesApproved.length > 0">
+          <ul class="image-thumbnail-list">
+            <li *ngFor="let imageApproved of imagesApproved" class="image-thumbnail-list-item image-thumbnail-list-item-approved">
+              <div class="image-thumbnail-list-item-image image-thumbnail-list-item-image-approved">
+                <img class="image-thumbnail-list-item-image-img image-thumbnail-list-item-image-approved-img" src="{{ imageApproved.src }}" />
+              </div>
+              <div class="image-thumbnail-list-item-title" ngbTooltip="{{ imageApproved.title }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">
+                  {{ imageApproved.title }}
               </div>
             </li>
           </ul>

@@ -92,6 +92,7 @@ export class ImageComponent implements OnInit, OnDestroy {
     refchildClose: '#mat-card-actions-'
   };
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
 
   debug: boolean = false;
 
@@ -287,7 +288,7 @@ export class ImageComponent implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('image.component: editFile: fileid: ', fileid);
     }
-    this.router.navigate(['upload-photo', {fileid: fileid}]);
+    this.router.navigate([this.uploadRouterAliasLower, {fileid: fileid}]);
   }
 
   addLike(): void {

@@ -19,6 +19,7 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { SeoTitleFormatPipe } from '../../pipes/seo-title-format/seo-title-format.pipe';
 import { getUriMatches } from '../../util/regexUtils';
+import { titleFromAlias } from '../../util/titleFromAlias';
 
 import * as _moment from 'moment';
 
@@ -215,6 +216,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   @ViewChild('dialogArticle') private dialogArticleTpl: TemplateRef<any>;
   @ViewChild('dialogSubmitArticleNotification') private dialogSubmitArticleNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogArticleMaxWordCountNotification') private dialogArticleMaxWordCountNotificationTpl: TemplateRef<any>;
+  @ViewChild('dialogArticleHelpNotification') private dialogArticleHelpNotificationTpl: TemplateRef<any>;
 
 
   public tinyMceSettings = {
@@ -288,6 +290,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
   hasUnsavedChanges: boolean = false;
   userid: number = 0;
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
+  catalogRouterAliasTitle: string = titleFromAlias(environment.catalogRouterAlias);
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
 
   debug: boolean = false;
 
@@ -1025,13 +1029,13 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   private processNextImageData = (data) => {
     if(data) {
-      this.router.navigate(['upload-photo', {fileid: data['fileUuid']}]);
+      this.router.navigate([this.uploadRouterAliasLower, {fileid: data['fileUuid']}]);
     }
   }
 
   private processPreviousImageData = (data) => {
     if(data) {
-      this.router.navigate(['upload-photo', {fileid: data['fileUuid']}]);
+      this.router.navigate([this.uploadRouterAliasLower, {fileid: data['fileUuid']}]);
     }
   }
 
@@ -1254,6 +1258,33 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if(result) {
         if(this.debug) {
           console.log('tree-dynamic: dialog article max word count notification: after open: result: ', result);
+        }
+      }
+    });
+  }
+
+  openArticleHelpNotificationDialog(): void {
+    const dialogRef = this.dialog.open(this.dialogArticleHelpNotificationTpl, {
+      width: this.isMobile ? '90%' :'50%',
+      id: 'dialog-article-help-notification'
+    });
+    dialogRef.beforeClose().subscribe(result => {
+      if(this.debug) {
+        console.log('tree-dynamic: dialog article help notification: before close');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('tree-dynamic: dialog article help notification: before close: result: ', result);
+        }
+      }
+    });
+    dialogRef.afterOpen().subscribe(result => {
+      if(this.debug) {
+        console.log('tree-dynamic: dialog article help notification: after open');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('tree-dynamic: dialog article help notification: after open: result: ', result);
         }
       }
     });

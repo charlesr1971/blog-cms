@@ -44,14 +44,14 @@
           </mat-optgroup>
         </mat-select>
         <mat-select class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Tag" floatLabel="never" (selectionChange)="onChangeTag($event)" *ngIf="gallerySectionsIsActive">
-          <mat-select-trigger>{{ catalogRouterAliasUpper }} by Tag</mat-select-trigger>
+          <mat-select-trigger>{{ catalogRouterAliasTitle }} by Tag</mat-select-trigger>
           <mat-option *ngFor="let tag of tags; let i = index" [value]="tag.value">
             {{ tag.title }}
           </mat-option>
         </mat-select>
         <a mat-list-item routerLink="" (click)="search()">Search</a>
         <a mat-list-item routerLink="" (click)="toProfile()" *ngIf="userid > 0">Profile</a>
-        <a mat-list-item routerLink="" (click)="toUploadPhoto()">Upload Photo</a>
+        <a mat-list-item routerLink="" (click)="toUploadPhoto()">{{ uploadRouterAliasTitle }}</a>
         <a mat-list-item routerLink="" (click)="login()" *ngIf="userid == 0">Login</a>
         <a mat-list-item routerLink="" (click)="logout()" *ngIf="userid > 0">Logout</a>
       </mat-nav-list>

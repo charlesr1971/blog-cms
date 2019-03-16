@@ -25,6 +25,8 @@ export class GalleryComponent implements OnInit {
   private ngdomid: string;
   private sub: Subscription;
 
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
+
   currentUser: User;
 
   debug: boolean = false;
@@ -85,7 +87,7 @@ export class GalleryComponent implements OnInit {
       });
 
       this.httpService.logout.subscribe( (data) => {
-        this.router.navigate(['upload-photo', {formType: 'logout'}]);
+        this.router.navigate([this.uploadRouterAliasLower, {formType: 'logout'}]);
       });
 
       if(this.debug) {
@@ -96,7 +98,7 @@ export class GalleryComponent implements OnInit {
       if(this.httpService.isSignUpValidated === 1) {
         this.httpService.isSignUpValidated = 0;
         this.openSnackBar('E-mail address has been successfully validated', 'Success');
-        this.router.navigate(['upload-photo', {formType: 'login'}]);
+        this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
       }
 
       this.userService.currentUser.subscribe( (user: User) => {

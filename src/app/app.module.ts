@@ -63,7 +63,7 @@ import { environment } from '../environments/environment';
 const appRoutes: Routes = [
   { path: environment.catalogRouterAlias, component: GalleryComponent },
   { path: environment.catalogRouterAlias + '/:id/:title', component: GalleryDetailComponent },
-  { path: 'upload-photo', component: UploadPhotoComponent },
+  { path: environment.uploadRouterAlias, component: UploadPhotoComponent },
   { path: 'profile', component: ProfileComponent },
   { path: '',   redirectTo: '/' + environment.catalogRouterAlias, pathMatch: 'prefix' },
   { path: '**', component: PageNotFoundComponent }

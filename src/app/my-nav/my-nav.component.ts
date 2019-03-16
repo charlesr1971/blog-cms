@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { addImage } from '../util/addImage';
 import { capitalizeFirstLetter } from '../util/capitalizeFirstLetter';
 import { getMonthShortName } from '../util/getMonthShortName';
+import { titleFromAlias } from '../util/titleFromAlias';
 
 import { HttpService } from '../services/http/http.service';
 import { UtilsService } from '../services/utils/utils.service';
@@ -43,6 +44,9 @@ export class MyNavComponent implements OnInit, OnDestroy {
   gallerySectionsIsActive: boolean = false;
   catalogRouterAliasUpper: string = capitalizeFirstLetter(environment.catalogRouterAlias);
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
+  catalogRouterAliasTitle: string = titleFromAlias(environment.catalogRouterAlias);
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
+  uploadRouterAliasTitle: string = titleFromAlias(environment.uploadRouterAlias);
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
   .pipe(
@@ -114,7 +118,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
           if(this.debug) {
             console.log('my-nav.component: searchReset');
           }
-          this.router.navigateByUrl('/upload-photo', {skipLocationChange: true}).then(()=>
+          this.router.navigateByUrl('/' + this.uploadRouterAliasLower, {skipLocationChange: true}).then(()=>
           this.router.navigate([this.catalogRouterAliasLower]));
         });
       });
@@ -363,7 +367,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
   }
 
   toGallery(): void {
-    this.router.navigateByUrl('/upload-photo', {skipLocationChange: true}).then(()=>
+    this.router.navigateByUrl('/' + this.uploadRouterAliasLower, {skipLocationChange: true}).then(()=>
           this.router.navigate([this.catalogRouterAliasLower]));
   }
 
@@ -379,7 +383,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   toUploadPhoto(): void {
     this.galleryIsActive = false;
-    this.router.navigate(['upload-photo', {formType: 'uploadPhoto'}]);
+    this.router.navigate([this.uploadRouterAliasLower, {formType: 'uploadPhoto'}]);
   }
 
   toProfile(): void {
@@ -389,13 +393,13 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   login(): void {
     this.galleryIsActive = false;
-    this.router.navigate(['upload-photo', {formType: 'login'}]);
+    this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
   }
 
   logout(): void {
     this.galleryIsActive = false;
     this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then(()=>
-          this.router.navigate(['upload-photo', {formType: 'logout'}]));
+          this.router.navigate([this.uploadRouterAliasLower, {formType: 'logout'}]));
   }
 
   ngOnDestroy() {

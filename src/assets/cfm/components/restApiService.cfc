@@ -195,6 +195,23 @@ DESCRIPTION: REST API service functions
   </cffunction>
   
   
+  <!--- FUNCTION UDF: imageApprovedCollection  --->
+  
+  <cffunction name="ImageApprovedCollection" returntype="struct" output="false" hint="returns ImageApprovedCollection">
+    <!--- arguments --->
+    <cfargument name="page" type="numeric" required="no" default="1" hint="argument description: page" />
+    <cfargument name="userToken" type="string" required="no" default="" hint="argument description: userToken" />
+    <!--- local variables --->
+    <cfset var local = StructNew()>
+    <cfset local.result = StructNew()>
+    <!--- logic --->
+    <cfhttp url="#request.restApiEndpoint#/images/approved/#arguments.page#" method="get" result="local.result" timeout="30">
+      <cfhttpparam type="header" name="userToken" value="#arguments.userToken#" />
+    </cfhttp>
+  <cfreturn local.result />
+  </cffunction>
+  
+  
   <!--- FUNCTION UDF: jwtMember  --->
   
   <cffunction name="JwtMember" returntype="struct" output="false" hint="returns JwtMember">
@@ -720,6 +737,24 @@ DESCRIPTION: REST API service functions
 	  <cfset arguments.userToken = "empty">
     </cfif>
     <cfhttp url="#request.restApiEndpoint#/pages/unapproved/userid/#arguments.userToken#" method="get" result="local.result" timeout="30">
+    </cfhttp>
+  <cfreturn local.result />
+  </cffunction>
+  
+  
+  <!--- FUNCTION UDF: pageApprovedByUseridCollection  --->
+  
+  <cffunction name="PageApprovedByUseridCollection" returntype="struct" output="false" hint="returns PageApprovedByUseridCollection">
+    <!--- arguments --->
+    <cfargument name="userToken" type="string" required="no" default="" hint="argument description: userToken" />
+    <!--- local variables --->
+    <cfset var local = StructNew()>
+    <cfset local.result = StructNew()>
+    <!--- logic --->
+    <cfif NOT Len(Trim(arguments.userToken))>
+	  <cfset arguments.userToken = "empty">
+    </cfif>
+    <cfhttp url="#request.restApiEndpoint#/pages/approved/userid/#arguments.userToken#" method="get" result="local.result" timeout="30">
     </cfhttp>
   <cfreturn local.result />
   </cffunction>

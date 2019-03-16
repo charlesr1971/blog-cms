@@ -496,6 +496,12 @@
 		body:""
 	  }
 	},
+	imageApprovedCollection:{
+	  get:{
+		requestHeader:"userToken^string",
+		body:""
+	  }
+	},
 	jwtMember:{
 	  get:{
 		requestHeader:"Authorization^string^[ Bearer (API Token) ]",

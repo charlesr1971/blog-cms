@@ -32,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
   themeObj = {};
   theme: string = '';
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
   @HostBinding('class') componentCssClass;
 
   debug: boolean = false;
@@ -78,8 +79,17 @@ export class AppComponent implements OnInit, OnDestroy {
           }
           if(this.debug) {
             console.log('app.component: this.cssClassName ',this.cssClassName);
+            console.log('app.component: this.buildPureRouteName(event.urlAfterRedirects) ',this.buildPureRouteName(event.urlAfterRedirects));
           }
-          this.renderer.setAttribute(document.body,'class',this.cssClassName);
+          if(this.catalogRouterAliasLower === this.buildPureRouteName(event.urlAfterRedirects)) {
+            this.renderer.setAttribute(document.body,'class','gallery');
+          }
+          else if(this.uploadRouterAliasLower === this.buildPureRouteName(event.urlAfterRedirects)) {
+            this.renderer.setAttribute(document.body,'class','upload-photo');
+          }
+          else{
+            this.renderer.setAttribute(document.body,'class',this.cssClassName);
+          }
       }
       if (event instanceof NavigationStart) {
         browserRefresh = !router.navigated;
@@ -238,6 +248,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   buildCssClassName(url: string): string {
     return url.replace(/(.*)\?.*/,'$1').replace(/(.*);.*/,'$1').replace(/^\//,'').replace(/\/$/,'').replace(/\//g,'_').trim();
+  }
+
+  buildPureRouteName(url: string): string {
+    return url.replace(/\/(.*?)\/.*/,'$1').replace(/(.*)\?.*/,'$1').replace(/(.*);.*/,'$1').trim();
   }
 
   getUrlVars(url: string): any {

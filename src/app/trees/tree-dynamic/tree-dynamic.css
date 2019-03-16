@@ -48,6 +48,14 @@
   font-size: 52px;
 }
 
+.form-field-container .form-field-legend > .mat-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 .form-field-container .form-field-text {
   padding: 20px;
 }
@@ -173,6 +181,10 @@ button {
 
 button[data-role='submit'] {
   margin-left: 10px;
+}
+
+.mat-dialog-content ol {
+  padding: 0px 10px;
 }
 
 /* media queries */

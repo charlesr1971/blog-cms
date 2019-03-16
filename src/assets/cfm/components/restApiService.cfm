@@ -836,6 +836,45 @@
 		  });
 		}
 		
+		
+		function imageApprovedCollection_get_page() {
+		  var url = '#restApiEndpoint#/pages/approved/userid/' + userToken;
+		  var imagecollectiongetpage = $('##imageApprovedCollection_get_page');
+		  var content = '';
+		  $.ajax({
+			url: url,
+			success: function (response) {
+			  var data = response;
+			  if($ajaxdataDebug){
+				console.log('imageApprovedCollection_get_page(): data 1 ',data);
+			  }
+			  if(!$.isEmptyObject(data) && 'pages' in data && data['pages'] > 0){
+				if($ajaxdataDebug){
+				  console.log('imageApprovedCollection_get_page(): data 2 ',data);
+				}
+				for(var i = 0;i<data['pages'];i++){
+				  <cfif StructKeyExists(variables,"imageApprovedCollection_get_page")>
+					if((i + 1) == '#variables.imageApprovedCollection_get_page#'){
+					  content += '<option value="' + (i + 1)  + '" selected="selected">' + (i + 1)  + '</option>';
+					}
+					else{
+					  content += '<option value="' + (i + 1)  + '">' + (i + 1)  + '</option>';
+					}
+				  <cfelse>
+					content += '<option value="' + (i + 1)  + '">' + (i + 1)  + '</option>';
+				  </cfif>
+				}
+			  }
+			  if(imagecollectiongetpage.length){
+				imagecollectiongetpage.html(content);
+			  }
+			},
+			error: function (jqXHR,textStatus,errorMessage) {
+			  console.log('ERROR: imageApprovedCollection_get_page(): ajax',errorMessage);
+			}
+		  });
+		}
+		
 		function searchCollection_get_page(loaded) {
 		  var url = '#restApiEndpoint#/pages/search/' + userToken;
 		  var searchcollectiongetpage = $('##searchCollection_get_page');
@@ -3237,6 +3276,38 @@
                 <div class="button-container"><a class="button verb" href="javascript:document.imageUnapprovedCollection_get.submit();">GET</a><a class="button clear" href="../components/restApiService.cfm">Clear</a><a class="button top" href="##top"><i class="fa fa-arrow-up"></i></a></div>
               </div>
               
+              
+              <!--- ImageApprovedCollection: GET --->
+              
+              <div class="component-container-divider"></div>
+              <a class="component-anchor" name="imageApprovedCollection-get"></a> 
+              <div id="imageApprovedCollection-get" class="component-container">       
+                <h2><strong>ImageApprovedCollection:</strong> <span>GET</span></h2>
+                <div class="param-container">
+                  <div class="param param-title">required</div> <div class="param param-value"><span class="param-type">required </span><span class="token-container">token:</span> <strong>page</strong>: <span class="data-type-container">integer</span></div>
+                </div>
+                <cfset componentName = "imageApprovedCollection">
+                <cfset funcName = "get">
+                <cfinclude template="../requestData.cfm">
+                <div class="curl-container">
+                  <div class="curl curl-title">curl</div><div class="curl curl-url">#restApiEndpoint#/images/<span class="token-container url-token"><span class="token-container url-token"><cfif StructKeyExists(variables,"imageApprovedCollection_get_page")>#variables.imageApprovedCollection_get_page#<cfelse>{page}</cfif></span></div>
+                </div>
+                <form name="imageApprovedCollection_get" method="post" action="?httpRequest=imageApprovedCollection&verb=get">
+                  <label style="margin-top:0px;">Pages</label>
+                  <div class="select-container">
+                    <i class="fa fa-arrow-circle-down icon"></i>
+                    <select name="imageApprovedCollection_get_page" id="imageApprovedCollection_get_page" style="margin-bottom:20px;">
+                    </select>
+                  </div>
+                </form>
+                <cfif StructKeyExists(variables,"httpRequest") AND CompareNoCase(variables['httpRequest'],"imageApprovedCollection") EQ 0 AND StructKeyExists(variables,"verb") AND CompareNoCase(variables['verb'],"get") EQ 0 AND StructKeyExists(variables,"imageApprovedCollection_get_page")>
+                  <cfset httpRequest$ = restApiService.ImageApprovedCollection(page=variables.imageApprovedCollection_get_page,userToken=userToken)>
+                  <cfinclude template="../http-request-to-json.cfm">
+                  <cfinclude template="../delete-request-vars.cfm">
+                </cfif>
+                <div class="button-container"><a class="button verb" href="javascript:document.imageApprovedCollection_get.submit();">GET</a><a class="button clear" href="../components/restApiService.cfm">Clear</a><a class="button top" href="##top"><i class="fa fa-arrow-up"></i></a></div>
+              </div>
+              
       <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
               
               
@@ -4541,7 +4612,7 @@
                 <cfset funcName = "get">
                 <cfinclude template="../requestData.cfm">
                 <div class="curl-container">
-                  <div class="curl curl-title">curl</div><div class="curl curl-url">#restApiEndpoint#/pages/userid/<span class="token-container url-token">empty</span></div>
+                  <div class="curl curl-title">curl</div><div class="curl curl-url">#restApiEndpoint#/pages/unapproved/userid/<span class="token-container url-token">empty</span></div>
                 </div>
                 <cfif StructKeyExists(variables,"httpRequest") AND CompareNoCase(variables['httpRequest'],"pageUnapprovedByUseridCollection") EQ 0 AND StructKeyExists(variables,"verb") AND CompareNoCase(variables['verb'],"get") EQ 0>
                   <cfset httpRequest$ = restApiService.PageUnapprovedByUseridCollection(userToken=userToken)>
@@ -4549,6 +4620,30 @@
                   <cfinclude template="../delete-request-vars.cfm">
                 </cfif>
                 <div class="button-container"><a class="button verb" href="?httpRequest=pageUnapprovedByUseridCollection&verb=get">GET</a><a class="button clear" href="../components/restApiService.cfm">Clear</a><a class="button top" href="##top"><i class="fa fa-arrow-up"></i></a></div>  
+              </div>
+              
+              
+              <!--- PageApprovedByUseridCollection: GET --->
+                    
+              <div class="component-container-divider"></div>
+              <a class="component-anchor" name="pageApprovedByUseridCollection-get"></a>
+              <div id="pageApprovedByUseridCollection-get" class="component-container">
+                <h2><strong>PageApprovedByUseridCollection:</strong> <span>GET</span></h2>
+                <div class="param-container">
+                  <div class="param param-title">required</div> <div class="param param-value"><span class="param-type">required </span><span class="token-container">token:</span> <strong>usertoken</strong>: <span class="data-type-container">string</span></div>
+                </div>
+                <cfset componentName = "pageApprovedByUseridCollection">
+                <cfset funcName = "get">
+                <cfinclude template="../requestData.cfm">
+                <div class="curl-container">
+                  <div class="curl curl-title">curl</div><div class="curl curl-url">#restApiEndpoint#/pages/approved/userid/<span class="token-container url-token">empty</span></div>
+                </div>
+                <cfif StructKeyExists(variables,"httpRequest") AND CompareNoCase(variables['httpRequest'],"pageApprovedByUseridCollection") EQ 0 AND StructKeyExists(variables,"verb") AND CompareNoCase(variables['verb'],"get") EQ 0>
+                  <cfset httpRequest$ = restApiService.PageApprovedByUseridCollection(userToken=userToken)>
+                  <cfinclude template="../http-request-to-json.cfm">
+                  <cfinclude template="../delete-request-vars.cfm">
+                </cfif>
+                <div class="button-container"><a class="button verb" href="?httpRequest=pageApprovedByUseridCollection&verb=get">GET</a><a class="button clear" href="../components/restApiService.cfm">Clear</a><a class="button top" href="##top"><i class="fa fa-arrow-up"></i></a></div>  
               </div>
               
       <!------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->    
