@@ -6,11 +6,8 @@ import { Router, NavigationStart, NavigationEnd, Event, ActivatedRoute } from '@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { capitalizeFirstLetter } from './util/capitalizeFirstLetter';
 import { UtilsService } from './services/utils/utils.service';
-
 import { HttpService } from './services/http/http.service';
-
 import { CookieService } from 'ngx-cookie-service';
-
 import { environment } from '../environments/environment';
 
 export let browserRefresh = false;
@@ -82,7 +79,12 @@ export class AppComponent implements OnInit, OnDestroy {
             console.log('app.component: this.buildPureRouteName(event.urlAfterRedirects) ',this.buildPureRouteName(event.urlAfterRedirects));
           }
           if(this.catalogRouterAliasLower === this.buildPureRouteName(event.urlAfterRedirects)) {
-            this.renderer.setAttribute(document.body,'class','gallery');
+            if(this.hasArticle(event.urlAfterRedirects)) {
+              this.renderer.setAttribute(document.body,'class','gallery-details');
+            }
+            else{
+              this.renderer.setAttribute(document.body,'class','gallery');
+            }
           }
           else if(this.uploadRouterAliasLower === this.buildPureRouteName(event.urlAfterRedirects)) {
             this.renderer.setAttribute(document.body,'class','upload-photo');
@@ -247,11 +249,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   buildCssClassName(url: string): string {
-    return url.replace(/(.*)\?.*/,'$1').replace(/(.*);.*/,'$1').replace(/^\//,'').replace(/\/$/,'').replace(/\//g,'_').trim();
+    return url.replace(/(.*)\?.*/,'$1').replace(/(.*);.*/,'$1').replace(/^\//,'').replace(/\/$/,'').replace(/\//g,'-').trim();
   }
 
   buildPureRouteName(url: string): string {
-    return url.replace(/\/(.*?)\/.*/,'$1').replace(/(.*)\?.*/,'$1').replace(/(.*);.*/,'$1').trim();
+    return url.replace(/\/(.*?)\/.*/,'$1').replace(/(.*)\?.*/,'$1').replace(/(.*);.*/,'$1').replace(/^\//,'').replace(/\/$/,'').trim();
+  }
+
+  hasArticle(url: string): boolean {
+    const pattern = new RegExp('.*\/[0-9]+\/.*');
+    const result = pattern.test(url); 
+    return result;
   }
 
   getUrlVars(url: string): any {

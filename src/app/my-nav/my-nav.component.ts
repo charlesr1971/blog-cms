@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, Inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -28,6 +29,11 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   @ViewChild('avatarNavContainer') avatarNavContainer;
   @ViewChild('drawer') drawer: MatSidenav;
+  @ViewChild('select1') select1;
+  @ViewChild('select2') select2;
+  @ViewChild('select3') select3;
+  @ViewChild('select4') select4;
+  @ViewChild('select5') select5;
 
   title = environment.title;
   pages = [];
@@ -77,7 +83,8 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   debug: boolean = false;
     
-  constructor(private breakpointObserver: BreakpointObserver,
+  constructor(@Inject(DOCUMENT) private documentBody: Document,
+    private breakpointObserver: BreakpointObserver,
     private renderer: Renderer2,
     public el: ElementRef,
     private httpService: HttpService,
@@ -144,7 +151,17 @@ export class MyNavComponent implements OnInit, OnDestroy {
       TweenMax.from('#logo', 1, {opacity:0, scale: 0, ease:Elastic.easeOut, delay: 1}, {opacity:1, scale: 10, ease:Elastic.easeOut, delay: 1}, 0.2);
       this.logoAnimationHasRun = true;
     }
+
+    this.documentBody.querySelector('#mat-nav-list').addEventListener('scroll', this.onMatNavListScroll.bind(this));
   
+  }
+
+  onMatNavListScroll(): void {
+    this.select1.close();
+    this.select2.close();
+    this.select3.close();
+    this.select4.close();
+    this.select5.close();
   }
 
   onSideNavOpenedChange(): void {

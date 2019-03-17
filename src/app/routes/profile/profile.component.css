@@ -57,7 +57,21 @@
 }
 
 .form-field-container .form-field-text div.panel.unapproved-images {
+    position: relative;
     margin: 30px 0px 40px;
+}
+
+.form-field-container .form-field-text div.panel.approved-images {
+    position: relative;
+}
+
+.form-field-container .form-field-text div.panel.unapproved-images .mat-icon.add, .form-field-container .form-field-text div.panel.approved-images .mat-icon.add {
+    position: absolute;
+    top: 19px;
+    right: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 10;
 }
 
 .form-field-container .form-field-text div.panel h2.panel-legend, .form-field-container .form-field-text div.panel mat-select.panel-legend {

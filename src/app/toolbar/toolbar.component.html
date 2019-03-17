@@ -16,7 +16,7 @@
   <button mat-button (click)="share($event,image.id)">
     <mat-icon>share</mat-icon>
   </button>
-  <mat-select class="gallery-sections" placeholder="#" floatLabel="never" (selectionChange)="onTagChange($event)" *ngIf="tagDisplay">
+  <mat-select  #imageTagsSelect class="gallery-sections" placeholder="#" floatLabel="never" (selectionChange)="onTagChange($event)" *ngIf="tagDisplay">
     <mat-select-trigger>#</mat-select-trigger>
     <mat-option *ngFor="let tag of tags; let i = index" [value]="tag.value">
       #{{ tag.display }}

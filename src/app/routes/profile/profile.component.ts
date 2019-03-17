@@ -52,6 +52,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @ViewChild('avatarContainer') avatarContainer;
   @ViewChild('modal') modal;
+  @ViewChild('unapprovedImagesSelect') unapprovedImagesSelect;
+  @ViewChild('approvedImagesSelect') approvedImagesSelect;
   @Input() profileApiDashboardState: string = 'out';
 
   themeObj = {};
@@ -208,6 +210,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
       console.log('profile.component init');
     }
 
+    this.documentBody.querySelector('#mat-sidenav-content').addEventListener('scroll', this.onMatSidenavContentScroll.bind(this));
+
+  }
+
+  onMatSidenavContentScroll(): void {
+    if(this.pagesUnapproved.length > 0) {
+      this.unapprovedImagesSelect.close();
+    }
+    if(this.pagesApproved.length > 0) {
+      this.approvedImagesSelect.close();
+    }
   }
 
   fetchPagesUnapproved(): void {
@@ -601,14 +614,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   onChangeUnapproved(event): void {
-    const page = event.source.value;
+    if(this.debug) {
+      console.log('profile.component: onChangeUnapproved: event: ', event);
+    }
+    const page = event.source ? event.source.value : event;
     this.currentPageUnapproved = page;
     if(this.debug) {
-      console.log('profile.component: onChange: page: ', page);
+      console.log('profile.component: onChangeUnapproved: page: ', page);
+    }
+    const imagethumbnailcontainerunapproved = this.documentBody.querySelector('#image-thumbnail-container-unapproved');
+    if(imagethumbnailcontainerunapproved) {
+      const styles = getComputedStyle(imagethumbnailcontainerunapproved);
+      this.renderer.setStyle(imagethumbnailcontainerunapproved,'display','block');
     }
     const pageCacheUnapprovedEntryExists = this.pageCacheUnapprovedEntryExists(this.currentPageUnapproved);
     if(this.debug) {
-      console.log('profile.component: onChange: pageCacheUnapprovedEntryExists: ', pageCacheUnapprovedEntryExists);
+      console.log('profile.component: onChangeUnapproved: pageCacheUnapprovedEntryExists: ', pageCacheUnapprovedEntryExists);
     }
     if(!pageCacheUnapprovedEntryExists) {
       this.imagesUnapprovedByUseridSubscription = this.httpService.fetchImagesUnapprovedByUserid(page).do(this.imagesUnapprovedByUseridData).subscribe();
@@ -622,14 +643,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   onChangeApproved(event): void {
-    const page = event.source.value;
+    if(this.debug) {
+      console.log('profile.component: onChangeApproved: event: ', event);
+    }
+    const page = event.source ? event.source.value : event;
     this.currentPageApproved = page;
     if(this.debug) {
-      console.log('profile.component: onChange: page: ', page);
+      console.log('profile.component: onChangeApproved: page: ', page);
+    }
+    const imagethumbnailcontainerapproved = this.documentBody.querySelector('#image-thumbnail-container-approved');
+    if(imagethumbnailcontainerapproved) {
+      const styles = getComputedStyle(imagethumbnailcontainerapproved);
+      this.renderer.setStyle(imagethumbnailcontainerapproved,'display','block');
     }
     const pageCacheApprovedEntryExists = this.pageCacheApprovedEntryExists(this.currentPageApproved);
     if(this.debug) {
-      console.log('profile.component: onChange: pageCacheApprovedEntryExists: ', pageCacheApprovedEntryExists);
+      console.log('profile.component: onChangeApproved: pageCacheApprovedEntryExists: ', pageCacheApprovedEntryExists);
     }
     if(!pageCacheApprovedEntryExists) {
       this.imagesApprovedByUseridSubscription = this.httpService.fetchImagesApproved(page).do(this.imagesApprovedByUseridData).subscribe();
@@ -654,6 +683,36 @@ export class ProfileComponent implements OnInit, OnDestroy {
   openProfileApiDashboard(event: any): void {
     this.profileApiDashboardState = this.profileApiDashboardState === 'in' ? 'out' : 'in';
     event.stopPropagation();
+  }
+
+  toggleUnapprovedImages(event: any): void {
+    event.stopPropagation();
+    const imagethumbnailcontainerunapproved = this.documentBody.querySelector('#image-thumbnail-container-unapproved');
+    if(this.debug) {
+      console.log('profile.component: toggleUnapprovedImages(): imagethumbnailcontainerunapproved: ', imagethumbnailcontainerunapproved);
+    }
+    if(imagethumbnailcontainerunapproved) {
+      const styles = getComputedStyle(imagethumbnailcontainerunapproved);
+      if(this.debug) {
+        console.log('profile.component: toggleUnapprovedImages(): styles: ', styles);
+      }
+      styles.display === 'block' ? this.renderer.setStyle(imagethumbnailcontainerunapproved,'display','none') : this.renderer.setStyle(imagethumbnailcontainerunapproved,'display','block');
+    }
+  }
+
+  toggleApprovedImages(event: any): void {
+    event.stopPropagation();
+    const imagethumbnailcontainerapproved = this.documentBody.querySelector('#image-thumbnail-container-approved');
+    if(this.debug) {
+      console.log('profile.component: toggleApprovedImages(): imagethumbnailcontainerapproved: ', imagethumbnailcontainerapproved);
+    }
+    if(imagethumbnailcontainerapproved) {
+      const styles = getComputedStyle(imagethumbnailcontainerapproved);
+      if(this.debug) {
+        console.log('profile.component: toggleApprovedImages(): styles: ', styles);
+      }
+      styles.display === 'block' ? this.renderer.setStyle(imagethumbnailcontainerapproved,'display','none') : this.renderer.setStyle(imagethumbnailcontainerapproved,'display','block');
+    }
   }
 
   goToApiDocumentation(event: any): void {

@@ -36,7 +36,7 @@ ol li {
 .mat-icon.cookie-policy-close {
     position: absolute;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
     cursor: pointer;
 }
 

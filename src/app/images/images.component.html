@@ -3,7 +3,7 @@
         <div class="form-field-container">
             <div class="form-field-legend">Search<mat-icon (click)="closeSearch()">close</mat-icon></div>
             <div class="form-field-text">
-                <mat-select class="gallery-sections" placeholder="Alpha Index" (selectionChange)="onSearchChange($event)">
+                <mat-select #searchSelect class="gallery-sections" placeholder="Alpha Index" (selectionChange)="onSearchChange($event)">
                     <mat-option *ngFor="let page of pages; let i = index" [value]="(i + 1)">
                         {{ page.title }}
                     </mat-option>
@@ -28,7 +28,7 @@
         <div class="form-field-container">
             <div class="form-field-legend">Tags <span class="form-field-legend-sub-title"> | {{ currentTag }}</span><mat-icon (click)="closeTags()">close</mat-icon></div>
             <div class="form-field-text">
-                <mat-select class="gallery-sections" placeholder="Pages" floatLabel="never" [formControl]="tags" (selectionChange)="onTagChange($event)">
+                <mat-select #tagsSelect class="gallery-sections" placeholder="Pages" floatLabel="never" [formControl]="tags" (selectionChange)="onTagChange($event)">
                     <mat-select-trigger>Pages</mat-select-trigger>
                     <mat-option *ngFor="let pagesTag of pagesTags; let i = index" [value]="(i + 1)">
                         {{ pagesTag.title }}

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Inject, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Inject, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -39,6 +39,8 @@ declare var ease, TweenMax, TimelineMax, Elastic: any;
   ]
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
+
+  @ViewChild('imageTagsSelect') imageTagsSelect;
 
   private allowMultipleLikesPerUser: number = environment.allowMultipleLikesPerUser;
   @Output() _openComments: EventEmitter<any> = new EventEmitter();
@@ -131,6 +133,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       }
     }
 
+    this.documentBody.querySelector('#mat-sidenav-content').addEventListener('scroll', this.onMatSidenavContentScroll.bind(this));
+
+  }
+
+  onMatSidenavContentScroll(): void {
+    if(this.imageTagsSelect) {
+      this.imageTagsSelect.close();
+    }
   }
 
   addLike(): void {

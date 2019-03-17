@@ -62,15 +62,16 @@
         </div>
 
         <div class="panel unapproved-images" *ngIf="pagesUnapproved.length > 0">
-          <mat-select class="panel-legend" placeholder="Unapproved Images" floatLabel="never" (selectionChange)="onChangeUnapproved($event)">
+          <mat-icon class="add" (click)="toggleUnapprovedImages($event)">add</mat-icon> 
+          <mat-select #unapprovedImagesSelect class="panel-legend" placeholder="Unapproved Images" floatLabel="never" (selectionChange)="onChangeUnapproved($event)">
             <mat-select-trigger>Images Awaiting Approval</mat-select-trigger>
-            <mat-option *ngFor="let pageUnapproved of pagesUnapproved; let i = index" [value]="(i + 1)">
+            <mat-option *ngFor="let pageUnapproved of pagesUnapproved; let i = index" [value]="(i + 1)" (click)="onChangeUnapproved((i + 1))">
               {{ pageUnapproved.title }}
             </mat-option>
           </mat-select>
         </div>
 
-        <div class="image-thumbnail-container" *ngIf="imagesUnapproved.length > 0">
+        <div id="image-thumbnail-container-unapproved" class="image-thumbnail-container" *ngIf="imagesUnapproved.length > 0" style="display:block;">
           <ul class="image-thumbnail-list">
             <li *ngFor="let imageUnapproved of imagesUnapproved" class="image-thumbnail-list-item image-thumbnail-list-item-unapproved">
               <div class="image-thumbnail-list-item-image image-thumbnail-list-item-image-unapproved">
@@ -84,15 +85,16 @@
         </div>
 
         <div class="panel approved-images" *ngIf="pagesApproved.length > 0">
-          <mat-select class="panel-legend" placeholder="Approved Images" floatLabel="never" (selectionChange)="onChangeApproved($event)">
+          <mat-icon class="add" (click)="toggleApprovedImages($event)">add</mat-icon> 
+          <mat-select #approvedImagesSelect class="panel-legend" placeholder="Approved Images" floatLabel="never" (selectionChange)="onChangeApproved($event)">
             <mat-select-trigger>Images Approved</mat-select-trigger>
-            <mat-option *ngFor="let pageApproved of pagesApproved; let i = index" [value]="(i + 1)">
+            <mat-option *ngFor="let pageApproved of pagesApproved; let i = index" [value]="(i + 1)" (click)="onChangeApproved((i + 1))">
               {{ pageApproved.title }}
             </mat-option>
           </mat-select>
         </div>
 
-        <div class="image-thumbnail-container" *ngIf="imagesApproved.length > 0">
+        <div id="image-thumbnail-container-approved" class="image-thumbnail-container" *ngIf="imagesApproved.length > 0" style="display:block;">
           <ul class="image-thumbnail-list">
             <li *ngFor="let imageApproved of imagesApproved" class="image-thumbnail-list-item image-thumbnail-list-item-approved">
               <div class="image-thumbnail-list-item-image image-thumbnail-list-item-image-approved">

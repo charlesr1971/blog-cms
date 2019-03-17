@@ -38,6 +38,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
   @ViewChild('infiniteScrollerImagesContainer') infiniteScrollerImagesContainer: ElementRef;
   @ViewChild('searchFormContainer') searchFormContainer: ElementRef;
   @ViewChild('tagsFormContainer') tagsFormContainer: ElementRef;
+  @ViewChild('searchSelect') searchSelect;
+  @ViewChild('tagsSelect') tagsSelect;
 
   isMobile: boolean = false;
 
@@ -309,6 +311,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.documentBody.querySelector('#infinite-scroller-images').addEventListener('scroll', this.onInfiniteScrollerImagesScroll.bind(this));
+
   }
 
   @HostListener('window:resize', ['$event']) onResize(event?) {
@@ -330,6 +334,11 @@ export class ImagesComponent implements OnInit, OnDestroy {
         );
       }
     })
+  }
+
+  onInfiniteScrollerImagesScroll(): void {
+    this.searchSelect.close();
+    this.tagsSelect.close();
   }
 
   fetchPagesTitles(): void {

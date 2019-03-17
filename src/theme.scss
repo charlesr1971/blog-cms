@@ -115,7 +115,7 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-primary, darker) !important;
     }
 
-    .uploaded-image-container {
+    .uploaded-image-container, .uploaded-image-container-outer {
         background: mat-color($dark-foreground-palette, text, 0.035);
     }
 
@@ -128,6 +128,10 @@ $dark-background-palette: map-get($dark-theme, background);
     }
 
     .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+        color: mat-color($dark-foreground-palette, text, 0.7);
+    }
+
+    .form-field-container .form-field-text div.panel.unapproved-images .mat-icon.add, .form-field-container .form-field-text div.panel.approved-images .mat-icon.add {
         color: mat-color($dark-foreground-palette, text, 0.7);
     }
 
@@ -445,7 +449,7 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-primary, darker) !important;
     }
 
-    .uploaded-image-container {
+    .uploaded-image-container, .uploaded-image-container-outer {
         background: mat-color($light-primary, default, 0.075);
     }
 
@@ -458,6 +462,10 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+        color: mat-color($light-foreground-palette, text, 0.7);
+    }
+
+    .form-field-container .form-field-text div.panel.unapproved-images .mat-icon.add, .form-field-container .form-field-text div.panel.approved-images .mat-icon.add {
         color: mat-color($light-foreground-palette, text, 0.7);
     }
 

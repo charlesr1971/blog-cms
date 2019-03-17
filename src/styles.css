@@ -13,6 +13,14 @@ body {
     font-family: 'Roboto', sans-serif; 
 }
 
+/* body.profile .mat-sidenav-container {
+    overflow : visible;
+}
+
+body.profile .mat-sidenav-content {
+    overflow : visible;
+} */
+
 body.gallery {
     overflow: hidden !important;
     height: 100% !important;
@@ -271,6 +279,11 @@ app-images .mat-spinner {
 #dialog-article-help-notification .form-field-text ol li:last-child {
     margin-bottom: 0px !important;
 }
+
+/* .mat-card > .mat-card-actions .mat-select-trigger {
+    position: relative;
+    top: 5px;
+} */
 
 /* media queries */
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Inject, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Inject, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { Lightbox, LightboxEvent, LIGHTBOX_EVENT } from 'angular2-lightbox';
 import { DOCUMENT } from '@angular/common';
@@ -51,6 +51,8 @@ interface commentElementsPrefix {
   ]
 })
 export class ImageComponent implements OnInit, OnDestroy {
+
+  @ViewChild('imageTagsSelect') imageTagsSelect;
 
   private album: Array<any> = [];
   private _subscription: Subscription;
@@ -206,6 +208,14 @@ export class ImageComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.documentBody.querySelector('#infinite-scroller-images').addEventListener('scroll', this.onInfiniteScrollerImagesScroll.bind(this));
+
+  }
+
+  onInfiniteScrollerImagesScroll(): void {
+    if(this.tagDisplay) {
+      this.imageTagsSelect.close();
+    }
   }
 
   articleIsPublished(): boolean {
