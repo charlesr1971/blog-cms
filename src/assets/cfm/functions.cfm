@@ -15,7 +15,7 @@
 	local.objQueryResult = local.queryService.execute(sql="SELECT Directory, Name FROM sourceQuery");
 	local.queryResult1 = local.objQueryResult.getResult();
 	
-	local.query2 = QueryNew("Id,ParentId,Directory,Name,GroupId");	
+	local.query2 = QueryNew("Id,ParentId,Directory,Name,GroupId,Empty");
 	
 	if(local.queryResult1.RecordCount){
 	  for(local.row in local.queryResult1){
@@ -25,6 +25,13 @@
 		QuerySetCell(local.query2,"Directory",local.row.Directory);
 		QuerySetCell(local.query2,"Name",local.row.Name);
 		QuerySetCell(local.query2,"GroupId","");
+		cfdirectory(action="list",directory=local.row.Directory & "\" & local.row.Name,name="local.query3",type="file",recurse="no");
+		if(local.query3.RecordCount){
+		  QuerySetCell(local.query2,"Empty",0);
+		}
+		else{
+		  QuerySetCell(local.query2,"Empty",1);
+		}
 	  }
 	}
 	
@@ -37,7 +44,7 @@
 	local.maxid = local.query2.RecordCount + 1;
 		
 	local.parentDirectories = ListRemoveDuplicates(ValueList(local.queryResult2.Directory),",",true);
-	
+		
 	for(local.item in ListToArray(local.parentDirectories)){
 	  local.queryService = new query();
 	  local.queryService.setDBType("query");
@@ -52,10 +59,11 @@
 		QuerySetCell(local.query2,"Directory",local.queryResult3.Directory);
 		QuerySetCell(local.query2,"Name","");
 		QuerySetCell(local.query2,"GroupId",0);
+		QuerySetCell(local.query2,"Empty",1);
 		local.maxid = maxid + 1;
 	  }
 	}
-		
+			
 	local.queryService = new query();
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=local.query2);
@@ -87,7 +95,7 @@
   }
 
 
-  public any function ConvertDirectoryQueryToArray(required query query, numeric parentId = 0, array directories = ArrayNew(1), array nestedDirectories = ArrayNew(1), string parents = "") output="true" { 
+  public any function ConvertDirectoryQueryToArray(required query query, numeric parentId = 0, array directories = ArrayNew(1), array nestedDirectories = ArrayNew(1), string parents = "", boolean addEmptyFlag = false) output="true" { 
   
 	var local = {};
 	
@@ -131,17 +139,20 @@
 	  for(local.row in local.queryResult){
 		local.directory = Trim(ReplaceNoCase(local.row.Directory & "\" & local.row.Name,request.filepath,""));
 		local.directory = REReplaceNoCase(local.directory,"(.*)\\[\s]*$","\1","ALL");
+		if(arguments.addEmptyFlag){
+		  local.directory = local.directory & "^" & local.row.Empty;
+		}
 		if(NOT Len(Trim(local.row.Name))){
 		  ArrayAppend(local.directories,local.directory);
 		  local.nestedDirectories = ArrayNew(1);
 		}
 		else{
-			if(NOT ListFindNoCase(local.parents,local.directory)){
-			  ArrayAppend(local.nestedDirectories,local.directory);
-			  ArrayAppend(local.directories,local.nestedDirectories);
-			}
+		  if(NOT ListFindNoCase(local.parents,ListFirst(local.directory,"^"))){
+			ArrayAppend(local.nestedDirectories,local.directory);
+			ArrayAppend(local.directories,local.nestedDirectories);
+		  }
 		}
-		local.directories = ConvertDirectoryQueryToArray(query=arguments.query,parentId=local.row.Id,directories=local.directories,nestedDirectories=local.nestedDirectories,parents=local.parents);
+		local.directories = ConvertDirectoryQueryToArray(query=arguments.query,parentId=local.row.Id,directories=local.directories,nestedDirectories=local.nestedDirectories,parents=local.parents,addEmptyFlag=arguments.addEmptyFlag);
 	  }
 	}
 	
@@ -751,6 +762,59 @@
 		cfhttp(url=request.ngIframeSrc,method="get",result="local.ping");
 		local.result['ping'] = local.ping;
 	  }
+	}
+	return local.result;
+  }
+  
+  
+  public struct function GetRandomTwitterCard() output="true" {
+	var local = {};
+	local.result = {};
+	local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
+	local.filename = "";
+	local.filedirectory = "";
+	local.filepath = "";
+	local.filecontent = "";
+	local.query = QueryNew("Name,Directory");
+	local.query1 = DirectoryList(request.filepath & "\categories\",true,"query","*.png|*.gif|*.jpg|*.jpeg","asc");
+	if(local.query1.RecordCount){
+	  for(local.row in local.query1){ 
+		QueryAddRow(local.query);
+		QuerySetCell(local.query,"Name",local.row.Name);
+		QuerySetCell(local.query,"Directory",local.row.Directory);
+	  }
+	}
+	local.query2 = DirectoryList(request.filepath & "\twitter-cards\",true,"query","*.png|*.gif|*.jpg|*.jpeg","asc");
+	if(local.query2.RecordCount){
+	  for(local.row in local.query2){ 
+		QueryAddRow(local.query);
+		QuerySetCell(local.query,"Name",local.row.Name);
+		QuerySetCell(local.query,"Directory",local.row.Directory);
+	  }
+	}
+	if(local.query.RecordCount){
+	  local.rangeEnd = local.query.RecordCount;
+	  local.filename = "";
+	  while(local.filename == ""){
+		local.randomRow = RandRange(1,local.rangeEnd);
+		local.randomFilename = local.query['Name'][local.randomRow];
+		local.randomDirectory = local.query['Directory'][local.randomRow];
+		local.filename = local.randomFilename;
+		local.filedirectory = local.randomDirectory;
+		local.filepath = local.filedirectory & "\" & local.filename;
+	  }
+	}
+	if(FileExists(local.filepath)){
+	  local.filecontenturi = REReplaceNoCase(local.filepath,".*(\\twitter-cards\\.*)","\1");
+	  if(REFindNoCase(".*(\\categories\\.*)",local.filepath)){
+		local.filecontenturi = REReplaceNoCase(local.filepath,".*(\\categories\\.*)","\1");
+	  }
+	  local.filecontenturi = REReplaceNoCase(local.filecontenturi,"[\\]+","/","ALL");
+	  local.filecontent = request.remoteuploadfolder & local.filecontenturi;
+	}
+	if(Len(Trim(local.filecontent))){
+	  local.result['path'] = local.filepath;
+	  local.result['url'] = local.filecontent;
 	}
 	return local.result;
   }

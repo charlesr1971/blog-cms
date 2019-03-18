@@ -10,6 +10,7 @@ import { DOCUMENT } from '@angular/common';
 import { uuid } from '../../util/uuid';
 import { addImage } from '../../util/addImage';
 import { isObjectEqual } from '../../util/isObjectEqual';
+import { updateCdkOverlayThemeClass } from '../../util/updateCdkOverlayThemeClass';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig, MatDialog } from '@angular/material';
 import { DialogAccountDeleteComponent } from '../../dialog-account-delete/dialog-account-delete.component';
@@ -57,6 +58,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @Input() profileApiDashboardState: string = 'out';
 
   themeObj = {};
+  themeRemove: string = '';
 
   imagesUnapproved: Array<any> = [];
   pageCacheUnapproved = {};
@@ -125,6 +127,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
 
       this.themeObj = this.httpService.themeObj;
+      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
 
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
@@ -294,7 +297,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
           keeploggedin: data['keeploggedin'],
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
-          theme: data['theme']
+          theme: data['theme'],
+          roleid: data['roleid']
         });
         this.userService.setCurrentUser(user);
         this.currentUser['authenticated'] = this.userid;
@@ -739,6 +743,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(DialogAccountDeleteComponent, {
       width: this.isMobile ? '90%' :'25%'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.afterClosed().subscribe(result => {
       if(this.debug) {
         console.log('profile.component: openDialog(): The dialog was closed');

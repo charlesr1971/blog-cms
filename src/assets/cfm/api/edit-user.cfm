@@ -24,6 +24,7 @@
 <cfset data['avatarSrc'] = "">
 <cfset data['emailNotification'] = 1>
 <cfset data['theme'] = themeObj['default']>
+<cfset data['roleid'] = 2>
 <cfset data['keeploggedin'] = 0>
 <cfset data['submitArticleNotification'] = 1>
 <cfset data['cookieAcceptance'] = 0>
@@ -115,6 +116,7 @@
   <cfset data['signUpToken'] = qGetUser.SignUpToken>
   <cfset data['signUpValidated'] = qGetUser.SignUpValidated>
   <cfset data['avatarSrc'] = request.avatarbasesrc & qGetUser.Filename>
+  <cfset data['roleid'] = qGetUser.Role_ID>
   <cfset data['keeploggedin'] = qGetUser.Keep_logged_in>
   <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
   <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>

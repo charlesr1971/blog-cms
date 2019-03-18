@@ -29,6 +29,7 @@
 <cfset data['avatarSrc'] = "">
 <cfset data['emailNotification'] = 1>
 <cfset data['theme'] = "">
+<cfset data['roleid'] = 2>
 <cfset data['keeploggedin'] = 0>
 <cfset data['submitArticleNotification'] = 1>
 <cfset data['commentToken'] = "">
@@ -168,6 +169,7 @@
         <cfset data['avatarSrc'] = request.avatarbasesrc & qGetUser.Filename>
         <cfset data['emailNotification'] = qGetUser.Email_notification>
         <cfset data['theme'] = themeObj['stem'] & "-" & qGetUser.Theme>
+        <cfset data['roleid'] = qGetUser.Role_ID>
         <cfset data['keeploggedin'] = data['keeploggedin']>
         <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
         <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
@@ -251,6 +253,7 @@
         <cfset data['avatarSrc'] = request.avatarbasesrc & qGetUser.Filename>
         <cfset data['emailNotification'] = qGetUser.Email_notification>
         <cfset data['theme'] = themeObj['stem'] & "-" & qGetUser.Theme>
+        <cfset data['roleid'] = qGetUser.Role_ID>
         <cfset data['keeploggedin'] = qGetUser.Keep_logged_in>
         <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
         <cfset data['commentid'] = qGetComment.Comment_ID>

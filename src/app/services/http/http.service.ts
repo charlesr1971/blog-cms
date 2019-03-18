@@ -16,6 +16,7 @@ import { environment } from '../../../environments/environment';
 export class HttpService { 
   
   websiteTitle: string = environment.title;
+  htmlTitle: string = environment.htmlTitle;
   port: string = '';
   signUpValidated: number = 0;
   viewCommentid: number = 0;
@@ -86,6 +87,12 @@ export class HttpService {
 
     if(websiteTitle !== '0' || websiteTitle !== '') {
       this.websiteTitle = websiteTitle;
+    }
+
+    const htmlTitle = getUrlParameter('htmlTitle');
+
+    if(htmlTitle !== '0' || htmlTitle !== '') {
+      this.htmlTitle = htmlTitle;
     }
 
     const port = getUrlParameter('port');
@@ -212,7 +219,8 @@ export class HttpService {
           keeploggedin: data['keeploggedin'],
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
-          theme: data['theme']
+          theme: data['theme'],
+          roleid: data['roleid']
         });
         if(this.commentToken === '' && data['keeploggedin'] === 1 && data['userid'] > 0) {
           user['authenticated'] = data['userid'];

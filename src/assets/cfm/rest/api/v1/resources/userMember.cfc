@@ -19,6 +19,7 @@
     <cfset local.data['avatarSrc'] = "">
     <cfset local.data['emailNotification'] = 1>
     <cfset local.data['theme'] = local.themeObj['default']>
+    <cfset local.data['roleid'] = 2>
     <cfset local.data['keeploggedin'] = 0>
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['cookieAcceptance'] = 0>
@@ -47,6 +48,7 @@
         <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.qGetUser.Filename>
         <cfset local.data['emailNotification'] = local.qGetUser.Email_notification>
         <cfset local.data['theme'] = local.themeObj['stem'] & "-" & local.qGetUser.Theme>
+        <cfset local.data['roleid'] = local.qGetUser.Role_ID>
         <cfset local.data['keeploggedin'] = local.qGetUser.Keep_logged_in>
         <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
         <cfset local.data['cookieAcceptance'] = local.qGetUser.Cookie_acceptance>
@@ -77,6 +79,7 @@
     <cfset local.data['cftoken'] = "">
     <cfset local.data['signuptoken'] = local.signuptoken>
     <cfset local.data['signUpValidated'] = 0>
+    <cfset local.data['roleid'] = 2>
     <cfset local.data['createdat'] = "">
     <cfset local.data['testEmail'] = false>
     <cfset local.data['cookieAcceptance'] = 0>
@@ -221,6 +224,7 @@
     <cfset local.data['avatarSrc'] = "">
     <cfset local.data['emailNotification'] = 1>
     <cfset local.data['theme'] = local.themeObj['default']>
+    <cfset local.data['roleid'] = 2>
     <cfset local.data['keeploggedin'] = 0>
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['cookieAcceptance'] = 0>
@@ -303,6 +307,7 @@
       <cfset local.data['signUpToken'] = local.qGetUser.SignUpToken>
       <cfset local.data['signUpValidated'] = local.qGetUser.SignUpValidated>
       <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.qGetUser.Filename>
+      <cfset local.data['roleid'] = local.qGetUser.Role_ID>
       <cfset local.data['keeploggedin'] = local.qGetUser.Keep_logged_in>
       <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
       <cfset local.data['cookieAcceptance'] = local.qGetUser.Cookie_acceptance>

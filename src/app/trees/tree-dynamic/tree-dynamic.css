@@ -1,5 +1,5 @@
 .mat-form-field {
-  width: 50%;
+  width: 48%;
 }
 
 .tree-progress-bar {
@@ -72,9 +72,9 @@
 	box-sizing: border-box;
 }
 
-.uploaded-image-container {
+.uploaded-image-container-outer {
   float: right;
-  width: 49%;
+  width: 50%;
   padding: 20px;
   vertical-align: top;
   line-height: 17px;
@@ -113,12 +113,13 @@
 }
 
 .form-field-container .form-field-text .form-button-container {
-  width: 50%;
+  width: 48%;
   margin-top: 20px;
 }
 
 .form-field-container .form-field-text .form-button-container button {
   width: 125px;
+  margin-left: 0px;
 }
 
 .form-field-container .form-field-text .form-button-container button:nth-of-type(2) {
@@ -211,7 +212,7 @@ button[data-role='submit'] {
     margin-bottom: 20px;
   }
   
-  .uploaded-image-container {
+  .uploaded-image-container-outer {
     float: none;
     width: 100%;
     vertical-align: initial;

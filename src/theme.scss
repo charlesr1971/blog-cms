@@ -115,8 +115,12 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-primary, darker) !important;
     }
 
-    .uploaded-image-container, .uploaded-image-container-outer {
-        background: mat-color($dark-foreground-palette, text, 0.035);
+    .uploaded-image-container {
+        background: mat-color($dark-primary, default, 0);
+    }
+
+    .uploaded-image-container-outer {
+        background: mat-color($dark-primary, default, 0.07);
     }
 
     .form-field-container .form-field-text div.panel h2.panel-legend, .form-field-container .form-field-text div.panel mat-select.panel-legend {
@@ -449,8 +453,12 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-primary, darker) !important;
     }
 
-    .uploaded-image-container, .uploaded-image-container-outer {
-        background: mat-color($light-primary, default, 0.075);
+    .uploaded-image-container {
+        background: mat-color($light-primary, default, 0);
+    }
+
+    .uploaded-image-container-outer {
+        background: mat-color($light-primary, default, 0.07);
     }
 
     .form-field-container .form-field-text div.panel h2.panel-legend, .form-field-container .form-field-text div.panel mat-select.panel-legend {
@@ -470,7 +478,7 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     .mat-tree {
-        background: mat-color($light-primary, default, 0.075);
+        background: mat-color($light-primary, default, 0.07);
     }
 
     .mat-tree-node a {

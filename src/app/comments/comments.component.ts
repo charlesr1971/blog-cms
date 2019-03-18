@@ -9,6 +9,7 @@ import { firstBy } from 'thenby';
 import { MatDialog } from '@angular/material';
 import { CookieService } from 'ngx-cookie-service';
 import { styler } from '../util/styler';
+import { updateCdkOverlayThemeClass } from '../util/updateCdkOverlayThemeClass';
 
 import { User } from '../user/user.model';
 import { Comment } from '../comment/comment.model';
@@ -87,6 +88,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   commentsDialogIsOpen: boolean = false;
   themeTypeLight: boolean = false;
   themeObj = {};
+  themeRemove: string = '';
 
   debug: boolean = false;
 
@@ -102,8 +104,9 @@ export class CommentsComponent implements OnInit, OnDestroy {
         console.log('comments.component loaded');
       }
 
-      this.themeObj = this.httpService.themeObj;
-      this.themeTypeLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+      const themeObj = this.httpService.themeObj;
+      this.themeTypeLight = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? true : false;
+      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
       this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -480,6 +483,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
       maxWidth: 740,
       id: 'dialog-comments-' + this.image['id']
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     const infiniteScrollerComments = this.documentBody.querySelector('#infinite-scroller-comments-' + this.image['id']);
     const newChild = this.documentBody.querySelector('#app-comments-' + this.image['id']);
     dialogRef.beforeClose().subscribe(result => {
@@ -505,14 +509,9 @@ export class CommentsComponent implements OnInit, OnDestroy {
       this.renderer.insertBefore(parent, newChild, refChild);
       this.httpService.commentsDialogOpened.next(false);
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('comments.component: dialog after open');
-      }
-      if(result) {
-        if(this.debug) {
-          console.log('comments.component: dialog result: ', result);
-        }
       }
       this.commentsDialogIsOpen = true;
       const parent = this.documentBody.querySelector('#dialog-comments-' + this.image['id']);
@@ -540,6 +539,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
       width: this.isMobile ? '90%' :'25%',
       id: 'dialog-comments-profanity-notification'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('comments.component: dialog comments profanity notification: before close');
@@ -550,14 +550,9 @@ export class CommentsComponent implements OnInit, OnDestroy {
         }
       }
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('comments.component: dialog comments profanity notification: after open');
-      }
-      if(result) {
-        if(this.debug) {
-          console.log('comments.component: dialog comments profanity notification: after open: result: ', result);
-        }
       }
     });
   }

@@ -21,6 +21,7 @@ export class User {
   submitArticleNotification: number;
   cookieAcceptance: number;
   theme: string;
+  roleid: number;
 
   constructor(obj?: any) {
 
@@ -41,6 +42,7 @@ export class User {
     this.submitArticleNotification = obj && obj.submitArticleNotification || 0;
     this.cookieAcceptance = obj && obj.cookieAcceptance || 0;
     this.theme = obj && obj.theme || null;
+    this.roleid = obj && obj.roleid || 2;
 
   }
   

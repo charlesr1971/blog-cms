@@ -215,3 +215,46 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   <cfset variables.thread = cfthread[key]>
   <cfdump var="#variables.thread#" />
 </cfloop>--->
+
+<cfoutput>
+
+
+  <!---<cfset path1 = request.filepath & "\categories">
+  
+  <cfdirectory action="list" directory="#path1#" name="query1" sort="Directory, Name ASC" type="dir" recurse="yes" />
+  
+  <cfloop query="query1">
+  
+    <cfset path2 = query1.Directory & "\" & query1.Name>
+  
+    <cfdirectory action="list" directory="#path2#" name="query2" type="file" recurse="no" />
+    
+    <cfif query2.RecordCount>
+      <strong>#path2#:</strong> not empty
+    <cfelse>
+      <strong>#path2#:</strong> empty
+    </cfif>
+    
+    <br /><br />
+  
+  </cfloop>--->
+  
+  <cfset qGetDirPlusId = request.utils.ParseDirectory(path=request.filepath & "/categories")>
+  
+  <cfdump var="#qGetDirPlusId#" />
+  
+  <cfset directories = request.utils.CleanArray(directories=request.utils.ConvertDirectoryQueryToArray(query=qGetDirPlusId,addEmptyFlag=false),formatWithKeys=false)>
+ 
+
+
+  <!---<cfset directories = request.utils.ConvertDirectoryQueryToArray(query=qGetDirPlusId,addEmptyFlag=true)>--->
+ 
+  <cfdump var="#directories#" />
+  
+  <!---<cfdirectory action="list" directory="C:\ColdFusion11\cfusion\wwwroot\community.establishmindfulness\material\ngMat02\src\assets\cfm\categories\objects" name="query1" sort="Directory, Name ASC" type="file" recurse="no" />
+  
+  <cfdump var="#query1#" />--->
+
+
+
+</cfoutput>

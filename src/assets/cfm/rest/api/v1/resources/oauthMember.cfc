@@ -24,6 +24,7 @@
     <cfset local.data['avatarSrc'] = "">
     <cfset local.data['emailNotification'] = 1>
     <cfset local.data['theme'] = "">
+    <cfset local.data['roleid'] = 2>
     <cfset local.data['keeploggedin'] = arguments.keeploggedin>
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['commentToken'] = "">
@@ -132,6 +133,7 @@
             <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.qGetUser.Filename>
             <cfset local.data['emailNotification'] = local.qGetUser.Email_notification>
             <cfset local.data['theme'] = local.themeObj['stem'] & "-" & local.qGetUser.Theme>
+            <cfset local.data['roleid'] = local.qGetUser.Role_ID>
             <cfset local.data['keeploggedin'] = local.data['keeploggedin']>
             <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
             <cfset local.data['cookieAcceptance'] = local.qGetUser.Cookie_acceptance>
@@ -214,6 +216,7 @@
             <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.qGetUser.Filename>
             <cfset local.data['emailNotification'] = local.qGetUser.Email_notification>
             <cfset local.data['theme'] = local.themeObj['stem'] & "-" & local.qGetUser.Theme>
+            <cfset local.data['roleid'] = local.qGetUser.Role_ID>
             <cfset local.data['keeploggedin'] = local.qGetUser.Keep_logged_in>
             <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
             <cfset local.data['commentid'] = local.qGetComment.Comment_ID>

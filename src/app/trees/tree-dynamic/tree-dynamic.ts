@@ -20,6 +20,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { SeoTitleFormatPipe } from '../../pipes/seo-title-format/seo-title-format.pipe';
 import { getUriMatches } from '../../util/regexUtils';
 import { titleFromAlias } from '../../util/titleFromAlias';
+import { updateCdkOverlayThemeClass } from '../../util/updateCdkOverlayThemeClass';
 
 import * as _moment from 'moment';
 
@@ -31,8 +32,6 @@ import { User } from '../../user/user.model';
 import { UserService } from '../../user/user.service';
 
 import { environment } from '../../../environments/environment';
-
-
 
 declare var ease, TweenMax, Elastic: any;
 
@@ -288,6 +287,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
   tinymceArticleImageCount: number = 0;
   tinyMceArticleMaxWordCount: number = environment.tinymcearticlemaxwordcount;
   tinymceArticleImages = [];
+  themeObj = {};
+  themeRemove: string = '';
   hasUnsavedChanges: boolean = false;
   userid: number = 0;
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
@@ -321,6 +322,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
     if(environment.debugComponentLoadingOrder) {
       console.log('tree-dynamic.component loaded');
     }
+
+    const themeObj = this.httpService.themeObj;
+    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
     this.apiUrl = this.httpService.apiUrl;
     this.categoryImagesUrl = this.httpService.categoryImagesUrl;
@@ -404,6 +408,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
           const maxcontentlength = Number(this.httpService.maxcontentlength);
           this.maxcontentlengthInMb = (maxcontentlength/1000000).toFixed(2);
           this.htmlStr = 'The image uploaded must be less than ' + this.maxcontentlengthInMb + 'MB';
+          const uploadedimagecontainer = this.documentBody.querySelector('#uploaded-image-container');
+          if(uploadedimagecontainer){
+            uploadedimagecontainer.innerHTML = this.htmlStr;
+          }
           this.editImageId = '';
           this.fileImageId = 0;
           if(this.debug) {
@@ -704,7 +712,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           signUpValidated: data['signUpValidated'],
           createdAt: data['createdat'],
           submitArticleNotification: 1,
-          cookieAcceptance: data['cookieAcceptance']
+          cookieAcceptance: data['cookieAcceptance'],
+          roleid: data['roleid']
         });
         this.userService.setCurrentUser(user);
         this.openSnackBar('Please check your e-mail to validate your sign up', 'Success');
@@ -739,7 +748,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           keeploggedin: data['keeploggedin'],
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
-          theme: data['theme']
+          theme: data['theme'],
+          roleid: data['roleid']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {
@@ -1164,6 +1174,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       maxWidth: 1278,
       id: 'dialog-article'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog aticle: before close');
@@ -1180,14 +1191,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
       }
       this.httpService.articleDialogOpened.next(0);
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('tree-dynamic: dialog aticle: after open');
-      }
-      if(result) {
-        if(this.debug) {
-          console.log('tree-dynamic: dialog aticle: after open: result: ', result);
-        }
       }
       const parent = this.documentBody.querySelector('#dialog-article');
       let height = parent.clientHeight ? parent.clientHeight : 0;
@@ -1210,6 +1216,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       width: this.isMobile ? '90%' :'25%',
       id: 'dialog-submit-article-notification'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog submit article notification: before close');
@@ -1225,14 +1232,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
         }
       }
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('tree-dynamic: dialog submit article notification: after open');
-      }
-      if(result) {
-        if(this.debug) {
-          console.log('tree-dynamic: dialog submit article notification: after open: result: ', result);
-        }
       }
     });
   }
@@ -1242,6 +1244,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       width: this.isMobile ? '90%' :'25%',
       id: 'dialog-article-max-word-count-notification'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog article max word count notification: before close');
@@ -1252,14 +1255,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
         }
       }
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('tree-dynamic: dialog article max word count notification: after open');
-      }
-      if(result) {
-        if(this.debug) {
-          console.log('tree-dynamic: dialog article max word count notification: after open: result: ', result);
-        }
       }
     });
   }
@@ -1271,6 +1269,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       maxWidth: this.isMobile ? '100%' :'50%',
       id: 'dialog-article-help-notification'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog article help notification: before close');
@@ -1281,7 +1280,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
         }
       }
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('tree-dynamic: dialog article help notification: after open');
       }
@@ -1299,17 +1298,15 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.renderer.setStyle(this.dialogArticleHelpNotificationText.nativeElement,'height',height + 'px');
         }
         const dialogarticlehelpnotificationcontainer = document.querySelector('#dialog-article-help-notification-container');
+
         if(parent) {
           TweenMax.fromTo(dialogarticlehelpnotificationcontainer, 1, {ease:Elastic.easeOut, opacity: 0}, {ease:Elastic.easeOut, opacity: 1});
         }
       }
-      if(result) {
-        if(this.debug) {
-          console.log('tree-dynamic: dialog article help notification: after open: result: ', result);
-        }
-      }
     });
   }
+
+
 
   closeArticleHelpNotificationDialog() {
     this.dialog.closeAll();

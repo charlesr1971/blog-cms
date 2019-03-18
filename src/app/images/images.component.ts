@@ -411,7 +411,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           keeploggedin: data['keeploggedin'],
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
-          theme: data['theme']
+          theme: data['theme'],
+          roleid: data['roleid']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {

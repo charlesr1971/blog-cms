@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, Inject, Renderer2, HostBinding } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { uuid } from './util/uuid';
 import { DOCUMENT } from '@angular/common';
 import { Router, NavigationStart, NavigationEnd, Event, ActivatedRoute } from '@angular/router';
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { capitalizeFirstLetter } from './util/capitalizeFirstLetter';
 import { UtilsService } from './services/utils/utils.service';
 import { HttpService } from './services/http/http.service';
 import { CookieService } from 'ngx-cookie-service';
@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
   debug: boolean = false;
 
   constructor(public cookieService: CookieService,
+    private titleService: Title,
     @Inject(DOCUMENT) document,
     private router: Router,
     private route: ActivatedRoute,
@@ -50,6 +51,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.themeObj = this.httpService.themeObj;
 
     this.title = this.httpService.websiteTitle !== '' ? this.httpService.websiteTitle : this.title;
+
+    this.setTitle(this.httpService.htmlTitle);
 
     if(!this.cookieService.check('userToken') || (this.cookieService.check('userToken') && this.cookieService.get('userToken') === '')) {
       this.httpService.browserCacheCleared = true;
@@ -246,6 +249,10 @@ export class AppComponent implements OnInit, OnDestroy {
         
       }
     }
+  }
+
+  setTitle(newTitle: string): void {
+    this.titleService.setTitle(newTitle);
   }
 
   buildCssClassName(url: string): string {

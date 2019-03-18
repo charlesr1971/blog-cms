@@ -23,6 +23,7 @@
   // START: Angular 7 config variables
   
   request.title = "Establish Mindfulness";
+  request.htmlTitle = request.title & " S.P.A";
   request.cfport = 0;
   request.maxcontentlength = 500000;
   request.tinymcearticlemaximages = 2;

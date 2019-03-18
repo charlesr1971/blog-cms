@@ -9,6 +9,7 @@ export const environment = {
   cf_dir: 'community.establishmindfulness/material/ngMat02/src/assets/cfm',
   allowMultipleLikesPerUser: 0,
   title: 'Establish Mindfulness',
+  htmlTitle: 'Establish Mindfulness S.P.A',
   logoSrc: 'assets/images/logo.png',
   debugComponentLoadingOrder: true,
   port: '8500',

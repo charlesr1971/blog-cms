@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -149,6 +149,7 @@ const appRoutes: Routes = [
   ],
   entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent], // Add the DialogComponent as entry component
   providers: [
+    Title,
     HttpService,
     UtilsService,
     CookieService,

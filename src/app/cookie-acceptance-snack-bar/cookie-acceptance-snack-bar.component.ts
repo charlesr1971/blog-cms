@@ -6,11 +6,10 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 import { MatDialog } from '@angular/material';
 import { CookiePolicyComponent } from '../cookie-policy/cookie-policy.component';
+import { updateCdkOverlayThemeClass } from '../util/updateCdkOverlayThemeClass';
 
 import { CookieService } from 'ngx-cookie-service';
-
 import { HttpService } from '../services/http/http.service';
-
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -30,6 +29,8 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
   isMobile: boolean = false;
   cookieAcceptanceSubscription: Subscription;
   dialogcookiePolicyHeight: number = 0;
+  themeObj = {};
+  themeRemove: string = '';
 
   debug: boolean = false;
 
@@ -42,6 +43,9 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
     if(environment.debugComponentLoadingOrder) {
       console.log('cookieAcceptanceSnackBarComponent.component loaded');
     }
+
+    const themeObj = this.httpService.themeObj;
+    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
     this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -167,6 +171,7 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
       maxWidth: 740,
       id: 'cookie-policy-dialog'
     });
+    updateCdkOverlayThemeClass(this.themeRemove);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('cookieAcceptanceSnackBarComponent.component: dialog cookie policy: before close');
@@ -177,14 +182,9 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
         }
       }
     });
-    dialogRef.afterOpen().subscribe(result => {
+    dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
         console.log('cookieAcceptanceSnackBarComponent.component: dialog cookie policy: after open');
-      }
-      if(result) {
-        if(this.debug) {
-          console.log('cookieAcceptanceSnackBarComponent.component: dialog cookie policy: after open: result: ', result);
-        }
       }
       if(this.isMobile) {
         const parent = document.querySelector('#cookie-policy-dialog');
