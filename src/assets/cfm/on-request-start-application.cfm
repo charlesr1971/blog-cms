@@ -20,19 +20,11 @@
 	request.engine = "Railo";
   }
   
-  // START: Angular 7 config variables
+  // START: settings
   
-  request.title = "Establish Mindfulness";
-  request.htmlTitle = request.title & " S.P.A";
-  request.cfport = 0;
-  request.maxcontentlength = 500000;
-  request.tinymcearticlemaximages = 2;
-  request.theme = "theme-1-dark";
+  include "settings/settings.cfm";
   
-  // END: Angular 7 config variables
-  
-  request.domain_dsn = "community-establishmindfulness";
-  request.websiteRootDirectory = "";
+  // END: settings
   
   request.newline = Chr(13) & Chr(10);
   request.crptographyencoding = "Hex";
@@ -112,12 +104,8 @@
   //theme=#request.theme#
   
   local.ngport = 4200;
-  local.useSSL = true;
+  
   local.host = ListFirst(CGI.HTTP_HOST,":");
-  request.protocol = "http";
-  if(!IsLocalHost(CGI.REMOTE_ADDR) AND local.useSSL){
-	request.protocol = "https";
-  }
   request.absoluteBaseUrl = request.protocol & "://" & CGI.HTTP_HOST;
   request.domainToken = Hash(request.basePathFull);
   request.ngAccessControlAllowOrigin = request.absoluteBaseUrl;
@@ -133,8 +121,8 @@
 	  request.ngAccessControlAllowOrigin = request.protocol & "://localhost";
 	}
 	request.ngIframeSrc = request.ngAccessControlAllowOrigin;
-	request.uploadfolder = request.absoluteBaseUrl & "/community.establishmindfulness/material/ngMat02/src/assets/cfm";
-	request.tinymcearticleuploadfolder = request.absoluteBaseUrl & "/community.establishmindfulness/material/ngMat02/src/assets/cfm/article-images";
+	request.uploadfolder = request.absoluteBaseUrl & "/" & request.localHost & "/src/assets/cfm";
+	request.tinymcearticleuploadfolder = request.absoluteBaseUrl & "/" & request.localHost & "/src/assets/cfm/article-images";
   }	
   
   request.restApiEndpoint = request.uploadfolder & "/rest/api/v1/index.cfm";
@@ -143,8 +131,8 @@
 	request.restApiEndpoint = request.uploadfolder & "/rest/api/v1";
   }
     
-  request.remoteuploadfolder = request.protocol & "://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/cfm";
-  request.emailimagesrc = request.protocol & "://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/images";
+  request.remoteuploadfolder = request.protocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/cfm";
+  request.emailimagesrc = request.protocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/images";
   request.emailimagealt = request.title & "S.P.A";  
   
   request.jwtexpiryminutes = 60;
@@ -253,11 +241,15 @@
   
   if(NOT StructKeyExists(application,"twittercard") OR request.appreloadValidated) {
 	cflock (name="twittercard", type="exclusive", timeout="30") {
-	  application.twittercard = "https://community.establishmindfulness.com/" & request.websiteRootDirectory & "assets/images/twitter-card.png";
+	  application.twittercard = request.protocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/images/twitter-card.png";
 	}
   }
   
-  request.twittercard = application.twittercard;
+  cflock (name="twittercard", type="readOnly", timeout="10") {
+	request.twittercard = application.twittercard;
+  }
+  
+  request.ogImage = request.twittercard;
   
   if(NOT StructKeyExists(application,"utils") OR request.appreloadValidated) {
 	try{

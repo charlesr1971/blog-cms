@@ -87,7 +87,52 @@
 		  }
 		}
 	  }
-	  
+	}
+	
+	local.queryService = new query();
+	local.queryService.setDBType("query");
+	local.queryService.setAttributes(sourceQuery=local.query2);
+	local.queryService.addParam(name="ParentId",value=0,cfsqltype="cf_sql_varchar"); 
+	local.objQueryResult = local.queryService.execute(sql="SELECT * FROM sourceQuery WHERE ParentId = :ParentId");
+	local.queryResult5 = local.objQueryResult.getResult();
+	
+	if(local.queryResult5.RecordCount){
+	  for(local.rowParent in local.queryResult5){
+		local.queryService1 = new query();
+		local.queryService1.setName("aQuery");
+		local.queryService1.setDBType("query");
+		local.queryService1.setAttributes(sourceQuery=local.query2);
+		local.objQueryResult1 = local.queryService1.execute(sql="SELECT * FROM sourceQuery WHERE ParentId<>0 AND GroupId=#local.rowParent.GroupId# AND Empty=0");
+		local.queryResult6 = local.objQueryResult1.getResult();
+		if(local.queryResult6.RecordCount){
+		  if(local.query2.RecordCount){
+			for(local.rowChild in local.query2){
+			  if(CompareNoCase(local.rowParent.Id,local.rowChild.Id) EQ 0){
+				local.query2['Empty'][local.query2.CurrentRow] = 0;
+				break;
+			  }
+			}
+		  }
+		}
+		else{
+		  if(local.query2.RecordCount){
+			for(local.rowChild in local.query2){
+			  if(CompareNoCase(local.rowParent.Id,local.rowChild.Id) EQ 0){
+				local.query2['Empty'][local.query2.CurrentRow] = 1;
+				break;
+			  }
+			}
+		  }
+		}		
+	  }
+	}
+	
+	if(local.query2.RecordCount){
+	  for(local.rowChild in local.query2){
+		if(CompareNoCase(ListLast(local.rowChild.Directory,"\"),"categories") EQ 0){
+		  local.query2['Empty'][local.query2.CurrentRow] = 0;
+		}
+	  }
 	}
 		
 	return local.query2;
@@ -140,6 +185,25 @@
 		local.directory = Trim(ReplaceNoCase(local.row.Directory & "\" & local.row.Name,request.filepath,""));
 		local.directory = REReplaceNoCase(local.directory,"(.*)\\[\s]*$","\1","ALL");
 		if(arguments.addEmptyFlag){
+		  /*if(NOT arguments.parentId){
+			  //WriteDump(var=local.row.GroupId);
+			  local.queryService1 = new query();
+			  local.queryService1.setName("aQuery");
+			  local.queryService1.setDBType("query");
+			  local.queryService1.setAttributes(sourceQuery=arguments.query);
+			  local.objQueryResult1 = local.queryService1.execute(sql="SELECT * FROM sourceQuery WHERE ParentId<>0 AND GroupId=#local.row.GroupId# AND Empty=0 ");
+			  local.queryResult1 = local.objQueryResult1.getResult();
+			  //WriteDump(var=local.queryResult1);
+			  if(local.queryResult1.RecordCount){
+				local.directory = local.directory & "^0";
+			  }
+			  else{
+				local.directory = local.directory & "^1";
+			  }
+		  }
+		  else{
+			local.directory = local.directory & "^" & local.row.Empty;
+		  }*/
 		  local.directory = local.directory & "^" & local.row.Empty;
 		}
 		if(NOT Len(Trim(local.row.Name))){
@@ -156,12 +220,14 @@
 	  }
 	}
 	
+	
+	
 	return local.directories;
 
   }
   
   
-  public any function CleanArray(array directories = ArrayNew(1), boolean formatWithKeys = false) output="true" {
+  public any function CleanArray(array directories = ArrayNew(1), boolean formatWithKeys = false, boolean flattenParentArray = false) output="true" {
 	  
 	  var local = {};
 	  
@@ -210,6 +276,17 @@
 		
 		local.directories = local.array;
 		
+	  }
+
+	  if(arguments.flattenParentArray){
+		local.categories = {};
+		for (local.index=1;local.index LTE ArrayLen(local.directories);local.index=local.index+1) {
+		  local.obj = local.directories[local.index];
+		  for(local.key in local.obj){
+			local.categories[local.key] = local.obj[local.key];
+		  }
+		}
+		local.directories = local.categories;
 	  }
 	  
 	  return local.directories;
@@ -775,6 +852,7 @@
 	local.filedirectory = "";
 	local.filepath = "";
 	local.filecontent = "";
+	local.currentFilename = ListLast(request.twittercard,"/");
 	local.query = QueryNew("Name,Directory");
 	local.query1 = DirectoryList(request.filepath & "\categories\",true,"query","*.png|*.gif|*.jpg|*.jpeg","asc");
 	if(local.query1.RecordCount){
@@ -799,9 +877,11 @@
 		local.randomRow = RandRange(1,local.rangeEnd);
 		local.randomFilename = local.query['Name'][local.randomRow];
 		local.randomDirectory = local.query['Directory'][local.randomRow];
-		local.filename = local.randomFilename;
-		local.filedirectory = local.randomDirectory;
-		local.filepath = local.filedirectory & "\" & local.filename;
+		if(CompareNoCase(local.randomFilename,local.currentFilename) NEQ 0){
+		  local.filename = local.randomFilename;
+		  local.filedirectory = local.randomDirectory;
+		  local.filepath = local.filedirectory & "\" & local.filename;
+		}
 	  }
 	}
 	if(FileExists(local.filepath)){
@@ -815,6 +895,9 @@
 	if(Len(Trim(local.filecontent))){
 	  local.result['path'] = local.filepath;
 	  local.result['url'] = local.filecontent;
+	  cflock (name="twittercard", type="exclusive", timeout="30") {
+		application.twittercard = local.filecontent;
+	  }
 	}
 	return local.result;
   }

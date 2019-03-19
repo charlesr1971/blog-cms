@@ -27,10 +27,12 @@ Dependency: none
   
   <cfif request.appreloadValidated OR isLocalhost(CGI.REMOTE_ADDR)>
   
-	<cfset twitterCardObj = TwitterCardRotator()>
+	<!---<cfset twitterCardObj = TwitterCardRotator()>--->
+    <cfset twitterCardObj = GetRandomTwitterCard()>
     
     <cftry>
-      <cfif NOT StructIsEmpty(twitterCardObj) AND StructKeyExists(twitterCardObj,"path") AND Len(Trim(twitterCardObj['path'])) AND StructKeyExists(twitterCardObj,"url") AND Len(Trim(twitterCardObj['url'])) AND StructKeyExists(twitterCardObj,"documentBefore") AND Len(Trim(twitterCardObj['documentBefore'])) AND StructKeyExists(twitterCardObj,"documentAfter") AND Len(Trim(twitterCardObj['documentAfter']))>
+      <!---<cfif NOT StructIsEmpty(twitterCardObj) AND StructKeyExists(twitterCardObj,"path") AND Len(Trim(twitterCardObj['path'])) AND StructKeyExists(twitterCardObj,"url") AND Len(Trim(twitterCardObj['url'])) AND StructKeyExists(twitterCardObj,"documentBefore") AND Len(Trim(twitterCardObj['documentBefore'])) AND StructKeyExists(twitterCardObj,"documentAfter") AND Len(Trim(twitterCardObj['documentAfter']))>--->
+      <cfif NOT StructIsEmpty(twitterCardObj) AND StructKeyExists(twitterCardObj,"path") AND Len(Trim(twitterCardObj['path'])) AND StructKeyExists(twitterCardObj,"url") AND Len(Trim(twitterCardObj['url']))>
         <cfsavecontent variable="messagedata">
           Twitter card was replaced successfully<br />
         </cfsavecontent>

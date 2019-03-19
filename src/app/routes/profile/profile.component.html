@@ -61,6 +61,15 @@
           </div>
         </div>
 
+        <div class="panel" *ngIf="currentUser.roleid >= 6">
+          <h2 class="panel-legend">
+            <span>Edit Categories</span><mat-icon (click)="openProfileCategoryEdit($event)">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileCategoryEditFadeInOutAnimation]="{value: profileCategoryEditState}" style="padding-bottom:0px;">
+            <app-tree-category-edit></app-tree-category-edit>
+          </div>
+        </div>
+
         <div class="panel unapproved-images" *ngIf="pagesUnapproved.length > 0">
           <mat-icon class="add" (click)="toggleUnapprovedImages($event)">add</mat-icon> 
           <mat-select #unapprovedImagesSelect class="panel-legend" placeholder="Unapproved Images" floatLabel="never" (selectionChange)="onChangeUnapproved($event)">
@@ -106,6 +115,8 @@
             </li>
           </ul>
         </div>
+
+        
 
         <div class="upload-container">
           <app-upload></app-upload>

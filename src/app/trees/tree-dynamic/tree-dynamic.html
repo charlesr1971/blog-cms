@@ -144,7 +144,7 @@
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
           <button mat-icon-button disabled></button>
           <!-- {{node.item}} -->
-          <a (click)="addPath($event,node.item)">{{node.item | pathFormat}}</a>
+          <a (click)="addPath($event,node.item)">{{ node.item | pathFormat }}</a>
           <mat-icon class="mat-icon-rtl-mirror grade" [attr.id]="'directory-' + (node.item | pathFormat)" color="accent">
             {{directorySelected == node.item ? 'grade' : ''}}
           </mat-icon>
@@ -153,10 +153,10 @@
           <button mat-icon-button
                   [attr.aria-label]="'toggle ' + node.filename" matTreeNodeToggle>
             <mat-icon class="mat-icon-rtl-mirror">
-              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
             </mat-icon>
           </button>
-          {{node.item | pathFormat}}
+          {{ node.item | pathFormat }}
           <mat-progress-bar *ngIf="node.isLoading"
                             mode="indeterminate"
                             class="tree-progress-bar"></mat-progress-bar>

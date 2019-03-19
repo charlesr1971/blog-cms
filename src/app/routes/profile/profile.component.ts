@@ -9,7 +9,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { DOCUMENT } from '@angular/common';
 import { uuid } from '../../util/uuid';
 import { addImage } from '../../util/addImage';
-import { isObjectEqual } from '../../util/isObjectEqual';
 import { updateCdkOverlayThemeClass } from '../../util/updateCdkOverlayThemeClass';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig, MatDialog } from '@angular/material';
@@ -47,6 +46,18 @@ declare var ease, TweenMax, Elastic: any;
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
   ]),
+    trigger('profileCategoryEditFadeInOutAnimation', [
+      state('in', style({
+        opacity: 1,
+        display: 'block'
+      })),
+      state('out', style({
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('out => in', animate('250ms ease-in')),
+      transition('in => out', animate('250ms ease-out'))
+  ]),
   ]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
@@ -56,6 +67,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('unapprovedImagesSelect') unapprovedImagesSelect;
   @ViewChild('approvedImagesSelect') approvedImagesSelect;
   @Input() profileApiDashboardState: string = 'out';
+  @Input() profileCategoryEditState: string = 'out';
 
   themeObj = {};
   themeRemove: string = '';
@@ -686,6 +698,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   openProfileApiDashboard(event: any): void {
     this.profileApiDashboardState = this.profileApiDashboardState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openProfileCategoryEdit(event: any): void {
+    this.profileCategoryEditState = this.profileCategoryEditState === 'in' ? 'out' : 'in';
     event.stopPropagation();
   }
 

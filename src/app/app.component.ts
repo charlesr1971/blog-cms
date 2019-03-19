@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject, Renderer2, HostBinding } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Title, Meta } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { uuid } from './util/uuid';
 import { DOCUMENT } from '@angular/common';
@@ -36,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(public cookieService: CookieService,
     private titleService: Title,
+    private meta : Meta ,
     @Inject(DOCUMENT) document,
     private router: Router,
     private route: ActivatedRoute,
@@ -53,6 +54,14 @@ export class AppComponent implements OnInit, OnDestroy {
     this.title = this.httpService.websiteTitle !== '' ? this.httpService.websiteTitle : this.title;
 
     this.setTitle(this.httpService.htmlTitle);
+
+    this.meta.addTag({name:'twitter:card',content:this.httpService.twitterCard});
+    this.meta.addTag({name:'twitter:site',content:this.httpService.twitterSite});
+    this.meta.addTag({name:'twitter:creator',content:this.httpService.twitterCreator});
+    this.meta.addTag({name:'og:url',content:this.httpService.ogUrl});
+    this.meta.addTag({name:'og:title',content:this.httpService.ogTitle});
+    this.meta.addTag({name:'og:description',content:this.httpService.ogDescription});
+    this.meta.addTag({name:'og:image',content:this.httpService.ogImage});
 
     if(!this.cookieService.check('userToken') || (this.cookieService.check('userToken') && this.cookieService.get('userToken') === '')) {
       this.httpService.browserCacheCleared = true;

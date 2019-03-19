@@ -17,6 +17,13 @@ export class HttpService {
   
   websiteTitle: string = environment.title;
   htmlTitle: string = environment.htmlTitle;
+  twitterCard: string = '';
+  twitterSite: string = '';
+  twitterCreator: string = '';
+  ogUrl: string = '';
+  ogTitle: string = '';
+  ogDescription: string = '';
+  ogImage: string = '';
   port: string = '';
   signUpValidated: number = 0;
   viewCommentid: number = 0;
@@ -93,6 +100,48 @@ export class HttpService {
 
     if(htmlTitle !== '0' || htmlTitle !== '') {
       this.htmlTitle = htmlTitle;
+    }
+
+    const twitterCard = getUrlParameter('twitterCard');
+
+    if(twitterCard !== '0' || twitterCard !== '') {
+      this.twitterCard = twitterCard;
+    }
+
+    const twitterSite = getUrlParameter('twitterSite');
+
+    if(twitterSite !== '0' || twitterSite !== '') {
+      this.twitterSite = twitterSite;
+    }
+
+    const twitterCreator = getUrlParameter('twitterCreator');
+
+    if(twitterCreator !== '0' || twitterCreator !== '') {
+      this.twitterCreator = twitterCreator;
+    }
+
+    const ogUrl = getUrlParameter('ogUrl');
+
+    if(ogUrl !== '0' || ogUrl !== '') {
+      this.ogUrl = ogUrl;
+    }
+
+    const ogTitle = getUrlParameter('ogTitle');
+
+    if(ogTitle !== '0' || ogTitle !== '') {
+      this.ogTitle = ogTitle;
+    }
+
+    const ogDescription = getUrlParameter('ogDescription');
+
+    if(ogDescription !== '0' || ogDescription !== '') {
+      this.ogDescription = ogDescription;
+    }
+
+    const ogImage = getUrlParameter('ogImage');
+
+    if(ogImage !== '0' || ogImage !== '') {
+      this.ogImage = ogImage;
     }
 
     const port = getUrlParameter('port');
@@ -907,8 +956,8 @@ export class HttpService {
 
   // GET
 
-  fetchDirectoryTree(): Observable<any> {
-    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/category') : new HttpRequest('GET', this.apiUrl + '/category.cfm');
+  fetchDirectoryTree(addEmptyFlag = false, formatWithKeys = false, flattenParentArray = false): Observable<any> {
+    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/category/' + addEmptyFlag + '/' + formatWithKeys + '/' + flattenParentArray) : new HttpRequest('GET', this.apiUrl + '/category.cfm?addEmptyFlag=' + addEmptyFlag + '&formatWithKeys=' + formatWithKeys + '&flattenParentArray=' + flattenParentArray);
     return this.http.request(req)
     .map( (data) => {
       return 'body' in data ? data['body'] : null;

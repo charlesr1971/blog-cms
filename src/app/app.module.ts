@@ -37,6 +37,7 @@ import { SnackbarService } from './services/snackbar/snackbar.service';
 
 import { RouterModule, Routes } from '@angular/router';
 import { TreeDynamic } from './trees/tree-dynamic/tree-dynamic';
+import { TreeCategoryEdit } from './trees/tree-category-edit/tree-category-edit';
 import { PathFormatPipe } from './pipes/path-format/path-format.pipe';
 import { FileSizePipe } from './pipes/file-size/file-size.pipe';
 import { SeoTitleFormatPipe } from './pipes/seo-title-format/seo-title-format.pipe';
@@ -59,6 +60,9 @@ import { CookiePolicyComponent } from './cookie-policy/cookie-policy.component';
 import { CharCountDirective } from './directives/char-count/char-count.directive';
 
 import { environment } from '../environments/environment';
+import { EmptyDirectoryFormatPipe } from './pipes/empty-directory-format/empty-directory-format.pipe';
+import { ConvertPathToIdPipe } from './pipes/convert-path-to-id/convert-path-to-id.pipe';
+import { ConvertIdToPathPipe } from './pipes/convert-id-to-path/convert-id-to-path.pipe';
 
 const appRoutes: Routes = [
   { path: environment.catalogRouterAlias, component: GalleryComponent },
@@ -79,6 +83,7 @@ const appRoutes: Routes = [
     ProfileComponent,
     UploadPhotoComponent,
     TreeDynamic,
+    TreeCategoryEdit,
     PathFormatPipe,
     ImagesComponent,
     ImageComponent,
@@ -97,7 +102,10 @@ const appRoutes: Routes = [
     MyFooterComponent,
     CookieAcceptanceSnackBarComponent,
     CookiePolicyComponent,
-    CharCountDirective
+    CharCountDirective,
+    EmptyDirectoryFormatPipe,
+    ConvertPathToIdPipe,
+    ConvertIdToPathPipe
   ],
   imports: [
     BrowserModule,
@@ -156,6 +164,7 @@ const appRoutes: Routes = [
     UserService,
     SnackbarService,
     HttpInterceptorProviders,
+    ConvertIdToPathPipe,
     {provide: LocationStrategy, useClass: PathLocationStrategy}
   ],
   bootstrap: [AppComponent]

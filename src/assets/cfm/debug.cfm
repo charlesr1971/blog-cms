@@ -243,7 +243,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   <cfdump var="#qGetDirPlusId#" />
   
-  <cfset directories = request.utils.CleanArray(directories=request.utils.ConvertDirectoryQueryToArray(query=qGetDirPlusId,addEmptyFlag=false),formatWithKeys=false)>
+  <cfset directories = request.utils.CleanArray(directories=request.utils.ConvertDirectoryQueryToArray(query=qGetDirPlusId,addEmptyFlag=true),formatWithKeys=true,flattenParentArray=true)>
  
 
 

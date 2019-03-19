@@ -13,14 +13,6 @@ body {
     font-family: 'Roboto', sans-serif; 
 }
 
-/* body.profile .mat-sidenav-container {
-    overflow : visible;
-}
-
-body.profile .mat-sidenav-content {
-    overflow : visible;
-} */
-
 body.gallery {
     overflow: hidden !important;
     height: 100% !important;
@@ -195,6 +187,7 @@ body.gallery .mat-card .mat-select-trigger {
 
 .tooltip-inner {
     white-space: nowrap !important;
+    max-width: 300px !important;
 }
 
 .mat-dialog-container div.avatar-container div.avatar-scale-container .mat-icon {
@@ -280,10 +273,21 @@ app-images .mat-spinner {
     margin-bottom: 0px !important;
 }
 
-/* .mat-card > .mat-card-actions .mat-select-trigger {
-    position: relative;
-    top: 5px;
-} */
+body.profile .mat-tree {
+    background: none !important;
+}
+
+body.profile .mat-tree .mat-form-field {
+    padding-left: 10px !important;
+}
+
+body.profile .mat-tree .mat-checkbox label {
+    margin-bottom: 0px !important;
+}
+
+body.profile .mat-tree .mat-form-field.create-new-category-form-field {
+    margin-left: 20px !important;
+}
 
 /* media queries */
 

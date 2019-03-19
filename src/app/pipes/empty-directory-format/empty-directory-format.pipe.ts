@@ -1,14 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'pathFormat'
+  name: 'emptyDirectoryFormat'
 })
-export class PathFormatPipe implements PipeTransform {
+export class EmptyDirectoryFormatPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
     let last = value.split('//');
     last = Array.isArray(last) ? last[last.length-1] : value;
-    last = last.replace(/\^.*/,'');
+    last = last.replace(/.*\^/,'');
     return last;
   }
 
