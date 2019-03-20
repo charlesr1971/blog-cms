@@ -207,9 +207,10 @@
                             </td>
                             <td align="right">
                             
-                              <table cellpadding="20" cellspacing="0" border="0" width="190">
+                              <table cellpadding="20" cellspacing="0" border="0" width="190" height="58">
                                 <tr valign="middle">
-                                  <td align="center" class="title" bgcolor="##f9f9f9">
+                                  <td align="center" class="title" bgcolor="##f9f9f9" style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;
+word-wrap:break-word;font-size:12px;">
                                     #request.title# S.P.A
                                   </td>
                                 </tr>

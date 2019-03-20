@@ -151,6 +151,14 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text);
     }
 
+    .category-edit-tree-container {
+        background: mat-color($dark-foreground-palette, text, 0.035);
+    }
+
+    .category-edit-tree {
+        background: mat-color($dark-foreground-palette, text, 0.035);
+    }
+
     .mat-card-content.comments {
         background: mat-color($dark-background-palette, background);
     }
@@ -487,6 +495,14 @@ $light-background-palette: map-get($light-theme, background);
 
     .mat-tree-node a:hover {
         color: mat-color($light-foreground-palette, text);
+    }
+
+    .category-edit-tree-container {
+        background: mat-color($light-foreground-palette, text, 0.035);
+    }
+
+    .category-edit-tree {
+        background: mat-color($light-foreground-palette, text, 0.035);
     }
 
     .mat-card-content.comments {

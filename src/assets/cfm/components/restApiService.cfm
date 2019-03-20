@@ -1593,21 +1593,30 @@
 		header div.header-container {
 			position: absolute;
 			display: inline-block;
-			top: 16px;
+			max-width: 600px;
+			height: 40px;
+			top: 50%;
 			left: 50%;
-			transform: translateX(-50%);
+			transform: translate(-50%,-50%);
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
 		}
 		
 		header div.header-container img {
 			position: relative;
-			top: -2px;
+			display: inline;
+			top: 5px;
+			left: 0px;
 			width: 30px;
-			margin-right: 5px;
-			vertical-align: middle;
+			margin: 0px 5px 0px 5px;
+			z-index: 2;
 		}
 		
 		header div.header-container h1 {
+			position: relative;
 			display: inline;
+			top: -4px;
 			font-size: 20px;
 			margin: 0px;
 			line-height: 32px;
@@ -1618,6 +1627,9 @@
 		}
 		
 		header div.header-container span {
+			position: relative;
+			display: inline;
+			top: -4px;
 			font-size: 20px;
 			line-height: 32px;
 			font-weight: normal;
@@ -2332,6 +2344,10 @@
 		  div.menu-overlay-show {
 			  background: rgba(189,189,189,.6);
 			  visibility: visible;
+		  }
+		  
+		  header div.header-container {
+			  max-width: 240px;
 		  }
 		  
 		  header##header i{

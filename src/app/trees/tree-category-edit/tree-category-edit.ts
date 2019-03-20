@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, ViewChild } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -17,6 +17,11 @@ import { HttpService } from '../../services/http/http.service';
 export class TodoItemNode {
   children: TodoItemNode[];
   item: string;
+  empty: number;
+  path: string;
+  id: string;
+  isDeleted: boolean;
+  opacity: number;
 }
 
 /** Flat to-do item node with expandable and level information */
@@ -27,6 +32,8 @@ export class TodoItemFlatNode {
   empty: number;
   path: string;
   id: string;
+  isDeleted: boolean;
+  opacity: number;
 }
 
 /**
@@ -48,8 +55,11 @@ export class ChecklistDatabase {
   get data(): TodoItemNode[] { return this.dataChange.value; }
 
   constructor(httpService: HttpService,
-    private convertIdToPathPipe: ConvertIdToPathPipe) {
-
+    private convertIdToPathPipe: ConvertIdToPathPipe,
+    private pathFormatPipe: PathFormatPipe,
+    private emptyDirectoryFormatPipe: EmptyDirectoryFormatPipe,
+    private convertPathToIdPipe: ConvertPathToIdPipe) {
+      
     this.httpService = httpService;
     this.fetchData();
 
@@ -83,15 +93,33 @@ export class ChecklistDatabase {
    */
   buildFileTree(obj: {[key: string]: any}, level: number): TodoItemNode[] {
     return Object.keys(obj).reduce<TodoItemNode[]>((accumulator, key) => {
+
       const value = obj[key];
       const node = new TodoItemNode();
-      node.item = key;
+
+      node.item = this.pathFormatPipe.transform(key);
+      node.empty = this.emptyDirectoryFormatPipe.transform(key);
+      if(node.item === 'categories') {
+        node.empty = 0;
+      }
+      node.path = key;
+      node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(key));
+      node.isDeleted = false;
+      node.opacity = 1;
 
       if (value != null) {
         if (typeof value === 'object') {
           node.children = this.buildFileTree(value, level + 1);
         } else {
-          node.item = value;
+          node.item = this.pathFormatPipe.transform(value);
+          node.empty = this.emptyDirectoryFormatPipe.transform(value);
+          if(node.item === 'categories') {
+            node.empty = 0;
+          }
+          node.path = value;
+          node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(value));
+          node.isDeleted = false;
+          node.opacity = 1;
         }
       }
 
@@ -108,19 +136,42 @@ export class ChecklistDatabase {
   }
 
   updateItem(node: TodoItemNode, name: string, id: string) {
-    node.item = this.updateName(name,id);
-    //if(this.debug) {
-      console.log('profile.component: this.data: ',this.data);
-    //}
+    node.item = name;
+    node.empty = 1;
+    node.path = this.updateName(name,id) + '^' + node.empty;
+    node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(node.path));
+    if(typeof node.isDeleted === 'undefined') {
+      node.isDeleted = false;
+    }
+    if(typeof node.opacity === 'undefined') {
+      node.opacity = 1;
+    }
+    if(this.debug) {
+      console.log('checklistDatabase: updateItem(): name: ',name);
+      console.log('checklistDatabase: updateItem(): id: ',id);
+      console.log('checklistDatabase: updateItem(): this.data: ',this.data);
+    }
+    this.dataChange.next(this.data);
+  }
+
+  isDeletedItem(node: TodoItemNode, value: boolean) {
+    node.isDeleted = value;
+    node.opacity = value ? 0.5 : 1;
+    if(this.debug) {
+      console.log('checklistDatabase: isDeletedItem(): this.data: ',this.data);
+    }
     this.dataChange.next(this.data);
   }
 
   updateName(name: string, id: string): string {
-    let str = id.split('-');
-    str.pop();
+    const regex = new RegExp('_[0-9]+$');
+    let _id = id.replace(regex,'');
+    let str = _id.split('-');
+    if(!regex.test(id)) {
+      str.pop();
+    }
     str.push(name);
     let result = str.join('//');
-    result = result.replace(/_[0-9]+$/,'');
     return result;
   }
 
@@ -136,6 +187,8 @@ export class ChecklistDatabase {
   providers: [ChecklistDatabase, PathFormatPipe, EmptyDirectoryFormatPipe, ConvertPathToIdPipe]
 })
 export class TreeCategoryEdit {
+
+  //@ViewChild('treeSelector') tree: any;
 
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
@@ -184,6 +237,31 @@ export class TreeCategoryEdit {
 
     database.dataChange.subscribe(data => {
       this.dataSource.data = data;
+      if(this.treeControl && data.length > 0) {
+        ;
+        if(this.debug) {
+          console.log('treeCategoryEdit.component: database.dataChange: this.treeControl.dataNodes: ',this.treeControl.dataNodes);
+        }
+        if(this.treeControl.dataNodes.length > 0) {
+          this.treeControl.dataNodes.map( (node) => {
+            let item = data.map(function(element) {
+              if (element['id'].toLowerCase() === node['id'].toLowerCase()) {
+                node.opacity = element['opacity'];
+              }
+            });
+            //if(this.debug) {
+              //console.log('treeCategoryEdit.component: database.dataChange: item: ',item);
+            //}
+            /* if('opacity' in item) {
+              const opacity = item['opacity'];
+              node.opacity = opacity;
+            } */
+          });
+        }
+      }
+      if(this.debug) {
+        console.log('treeCategoryEdit.component: database.dataChange: data: ',data);
+      }
     });
 
   }
@@ -208,14 +286,15 @@ export class TreeCategoryEdit {
     const flatNode = existingNode && existingNode.item === node.item
         ? existingNode
         : new TodoItemFlatNode();
-    flatNode.item = this.pathFormatPipe.transform(node.item);
+
+    flatNode.item = node.item;
     flatNode.level = level;
-    flatNode.empty = this.emptyDirectoryFormatPipe.transform(node.item);
-    if(flatNode.item === 'categories') {
-      flatNode.empty = 0;
-    }
-    flatNode.path = node.item;
-    flatNode.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(node.item));
+    flatNode.empty = node.empty;
+    flatNode.path = node.path;
+    flatNode.id = node.id;
+    flatNode.isDeleted = false;
+    flatNode.opacity = 1;
+
     flatNode.expandable = !!node.children;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
@@ -225,8 +304,10 @@ export class TreeCategoryEdit {
   /** Whether all the descendants of the node are selected. */
   descendantsAllSelected(node: TodoItemFlatNode): boolean {
     const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every(child =>
-      this.checklistSelection.isSelected(child)
+    const descAllSelected = descendants.every( (child) =>
+      {
+        return this.checklistSelection.isSelected(child);
+      }
     );
     return descAllSelected;
   }
@@ -234,7 +315,9 @@ export class TreeCategoryEdit {
   /** Whether part of the descendants are selected */
   descendantsPartiallySelected(node: TodoItemFlatNode): boolean {
     const descendants = this.treeControl.getDescendants(node);
-    const result = descendants.some(child => this.checklistSelection.isSelected(child));
+    const result = descendants.some( (child) => {
+      return this.checklistSelection.isSelected(child);
+    });
     return result && !this.descendantsAllSelected(node);
   }
 
@@ -247,10 +330,15 @@ export class TreeCategoryEdit {
       : this.checklistSelection.deselect(...descendants);
 
     // Force update for the parent
-    descendants.every(child =>
-      this.checklistSelection.isSelected(child)
+    descendants.every( (child) => {
+        return this.checklistSelection.isSelected(child);
+      }
     );
+    descendants.map( (child) => {
+      this.isDeletedNode(child,this.checklistSelection.isSelected(child));
+    });
     this.checkAllParentsSelection(node);
+
   }
 
   /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
@@ -272,14 +360,18 @@ export class TreeCategoryEdit {
   checkRootNodeSelection(node: TodoItemFlatNode): void {
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every(child =>
-      this.checklistSelection.isSelected(child)
+    const descAllSelected = descendants.every( (child) => {
+        return this.checklistSelection.isSelected(child);
+      }
     );
     if (nodeSelected && !descAllSelected) {
       this.checklistSelection.deselect(node);
     } else if (!nodeSelected && descAllSelected) {
       this.checklistSelection.select(node);
     }
+    descendants.map( (child) => {
+      this.isDeletedNode(child,this.checklistSelection.isSelected(child));
+    });
   }
 
   /* Get the parent node of a node */
@@ -319,14 +411,47 @@ export class TreeCategoryEdit {
   /** Save the node to database */
   saveNode(node: TodoItemFlatNode, itemValue: string) {
     const nestedNode = this.flatNodeMap.get(node);
-    this.database.updateItem(nestedNode!, itemValue, node.id);
+    let nodeid = node.id;
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: saveNode(): node: ',node);
+      console.log('treeCategoryEdit.component: saveNode(): nodeid: before: ',nodeid);
+      console.log('treeCategoryEdit.component: saveNode(): nestedNode: ',nestedNode);
+    }
+    if(!nodeid || (nodeid && nodeid === '')) {
+      nodeid = this.newNodeId;
+    }
+    else{
+      this.newNodeId = '';
+    }
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: saveNode(): nodeid: after: ',nodeid);
+    }
+    this.database.updateItem(nestedNode!, itemValue, nodeid);
+  }
+
+  /** Mark the node as 'isDeleted' to database */
+  isDeletedNode(node: TodoItemFlatNode, itemValue: boolean) {
+    const nestedNode = this.flatNodeMap.get(node);
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: isDeletedNode(): node: ',node);
+      console.log('treeCategoryEdit.component: isDeletedNode(): itemValue: ',itemValue);
+      console.log('treeCategoryEdit.component: isDeletedNode(): nestedNode: ',nestedNode);
+    }
+    this.database.isDeletedItem(nestedNode!, itemValue);
+    //this.flatNodeMap.get(node).opacity = itemValue ? 1 : 0.5;
   }
 
   createNodeId(node: TodoItemFlatNode) {
     const id = node.id + '_' + this.getRandomInt();
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: createNodeId(): node: ',node);
+      console.log('treeCategoryEdit.component: createNodeId(): id: ',id);
+    }
     this.newNodeId = id;
-    //this.flatNodeMap.set(node);
-    //this.database.updateItem(nestedNode!, itemValue, node.id);
+  }
+
+  treeCategoryEditSubmit(): void {
+
   }
 
 }
