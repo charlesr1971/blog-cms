@@ -6,3 +6,11 @@
     padding: 10px;
     margin-bottom: 20px;
 }
+
+.category-edit-tree-node {
+    opacity: 1;
+}
+
+.category-edit-tree-node-opaque {
+    opacity: 0.25;
+}

@@ -21,7 +21,6 @@ export class TodoItemNode {
   path: string;
   id: string;
   isDeleted: boolean;
-  opacity: number;
 }
 
 /** Flat to-do item node with expandable and level information */
@@ -33,7 +32,6 @@ export class TodoItemFlatNode {
   path: string;
   id: string;
   isDeleted: boolean;
-  opacity: number;
 }
 
 /**
@@ -105,7 +103,6 @@ export class ChecklistDatabase {
       node.path = key;
       node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(key));
       node.isDeleted = false;
-      node.opacity = 1;
 
       if (value != null) {
         if (typeof value === 'object') {
@@ -119,7 +116,6 @@ export class ChecklistDatabase {
           node.path = value;
           node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(value));
           node.isDeleted = false;
-          node.opacity = 1;
         }
       }
 
@@ -143,9 +139,6 @@ export class ChecklistDatabase {
     if(typeof node.isDeleted === 'undefined') {
       node.isDeleted = false;
     }
-    if(typeof node.opacity === 'undefined') {
-      node.opacity = 1;
-    }
     if(this.debug) {
       console.log('checklistDatabase: updateItem(): name: ',name);
       console.log('checklistDatabase: updateItem(): id: ',id);
@@ -156,7 +149,6 @@ export class ChecklistDatabase {
 
   isDeletedItem(node: TodoItemNode, value: boolean) {
     node.isDeleted = value;
-    node.opacity = value ? 0.5 : 1;
     if(this.debug) {
       console.log('checklistDatabase: isDeletedItem(): this.data: ',this.data);
     }
@@ -237,28 +229,7 @@ export class TreeCategoryEdit {
 
     database.dataChange.subscribe(data => {
       this.dataSource.data = data;
-      if(this.treeControl && data.length > 0) {
-        ;
-        if(this.debug) {
-          console.log('treeCategoryEdit.component: database.dataChange: this.treeControl.dataNodes: ',this.treeControl.dataNodes);
-        }
-        if(this.treeControl.dataNodes.length > 0) {
-          this.treeControl.dataNodes.map( (node) => {
-            let item = data.map(function(element) {
-              if (element['id'].toLowerCase() === node['id'].toLowerCase()) {
-                node.opacity = element['opacity'];
-              }
-            });
-            //if(this.debug) {
-              //console.log('treeCategoryEdit.component: database.dataChange: item: ',item);
-            //}
-            /* if('opacity' in item) {
-              const opacity = item['opacity'];
-              node.opacity = opacity;
-            } */
-          });
-        }
-      }
+      
       if(this.debug) {
         console.log('treeCategoryEdit.component: database.dataChange: data: ',data);
       }
@@ -293,7 +264,6 @@ export class TreeCategoryEdit {
     flatNode.path = node.path;
     flatNode.id = node.id;
     flatNode.isDeleted = false;
-    flatNode.opacity = 1;
 
     flatNode.expandable = !!node.children;
     this.flatNodeMap.set(flatNode, node);
@@ -438,7 +408,6 @@ export class TreeCategoryEdit {
       console.log('treeCategoryEdit.component: isDeletedNode(): nestedNode: ',nestedNode);
     }
     this.database.isDeletedItem(nestedNode!, itemValue);
-    //this.flatNodeMap.get(node).opacity = itemValue ? 1 : 0.5;
   }
 
   createNodeId(node: TodoItemFlatNode) {

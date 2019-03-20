@@ -254,6 +254,10 @@ export class CommentsComponent implements OnInit, OnDestroy {
             this.lastReplyToCommentid = 0;
             this.commentInput.patchValue('');
             this.resetComments();
+            const commentcharcounter = this.documentBody.querySelector('#comment-char-counter-' + this.image.id);
+            if(commentcharcounter) {
+              commentcharcounter.innerHTML = environment.maxCommentInputLength.toString();
+            }
           }
           else{
             if('jwtObj' in data) {

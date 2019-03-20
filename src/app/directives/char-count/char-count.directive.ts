@@ -67,4 +67,20 @@ export class CharCountDirective implements AfterViewInit {
     }
   }
 
+  /* @HostListener("window:click", ["$event"]) onClick(event) {
+    if(this.appCharCountReset){
+      if(this.appCharCountDisplayId) {
+        const el = document.getElementById(this.appCharCountDisplayId);
+        //if(this.debug) {
+          console.log('charCountDirective.directive: el: ', el);
+        //}
+        if(el) {
+            el.innerHTML = '0';
+            this.appCharCountReset = false;
+        }
+      }
+    }
+  } */
+  
+
 }
