@@ -14,3 +14,16 @@
 .category-edit-tree-node-opaque {
     opacity: 0.25;
 }
+
+/* media queries */
+
+/* smart phones */
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .category-edit-tree {
+        padding: 0px;
+        margin-bottom: 30px;
+    }  
+
+}

@@ -318,6 +318,10 @@ body.profile .mat-tree .mat-form-field.create-new-category-form-field {
         margin-bottom: 0px !important;
     }
 
+    body.profile .mat-tree .mat-form-field {
+        width: 35%;
+    }
+
 }
 
 

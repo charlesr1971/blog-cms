@@ -1,1 +1,0 @@
-<cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />

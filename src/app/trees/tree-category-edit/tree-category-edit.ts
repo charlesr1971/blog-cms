@@ -1,9 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Injectable, ViewChild } from '@angular/core';
+import { Component, Injectable, ViewChild, OnDestroy } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 
 import { PathFormatPipe } from '../../pipes/path-format/path-format.pipe';
 import { EmptyDirectoryFormatPipe } from '../../pipes/empty-directory-format/empty-directory-format.pipe';
@@ -21,6 +22,7 @@ export class TodoItemNode {
   path: string;
   id: string;
   isDeleted: boolean;
+  originalPath: string;
 }
 
 /** Flat to-do item node with expandable and level information */
@@ -32,6 +34,7 @@ export class TodoItemFlatNode {
   path: string;
   id: string;
   isDeleted: boolean;
+  originalPath: string;
 }
 
 /**
@@ -103,6 +106,7 @@ export class ChecklistDatabase {
       node.path = key;
       node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(key));
       node.isDeleted = false;
+      node.originalPath = key;
 
       if (value != null) {
         if (typeof value === 'object') {
@@ -116,6 +120,7 @@ export class ChecklistDatabase {
           node.path = value;
           node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(value));
           node.isDeleted = false;
+          node.originalPath = value;
         }
       }
 
@@ -134,16 +139,20 @@ export class ChecklistDatabase {
   updateItem(node: TodoItemNode, name: string, id: string) {
     node.item = name;
     node.empty = 1;
-    node.path = this.updateName(name,id) + '^' + node.empty;
+    node.path = this.formatPath(name,id) + '^' + node.empty;
     node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(node.path));
     if(typeof node.isDeleted === 'undefined') {
       node.isDeleted = false;
     }
-    if(this.debug) {
+    if(typeof node.originalPath === 'undefined') {
+      node.originalPath = '';
+    }
+    //if(this.debug) {
       console.log('checklistDatabase: updateItem(): name: ',name);
       console.log('checklistDatabase: updateItem(): id: ',id);
+      console.log('checklistDatabase: updateItem(): node.path: ',node.path);
       console.log('checklistDatabase: updateItem(): this.data: ',this.data);
-    }
+    //}
     this.dataChange.next(this.data);
   }
 
@@ -155,15 +164,15 @@ export class ChecklistDatabase {
     this.dataChange.next(this.data);
   }
 
-  updateName(name: string, id: string): string {
-    const regex = new RegExp('_[0-9]+$');
-    let _id = id.replace(regex,'');
+  formatPath(name: string, id: string): string {
+    const regex1 = new RegExp('_[0-9]+$');
+    let _id = id.replace(regex1,'');
     let str = _id.split('-');
-    if(!regex.test(id)) {
+    if(!regex1.test(id)) {
       str.pop();
     }
-    str.push(name);
-    let result = str.join('//');
+    str.push(name.replace(/[\s]+/,'-').replace(/[.,\/\\#!$%\^&\*;:{}=_'"`~()]/g,''));
+    let result = str.join('//').toLowerCase().trim();
     return result;
   }
 
@@ -178,7 +187,7 @@ export class ChecklistDatabase {
   styleUrls: ['tree-category-edit.css'],
   providers: [ChecklistDatabase, PathFormatPipe, EmptyDirectoryFormatPipe, ConvertPathToIdPipe]
 })
-export class TreeCategoryEdit {
+export class TreeCategoryEdit implements OnDestroy {
 
   //@ViewChild('treeSelector') tree: any;
 
@@ -206,14 +215,14 @@ export class TreeCategoryEdit {
   newNodeId: string = '';
   isMobile: boolean = false;
   disableTreeCategoryEditTooltip: boolean = false;
+  editCategoriesSubscription: Subscription;
 
   debug: boolean = false;
 
   constructor(private database: ChecklistDatabase,
     private deviceDetectorService: DeviceDetectorService,
-    private pathFormatPipe: PathFormatPipe,
-    private emptyDirectoryFormatPipe: EmptyDirectoryFormatPipe,
-    private convertPathToIdPipe: ConvertPathToIdPipe) {
+    public matSnackBar: MatSnackBar,
+    private httpService: HttpService) {
 
     this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -264,6 +273,7 @@ export class TreeCategoryEdit {
     flatNode.path = node.path;
     flatNode.id = node.id;
     flatNode.isDeleted = false;
+    flatNode.originalPath = node.path;
 
     flatNode.expandable = !!node.children;
     this.flatNodeMap.set(flatNode, node);
@@ -420,6 +430,50 @@ export class TreeCategoryEdit {
   }
 
   treeCategoryEditSubmit(): void {
+    this.editCategories();
+  }
+
+  editCategories(): void {
+    const body = {
+      categories: this.dataSource.data,
+    };
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: editCategories: body',body);
+    }
+    this.editCategoriesSubscription = this.httpService.editCategories(body,true,true,true).do(this.processEditCategoriesData).subscribe();
+  }
+
+  private processEditCategoriesData = (data) => {
+    if(this.debug) {
+      console.log('processEditCategoriesData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '') {
+        
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.openSnackBar(data['error'], 'Error');
+        }
+      }
+    }
+  }
+
+  openSnackBar(message: string, action: string) {
+    const config = new MatSnackBarConfig();
+    config.panelClass = ['custom-class'];
+    config.duration = 5000;
+    this.matSnackBar.open(message, action, config);
+  }
+
+  ngOnDestroy() {
+
+    if (this.editCategoriesSubscription) {
+      this.editCategoriesSubscription.unsubscribe();
+    }
 
   }
 

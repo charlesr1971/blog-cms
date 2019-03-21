@@ -765,6 +765,50 @@ export class HttpService {
     );
   }
 
+  editCategories(data: any, addEmptyFlag = false, formatWithKeys = false, flattenParentArray = false): Observable<any> {
+    let req = null;
+    let headers = null;
+    let body = null;
+    if(this.useRestApi) {
+      body = {
+        data: data['categories']
+      };
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'userToken': this.cookieService.get('userToken') || '',
+          'X-HTTP-METHOD-OVERRIDE': 'PUT'
+        })
+      };
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/category/' + addEmptyFlag + '/' + formatWithKeys + '/' + flattenParentArray, body, headers);
+      if(this.debug) {
+        console.log('http.service: editCategories: body ',body);
+        console.log('http.service: editCategories: headers ',headers);
+      }
+    }
+    else{
+      body = {
+        data: data['categories']
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('POST', this.apiUrl + '/category.cfm?addEmptyFlag=' + addEmptyFlag + '&formatWithKeys=' + formatWithKeys + '&flattenParentArray=' + flattenParentArray, body, headers);
+      if(this.debug) {
+        console.log('http.service: editCategories: body: ',body);
+        console.log('http.service: editCategories: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   editTheme(theme: string): Observable<any> {
     let req = null;
     let headers = null;
