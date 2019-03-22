@@ -276,13 +276,12 @@
   
   public any function UpdateCategories(struct currentObj = {}, struct newObj = {}, boolean addEmptyFlag = false, boolean formatWithKeys = false, boolean flattenParentArray = false) output="true" {
 	var local = {};
-	local.error = "";
 	local.new = StructNew();
 	local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
-
+	
 	for(local.currentChild in arguments.currentObj) {
     
-	  local.currentChildEmpty = ListLast(local.currentChild,"^"); 
+	  local.currentChildEmpty = ListLast(local.currentChild,"^");
 	  local.currentChildOriginalPath = REReplaceNoCase(ListFirst(local.currentChild,"^"),"[\\]+","/","ALL");
 	      
 	  if(StructKeyExists(arguments.newObj,"data") AND IsArray(arguments.newObj['data']) AND ArrayLen(arguments.newObj['data']) AND IsStruct(arguments.newObj['data'][1]) AND StructKeyExists(arguments.newObj['data'][1],"children") AND IsArray(arguments.newObj['data'][1]['children']) AND ArrayLen(arguments.newObj['data'][1]['children'])){
@@ -293,78 +292,59 @@
 			
 		  local.childObj = arguments.newObj['data'][1]['children'][local.newChild];		  
 		  
-		  if(StructKeyExists(local.childObj,"empty") AND StructKeyExists(local.childObj,"isDeleted") AND StructKeyExists(local.childObj,"item") AND StructKeyExists(local.childObj,"originalPath") AND StructKeyExists(local.childObj,"path")){
+		  if(StructKeyExists(local.childObj,"children") AND IsArray(local.childObj['children']) AND StructKeyExists(local.childObj,"empty") AND StructKeyExists(local.childObj,"isDeleted") AND StructKeyExists(local.childObj,"item") AND StructKeyExists(local.childObj,"originalPath") AND StructKeyExists(local.childObj,"path")){
 		   
-			local.newGrandChildren = ArrayNew(1);
-			if(StructKeyExists(local.childObj,"children") AND IsArray(local.childObj['children'])){
-			  local.newGrandChildren = local.childObj['children'];
-			}
-			local.newChildEmpty = local.childObj['empty'];
-			local.newChildIsDeleted = LCase(local.childObj['isDeleted']) EQ 'yes' ? true : false;
-			local.newChildCategory = local.childObj['item'];
-			if(CompareNoCase(Trim(local.childObj['originalPath']),"[empty string]") EQ 0) {
-			  local.childObj['originalPath'] = "";
-			}
-			local.newChildOriginalPath = REReplaceNoCase(ListFirst(local.childObj['originalPath'],"^"),"[//]+","/","ALL");
-			local.newChildPath = REReplaceNoCase(ListFirst(local.childObj['path'],"^"),"[//]+","/","ALL");
+			local['newGrandChildren' & local.newChild] = local.childObj['children'];
+			local['newChildEmpty' & local.newChild] = local.childObj['empty'];
+			local['newChildIsDeleted' & local.newChild] = LCase(local.childObj['isDeleted']) EQ 'yes' ? true : false;
+			local['newChildCategory' & local.newChild] = local.childObj['item'];
+			local['newChildOriginalPath' & local.newChild] = REReplaceNoCase(ListFirst(local.childObj['originalPath'],"^"),"[//]+","/","ALL");
+			local['newChildPath' & local.newChild] = REReplaceNoCase(ListFirst(local.childObj['path'],"^"),"[//]+","/","ALL");
 						
-			if(CompareNoCase(local.currentChildOriginalPath,local.newChildOriginalPath) EQ 0){
-			  if(CompareNoCase(local.currentChildOriginalPath,local.newChildPath) NEQ 0){
+			if(CompareNoCase(local.currentChildOriginalPath,local['newChildOriginalPath' & local.newChild]) EQ 0){
+			  if(CompareNoCase(local.currentChildOriginalPath,local['newChildPath' & local.newChild]) NEQ 0){
 				local.directoryName = request.filepath & REReplaceNoCase(local.currentChildOriginalPath,"[/]+","\","ALL");
-				local.newDirectoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
+				local.newDirectoryName = request.filepath & REReplaceNoCase(local['newChildPath' & local.newChild],"[/]+","\","ALL");
+				WriteOutput('<strong>RENAME: child: directoryName:</strong> ' & local.directoryName & '<br />');
+				WriteOutput('<strong>RENAME: child: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
 				if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-				  WriteOutput('<strong>RENAME: child: directoryName:</strong> ' & local.directoryName & '<br />');
-				  WriteOutput('<strong>RENAME: child: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
-				  try{
-					cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
-					  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
-					}
-				  }
-				  catch( any e ){
-					local.error = e.message;
+				  cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
+					cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
 				  }
 				}
 			  }
 			}
 			
-			if(NOT Len(Trim(local.newChildOriginalPath)) AND Len(Trim(local.newChildPath))){
-			  local.directoryName1 = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
+			if(NOT Len(Trim(local['newChildOriginalPath' & local.newChild])) AND Len(Trim(local['newChildPath' & local.newChild]))){
+			  local.directoryName1 = request.filepath & REReplaceNoCase(local['newChildPath' & local.newChild],"[/]+","\","ALL");
+			  WriteOutput('<strong>CREATE: child: local.directoryName1:</strong> ' & local.directoryName1 & '<br />');
 			  if(NOT DirectoryExists(local.directoryName1)){
-				WriteOutput('<strong>CREATE: child: local.directoryName1:</strong> ' & local.directoryName1 & '<br />');
-				try{
-				  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
-					cfdirectory(action="create",directory=local.directoryName1);
-				  }
-				  local.directoryName2 = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL") & "\miscellaneous";
-				  if(DirectoryExists(local.directoryName1) AND NOT DirectoryExists(local.directoryName2)){
-					WriteOutput('<strong>CREATE DEFAULT GRANDCHILD: child: local.directoryName2:</strong> ' & local.directoryName2 & '<br /><br />');
-					cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
-					  cfdirectory(action="create",directory=local.directoryName2);
-					}
-				  }
+				local['newChildOriginalPath' & local.newChild] = local['newChildPath' & local.newChild];
+				cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
+				  cfdirectory(action="create",directory=local.directoryName1);
 				}
-				catch( any e ){
-				  local.error = e.message;
+				local.directoryName2 = request.filepath & REReplaceNoCase(local['newChildPath' & local.newChild],"[/]+","\","ALL") & "\miscellaneous";
+				WriteOutput('<strong>CREATE DEFAULT GRANDCHILD: child: local.directoryName2:</strong> ' & local.directoryName2 & '<br /><br />');
+				if(DirectoryExists(local.directoryName1) AND NOT DirectoryExists(local.directoryName2)){
+				  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
+					cfdirectory(action="create",directory=local.directoryName2);
+				  }
 				}
 			  }
 			}
 			
-			if(local.currentChildEmpty AND local.newChildIsDeleted AND local.newChildEmpty AND Len(Trim(local.newChildPath))){
-			  local.directoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
+			if(local.currentChildEmpty AND local['newChildIsDeleted' & local.newChild] AND local['newChildEmpty' & local.newChild] AND Len(Trim(local['newChildPath' & local.newChild]))){
+			  local.directoryName = request.filepath & REReplaceNoCase(local['newChildPath' & local.newChild],"[/]+","\","ALL");
+			  WriteOutput('<strong>DELETE: child: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
 			  if(DirectoryExists(local.directoryName)){
-				//WriteOutput('<strong>DELETE: child: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
-				/*try{
-				  cflock (name="delete_directory_" & local.timestamp, type="exclusive", timeout="30") {
-					cfdirectory(action="delete",directory=local.directoryName);
-				  }
-				}
-				catch( any e ){
-				  local.error = e.message;
+				local['newChildIsDeleted' & local.newChild] = false;
+				/*cflock (name="delete_directory_" & local.timestamp, type="exclusive", timeout="30") {
+				  cfdirectory(action="delete",directory=local.directoryName);
 				}*/
 			  }
 			}
 			
-			if(CompareNoCase(local.currentChildOriginalPath,local.newChildOriginalPath) EQ 0){
+			if(CompareNoCase(local.currentChildOriginalPath,local['newChildOriginalPath' & local.newChild]) EQ 0){
 				
 			  if(IsArray(arguments.currentObj[local.currentChild]) AND ArrayLen(arguments.currentObj[local.currentChild])){
 				  
@@ -373,81 +353,52 @@
 				  local.currentGrandChildEmpty = ListLast(local.currentGrandChild,"^");
 				  local.currentGrandChildOriginalPath = REReplaceNoCase(ListFirst(local.currentGrandChild,"^"),"[\\]+","/","ALL");
 				
-				  if(IsArray(local.newGrandChildren)){
+				  if(IsArray(local['newGrandChildren' & local.newChild])){
 					  
-					for (local.newGrandChild=1;local.newGrandChild LTE ArrayLen(local.newGrandChildren);local.newGrandChild=local.newGrandChild+1) {
+					for (local.newGrandChild=1;local.newGrandChild LTE ArrayLen(local['newGrandChildren' & local.newChild]);local.newGrandChild=local.newGrandChild+1) {
 						
-					  local.grandChildObj = local.newGrandChildren[local.newGrandChild];
+					  local.grandChildObj = local['newGrandChildren' & local.newChild][local.newGrandChild];
 					  
 					  if(IsStruct(local.grandChildObj) AND StructKeyExists(local.grandChildObj,"empty") AND StructKeyExists(local.grandChildObj,"isDeleted") AND StructKeyExists(local.grandChildObj,"item") AND StructKeyExists(local.grandChildObj,"originalPath") AND StructKeyExists(local.grandChildObj,"path")){
 						  
-						local.newGrandChildEmpty = local.grandChildObj['empty'];
-						local.newGrandChildIsDeleted = LCase(local.grandChildObj['isDeleted']) EQ 'yes' ? true : false;
-						local.newGrandChildCategory = local.grandChildObj['item'];
-						if(CompareNoCase(Trim(local.grandChildObj['originalPath']),"[empty string]") EQ 0) {
-						  local.grandChildObj['originalPath'] = "";
-						}
-						local.newGrandChildOriginalPath = REReplaceNoCase(ListFirst(local.grandChildObj['originalPath'],"^"),"[//]+","/","ALL");
-						local.newGrandChildPath = REReplaceNoCase(ListFirst(local.grandChildObj['path'],"^"),"[//]+","/","ALL");
+						local['newGrandChildEmpty' & local.newGrandChild] = local.grandChildObj['empty'];
+						local['newGrandChildIsDeleted' & local.newGrandChild] = LCase(local.grandChildObj['isDeleted']) EQ 'yes' ? true : false;
+						local['newGrandChildCategory' & local.newGrandChild] = local.grandChildObj['item'];
+						local['newGrandChildOriginalPath' & local.newGrandChild] = REReplaceNoCase(ListFirst(local.grandChildObj['originalPath'],"^"),"[//]+","/","ALL");
+						local['newGrandChildPath' & local.newGrandChild] = REReplaceNoCase(ListFirst(local.grandChildObj['path'],"^"),"[//]+","/","ALL");
 						
-						if(CompareNoCase(local.currentGrandChildOriginalPath,local.newGrandChildOriginalPath) EQ 0){
-						  if(CompareNoCase(local.currentGrandChildOriginalPath,local.newGrandChildPath) NEQ 0){
+						if(CompareNoCase(local.currentGrandChildOriginalPath,local['newGrandChildOriginalPath' & local.newGrandChild]) EQ 0){
+						  if(CompareNoCase(local.currentGrandChildOriginalPath,local['newGrandChildPath' & local.newGrandChild]) NEQ 0){
 							local.directoryName = request.filepath & REReplaceNoCase(local.currentGrandChildOriginalPath,"[/]+","\","ALL");
-							local.newDirectoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
+							local.newDirectoryName = request.filepath & REReplaceNoCase(local['newGrandChildPath' & local.newGrandChild],"[/]+","\","ALL");
+							WriteOutput('<strong>RENAME: grandchild: directoryName:</strong> ' & local.directoryName & '<br />');
 							WriteOutput('<strong>RENAME: grandchild: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
 							if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-							  WriteOutput('<strong>RENAME: grandchild: directoryName 1:</strong> ' & local.directoryName & '<br />');
-							  try{
-								cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
-								  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
-								}
-							  }
-							  catch( any e ){
-								local.error = e.message;
-								WriteDump(var=local.error);
-							  }
-							}
-							local.directoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL") & "\" & ListLast(local.currentGrandChildOriginalPath,"/");
-							if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-							  WriteOutput('<strong>RENAME: grandchild: directoryName 2:</strong> ' & local.directoryName & '<br />');
-							  try{
-								cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
-								  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
-								}
-							  }
-							  catch( any e ){
-								local.error = e.message;
+							  cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
+								cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
 							  }
 							}
 						  }
 						}
 						
-						if(NOT Len(Trim(local.newGrandChildOriginalPath)) AND Len(Trim(local.newGrandChildPath))){
-						  local.directoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
+						if(NOT Len(Trim(local['newGrandChildOriginalPath' & local.newGrandChild])) AND Len(Trim(local['newGrandChildPath' & local.newGrandChild]))){
+						  local.directoryName = request.filepath & REReplaceNoCase(local['newGrandChildPath' & local.newGrandChild],"[/]+","\","ALL");
+						  WriteOutput('<strong>CREATE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
 						  if(NOT DirectoryExists(local.directoryName)){
-							WriteOutput('<strong>CREATE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
-							try{
-							  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
-								cfdirectory(action="create",directory=local.directoryName);
-							  }
-							}
-							catch( any e ){
-							  local.error = e.message;
+							local['newGrandChildOriginalPath' & local.newGrandChild] = local['newGrandChildPath' & local.newGrandChild];
+							cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
+							  cfdirectory(action="create",directory=local.directoryName);
 							}
 						  }
 						}
 						
-						if(local.currentGrandChildEmpty AND local.newGrandChildIsDeleted AND local.newGrandChildEmpty AND Len(Trim(local.newGrandChildPath))){
-						  local.directoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
+						if(local.currentGrandChildEmpty AND local['newGrandChildIsDeleted' & local.newGrandChild] AND local['newGrandChildEmpty' & local.newGrandChild] AND Len(Trim(local['newGrandChildPath' & local.newGrandChild]))){
+						  local.directoryName = request.filepath & REReplaceNoCase(local['newGrandChildPath' & local.newGrandChild],"[/]+","\","ALL");
+						  WriteOutput('<strong>DELETE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
 						  if(DirectoryExists(local.directoryName)){
-							//WriteOutput('<strong>DELETE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
-							/*try{
-							  cflock (name="delete_directory_" & local.timestamp, type="exclusive", timeout="30") {
-								cfdirectory(action="delete",directory=local.directoryName);
-							  }
-							}
-							catch( any e ){
-							  local.error = e.message;
+							local['newGrandChildIsDeleted' & local.newGrandChild] = false;
+							/*cflock (name="delete_directory_" & local.timestamp, type="exclusive", timeout="30") {
+							  cfdirectory(action="delete",directory=local.directoryName);
 							}*/
 						  }
 						}
@@ -464,14 +415,8 @@
 	  }
 	}
 	
-	if(NOT Len(Trim(local.error))){
-	  local.qGetDirPlusId = ParseDirectory(path=request.filepath & "/categories");
-	  local.directories = CleanArray(directories=ConvertDirectoryQueryToArray(query=local.qGetDirPlusId,addEmptyFlag=arguments.addEmptyFlag),formatWithKeys=arguments.formatWithKeys,flattenParentArray=arguments.flattenParentArray);
-	}
-	else{
-	  local.directories = StructNew();
-	  local.directories['error'] = local.error;
-	}
+	local.qGetDirPlusId = ParseDirectory(path=request.filepath & "/categories");
+	local.directories = CleanArray(directories=ConvertDirectoryQueryToArray(query=local.qGetDirPlusId,addEmptyFlag=arguments.addEmptyFlag),formatWithKeys=arguments.formatWithKeys,flattenParentArray=arguments.flattenParentArray);
 	
 	return local.directories;
 	

@@ -50,6 +50,7 @@ export class ChecklistDatabase {
   dataMap = {};
   http: Observable<any>;
   httpService;
+  lastNodeIdCreatedBeforeUpddate: string = '';
 
   debug: boolean = false;
   
@@ -69,10 +70,10 @@ export class ChecklistDatabase {
   fetchData(): void {
     this.http = this.httpService.fetchDirectoryTree(true,true,true).subscribe( (data: any) => {
       if(data) {
-        this.dataMap['categories'] = data;
-        if(this.debug) {
-          console.log(this.dataMap);
-        }
+        this.dataMap['//categories'] = data;
+        //if(this.debug) {
+          console.log('checklistDatabase: fetchData(): data: ',data);
+        //}
         this.initialize();
       }
     });
@@ -141,6 +142,25 @@ export class ChecklistDatabase {
     node.empty = 1;
     node.path = this.formatPath(name,id) + '^' + node.empty;
     node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(node.path));
+    if(this.isParent(node.id) && 'children' in node) {
+      node.children.map( (child) => {
+        let childIdArr = child.id.split('-');
+        let childId = childIdArr[childIdArr.length-1];
+        let id = node.id + '-' + childId;
+        if(this.debug) {
+          console.log('checklistDatabase: updateItem(): new child id: ',id);
+        }
+        child.id = id;
+        let parentPathArr = node.path.replace(/\^.*/,'').split('//');
+        let childPathArr = child.path.split('//');
+        parentPathArr.push(childPathArr[childPathArr.length-1]);
+        let childPath = parentPathArr.join('//');
+        //if(this.debug) {
+          console.log('checklistDatabase: updateItem(): new child childPath: ',childPath);
+        //}
+        child.path = childPath;
+      });
+    }
     if(typeof node.isDeleted === 'undefined') {
       node.isDeleted = false;
     }
@@ -148,12 +168,23 @@ export class ChecklistDatabase {
       node.originalPath = '';
     }
     //if(this.debug) {
-      console.log('checklistDatabase: updateItem(): name: ',name);
-      console.log('checklistDatabase: updateItem(): id: ',id);
+      /* console.log('checklistDatabase: updateItem(): name: ',name);
+      console.log('checklistDatabase: updateItem(): id: ',id); */
       console.log('checklistDatabase: updateItem(): node.path: ',node.path);
-      console.log('checklistDatabase: updateItem(): this.data: ',this.data);
+      //console.log('checklistDatabase: updateItem(): this.data: ',this.data);
     //}
+    this.lastNodeIdCreatedBeforeUpddate = node.id;
     this.dataChange.next(this.data);
+  }
+
+  isParent(id: string): boolean {
+    const regex1 = new RegExp('_[0-9]+$');
+    let _id = id.replace(regex1,'');
+    let str = _id.split('-');
+    if(this.debug) {
+      console.log('checklistDatabase: isParent(): str.length: ',str.length);
+    }
+    return str.length === 3 ? true : false ;
   }
 
   isDeletedItem(node: TodoItemNode, value: boolean) {
@@ -214,6 +245,7 @@ export class TreeCategoryEdit implements OnDestroy {
 
   newNodeId: string = '';
   isMobile: boolean = false;
+  isUpdated: boolean = false;
   disableTreeCategoryEditTooltip: boolean = false;
   editCategoriesSubscription: Subscription;
 
@@ -230,7 +262,6 @@ export class TreeCategoryEdit implements OnDestroy {
       this.disableTreeCategoryEditTooltip = true;
     }
 
-
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<TodoItemFlatNode>(this.getLevel, this.isExpandable);
@@ -238,9 +269,39 @@ export class TreeCategoryEdit implements OnDestroy {
 
     database.dataChange.subscribe(data => {
       this.dataSource.data = data;
-      
-      if(this.debug) {
+      //if(this.debug) {
         console.log('treeCategoryEdit.component: database.dataChange: data: ',data);
+      //}
+      if(this.isUpdated && this.database.lastNodeIdCreatedBeforeUpddate !== '') {
+        const descendants = this.treeControl.dataNodes;
+        const nodes = descendants.filter( (node) => {
+          return node.id.toLowerCase() === this.database.lastNodeIdCreatedBeforeUpddate.toLowerCase();
+        });
+        if(nodes.length) {
+          const node = nodes[0];
+          //if(this.debug) {
+            console.log('treeCategoryEdit.component: database.dataChange: node: ',node);
+          //}
+          if(node) {
+            const parentNode = this.getParentNode(node);
+            if(parentNode && parentNode.expandable) {
+              this.treeControl.expand(parentNode);
+              const rootNode = this.getParentNode(parentNode);
+              if(rootNode && rootNode.expandable) {
+                this.treeControl.expand(rootNode);
+              }
+            }
+            if(node && node.expandable) {
+              this.treeControl.expand(node);
+            }
+          }
+        }
+        //if(this.debug) {
+          console.log('treeCategoryEdit.component: database.dataChange: this.database.lastNodeIdCreatedBeforeUpddate: ',this.database.lastNodeIdCreatedBeforeUpddate);
+        //}
+        this.openSnackBar('Changes have been submitted...', 'Success');
+        this.isUpdated = false;
+        this.database.lastNodeIdCreatedBeforeUpddate = '';
       }
     });
 
@@ -445,18 +506,19 @@ export class TreeCategoryEdit implements OnDestroy {
 
   private processEditCategoriesData = (data) => {
     if(this.debug) {
-      console.log('processEditCategoriesData: data',data);
+      console.log('treeCategoryEdit.component: processEditCategoriesData: data',data);
     }
     if(data) {
-      if('error' in data && data['error'] === '') {
-        
+      if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+        this.httpService.jwtHandler(data['jwtObj']);
       }
       else{
-        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
-          this.httpService.jwtHandler(data['jwtObj']);
+        if('error' in data) {
+          this.openSnackBar('Changes could not be submitted', 'Error');
         }
         else{
-          this.openSnackBar(data['error'], 'Error');
+          this.database.fetchData();
+          this.isUpdated = true;
         }
       }
     }
