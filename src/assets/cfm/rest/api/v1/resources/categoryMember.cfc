@@ -25,9 +25,6 @@
     <cfset local.current['categories'] = StructNew()>
 	<cfset local.qGetDirPlusId = request.utils.ParseDirectory(path=request.filepath & "/categories")>
 	<cfset local.current['categories'] = request.utils.CleanArray(directories=request.utils.ConvertDirectoryQueryToArray(query=local.qGetDirPlusId,addEmptyFlag=arguments.addEmptyFlag),formatWithKeys=arguments.formatWithKeys,flattenParentArray=arguments.flattenParentArray)>
-    <!---<cfset local.current['categories'] = SerializeJSON(local.directories)>
-    <cfset local.current['categories'] = ReplaceNoCase(local.current['categories'],"\","/","ALL")>
-    <cfset local.current['categories'] = DeserializeJSON(local.current['categories'])>--->
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
     <cfset local.data = StructNew()>

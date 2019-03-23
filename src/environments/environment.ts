@@ -23,7 +23,8 @@ export const environment = {
   apiEndpointUrl: 'http://localhost:8500/community.establishmindfulness/material/ngMat02/src/assets/cfm/rest/api/v1/index.cfm',
   maxCommentInputLength: 140,
   catalogRouterAlias: 'stories',
-  uploadRouterAlias: 'upload-story'
+  uploadRouterAlias: 'upload-story',
+  maxcategoryeditnamelength: 25
 };
 
 /*

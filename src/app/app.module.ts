@@ -51,18 +51,24 @@ import { TinymceComponent } from './tinymce/tinymce.component';
 import { GalleryDetailComponent } from './routes/gallery-detail/gallery-detail.component';
 import { CommentsComponent } from './comments/comments.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-
 import { HttpInterceptorProviders } from './http-interceptors';
 import { MyFooterComponent } from './my-footer/my-footer.component';
 import { CookieAcceptanceSnackBarComponent } from './cookie-acceptance-snack-bar/cookie-acceptance-snack-bar.component';
 import { CookiePolicyComponent } from './cookie-policy/cookie-policy.component';
+import { CategoryEditComponent } from './help/dialogs/category-edit/category-edit.component';
 
 import { CharCountDirective } from './directives/char-count/char-count.directive';
+import { DialogDraggableTitleDirective } from './directives/dialog-draggable-title/dialog-draggable-title.directive';
 
-import { environment } from '../environments/environment';
 import { EmptyDirectoryFormatPipe } from './pipes/empty-directory-format/empty-directory-format.pipe';
 import { ConvertPathToIdPipe } from './pipes/convert-path-to-id/convert-path-to-id.pipe';
 import { ConvertIdToPathPipe } from './pipes/convert-id-to-path/convert-id-to-path.pipe';
+
+import { ModalPositionCache } from './directives/dialog-draggable-title/modal-position.cache';
+
+import { environment } from '../environments/environment';
+
+
 
 const appRoutes: Routes = [
   { path: environment.catalogRouterAlias, component: GalleryComponent },
@@ -105,7 +111,9 @@ const appRoutes: Routes = [
     CharCountDirective,
     EmptyDirectoryFormatPipe,
     ConvertPathToIdPipe,
-    ConvertIdToPathPipe
+    ConvertIdToPathPipe,
+    DialogDraggableTitleDirective,
+    CategoryEditComponent
   ],
   imports: [
     BrowserModule,
@@ -155,7 +163,7 @@ const appRoutes: Routes = [
     OverlayModule,
     NgbModule
   ],
-  entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent], // Add the DialogComponent as entry component
+  entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent], // Add the DialogComponent as entry component
   providers: [
     Title,
     HttpService,
@@ -165,6 +173,7 @@ const appRoutes: Routes = [
     SnackbarService,
     HttpInterceptorProviders,
     ConvertIdToPathPipe,
+    ModalPositionCache,
     {provide: LocationStrategy, useClass: PathLocationStrategy}
   ],
   bootstrap: [AppComponent]

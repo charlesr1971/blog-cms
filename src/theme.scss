@@ -131,7 +131,7 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text);
     }
 
-    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon, .form-field-container .form-field-text div.panel h2.panel-legend span.help {
         color: mat-color($dark-foreground-palette, text, 0.7);
     }
 
@@ -477,7 +477,7 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text);
     }
 
-    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon {
+    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon, .form-field-container .form-field-text div.panel h2.panel-legend span.help {
         color: mat-color($light-foreground-palette, text, 0.7);
     }
 

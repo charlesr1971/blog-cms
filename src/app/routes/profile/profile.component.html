@@ -1,5 +1,3 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
 <div class="mat-app-background basic-container">
 
   <form novalidate [formGroup]="editProfileForm" *ngIf="userid > 0" autocomplete="off">
@@ -63,7 +61,7 @@
 
         <div class="panel" *ngIf="currentUser.roleid >= 6">
           <h2 class="panel-legend">
-            <span>Edit Categories</span><mat-icon (click)="openProfileCategoryEdit($event)">add</mat-icon> 
+            <span>Edit Categories</span><span class="help" (click)="openEditCategoriesHelpNotificationDialog()">?</span><mat-icon (click)="openProfileCategoryEdit($event)">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileCategoryEditFadeInOutAnimation]="{value: profileCategoryEditState}" style="padding-bottom:0px;">
             <app-tree-category-edit></app-tree-category-edit>

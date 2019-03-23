@@ -12,6 +12,8 @@ import { ConvertPathToIdPipe } from '../../pipes/convert-path-to-id/convert-path
 import { ConvertIdToPathPipe } from '../../pipes/convert-id-to-path/convert-id-to-path.pipe';
 import { HttpService } from '../../services/http/http.service';
 
+import { environment } from '../../../environments/environment';
+
 /**
  * Node for to-do item
  */
@@ -51,6 +53,7 @@ export class ChecklistDatabase {
   http: Observable<any>;
   httpService;
   lastNodeIdCreatedBeforeUpddate: string = '';
+  maxcategoryeditnamelength: number = environment.maxcategoryeditnamelength;
 
   debug: boolean = false;
   
@@ -71,9 +74,9 @@ export class ChecklistDatabase {
     this.http = this.httpService.fetchDirectoryTree(true,true,true).subscribe( (data: any) => {
       if(data) {
         this.dataMap['//categories'] = data;
-        //if(this.debug) {
+        if(this.debug) {
           console.log('checklistDatabase: fetchData(): data: ',data);
-        //}
+        }
         this.initialize();
       }
     });
@@ -155,9 +158,9 @@ export class ChecklistDatabase {
         let childPathArr = child.path.split('//');
         parentPathArr.push(childPathArr[childPathArr.length-1]);
         let childPath = parentPathArr.join('//');
-        //if(this.debug) {
+        if(this.debug) {
           console.log('checklistDatabase: updateItem(): new child childPath: ',childPath);
-        //}
+        }
         child.path = childPath;
       });
     }
@@ -167,12 +170,12 @@ export class ChecklistDatabase {
     if(typeof node.originalPath === 'undefined') {
       node.originalPath = '';
     }
-    //if(this.debug) {
-      /* console.log('checklistDatabase: updateItem(): name: ',name);
-      console.log('checklistDatabase: updateItem(): id: ',id); */
+    if(this.debug) {
+      console.log('checklistDatabase: updateItem(): name: ',name);
+      console.log('checklistDatabase: updateItem(): id: ',id);
       console.log('checklistDatabase: updateItem(): node.path: ',node.path);
-      //console.log('checklistDatabase: updateItem(): this.data: ',this.data);
-    //}
+      console.log('checklistDatabase: updateItem(): this.data: ',this.data);
+    }
     this.lastNodeIdCreatedBeforeUpddate = node.id;
     this.dataChange.next(this.data);
   }
@@ -248,6 +251,7 @@ export class TreeCategoryEdit implements OnDestroy {
   isUpdated: boolean = false;
   disableTreeCategoryEditTooltip: boolean = false;
   editCategoriesSubscription: Subscription;
+  maxcategoryeditnamelength: number = environment.maxcategoryeditnamelength;
 
   debug: boolean = false;
 
@@ -269,9 +273,9 @@ export class TreeCategoryEdit implements OnDestroy {
 
     database.dataChange.subscribe(data => {
       this.dataSource.data = data;
-      //if(this.debug) {
+      if(this.debug) {
         console.log('treeCategoryEdit.component: database.dataChange: data: ',data);
-      //}
+      }
       if(this.isUpdated && this.database.lastNodeIdCreatedBeforeUpddate !== '') {
         const descendants = this.treeControl.dataNodes;
         const nodes = descendants.filter( (node) => {
@@ -279,9 +283,9 @@ export class TreeCategoryEdit implements OnDestroy {
         });
         if(nodes.length) {
           const node = nodes[0];
-          //if(this.debug) {
+          if(this.debug) {
             console.log('treeCategoryEdit.component: database.dataChange: node: ',node);
-          //}
+          }
           if(node) {
             const parentNode = this.getParentNode(node);
             if(parentNode && parentNode.expandable) {
@@ -296,9 +300,9 @@ export class TreeCategoryEdit implements OnDestroy {
             }
           }
         }
-        //if(this.debug) {
+        if(this.debug) {
           console.log('treeCategoryEdit.component: database.dataChange: this.database.lastNodeIdCreatedBeforeUpddate: ',this.database.lastNodeIdCreatedBeforeUpddate);
-        //}
+        }
         this.openSnackBar('Changes have been submitted...', 'Success');
         this.isUpdated = false;
         this.database.lastNodeIdCreatedBeforeUpddate = '';

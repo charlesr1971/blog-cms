@@ -1306,8 +1306,6 @@ export class TreeDynamic implements OnInit, OnDestroy {
     });
   }
 
-
-
   closeArticleHelpNotificationDialog() {
     this.dialog.closeAll();
   }

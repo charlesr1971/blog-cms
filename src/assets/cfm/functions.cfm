@@ -313,8 +313,8 @@
 				local.directoryName = request.filepath & REReplaceNoCase(local.currentChildOriginalPath,"[/]+","\","ALL");
 				local.newDirectoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
 				if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-				  WriteOutput('<strong>RENAME: child: directoryName:</strong> ' & local.directoryName & '<br />');
-				  WriteOutput('<strong>RENAME: child: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
+				  /*WriteOutput('<strong>RENAME: child: directoryName:</strong> ' & local.directoryName & '<br />');
+				  WriteOutput('<strong>RENAME: child: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');*/
 				  try{
 					cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
 					  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
@@ -330,14 +330,14 @@
 			if(NOT Len(Trim(local.newChildOriginalPath)) AND Len(Trim(local.newChildPath))){
 			  local.directoryName1 = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
 			  if(NOT DirectoryExists(local.directoryName1)){
-				WriteOutput('<strong>CREATE: child: local.directoryName1:</strong> ' & local.directoryName1 & '<br />');
+				//WriteOutput('<strong>CREATE: child: local.directoryName1:</strong> ' & local.directoryName1 & '<br />');
 				try{
 				  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
 					cfdirectory(action="create",directory=local.directoryName1);
 				  }
 				  local.directoryName2 = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL") & "\miscellaneous";
 				  if(DirectoryExists(local.directoryName1) AND NOT DirectoryExists(local.directoryName2)){
-					WriteOutput('<strong>CREATE DEFAULT GRANDCHILD: child: local.directoryName2:</strong> ' & local.directoryName2 & '<br /><br />');
+					//WriteOutput('<strong>CREATE DEFAULT GRANDCHILD: child: local.directoryName2:</strong> ' & local.directoryName2 & '<br /><br />');
 					cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
 					  cfdirectory(action="create",directory=local.directoryName2);
 					}
@@ -394,9 +394,9 @@
 						  if(CompareNoCase(local.currentGrandChildOriginalPath,local.newGrandChildPath) NEQ 0){
 							local.directoryName = request.filepath & REReplaceNoCase(local.currentGrandChildOriginalPath,"[/]+","\","ALL");
 							local.newDirectoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
-							WriteOutput('<strong>RENAME: grandchild: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
+							//WriteOutput('<strong>RENAME: grandchild: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
 							if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-							  WriteOutput('<strong>RENAME: grandchild: directoryName 1:</strong> ' & local.directoryName & '<br />');
+							  //WriteOutput('<strong>RENAME: grandchild: directoryName 1:</strong> ' & local.directoryName & '<br />');
 							  try{
 								cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
@@ -409,7 +409,7 @@
 							}
 							local.directoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL") & "\" & ListLast(local.currentGrandChildOriginalPath,"/");
 							if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-							  WriteOutput('<strong>RENAME: grandchild: directoryName 2:</strong> ' & local.directoryName & '<br />');
+							  //WriteOutput('<strong>RENAME: grandchild: directoryName 2:</strong> ' & local.directoryName & '<br />');
 							  try{
 								cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
@@ -425,7 +425,7 @@
 						if(NOT Len(Trim(local.newGrandChildOriginalPath)) AND Len(Trim(local.newGrandChildPath))){
 						  local.directoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
 						  if(NOT DirectoryExists(local.directoryName)){
-							WriteOutput('<strong>CREATE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
+							//WriteOutput('<strong>CREATE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
 							try{
 							  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								cfdirectory(action="create",directory=local.directoryName);

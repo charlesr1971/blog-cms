@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, Input, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, Input, Inject, TemplateRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig, MatDialog } from '@angular/material';
 import { DialogAccountDeleteComponent } from '../../dialog-account-delete/dialog-account-delete.component';
 import { UtilsService } from '../../services/utils/utils.service';
+import { CategoryEditComponent } from '../../help/dialogs/category-edit/category-edit.component';
 import * as _ from 'lodash';
 
 import { UploadService } from '../../upload/upload.service';
@@ -66,6 +67,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('modal') modal;
   @ViewChild('unapprovedImagesSelect') unapprovedImagesSelect;
   @ViewChild('approvedImagesSelect') approvedImagesSelect;
+  @ViewChild('dialogEditCategoriesHelpNotification') private dialogEditCategoriesHelpNotificationTpl: TemplateRef<any>;
+  @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
 
@@ -116,6 +119,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   userid: number = 0;
   disableCommentGeneralTooltip: boolean = false;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
+  maxcategoryeditnamelength: number = environment.maxcategoryeditnamelength;
+  dialogEditCategoriesHeight: number = 0;
 
   debug: boolean = false;
 
@@ -770,6 +775,46 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: openDialog(): The action was approved');
         }
+      }
+    });
+  }
+
+  openEditCategoriesHelpNotificationDialog(): void {
+    const dialogRef = this.dialog.open(CategoryEditComponent, {
+      width: this.isMobile ? '100%' :'50%',
+      height: this.isMobile ? '100%' :'75%',
+      maxWidth: this.isMobile ? '100%' :'50%',
+      hasBackdrop: false,
+      disableClose: true,
+      id: 'dialog-edit-categories-help-notification'
+    });
+    updateCdkOverlayThemeClass(this.themeRemove);
+    dialogRef.beforeClose().subscribe(result => {
+      if(this.debug) {
+        console.log('tree-dynamic: dialog edit categories help notification: before close');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('tree-dynamic: dialog edit categories help notification: before close: result: ', result);
+        }
+      }
+    });
+    dialogRef.afterOpen().subscribe( () => {
+      if(this.debug) {
+        console.log('tree-dynamic: dialog edit categories help notification: after open');
+      }
+      const parent = document.querySelector('#dialog-edit-categories-help-notification');
+      let height = parent.clientHeight ? parent.clientHeight : 0;
+      const offsetHeight = 150;
+      if(!isNaN(height) && (height - offsetHeight) > 0) {
+        height = height - offsetHeight;
+      }
+      if(height > 0 ) {
+        this.dialogEditCategoriesHeight = height;
+        this.httpService.editCategoriesDialogOpened.next(this.dialogEditCategoriesHeight);
+      }
+      if(this.debug) {
+        console.log('cookieAcceptanceSnackBarComponent.component: dialog: this.dialogEditCategoriesHeight: ', this.dialogEditCategoriesHeight);
       }
     });
   }

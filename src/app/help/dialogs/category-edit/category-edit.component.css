@@ -1,0 +1,31 @@
+
+.form-field-container .form-field-legend {
+    position: relative;
+    padding: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.form-field-container .form-field-legend > .mat-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    cursor: move;
+}
+
+.form-field-container .form-field-text {
+    padding: 20px;
+}
+
+.mat-icon.dialog-edit-categories-help-notification-close {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+#dialogEditCategoriesHelpNotificationText {
+    overflow: auto;
+}
+

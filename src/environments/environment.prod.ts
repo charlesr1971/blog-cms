@@ -19,5 +19,6 @@ export const environment = {
   apiEndpointUrl: 'https://community.establishmindfulness.com/assets/cfm/rest/api/v1/',
   maxCommentInputLength: 140,
   catalogRouterAlias: 'stories',
-  uploadRouterAlias: 'upload-story'
+  uploadRouterAlias: 'upload-story',
+  maxcategoryeditnamelength: 25
 };

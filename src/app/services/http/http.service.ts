@@ -60,6 +60,7 @@ export class HttpService {
   commentsDialogOpened: Subject<any> = new Subject<any>();
   articleDialogOpened: Subject<any> = new Subject<any>();
   cookiePolicyDialogOpened: Subject<any> = new Subject<any>();
+  editCategoriesDialogOpened: Subject<any> = new Subject<any>();
   tinymceArticleDeletedImages: Subject<any> = new Subject<any>();
   tinymceArticleOnChange: Subject<any> = new Subject<any>();
   tinymceArticleHasUnsavedChanges: Subject<any> = new Subject<any>();

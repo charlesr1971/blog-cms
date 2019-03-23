@@ -93,6 +93,14 @@
     cursor: pointer;
 }
 
+.form-field-container .form-field-text div.panel h2.panel-legend span.help {
+    position: absolute;
+    top: 16px;
+    right: 40px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .form-field-container .form-field-text div.panel div.panel-content {
     padding: 30px 0px;
     font-size: 16px;
@@ -159,6 +167,17 @@ div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-lis
 
 .upload-container {
     padding: 20px 0px 0px;
+}
+
+.mat-icon.dialog-edit-categories-help-notification-close {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+#dialogEditCategoriesHelpNotificationText {
+    overflow: auto;
 }
 
 /* media queries */
