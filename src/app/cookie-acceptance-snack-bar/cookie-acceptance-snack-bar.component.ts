@@ -29,8 +29,8 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
   isMobile: boolean = false;
   cookieAcceptanceSubscription: Subscription;
   dialogcookiePolicyHeight: number = 0;
-  themeObj = {};
   themeRemove: string = '';
+  themeAdd: string = '';
 
   debug: boolean = false;
 
@@ -45,7 +45,8 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
     }
 
     const themeObj = this.httpService.themeObj;
-    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+    this.themeAdd = this.themeRemove === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
     this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -171,7 +172,7 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
       maxWidth: 740,
       id: 'cookie-policy-dialog'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('cookieAcceptanceSnackBarComponent.component: dialog cookie policy: before close');

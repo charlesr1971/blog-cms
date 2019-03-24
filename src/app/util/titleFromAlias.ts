@@ -1,6 +1,6 @@
 export function titleFromAlias(string: string): string {
     const title = string.replace(/-/gi,' ').trim();
-    let splitStr = title.toLowerCase().split(' ');
+    const splitStr = title.toLowerCase().split(' ');
     for (var i = 0; i < splitStr.length; i++) {
         splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
     }

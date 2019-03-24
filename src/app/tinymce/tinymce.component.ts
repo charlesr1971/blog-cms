@@ -96,7 +96,7 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
 
         const that = this;
         var tinymce_config = {};
-        var style_formats = [
+        const style_formats = [
           {title: 'Headers', items: [
             {title: 'Header 1', format: 'h1'},
             {title: 'Header 2', format: 'h2'},
@@ -222,15 +222,15 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
   }
 
   private deleteImage(event: any, editor: any): void {
-    if ((event.keyCode == 8 || event.keyCode == 46) && editor.selection) {
-      var selectedNode = editor.selection.getNode();
-      if (selectedNode && selectedNode.nodeName == 'IMG') {
+    if ((event.keyCode === 8 || event.keyCode === 46) && editor.selection) {
+      const selectedNode = editor.selection.getNode();
+      if (selectedNode && selectedNode.nodeName === 'IMG') {
           const filename = uriParse(selectedNode.src);
           this.tinymceArticleDeletedImages.push(filename);
           if(this.debug) {
             console.log('tinymce.component: delete image: this.tinymceArticleDeletedImages: ',this.tinymceArticleDeletedImages);
           }
-          let deferDeleteItems = arrayInclude(this.tinymceArticleDeletedImages,this.tinymceArticleImages);
+          const deferDeleteItems = arrayInclude(this.tinymceArticleDeletedImages,this.tinymceArticleImages);
           if(deferDeleteItems.length) {
             this.httpService.tinymceArticleDeletedImages.next(deferDeleteItems);
           }
@@ -284,9 +284,9 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
 
   private getMetaData(): any {
       const editor = tinymce.activeEditor;
-      var body = editor.getBody();
-      var text = tinymce.trim(body.innerText || body.textContent);
-      var obj = {
+      const body = editor.getBody();
+      const text = tinymce.trim(body.innerText || body.textContent);
+      const obj = {
         chars: text.length,
         words: text.split(/[\w\u2019\'-]+/).length
       };
@@ -430,7 +430,7 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
       console.log('tinymce.component: openNotificationManager: closeButton: mobile: ', closeButton);
     }
     if(closeButton) {
-      closeButton.addEventListener("click", this.closeNotificationManager.bind(this),false);
+      closeButton.addEventListener('click', this.closeNotificationManager.bind(this),false);
       if(timeout > 0) {
         setTimeout( () => {
           if(this.debug) {
@@ -444,7 +444,7 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
 
   private closeNotificationManager(): void {
     const editor = tinymce.activeEditor;
-    var nodes =  editor.dom.select('.mce-notification-custom');
+    const nodes =  editor.dom.select('.mce-notification-custom');
     if(this.debug) {
       console.log('tinymce.component: closeNotificationManager: nodes: mobile: ', nodes);
     }
@@ -459,18 +459,18 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
   private init_instance_callback(editor: any): void {
     const that = this;
     editor.on('nodeChange', function (event) {
-      var selectedNode = editor.selection.getNode();
-      var hasClass = editor.dom.hasClass(selectedNode,'tinymce-divider-after-plugin');
-      if (selectedNode && selectedNode.nodeName == 'DIV' && hasClass) {
+      const selectedNode = editor.selection.getNode();
+      const hasClass = editor.dom.hasClass(selectedNode,'tinymce-divider-after-plugin');
+      if (selectedNode && selectedNode.nodeName === 'DIV' && hasClass) {
         if(that.debug) {
           console.log('tinymce.component: nodeChange: selectedNode: ', selectedNode);
         }
-        var uniqueID = editor.dom.uniqueId();
-        var paragraph = document.createElement('p');
+        const uniqueID = editor.dom.uniqueId();
+        const paragraph = document.createElement('p');
         paragraph.setAttribute('id',uniqueID);
         paragraph.innerHTML = '&nbsp;';
         editor.dom.insertAfter(paragraph,selectedNode);
-        var newParagraph = editor.dom.select('p#' + uniqueID)[0];
+        const newParagraph = editor.dom.select('p#' + uniqueID)[0];
         editor.selection.setCursorLocation(newParagraph);
       }
     });

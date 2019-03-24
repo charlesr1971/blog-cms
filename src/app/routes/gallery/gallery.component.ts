@@ -92,7 +92,7 @@ export class GalleryComponent implements OnInit {
 
       if(this.debug) {
         console.log('gallery.component: this.httpService.isSignUpValidated: ', this.httpService.isSignUpValidated);
-        console.log('gallery.component: this.httpService.isSignUpValidated: is data type number: ', (typeof this.httpService.isSignUpValidated === "number"));
+        console.log('gallery.component: this.httpService.isSignUpValidated: is data type number: ', (typeof this.httpService.isSignUpValidated === 'number'));
       }
   
       if(this.httpService.isSignUpValidated === 1) {

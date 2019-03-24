@@ -421,7 +421,6 @@ export class ImagesComponent implements OnInit, OnDestroy {
         user['authenticated'] = data['userid'];
         this.userService.setCurrentUser(user);
         this.userid = data['userid'];
-        //this.currentUser['authenticated'] = this.userid;
         if(this.debug) {
           console.log('images.component: processLoginWithTokenData: this.currentUser ',this.currentUser);
         }
@@ -757,7 +756,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
   }
 
   imagesApproved(): boolean {
-    let approved = true;
+    const approved = true;
     const temp = this.images.filter( (image: any) => {
       return image['approved'] === 0;
     });

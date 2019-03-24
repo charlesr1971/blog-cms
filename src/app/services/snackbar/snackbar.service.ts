@@ -24,7 +24,7 @@ export class SnackbarService implements OnDestroy
       if (this.msgQueue.length === 0) {
         return;
       }
-      let message = this.msgQueue.shift();
+      const message = this.msgQueue.shift();
       this.isInstanceVisible = true;
       this.snackBarRef = this.snackBar.open(message.message, message.action, {duration: 2000});
       this.snackBarRef.afterDismissed().subscribe(() => {
@@ -41,7 +41,7 @@ export class SnackbarService implements OnDestroy
      */
     add(message: string, action?: string, config?: MatSnackBarConfig): void{
 
-        let sbMessage = new SnackBarMessage();
+        const sbMessage = new SnackBarMessage();
         sbMessage.message = message;
         sbMessage.action = action;
 

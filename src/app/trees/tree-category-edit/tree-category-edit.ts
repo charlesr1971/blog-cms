@@ -25,6 +25,7 @@ export class TodoItemNode {
   id: string;
   isDeleted: boolean;
   originalPath: string;
+  originalPathCache: string;
 }
 
 /** Flat to-do item node with expandable and level information */
@@ -37,6 +38,7 @@ export class TodoItemFlatNode {
   id: string;
   isDeleted: boolean;
   originalPath: string;
+  originalPathCache: string;
 }
 
 /**
@@ -111,6 +113,7 @@ export class ChecklistDatabase {
       node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(key));
       node.isDeleted = false;
       node.originalPath = key;
+      node.originalPathCache = key;
 
       if (value != null) {
         if (typeof value === 'object') {
@@ -125,6 +128,7 @@ export class ChecklistDatabase {
           node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(value));
           node.isDeleted = false;
           node.originalPath = value;
+          node.originalPathCache = value;
         }
       }
 
@@ -147,17 +151,17 @@ export class ChecklistDatabase {
     node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(node.path));
     if(this.isParent(node.id) && 'children' in node) {
       node.children.map( (child) => {
-        let childIdArr = child.id.split('-');
-        let childId = childIdArr[childIdArr.length-1];
-        let id = node.id + '-' + childId;
+        const childIdArr = child.id.split('-');
+        const childId = childIdArr[childIdArr.length-1];
+        const id = node.id + '-' + childId;
         if(this.debug) {
           console.log('checklistDatabase: updateItem(): new child id: ',id);
         }
         child.id = id;
-        let parentPathArr = node.path.replace(/\^.*/,'').split('//');
-        let childPathArr = child.path.split('//');
+        const parentPathArr = node.path.replace(/\^.*/,'').split('//');
+        const childPathArr = child.path.split('//');
         parentPathArr.push(childPathArr[childPathArr.length-1]);
-        let childPath = parentPathArr.join('//');
+        const childPath = parentPathArr.join('//');
         if(this.debug) {
           console.log('checklistDatabase: updateItem(): new child childPath: ',childPath);
         }
@@ -169,6 +173,9 @@ export class ChecklistDatabase {
     }
     if(typeof node.originalPath === 'undefined') {
       node.originalPath = '';
+    }
+    if(typeof node.originalPathCache === 'undefined') {
+      node.originalPathCache = this.formatPath(name,id) + '^' + node.empty;
     }
     if(this.debug) {
       console.log('checklistDatabase: updateItem(): name: ',name);
@@ -182,8 +189,8 @@ export class ChecklistDatabase {
 
   isParent(id: string): boolean {
     const regex1 = new RegExp('_[0-9]+$');
-    let _id = id.replace(regex1,'');
-    let str = _id.split('-');
+    const _id = id.replace(regex1,'');
+    const str = _id.split('-');
     if(this.debug) {
       console.log('checklistDatabase: isParent(): str.length: ',str.length);
     }
@@ -200,13 +207,13 @@ export class ChecklistDatabase {
 
   formatPath(name: string, id: string): string {
     const regex1 = new RegExp('_[0-9]+$');
-    let _id = id.replace(regex1,'');
-    let str = _id.split('-');
+    const _id = id.replace(regex1,'');
+    const str = _id.split('-');
     if(!regex1.test(id)) {
       str.pop();
     }
     str.push(name.replace(/[\s]+/,'-').replace(/[.,\/\\#!$%\^&\*;:{}=_'"`~()]/g,''));
-    let result = str.join('//').toLowerCase().trim();
+    const result = str.join('//').toLowerCase().trim();
     return result;
   }
 
@@ -222,8 +229,6 @@ export class ChecklistDatabase {
   providers: [ChecklistDatabase, PathFormatPipe, EmptyDirectoryFormatPipe, ConvertPathToIdPipe]
 })
 export class TreeCategoryEdit implements OnDestroy {
-
-  //@ViewChild('treeSelector') tree: any;
 
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
@@ -327,6 +332,7 @@ export class TreeCategoryEdit implements OnDestroy {
    * Transformer to convert nested node to flat node. Record the nodes in maps for later use.
    */
   transformer = (node: TodoItemNode, level: number) => {
+
     const existingNode = this.nestedNodeMap.get(node);
     const flatNode = existingNode && existingNode.item === node.item
         ? existingNode
@@ -338,12 +344,21 @@ export class TreeCategoryEdit implements OnDestroy {
     flatNode.path = node.path;
     flatNode.id = node.id;
     flatNode.isDeleted = false;
-    flatNode.originalPath = node.path;
-
+    flatNode.originalPath = !existingNode ? node.path : this.flatNodeMap.get(existingNode).originalPath;
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: transformer(): flatNode.originalPath: ',flatNode.originalPath);
+    }
+    flatNode.originalPathCache = !existingNode ? node.originalPathCache : this.flatNodeMap.get(existingNode).originalPathCache;
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: transformer(): flatNode.originalPathCache: ',flatNode.originalPathCache);
+    }
     flatNode.expandable = !!node.children;
+
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
+
     return flatNode;
+
   }
 
   /** Whether all the descendants of the node are selected. */

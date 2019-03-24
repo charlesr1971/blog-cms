@@ -1,6 +1,6 @@
-<div mat-dialog-draggable-title id="dialog-edit-categories-help-notification-container" class="mat-app-background basic-container" style="opacity:0;">
+<div appMatDialogDraggableTitle id="dialog-edit-categories-help-notification-container" class="mat-app-background basic-container" style="opacity:0;">
   <div class="form-field-container">
-    <div class="form-field-legend">How to edit categories?<mat-icon ngbTooltip="Draggable Panel" [disableTooltip]="disableEditCategoriesTooltip" [container]="'body'">drag_indicator</mat-icon></div>
+    <div class="form-field-legend">How to edit categories?<mat-icon ngbTooltip="Draggable Panel" [disableTooltip]="disableEditCategoriesTooltip" [container]="'body'" *ngIf="!isMobile">drag_indicator</mat-icon></div>
     <div class="form-field-text" id="dialogEditCategoriesHelpNotificationText" #dialogEditCategoriesHelpNotificationText>
       <ol>
         <li>An existing category can be renamed or deleted, as long as one or more image and/or article is not already associated with it.</li>
@@ -9,7 +9,7 @@
         <li>There is only one level 1 category called 'categories'. The level 1 category is also known as the 'root' category. The root category name cannot be edited. The root category cannot be deleted. However, new sub categories can be added to it. Like a level 2 category, it can only be associated with sub categories.</li>
         <li>After a new level 2 category is added to the database by pressing the 'Update' button, a new sub category is automatically created by the system, called 'miscellaneous'. Each level 2 category can only be associated with one or more sub categories.</li>
         <li>Level 3 categories can only be associated with images and/or articles.</li>
-        <li>To delete a category, press the check box on the left hand side. The entire category node will become semi opaque. If a level 2 category checkbox is selected, all its sub categories will be marked for deletion, as well. Categories will only be deleted from the system, after the 'Update' button is pressed.</li>
+        <li>To delete a category, press the check box on the left hand side. Category node icons will turn red. If a level 2 category checkbox is selected, all its sub categories will be marked for deletion, as well. Categories will only be deleted from the system, after the 'Update' button is pressed.</li>
         <li>If a level 2 or 3 category is deleted from the system by mistake, do not panic. Because, such a category is not already associated with an image and/or article, add it back to the category tree. If the deleted category contained sub categories, these will also need to added again. Then, just press the 'Update' button again.</li>
         <li>Certain category nodes are disabled. These categories nodes will appear semi opaque. A disabled category is already associated with one or more image and/or article.</li>
       </ol>

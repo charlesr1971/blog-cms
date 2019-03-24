@@ -8,7 +8,7 @@ import { take } from 'rxjs/operators/take';
 import { ModalPositionCache, Position } from './modal-position.cache';
 
 @Directive({
-  selector: '[mat-dialog-draggable-title]'
+  selector: '[appMatDialogDraggableTitle]'
 })
 export class DialogDraggableTitleDirective implements OnInit {
 

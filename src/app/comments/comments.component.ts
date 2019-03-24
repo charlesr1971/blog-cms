@@ -20,7 +20,7 @@ import { environment } from '../../environments/environment';
 
 declare var ease, TweenMax, TimelineMax, Elastic: any;
 
-interface commentElementsPrefix {
+interface CommentElementsPrefix {
   parentClose: string;
   refchildClose: string
 };
@@ -57,7 +57,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   @Input() currentUser: User;
   @Input() disableCommentTooltip: boolean = false;
 
-  @Input() commentElementsPrefix: commentElementsPrefix  = {
+  @Input() CommentElementsPrefix: CommentElementsPrefix  = {
     parentClose: '',
     refchildClose: ''
   };
@@ -87,9 +87,8 @@ export class CommentsComponent implements OnInit, OnDestroy {
   lastReplyToCommentid: number = 0;
   commentsDialogIsOpen: boolean = false;
   themeTypeLight: boolean = false;
-  themeObj = {};
   themeRemove: string = '';
-
+  themeAdd: string = '';
   debug: boolean = false;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document,
@@ -106,7 +105,8 @@ export class CommentsComponent implements OnInit, OnDestroy {
 
       const themeObj = this.httpService.themeObj;
       this.themeTypeLight = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? true : false;
-      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+      this.themeAdd = this.themeRemove === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
       this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -487,7 +487,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
       maxWidth: 740,
       id: 'dialog-comments-' + this.image['id']
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     const infiniteScrollerComments = this.documentBody.querySelector('#infinite-scroller-comments-' + this.image['id']);
     const newChild = this.documentBody.querySelector('#app-comments-' + this.image['id']);
     dialogRef.beforeClose().subscribe(result => {
@@ -501,10 +501,10 @@ export class CommentsComponent implements OnInit, OnDestroy {
       }
       this.commentsDialogIsOpen = false;
       if(this.debug) {
-        console.log('comments.component: dialog result: this.commentElementsPrefix: ', this.commentElementsPrefix);
+        console.log('comments.component: dialog result: this.CommentElementsPrefix: ', this.CommentElementsPrefix);
       }
-      const parent = this.documentBody.querySelector(this.commentElementsPrefix['parentClose'] + this.image['id']);
-      const refChild = this.documentBody.querySelector(this.commentElementsPrefix['refchildClose'] + this.image['id']);
+      const parent = this.documentBody.querySelector(this.CommentElementsPrefix['parentClose'] + this.image['id']);
+      const refChild = this.documentBody.querySelector(this.CommentElementsPrefix['refchildClose'] + this.image['id']);
       if(this.debug) {
         console.log('comments.component: dialog result: parent: ', parent);
         console.log('comments.component: dialog result: refChild: ', refChild);
@@ -520,12 +520,13 @@ export class CommentsComponent implements OnInit, OnDestroy {
       this.commentsDialogIsOpen = true;
       const parent = this.documentBody.querySelector('#dialog-comments-' + this.image['id']);
       let height = parent.clientHeight ? parent.clientHeight : 0;
+      const offset = this.currentUser.authenticated !== 0 ? 12 : 42;
       const padding = 48;
-      const commentInputHeight = 108;
+      const commentInputHeight = this.currentUser.authenticated !== 0 ? 108 : 0;
       const matCardContentPadding = 32;
-      const commentAddHeight = 24;
-      if(!isNaN(height) && (height - (padding + commentInputHeight + matCardContentPadding + commentAddHeight)) > 0) {
-        height = height - (padding + commentInputHeight + matCardContentPadding + commentAddHeight);
+      const commentAddHeight = this.currentUser.authenticated !== 0 ? 24 : 0;
+      if(!isNaN(height) && (height - (padding + commentInputHeight + matCardContentPadding + commentAddHeight + offset)) > 0) {
+        height = height - (padding + commentInputHeight + matCardContentPadding + commentAddHeight + offset);
       }
       if(this.debug) {
         console.log('comments.component: dialog: height: ', height);
@@ -543,7 +544,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
       width: this.isMobile ? '90%' :'25%',
       id: 'dialog-comments-profanity-notification'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('comments.component: dialog comments profanity notification: before close');

@@ -213,11 +213,11 @@ export class HttpService {
     }
     if(theme !== '') {
       result['default'] = theme;
-      let themeArray = theme.split('-');
+      const themeArray = theme.split('-');
       if(Array.isArray(themeArray) && themeArray.length === 3){
         result['id'] = parseInt(themeArray[1]);
         themeArray.pop();
-        let _theme = themeArray.join('-');
+        const _theme = themeArray.join('-');
         result['stem'] = _theme;
         result['light'] = _theme + '-light';
         result['dark'] = _theme + '-dark';
@@ -795,7 +795,7 @@ export class HttpService {
       headers = {
         headers: requestHeaders
       };
-      req = new HttpRequest('POST', this.apiUrl + '/category.cfm?addEmptyFlag=' + addEmptyFlag + '&formatWithKeys=' + formatWithKeys + '&flattenParentArray=' + flattenParentArray, body, headers);
+      req = new HttpRequest('POST', this.apiUrl + '/category-edit.cfm?addEmptyFlag=' + addEmptyFlag + '&formatWithKeys=' + formatWithKeys + '&flattenParentArray=' + flattenParentArray, body, headers);
       if(this.debug) {
         console.log('http.service: editCategories: body: ',body);
         console.log('http.service: editCategories: headers ',headers);

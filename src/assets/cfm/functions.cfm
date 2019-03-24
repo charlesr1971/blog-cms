@@ -1191,7 +1191,7 @@
 	local.result = {};
     local.materialThemeData = createTheme(theme=arguments.theme);
 	if(StructKeyExists(local.materialThemeData,"stem")){
-	  for (var local.i = 1; local.i < ArrayLen(request.materialThemeData); local.i++) {
+	  for (var local.i = 1; local.i LTE ArrayLen(request.materialThemeData); local.i++) {
 		local.materialThemeDataObj = request.materialThemeData[local.i];
 		if(CompareNoCase(local.materialThemeDataObj['themeName'],local.materialThemeData['stem']) EQ 0){
 		  local.result = local.materialThemeDataObj;
@@ -1244,7 +1244,7 @@
 	local.result = false;
 	local.string = REReplaceNoCase(arguments.string,"[[:punct:]]","","ALL");
 	local.array = ListToArray(local.string," ");
-	for (var local.i = 1; local.i < ArrayLen(local.array); local.i++) {
+	for (var local.i = 1; local.i LTE ArrayLen(local.array);local.i++) {
 	  if(ListFindNoCase(request.profanityList,Trim(local.array[local.i]),"|")){
 		local.result = true;
 		break;

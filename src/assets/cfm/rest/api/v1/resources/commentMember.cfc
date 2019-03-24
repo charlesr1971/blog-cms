@@ -49,7 +49,7 @@
     <cfreturn representationOf(local.data) />
   </cffunction>
 
-  <cffunction name="post">
+  <cffunction name="post" taffy_docs_hide>
 	  <cfset var local = StructNew()>
       <cfset var emailtemplateheaderbackground = request.utils.getMaterialThemePrimaryColour(theme=request.theme)>
       <cfset var emailtemplatemessage = "">

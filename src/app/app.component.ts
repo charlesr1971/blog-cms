@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(public cookieService: CookieService,
     private titleService: Title,
-    private meta : Meta ,
+    private meta: Meta,
     @Inject(DOCUMENT) document,
     private router: Router,
     private route: ActivatedRoute,

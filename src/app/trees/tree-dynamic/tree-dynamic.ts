@@ -195,7 +195,6 @@ export class DynamicDataSource {
   selector: 'app-tree-dynamic',
   templateUrl: 'tree-dynamic.html',
   styleUrls: ['tree-dynamic.css'],
-  //providers: [DynamicDatabase],
   providers: [
     SeoTitleFormatPipe,
     DynamicDatabase,
@@ -287,8 +286,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
   tinymceArticleImageCount: number = 0;
   tinyMceArticleMaxWordCount: number = environment.tinymcearticlemaxwordcount;
   tinymceArticleImages = [];
-  themeObj = {};
   themeRemove: string = '';
+  themeAdd: string = '';
   hasUnsavedChanges: boolean = false;
   userid: number = 0;
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
@@ -324,7 +323,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
 
     const themeObj = this.httpService.themeObj;
-    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+    this.themeAdd = this.themeRemove === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
     this.apiUrl = this.httpService.apiUrl;
     this.categoryImagesUrl = this.httpService.categoryImagesUrl;
@@ -653,7 +653,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.isEditImageValid = false;
       }
       this.tinymceArticleImageCount = data['tinymceArticleImageCount'];
-      var regex = /<img\s+[^>]*?src=("|')([^'"]+)/ig;
+      const regex = /<img\s+[^>]*?src=("|')([^'"]+)/ig;
       this.tinymceArticleImages = getUriMatches(data['article'], regex, 2);
       if(this.debug) {
         console.log('tree-dynamic: processImageData: this.tinymceArticleImageCount',this.tinymceArticleImageCount);
@@ -673,7 +673,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if('error' in data && data['error'] === '') {
         this.tinyMceArticleContent = data['article'];
         this.tinymceArticleImageCount = data['tinymceArticleImageCount'];
-        var regex = /<img\s+[^>]*?src=("|')([^'"]+)/ig;
+        const regex = /<img\s+[^>]*?src=("|')([^'"]+)/ig;
         this.tinymceArticleImages = getUriMatches(data['article'], regex, 2);
         this.currentUser['submitArticleNotification'] = data['submitArticleNotification'];
         if(this.debug) {
@@ -731,7 +731,6 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '') {
-        //this.userid = data['userid'];
         const user: User = new User({
           userid: data['userid'],
           email: data['email'],
@@ -758,7 +757,6 @@ export class TreeDynamic implements OnInit, OnDestroy {
         user['authenticated'] = data['userid'];
         this.userService.setCurrentUser(user);
         this.userid = data['userid'];
-        //this.currentUser['authenticated'] = this.userid;
         if(this.debug) {
           console.log('tree-dynamic.component: processLoginData: this.currentUser ',this.currentUser);
         }
@@ -1174,7 +1172,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       maxWidth: 1278,
       id: 'dialog-article'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog aticle: before close');
@@ -1216,7 +1214,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       width: this.isMobile ? '90%' :'25%',
       id: 'dialog-submit-article-notification'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog submit article notification: before close');
@@ -1244,7 +1242,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       width: this.isMobile ? '90%' :'25%',
       id: 'dialog-article-max-word-count-notification'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog article max word count notification: before close');
@@ -1269,7 +1267,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       maxWidth: this.isMobile ? '100%' :'50%',
       id: 'dialog-article-help-notification'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog article help notification: before close');

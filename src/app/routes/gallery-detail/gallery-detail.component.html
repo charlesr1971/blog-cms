@@ -48,7 +48,7 @@
         <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">
           <app-toolbar [image]="image" [commentsState]="commentsState" [currentUser]="currentUser" (_openComments)="openComments($event)" [commentsTotal]="commentsTotal" [disableCommentTooltip]="disableCommentTooltip"></app-toolbar>
           <div id="gallery-detail-comments-ref-{{ image.id }}"></div>
-          <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [scrollToCommentsPanel]="scrollToCommentsPanel" [commentElementsPrefix]="commentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
+          <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [scrollToCommentsPanel]="scrollToCommentsPanel" [CommentElementsPrefix]="CommentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@
       <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">
         <app-toolbar [image]="image" [commentsState]="commentsState" [currentUser]="currentUser" (_openComments)="openComments($event)" [commentsTotal]="commentsTotal" [disableCommentTooltip]="disableCommentTooltip"></app-toolbar>
         <div id="gallery-detail-comments-ref-{{ image.id }}"></div>
-        <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [commentElementsPrefix]="commentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
+        <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [CommentElementsPrefix]="CommentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
       </div>
     </div>
   </div>

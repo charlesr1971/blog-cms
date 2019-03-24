@@ -26,7 +26,6 @@
 	<cfset local.qGetDirPlusId = request.utils.ParseDirectory(path=request.filepath & "/categories")>
 	<cfset local.current['categories'] = request.utils.CleanArray(directories=request.utils.ConvertDirectoryQueryToArray(query=local.qGetDirPlusId,addEmptyFlag=arguments.addEmptyFlag),formatWithKeys=arguments.formatWithKeys,flattenParentArray=arguments.flattenParentArray)>
     <cfset local.jwtString = "">
-    <cfset local.authorized = true>
     <cfset local.data = StructNew()>
     <cfset local.data['categories'] =  "">
     <cfset local.data['userToken'] = "">

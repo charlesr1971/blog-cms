@@ -12,7 +12,7 @@ import { Image } from '../../image/image.model';
 import { HttpService } from '../../services/http/http.service';
 import { environment } from '../../../environments/environment';
 
-interface commentElementsPrefix {
+interface CommentElementsPrefix {
   parentClose: string;
   refchildClose: string
 };
@@ -40,7 +40,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
   disableFavouriteTooltip: boolean = false;
   hasAside: boolean = false;
   hideCommentInput: boolean = false;
-  commentElementsPrefix: commentElementsPrefix  = {
+  CommentElementsPrefix: CommentElementsPrefix  = {
     parentClose: '#gallery-detail-comments-container-',
     refchildClose: '#gallery-detail-comments-ref-'
   };

@@ -32,7 +32,7 @@
         <a class="read-more-link" routerLink="/{{ catalogRouterAliasLower }}/{{ image.fileid }}/{{ image.title | seoTitleFormat }}">Read more</a>
       </p>
     </mat-card-content>
-    <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [scrollToCommentsPanel]="scrollToCommentsPanel" [commentElementsPrefix]="commentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
+    <app-comments id="app-comments-{{ image.id }}" [image]="image" (sendCommentsTotal)="sendCommentsTotal($event)" (sendDisableCommentTooltip)="sendDisableCommentTooltip($event)" [commentsState]="commentsState" [scrollToCommentsPanel]="scrollToCommentsPanel" [CommentElementsPrefix]="CommentElementsPrefix" [currentUser]="currentUser" [disableCommentTooltip]="disableCommentTooltip" (sendHideCommentInput)="sendHideCommentInput($event)"></app-comments>
     <mat-card-actions id="mat-card-actions-{{ image.id }}" *ngIf="!hideCommentInput" color="accent">
       <div class="social-media-container" id="social-media-{{ image.id }}" [@shareFadeInOutAnimation]="{value: shareState}">
         <mat-icon class="mat-icon-rtl-mirror close" id="close-{{ image.id }}"  (click)="share($event,image.id)">

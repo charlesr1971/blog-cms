@@ -16,15 +16,15 @@ export function styler(element) {
                 throw new Error('Second parameter of this function should be an array');
             }
  
-            let elems = getElements();
+            const elems = getElements();
             
             if (elems.length === 0) {
                 return false;
             }
 
-            let elem = elems[0];
+            const elem = elems[0];
  
-            let obj = {};
+            const obj = {};
  
             if (elem instanceof HTMLElement && styles) {
                 styles.map((style) => obj[style] = window.getComputedStyle(elem, null).getPropertyValue(style));
@@ -36,14 +36,14 @@ export function styler(element) {
                 throw new Error('Second parameter of this function should be an object');
             }
  
-            let elems: any = getElements();
+            const elems: any = getElements();
 
             if (elems.length === 0) {
                 return false;
             }
 
             elems.forEach(function(elem) {
-                for (let i in styles) {
+                for (const i in styles) {
                     if (styles.hasOwnProperty(i)) {
                         elem.style[i] = styles[i];
                     }

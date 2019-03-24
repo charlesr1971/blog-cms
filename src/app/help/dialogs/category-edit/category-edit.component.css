@@ -18,6 +18,11 @@
     padding: 20px;
 }
 
+.form-field-container .form-field-text .mat-icon {
+    position: relative;
+    top: 2px;
+}
+
 .mat-icon.dialog-edit-categories-help-notification-close {
     position: absolute;
     bottom: 20px;

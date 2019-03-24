@@ -74,6 +74,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   themeObj = {};
   themeRemove: string = '';
+  themeAdd: string = '';
 
   imagesUnapproved: Array<any> = [];
   pageCacheUnapproved = {};
@@ -119,7 +120,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   userid: number = 0;
   disableCommentGeneralTooltip: boolean = false;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
-  maxcategoryeditnamelength: number = environment.maxcategoryeditnamelength;
   dialogEditCategoriesHeight: number = 0;
 
   debug: boolean = false;
@@ -144,7 +144,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
 
       this.themeObj = this.httpService.themeObj;
-      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+      this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
 
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
@@ -323,6 +324,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.themeChecked = this.currentUser['theme'] === this.themeObj['dark'] ? false : true;
         const themeType = data['theme'] === this.themeObj['light'] ? this.themeObj['light'] : this.themeObj['dark'];
         this.httpService.themeType.next(themeType);
+        this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+        this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.openSnackBar('Changes have been submitted...', 'Success');
       }
       else{
@@ -470,7 +473,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const imagethumbnaillistitemimageimg = Array.prototype.slice.call(this.documentBody.querySelectorAll(className1));
     if(!this.isMobile && imagethumbnaillistitemimageimg.length > 1) {
       const imagethumbnaillistitemimage = Array.prototype.slice.call(this.documentBody.querySelectorAll(className2));
-      let imgHeights = [];
+      const imgHeights = [];
       imagethumbnaillistitemimageimg.map( (element) => {
         const height = element.clientHeight ? element.clientHeight : 0;
         if(height > 0) {
@@ -765,7 +768,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(DialogAccountDeleteComponent, {
       width: this.isMobile ? '90%' :'25%'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.afterClosed().subscribe(result => {
       if(this.debug) {
         console.log('profile.component: openDialog(): The dialog was closed');
@@ -788,7 +791,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
       disableClose: true,
       id: 'dialog-edit-categories-help-notification'
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    if(this.debug) {
+      console.log('tree-dynamic: dialog edit categories help notification: before close: this.themeRemove: ', this.themeRemove);
+      console.log('tree-dynamic: dialog edit categories help notification: before close: this.themeAdd: ', this.themeAdd);
+    }
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
         console.log('tree-dynamic: dialog edit categories help notification: before close');

@@ -7,13 +7,17 @@
     margin-bottom: 20px;
 }
 
-.category-edit-tree-node {
+/* .mat-tree-node.category-edit-tree-node {
+    background: none;
+} */
+
+/* .category-edit-tree-node {
     opacity: 1;
 }
 
 .category-edit-tree-node-opaque {
     opacity: 0.25;
-}
+} */
 
 /* media queries */
 

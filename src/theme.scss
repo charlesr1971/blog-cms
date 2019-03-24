@@ -143,6 +143,14 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-foreground-palette, text, 0.035);
     }
 
+    .mat-tree-node.category-edit-tree-node .mat-icon.add, .mat-tree-node.category-edit-tree-node .mat-icon.update {
+        color: mat-color($dark-accent, lighter);
+    }
+
+    .mat-tree-node.category-edit-tree-node-opaque .mat-icon.add, .mat-tree-node.category-edit-tree-node-opaque .mat-icon.update {
+        color: mat-color($dark-warn, default);
+    }
+
     .mat-tree-node a {
         color: mat-color($dark-foreground-palette, text, 0.5);
     }
@@ -291,8 +299,12 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-foreground-palette, text, 0.025);
     }
 
-    app-images .mat-progress-spinner circle, app-images .mat-spinner circle{
+    app-images .mat-progress-spinner circle, app-images .mat-spinner circle {
         stroke: mat-color($dark-foreground-palette, text, 0.5) !important;
+    }
+
+    .mat-dialog-container .form-field-container .form-field-text .mat-icon {
+        color: mat-color($dark-accent, lighter);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
@@ -489,6 +501,14 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-primary, default, 0.07);
     }
 
+    .mat-tree-node.category-edit-tree-node .mat-icon.add, .mat-tree-node.category-edit-tree-node .mat-icon.update {
+        color: mat-color($light-accent, lighter);
+    }
+
+    .mat-tree-node.category-edit-tree-node-opaque .mat-icon.add, .mat-tree-node.category-edit-tree-node-opaque .mat-icon.update {
+        color: mat-color($light-warn, default);
+    }
+
     .mat-tree-node a {
         color: mat-color($light-foreground-palette, text, 0.5);
     }
@@ -647,6 +667,10 @@ $light-background-palette: map-get($light-theme, background);
 
     app-images .mat-progress-spinner circle, app-images .mat-spinner circle{
         stroke: mat-color($light-foreground-palette, text, 0.5) !important;
+    }
+
+    .mat-dialog-container .form-field-container .form-field-text .mat-icon {
+        color: mat-color($light-accent, lighter);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef, Renderer2 } from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import { Component, OnInit, Inject, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 import { HttpService } from '../../../services/http/http.service';
@@ -19,6 +19,7 @@ export class CategoryEditComponent implements OnInit {
 
   isMobile: boolean = false;
   disableEditCategoriesTooltip: boolean = false;
+  maxcategoryeditnamelength: number = environment.maxcategoryeditnamelength;
 
   debug: boolean = false;
 
@@ -62,6 +63,22 @@ export class CategoryEditComponent implements OnInit {
 
     });
 
+  }
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(event: MouseEvent) {
+    this.disableEditCategoriesTooltip = true;
+    if(this.debug) {
+      console.log('CategoryEditComponent.component: mousedown: this.disableEditCategoriesTooltip: ',this.disableEditCategoriesTooltip);
+    }
+  }
+
+  @HostListener('mouseup', ['$event'])
+  onMouseUp(event: MouseEvent) {
+    this.disableEditCategoriesTooltip = false;
+    if(this.debug) {
+      console.log('CategoryEditComponent.component: mouseup: this.disableEditCategoriesTooltip: ',this.disableEditCategoriesTooltip);
+    }
   }
 
   closeEditCategoriesHelpNotificationDialog() {

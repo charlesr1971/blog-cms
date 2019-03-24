@@ -239,23 +239,41 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   </cfloop>--->
   
-  <cfset qGetDirPlusId = request.utils.ParseDirectory(path=request.filepath & "/categories")>
   
-  <!---<cfdump var="#qGetDirPlusId#" />--->
   
+  
+  
+  
+  <!---<cfset qGetDirPlusId = request.utils.ParseDirectory(path=request.filepath & "/categories")>
+    
   <cfset currentObj = request.utils.CleanArray(directories=request.utils.ConvertDirectoryQueryToArray(query=qGetDirPlusId,addEmptyFlag=true),formatWithKeys=true,flattenParentArray=true)>
-  <!---<cfset currentObj = SerializeJSON(currentObj)>
-  <cfset currentObj = ReplaceNoCase(currentObj,"\","/","ALL")>
-  <cfset currentObj = DeserializeJSON(currentObj)>--->
- 
-  <!---<cfdump var="#currentObj#" />--->
   
   <cfset newObj = '{"data":[{"path":"//categories","item":"categories","isDeleted":false,"id":"-categories","originalPath":"//categories","empty":0,"children":[{"path":"//categories//objects^0","item":"objects","isDeleted":false,"id":"-categories-objects","originalPath":"//categories//objects^0","empty":0,"children":[{"path":"//categories//objects//architecture^0","item":"architecture","isDeleted":false,"id":"-categories-objects-architecture","originalPath":"//categories//objects//architecture^0","empty":0},{"path":"//categories//objects//landscape^0","item":"landscape","isDeleted":false,"id":"-categories-objects-landscape","originalPath":"//categories//objects//landscape^0","empty":0},{"path":"//categories//objects//metropolis^1","item":"metropolis","isDeleted":false,"id":"-categories-objects-metropolis","originalPath":"//categories//objects//metropolis^1","empty":1},{"path":"//categories//objects//people^1","item":"people","isDeleted":false,"id":"-categories-objects-people","originalPath":"//categories//objects//people^1","empty":1},{"path":"//categories//objects//seascape^0","item":"seascape","isDeleted":false,"id":"-categories-objects-seascape","originalPath":"//categories//objects//seascape^0","empty":0},{"path":"//categories//objects//transport^1","item":"transport","isDeleted":false,"id":"-categories-objects-transport","originalPath":"//categories//objects//transport^1","empty":1}]},{"path":"//categories//otherx^1","item":"otherx","isDeleted":false,"id":"-categories-otherx","originalPath":"//categories//other^1","empty":1,"children":[{"path":"//categories//otherx//cuisine^1","item":"cuisine","isDeleted":false,"id":"-categories-otherx-cuisine","originalPath":"//categories//other//cuisine^1","empty":1},{"path":"//categories//otherx//miscellaneous^1","item":"miscellaneous","isDeleted":false,"id":"-categories-otherx-miscellaneous","originalPath":"//categories//other//miscellaneous^1","empty":1},{"path":"//categories//otherx//nightlife^1","item":"nightlife","isDeleted":false,"id":"-categories-otherx-nightlife","originalPath":"//categories//other//nightlife^1","empty":1},{"path":"//categories//otherx//portrait^1","item":"portrait","isDeleted":false,"id":"-categories-otherx-portrait","originalPath":"//categories//other//portrait^1","empty":1},{"path":"//categories//otherx//religion^1","item":"religion","isDeleted":false,"id":"-categories-otherx-religion","originalPath":"//categories//other//religion^1","empty":1},{"path":"//categories//otherx//sports^1","item":"sports","isDeleted":false,"id":"-categories-otherx-sports","originalPath":"//categories//other//sports^1","empty":1},{"path":"//categories//otherx//technology^1","item":"technology","isDeleted":false,"id":"-categories-otherx-technology","originalPath":"//categories//other//technology^1","empty":1},{"path":"//categories//otherx//war^1","item":"war","isDeleted":false,"id":"-categories-otherx-war","originalPath":"//categories//other//war^1","empty":1}]},{"path":"//categories//carsxxx^1","item":"carsxxx","isDeleted":false,"id":"-categories-carsxxx","originalPath":"//categories//carsxx^1","empty":1,"children":[{"path":"//categories//cars//miscellaneous^1","item":"miscellaneous","isDeleted":false,"id":"-categories-cars-miscellaneous","originalPath":"//categories//cars//miscellaneous^1","empty":1}]},{"path":"//categories//nature^0","item":"nature","isDeleted":false,"id":"-categories-nature","originalPath":"//categories//nature^0","empty":0,"children":[{"path":"//categories//nature//animals^1","item":"animals","isDeleted":false,"id":"-categories-nature-animals","originalPath":"//categories//nature//animals^1","empty":1},{"path":"//categories//nature//cosmology^1","item":"cosmology","isDeleted":false,"id":"-categories-nature-cosmology","originalPath":"//categories//nature//cosmology^1","empty":1},{"path":"//categories//nature//forest^0","item":"forest","isDeleted":false,"id":"-categories-nature-forest","originalPath":"//categories//nature//forest^0","empty":0},{"path":"//categories//nature//mixed^1","item":"mixed","isDeleted":false,"id":"-categories-nature-mixed","originalPath":"//categories//nature//mixed^1","empty":1},{"path":"//categories//nature//mountains^1","item":"mountains","isDeleted":false,"id":"-categories-nature-mountains","originalPath":"//categories//nature//mountains^1","empty":1},{"path":"//categories//nature//plants^1","item":"plants","isDeleted":false,"id":"-categories-nature-plants","originalPath":"//categories//nature//plants^1","empty":1},{"path":"//categories//nature//shoreline^1","item":"shoreline","isDeleted":false,"id":"-categories-nature-shoreline","originalPath":"//categories//nature//shoreline^1","empty":1},{"path":"//categories//nature//weather^1","item":"weather","isDeleted":false,"id":"-categories-nature-weather","originalPath":"//categories//nature//weather^1","empty":1}]}]}]}'>
   
   
   <cfset updateCategories = request.utils.UpdateCategories(currentObj=currentObj,newObj=DeserializeJson(newObj),addEmptyFlag=true,formatWithKeys=true,flattenParentArray=true)>
   
-  <cfdump var="#updateCategories#" />
+  <cfdump var="#updateCategories#" />--->
+  
+  
+  
+  
+  
+  
+  <!---<cfdump var="#request.profanityList#" />--->
+  
+  <cfset string = "Shit">
+  
+  <!---<cfset string = REReplaceNoCase(string,"[[:punct:]]","","ALL")>
+  <cfset array = ListToArray(string," ")>
+  
+  <cfdump var="#array#" />
+  
+  <strong>string:</strong> #string#<br /><br />--->
+
+  <cfset hasProfanity = request.utils.HasProfanity(string=string)>
+  
+  <strong>hasProfanity:</strong> #hasProfanity#<br /><br />
   
 
 

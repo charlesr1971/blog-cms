@@ -26,7 +26,7 @@ declare var ease, TweenMax, TimelineMax, Elastic: any, Bounce: any, Back: any;
 
 const moment = _moment;
 
-interface commentElementsPrefix {
+interface CommentElementsPrefix {
   parentClose: string;
   refchildClose: string
 };
@@ -89,7 +89,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   showFavouriteTooltipMax: number = 99;
   isPublished: boolean = false;
   hideCommentInput: boolean = false;
-  commentElementsPrefix: commentElementsPrefix  = {
+  CommentElementsPrefix: CommentElementsPrefix  = {
     parentClose: '#image-',
     refchildClose: '#mat-card-actions-'
   };

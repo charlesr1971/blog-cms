@@ -20,8 +20,8 @@ export class UploadComponent {
   isMobile: boolean = false;
   isValid: boolean = false;
   chooseImageButtonText: string = 'Choose Image';
-  themeObj = {};
   themeRemove: string = '';
+  themeAdd: string = '';
 
   debug: boolean = false;
 
@@ -36,7 +36,8 @@ export class UploadComponent {
       }
 
       const themeObj = this.httpService.themeObj;
-      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') == themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+      this.themeAdd = this.themeRemove === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
 
       this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -62,7 +63,7 @@ export class UploadComponent {
       width: this.isMobile ? '90%' :'50%', 
       height: this.isMobile ? '60%' :'50%' 
     });
-    updateCdkOverlayThemeClass(this.themeRemove);
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     this.uploadService.subscriptionImageError.next('');
   }
 

@@ -25,7 +25,7 @@ export class CharCountDirective implements AfterViewInit {
     }
   }
 
-  @HostListener("keyup", ["$event"]) onkeyup(event) {
+  @HostListener('keyup', ['$event']) onkeyup(event) {
     const overshoot=5;
     const period=0.25;
     const length = this.el.nativeElement.value.length;
