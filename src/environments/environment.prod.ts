@@ -7,7 +7,7 @@ export const environment = {
   title: 'Establish Mindfulness',
   htmlTitle: 'Establish Mindfulness S.P.A',
   logoSrc: 'assets/images/logo.png',
-  debugComponentLoadingOrder: true,
+  debugComponentLoadingOrder: false,
   port: '',
   maxcontentlength: 500000,
   tinymcearticlemaximages: 2,
@@ -20,5 +20,5 @@ export const environment = {
   maxCommentInputLength: 140,
   catalogRouterAlias: 'stories',
   uploadRouterAlias: 'upload-story',
-  maxcategoryeditnamelength: 25
+  maxcategoryeditnamelength: 30
 };

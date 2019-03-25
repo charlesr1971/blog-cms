@@ -3,28 +3,28 @@
     <div class="category-edit-tree">
 
         <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle [matTreeNodePadding]="node.level" [matTreeNodePaddingIndent]="isMobile ? 20 : 40" [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
                 <button mat-icon-button disabled></button>
                 <mat-checkbox class="checklist-leaf-node"
                             [checked]="checklistSelection.isSelected(node)"
                             (change)="todoLeafItemSelectionToggle(node)" [disabled]="node.empty == 0" ngbTooltip="Delete Category &amp; Sub Categories" [disableTooltip]="disableTreeCategoryEditTooltip || node.empty == 0 || checklistSelection.isSelected(node)" [container]="'body'" color="warn"><span *ngIf="node.item == 'categories'">{{ node.item }}</span></mat-checkbox>
                 <ng-container *ngIf="node.item != 'categories'">           
-                    <mat-form-field class="example-full-width" >
-                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalPathCache | pathFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0">
+                    <mat-form-field class="example-full-width" [attr.data-role-level]="node.level">
+                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalItemCache | nameFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0">
                     </mat-form-field>
                     <button mat-icon-button (click)="saveNode(node, itemValue.value)" ngbTooltip="Update Category Name" [disableTooltip]="disableTreeCategoryEditTooltip || checklistSelection.isSelected(node)" [container]="'body'" [disabled]="node.empty == 0"><mat-icon class="update">update</mat-icon></button>
                 </ng-container>
             </mat-tree-node>
 
-            <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
+            <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" [matTreeNodePadding]="node.level" [matTreeNodePaddingIndent]="isMobile ? 20 : 40" [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
                 <button mat-icon-button disabled></button>
-                <mat-form-field class="create-new-category-form-field">
+                <mat-form-field class="create-new-category-form-field" [attr.data-role-level]="node.level">
                     <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="New category..." [id]="newNodeId">
                 </mat-form-field>
                 <button mat-icon-button (click)="saveNode(node, itemValue.value)" ngbTooltip="Save New Category" [disableTooltip]="disableTreeCategoryEditTooltip || checklistSelection.isSelected(node)" [container]="'body'"><mat-icon class="update">save</mat-icon></button>
             </mat-tree-node>
 
-            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" [matTreeNodePadding]="node.level" [matTreeNodePaddingIndent]="isMobile ? 20 : 40" [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
                 <button mat-icon-button matTreeNodeToggle
                         [attr.aria-label]="'toggle ' + node.filename">
                 <mat-icon class="mat-icon-rtl-mirror">
@@ -35,8 +35,8 @@
                             [indeterminate]="descendantsPartiallySelected(node)"
                             (change)="todoItemSelectionToggle(node)" [disabled]="node.empty == 0" ngbTooltip="Delete Category &amp; Sub Categories" [disableTooltip]="disableTreeCategoryEditTooltip || node.empty == 0 || checklistSelection.isSelected(node)" [container]="'body'" color="warn"><span *ngIf="node.item == 'categories'">{{ node.item }}</span></mat-checkbox>
                 <ng-container *ngIf="node.item != 'categories'">
-                    <mat-form-field class="example-full-width">
-                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalPathCache | pathFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0">
+                    <mat-form-field class="example-full-width" [attr.data-role-level]="node.level">
+                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalItemCache | nameFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0">
                     </mat-form-field>
                     <button mat-icon-button (click)="saveNode(node, itemValue.value)" ngbTooltip="Update Category Name" [disableTooltip]="disableTreeCategoryEditTooltip || checklistSelection.isSelected(node)" [container]="'body'" [disabled]="node.empty == 0"><mat-icon class="update">update</mat-icon></button>
                 </ng-container>

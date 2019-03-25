@@ -7,7 +7,7 @@ export class ConvertPathToIdPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
     let path = value.split('//');
-    path = path.join('-').toLowerCase().trim();
+    path = path.join('_').toLowerCase().trim();
     return path;
   }
 

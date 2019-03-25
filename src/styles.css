@@ -293,6 +293,10 @@ body.profile .mat-tree .mat-form-field.create-new-category-form-field {
     cursor: move;
 }
 
+body.profile .mat-tree .mat-form-field {
+    width: 245px !important;
+}
+
 /* media queries */
 
 /* smart phones */
@@ -323,7 +327,11 @@ body.profile .mat-tree .mat-form-field.create-new-category-form-field {
     }
 
     body.profile .mat-tree .mat-form-field {
-        width: 35%;
+        width: 35% !important;
+    }
+
+    body.profile .mat-tree .mat-form-field[data-role-level='2'] {
+        width: 47% !important;
     }
 
 }

@@ -7,18 +7,6 @@
     margin-bottom: 20px;
 }
 
-/* .mat-tree-node.category-edit-tree-node {
-    background: none;
-} */
-
-/* .category-edit-tree-node {
-    opacity: 1;
-}
-
-.category-edit-tree-node-opaque {
-    opacity: 0.25;
-} */
-
 /* media queries */
 
 /* smart phones */
@@ -28,6 +16,6 @@
     .category-edit-tree {
         padding: 0px;
         margin-bottom: 30px;
-    }  
+    } 
 
 }

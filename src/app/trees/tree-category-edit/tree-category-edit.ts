@@ -7,6 +7,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 
 import { PathFormatPipe } from '../../pipes/path-format/path-format.pipe';
+import { NameFormatPipe } from '../../pipes/name-format/name-format.pipe';
 import { EmptyDirectoryFormatPipe } from '../../pipes/empty-directory-format/empty-directory-format.pipe';
 import { ConvertPathToIdPipe } from '../../pipes/convert-path-to-id/convert-path-to-id.pipe';
 import { ConvertIdToPathPipe } from '../../pipes/convert-id-to-path/convert-id-to-path.pipe';
@@ -25,7 +26,7 @@ export class TodoItemNode {
   id: string;
   isDeleted: boolean;
   originalPath: string;
-  originalPathCache: string;
+  originalItemCache: string;
 }
 
 /** Flat to-do item node with expandable and level information */
@@ -38,7 +39,7 @@ export class TodoItemFlatNode {
   id: string;
   isDeleted: boolean;
   originalPath: string;
-  originalPathCache: string;
+  originalItemCache: string;
 }
 
 /**
@@ -64,6 +65,7 @@ export class ChecklistDatabase {
   constructor(httpService: HttpService,
     private convertIdToPathPipe: ConvertIdToPathPipe,
     private pathFormatPipe: PathFormatPipe,
+    private nameFormatPipe: NameFormatPipe,
     private emptyDirectoryFormatPipe: EmptyDirectoryFormatPipe,
     private convertPathToIdPipe: ConvertPathToIdPipe) {
       
@@ -104,7 +106,7 @@ export class ChecklistDatabase {
       const value = obj[key];
       const node = new TodoItemNode();
 
-      node.item = this.pathFormatPipe.transform(key);
+      node.item = this.nameFormatPipe.transform(key);
       node.empty = this.emptyDirectoryFormatPipe.transform(key);
       if(node.item === 'categories') {
         node.empty = 0;
@@ -113,13 +115,13 @@ export class ChecklistDatabase {
       node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(key));
       node.isDeleted = false;
       node.originalPath = key;
-      node.originalPathCache = key;
+      node.originalItemCache = this.nameFormatPipe.transform(key);
 
       if (value != null) {
         if (typeof value === 'object') {
           node.children = this.buildFileTree(value, level + 1);
         } else {
-          node.item = this.pathFormatPipe.transform(value);
+          node.item = this.nameFormatPipe.transform(value);
           node.empty = this.emptyDirectoryFormatPipe.transform(value);
           if(node.item === 'categories') {
             node.empty = 0;
@@ -128,7 +130,7 @@ export class ChecklistDatabase {
           node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(value));
           node.isDeleted = false;
           node.originalPath = value;
-          node.originalPathCache = value;
+          node.originalItemCache = this.nameFormatPipe.transform(value);
         }
       }
 
@@ -145,20 +147,20 @@ export class ChecklistDatabase {
   }
 
   updateItem(node: TodoItemNode, name: string, id: string) {
-    node.item = name;
+    node.item = this.nameFormatPipe.transform(name);
     node.empty = 1;
     node.path = this.formatPath(name,id) + '^' + node.empty;
     node.id = this.pathFormatPipe.transform(this.convertPathToIdPipe.transform(node.path));
     if(this.isParent(node.id) && 'children' in node) {
       node.children.map( (child) => {
-        const childIdArr = child.id.split('-');
+        const childIdArr = child.id.split('_');
         const childId = childIdArr[childIdArr.length-1];
-        const id = node.id + '-' + childId;
+        const id = node.id + '_' + childId;
         if(this.debug) {
           console.log('checklistDatabase: updateItem(): new child id: ',id);
         }
         child.id = id;
-        const parentPathArr = node.path.replace(/\^.*/,'').split('//');
+        const parentPathArr = node.path.replace(/\^[0-9]$/,'').split('//');
         const childPathArr = child.path.split('//');
         parentPathArr.push(childPathArr[childPathArr.length-1]);
         const childPath = parentPathArr.join('//');
@@ -174,13 +176,16 @@ export class ChecklistDatabase {
     if(typeof node.originalPath === 'undefined') {
       node.originalPath = '';
     }
-    if(typeof node.originalPathCache === 'undefined') {
-      node.originalPathCache = this.formatPath(name,id) + '^' + node.empty;
+    if(typeof node.originalItemCache === 'undefined') {
+      node.originalItemCache = this.nameFormatPipe.transform(name);
     }
     if(this.debug) {
       console.log('checklistDatabase: updateItem(): name: ',name);
       console.log('checklistDatabase: updateItem(): id: ',id);
+      console.log('checklistDatabase: updateItem(): node.id: ',node.id);
       console.log('checklistDatabase: updateItem(): node.path: ',node.path);
+      console.log('checklistDatabase: updateItem(): node.item: ',node.item);
+      console.log('checklistDatabase: updateItem(): node.originalItemCache: ',node.originalItemCache);
       console.log('checklistDatabase: updateItem(): this.data: ',this.data);
     }
     this.lastNodeIdCreatedBeforeUpddate = node.id;
@@ -208,11 +213,11 @@ export class ChecklistDatabase {
   formatPath(name: string, id: string): string {
     const regex1 = new RegExp('_[0-9]+$');
     const _id = id.replace(regex1,'');
-    const str = _id.split('-');
+    const str = _id.split('_');
     if(!regex1.test(id)) {
       str.pop();
     }
-    str.push(name.replace(/[\s]+/,'-').replace(/[.,\/\\#!$%\^&\*;:{}=_'"`~()]/g,''));
+    str.push(name.replace(/[.,\/\\#!$%\^&\*;:{}=_'"`~()]/g,'').replace(/[0-9]+/g,'').replace(/[\s]+/g,'-').replace(/[-]+/g,'-'));
     const result = str.join('//').toLowerCase().trim();
     return result;
   }
@@ -226,7 +231,7 @@ export class ChecklistDatabase {
   selector: 'app-tree-category-edit',
   templateUrl: 'tree-category-edit.html',
   styleUrls: ['tree-category-edit.css'],
-  providers: [ChecklistDatabase, PathFormatPipe, EmptyDirectoryFormatPipe, ConvertPathToIdPipe]
+  providers: [ChecklistDatabase, PathFormatPipe, NameFormatPipe, EmptyDirectoryFormatPipe, ConvertPathToIdPipe]
 })
 export class TreeCategoryEdit implements OnDestroy {
 
@@ -339,6 +344,9 @@ export class TreeCategoryEdit implements OnDestroy {
         : new TodoItemFlatNode();
 
     flatNode.item = node.item;
+    if(this.debug) {
+      console.log('treeCategoryEdit.component: transformer(): flatNode.item: ',flatNode.item);
+    }
     flatNode.level = level;
     flatNode.empty = node.empty;
     flatNode.path = node.path;
@@ -348,9 +356,9 @@ export class TreeCategoryEdit implements OnDestroy {
     if(this.debug) {
       console.log('treeCategoryEdit.component: transformer(): flatNode.originalPath: ',flatNode.originalPath);
     }
-    flatNode.originalPathCache = !existingNode ? node.originalPathCache : this.flatNodeMap.get(existingNode).originalPathCache;
+    flatNode.originalItemCache = !existingNode ? node.originalItemCache : this.flatNodeMap.get(existingNode).originalItemCache;
     if(this.debug) {
-      console.log('treeCategoryEdit.component: transformer(): flatNode.originalPathCache: ',flatNode.originalPathCache);
+      console.log('treeCategoryEdit.component: transformer(): flatNode.originalItemCache: ',flatNode.originalItemCache);
     }
     flatNode.expandable = !!node.children;
 
@@ -486,6 +494,8 @@ export class TreeCategoryEdit implements OnDestroy {
     if(this.debug) {
       console.log('treeCategoryEdit.component: saveNode(): nodeid: after: ',nodeid);
     }
+    // allow inputs with values that have dissallowed characters removed, to change, even when the resulting value is the same as the original value
+    node.item = '';
     this.database.updateItem(nestedNode!, itemValue, nodeid);
   }
 

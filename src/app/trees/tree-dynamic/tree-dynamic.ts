@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, merge, Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { map } from 'rxjs/operators';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { DOCUMENT } from '@angular/common'; 
@@ -66,8 +66,9 @@ export class DynamicFlatNode {
 @Injectable()
 export class DynamicDatabase  {
 
+  dataChange = new BehaviorSubject<DynamicFlatNode[]>([]);
   dataMap = new Map<string, string[]>();
-  rootLevelNodes: string[] = ['//categories//objects', '//categories//nature', '//categories//other'];
+  rootLevelNodes: string[] = [];
   http: Observable<any>;
   httpService;
 
@@ -85,8 +86,17 @@ export class DynamicDatabase  {
       if(data) {
         this.dataMap = new Map<string, string[]>(data);
         if(this.debug) {
-          console.log(this.dataMap);
+          console.log('DynamicDatabase: fetchData(): this.dataMap: ', this.dataMap);
         }
+        for (const value of data) {
+          if(Array.isArray(value) && value.length > 0){
+            this.rootLevelNodes.push(value[0]);
+          }
+        }
+        if(this.debug) {
+          console.log('DynamicDatabase: fetchData(): this.rootLevelNodes: ', this.rootLevelNodes);
+        }
+        this.dataChange.next(this.rootLevelNodes.map(name => new DynamicFlatNode(name, 0, true, false, this.pathFormat(name))));
       }
     });
   }
@@ -331,7 +341,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
     this.treeControl = new FlatTreeControl<DynamicFlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new DynamicDataSource(this.treeControl, database);
-    this.dataSource.data = database.initialData();
+
+    database.dataChange.subscribe(data => {
+      this.dataSource.data = data;
+    });
+
     this.isMobile = this.deviceDetectorService.isMobile();
 
     this.userService.currentUser.subscribe( (user: User) => {

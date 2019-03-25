@@ -24,7 +24,7 @@ export const environment = {
   maxCommentInputLength: 140,
   catalogRouterAlias: 'stories',
   uploadRouterAlias: 'upload-story',
-  maxcategoryeditnamelength: 25
+  maxcategoryeditnamelength: 30
 };
 
 /*

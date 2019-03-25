@@ -39,6 +39,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TreeDynamic } from './trees/tree-dynamic/tree-dynamic';
 import { TreeCategoryEdit } from './trees/tree-category-edit/tree-category-edit';
 import { PathFormatPipe } from './pipes/path-format/path-format.pipe';
+import { NameFormatPipe } from './pipes/name-format/name-format.pipe';
 import { FileSizePipe } from './pipes/file-size/file-size.pipe';
 import { SeoTitleFormatPipe } from './pipes/seo-title-format/seo-title-format.pipe';
 import { InfiniteScrollerDirective } from './directives/infinite-scroller/infinite-scroller.directive';
@@ -69,7 +70,6 @@ import { ModalPositionCache } from './directives/dialog-draggable-title/modal-po
 import { environment } from '../environments/environment';
 
 
-
 const appRoutes: Routes = [
   { path: environment.catalogRouterAlias, component: GalleryComponent },
   { path: environment.catalogRouterAlias + '/:id/:title', component: GalleryDetailComponent },
@@ -91,6 +91,7 @@ const appRoutes: Routes = [
     TreeDynamic,
     TreeCategoryEdit,
     PathFormatPipe,
+    NameFormatPipe,
     ImagesComponent,
     ImageComponent,
     FileSizePipe,
