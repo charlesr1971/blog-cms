@@ -68,6 +68,7 @@ import { ConvertIdToPathPipe } from './pipes/convert-id-to-path/convert-id-to-pa
 import { ModalPositionCache } from './directives/dialog-draggable-title/modal-position.cache';
 
 import { environment } from '../environments/environment';
+import { AdZoneDirective } from './directives/ad-zone/ad-zone.directive';
 
 
 const appRoutes: Routes = [
@@ -114,7 +115,8 @@ const appRoutes: Routes = [
     ConvertPathToIdPipe,
     ConvertIdToPathPipe,
     DialogDraggableTitleDirective,
-    CategoryEditComponent
+    CategoryEditComponent,
+    AdZoneDirective
   ],
   imports: [
     BrowserModule,

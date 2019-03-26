@@ -24,6 +24,7 @@ export class HttpService {
   ogTitle: string = '';
   ogDescription: string = '';
   ogImage: string = '';
+  adZoneUrl: string = '';
   port: string = '';
   signUpValidated: number = 0;
   viewCommentid: number = 0;
@@ -143,6 +144,12 @@ export class HttpService {
 
     if(ogImage !== '0' || ogImage !== '') {
       this.ogImage = ogImage;
+    }
+
+    const adZoneUrl = getUrlParameter('adZoneUrl');
+
+    if(adZoneUrl !== '0' || adZoneUrl !== '') {
+      this.adZoneUrl = adZoneUrl;
     }
 
     const port = getUrlParameter('port');

@@ -66,6 +66,10 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text, 0.5) !important;
     }
 
+    .app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle {
+        background: mat-color($dark-accent, default);
+    }
+
     .mat-card .image-category {
         background: mat-color($dark-primary, default, 0.5);
     }
@@ -422,6 +426,10 @@ $light-background-palette: map-get($light-theme, background);
 
     .mat-card .social-media-container {
         background: mat-color($light-background-palette, background);
+    }
+
+    .app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle {
+        background: mat-color($light-accent, default);
     }
 
     .mat-card .image-category {

@@ -40,7 +40,99 @@
     height: 100%;
 }
 
+.app-advert {
+    display: inline;
+}
+
+.app-advert .mat-card{
+    position: relative;
+    display: inline-block;
+    width: 27%;
+    height: 740px;
+    margin: 30px;
+    vertical-align: top;
+    overflow: hidden;
+}
+
+.app-advert .mat-card .app-advert-header-icon {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 70px;
+}
+
+.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle img {
+    position: absolute;
+    width: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.app-advert .mat-card .image-category {
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+    word-wrap: break-word;
+}
+
+.app-advert .mat-card img.advertiser-icon-default {
+    position: absolute;
+    width: 300%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.075;
+    z-index: 1;
+}
+
+.app-advert .mat-card iframe {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    z-index: 2;
+}
+
+/* media queries */
+
+/* tablets */
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
+
+    .app-advert .mat-card{
+        width: 42%;
+    }
+
+}
+
+/* smart phones */
+
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+    .app-advert .mat-card{
+        display: block;
+        max-width: 100%;
+        width: auto;
+        margin: 30px;
+    }
 
     .mat-form-field {
       width: 100%;
@@ -56,3 +148,14 @@
     }
     
   }
+
+@media only screen and (min-device-width : 481px) and (max-device-width : 667px) {
+
+    .app-advert .mat-card{
+        display: block;
+        max-width: 100%;
+        width: auto;
+        margin: 30px;
+    }
+
+}

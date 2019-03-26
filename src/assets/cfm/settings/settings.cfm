@@ -23,5 +23,12 @@
   request.ogTitle = request.htmlTitle;
   request.ogDescription = "This website allows users to upload their favourite photos to the gallery. The following technologies power this website. An Angular 7x front-end with a Google Material UI. An Adobe Coldfusion back-end, using a Lucee 5 Application server with a MySQL database.";
   request.ogImage = "";
+  
+  if(IsLocalHost(CGI.REMOTE_ADDR)){
+	request.adzoneurl = "http://localhost:8500/establishmindfulness/includes/structures/adzone-structure.cfm";
+  }
+  else{
+	request.adzoneurl = "https://app.establishmindfulness.com/includes/structures/adzone-structure.cfm";
+  }
 
 </cfscript>
