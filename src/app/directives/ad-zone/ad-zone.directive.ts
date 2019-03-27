@@ -1,4 +1,5 @@
-import { Directive, ElementRef, Input, HostListener, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
+import { Directive, Inject, ElementRef, Input, HostListener, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -37,7 +38,8 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
   debug: boolean = false;
 
 
-  constructor(private el: ElementRef,
+  constructor(@Inject(DOCUMENT) private documentBody: Document,
+    private el: ElementRef,
     private renderer: Renderer2,
     private deviceDetectorService: DeviceDetectorService,
     private httpService: HttpService) { 
@@ -81,6 +83,10 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
         });
       });
 
+      if(this.debug) {
+        console.log('adZoneDirective.directive: adzoneMutation: this.adzoneObserver: connected...');
+      }
+
       this.adzoneMutation.next(this.images);
 
     });
@@ -92,7 +98,11 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
       if(this.debug) {
         console.log('adZoneDirective.directive: adzoneMutation: data: ', data);
       }
-      if(Array.isArray(data) && data.length > 0) {
+      if(this.debug) {
+        console.log('adZoneDirective.directive: adzoneMutation: this.adverts.length: ', this.adverts.length);
+        console.log('adZoneDirective.directive: adzoneMutation: this.adverts.length <= environment.adZoneMaxAdverts: ', this.adverts.length <= environment.adZoneMaxAdverts);
+      }
+      if(Array.isArray(data) && data.length > 0 && this.adverts.length < environment.adZoneMaxAdverts) {
         const lastChild = data[data.length-1];
         if(lastChild) {
           this.adzoneObserver.disconnect();
@@ -148,7 +158,7 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
           const adZoneRemoteMobileViewportMargin = 29;
           const adZoneMobileIsScaled = false;
           const adZoneRemoteDividerHeight = 10;
-          const adZoneRemoteIdentifier = this.getRandomInt();
+          const adZoneRemoteIdentifier = lastChild['id'];
           let adZoneRemoteClass = this.formatAdZoneRemoteClass('hidden-elements');
           const iframeWidth = 180;
           let iframeHeight = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
@@ -156,21 +166,92 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
           const iframe = this.renderer.createElement('iframe');
           const iframeSrc = this.adZoneUrl + '?adzones=' + adZones + '&adzonewidth=' + adZoneWidth + '&adzoneheight=' + adZoneHeight + '&adzonedisplay=' + adZoneDisplay + '&adzonecategoryid=' + adZoneCategoryId + '&adzonecontentboxstyle=' + adZoneContentBoxStyle + '&adzoneusecontentbox=' + adzoneUseContentBox + '&adzoneremoteaccess=' + adZoneRemoteAccess + '&adzonedivider=' + adZoneDivider + '&adzonemobileformat=' + adZoneMobileFormat + '&adzoneremotemobileviewportmargin=' + adZoneRemoteMobileViewportMargin + '&adzonemobileisscaled=' + adZoneMobileIsScaled + '&adzoneremotedividerheight=' + adZoneRemoteDividerHeight + '&adzoneremoteidentifier=' + adZoneRemoteIdentifier;
           this.renderer.setAttribute(iframe,'id','app-advert-iframe-' + lastChild['id']);
+          this.renderer.setAttribute(iframe,'name','app-advert-iframe-' + lastChild['id']);
           this.renderer.setAttribute(iframe,'src',iframeSrc);
           this.renderer.setAttribute(iframe,'width',iframeWidth + '');
           this.renderer.setAttribute(iframe,'height',iframeHeight + '');
           this.renderer.setAttribute(iframe,'scrolling','no');
           this.renderer.setAttribute(iframe,'frameborder','0');
 
-          this.renderer.appendChild(matCard,iframe);
+          const advertTable = this.renderer.createElement('table');
+          this.renderer.setAttribute(advertTable,'class','app-advert-table');
+          const advertTableRow = this.renderer.createElement('tr');
+          const advertTableCell1 = this.renderer.createElement('td');
+          const advertTableCell2 = this.renderer.createElement('td');
+          this.renderer.setStyle(advertTableCell2,'width','10px');
+          const advertTableCell3 = this.renderer.createElement('td');
+          this.renderer.setStyle(advertTableCell3,'width',adZoneWidth + 'px');
+          this.renderer.appendChild(advertTableRow,advertTableCell1);
+          this.renderer.appendChild(advertTableRow,advertTableCell2);
+          this.renderer.appendChild(advertTableRow,advertTableCell3);
+
+          let temp = adZones.split(',');
+
+          if(temp.length > 0) {
+            for (var i = 0; i < temp.length; i++) {
+              const advertTableCell1Block = this.renderer.createElement('div');
+              this.renderer.setAttribute(advertTableCell1Block,'class','app-advert-table-cell-block');
+              this.renderer.setStyle(advertTableCell1Block,'height',adZoneHeight + 'px');
+              this.renderer.appendChild(advertTableCell1,advertTableCell1Block);
+              const advertTableCell1BlockDivider = this.renderer.createElement('div');
+              this.renderer.setAttribute(advertTableCell1BlockDivider,'class','app-advert-table-cell-block-divider');
+              this.renderer.setStyle(advertTableCell1BlockDivider,'height',adZoneRemoteDividerHeight + 'px');
+              this.renderer.appendChild(advertTableCell1,advertTableCell1BlockDivider);
+            }
+          }
+
+          this.renderer.appendChild(advertTable,advertTableRow);
+
+          this.renderer.appendChild(advertTableCell3,iframe);
+
+          matCard.appendChild(advertTable);
+
+          const obj: AppAdvert = {
+            id: lastChild['id'],
+            item: iframe
+          }
+          this.adverts.push(obj);
 
           this.adzoneObserver.observe(this.el.nativeElement, {
             childList: true
           });
+
+          /* setTimeout( () => {
+            const iframeMetaData: HTMLElement = this.documentBody.querySelector('iframe#app-advert-iframe-' + lastChild['id']);
+            if(this.debug) {
+              console.log('adZoneDirective.directive: adzoneMutation: iframeMetaData: ', iframeMetaData);
+            }
+            if(iframeMetaData) {
+              const dataroleadzone = JSON.parse(iframeMetaData.dataset['roleAdZone']);
+              if(this.debug) {
+                console.log('adZoneDirective.directive: adzoneMutation: dataroleadzone: ', dataroleadzone);
+              }
+            }
+          },2000); */
+
+        }
+        else{
+          this.adzoneObserver.disconnect();
+          if(this.debug) {
+            console.log('adZoneDirective.directive: adzoneMutation: this.adzoneObserver: disconnected 1...');
+          }
+        }
+      }
+      else{
+        this.adzoneObserver.disconnect();
+        if(this.debug) {
+          console.log('adZoneDirective.directive: adzoneMutation: this.adzoneObserver: disconnected 2...');
+        }
+        if (this.subscriptionAdzoneMutation) {
+          this.subscriptionAdzoneMutation.unsubscribe();
         }
       }
     });
 
+  }
+
+  @HostListener("window:message", ["$event"]) receiveMessage(event) {
+    //console.log('adZoneDirective.directive: window:message: event: ', event);
   }
 
   getAppImageId(id: string): string {

@@ -54,6 +54,19 @@
     overflow: hidden;
 }
 
+.app-advert .mat-card table.app-advert-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.app-advert .mat-card table.app-advert-table tr {
+    vertical-align: top;
+}
+
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block {
+    background: rgba(255, 255, 255, 0.075);
+}
+
 .app-advert .mat-card .app-advert-header-icon {
     position: relative;
     display: block;
