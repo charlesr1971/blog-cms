@@ -395,7 +395,9 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   search(): void {
     this.galleryIsActive = true;
-    this.router.navigate([this.catalogRouterAliasLower, {formType: 'search'}]);
+    //this.router.navigate([this.catalogRouterAliasLower, {formType: 'search'}]);
+    this.router.navigateByUrl('/' + this.uploadRouterAliasLower, {skipLocationChange: true}).then(()=>
+          this.router.navigate([this.catalogRouterAliasLower, {formType: 'search'}]));
   }
 
   toUploadPhoto(): void {

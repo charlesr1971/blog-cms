@@ -350,7 +350,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   }
 
   disabledCommentTooltip(): boolean {
-    return this.comments.length < this.showCommentTooltipMax;
+    return this.comments.length > this.showCommentTooltipMax;
   }
 
   sortComments(): void {

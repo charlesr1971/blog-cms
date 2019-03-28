@@ -297,6 +297,42 @@ body.profile .mat-tree .mat-form-field {
     width: 245px !important;
 }
 
+.css-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.css-tooltip .tooltiptext {
+    visibility: hidden;
+    max-width: 300px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.css-tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.css-tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
 /* media queries */
 
 /* smart phones */

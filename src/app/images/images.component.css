@@ -64,7 +64,38 @@
 }
 
 .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block {
-    background: rgba(255, 255, 255, 0.075);
+    position: relative;
+    padding: 10px;
+    /* background: rgba(255, 255, 255, 0.075); */
+}
+
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div {
+    position: absolute;
+    display: inline-block;
+    width: 90%;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    cursor: pointer;
+    z-index: 20;
+}
+
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div {
+    width: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i {
+    margin: 0px 5px 0px 0px;
+    font-size: 20px;
+}
+
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i:last-child {
+    margin: 0px 0px 0px 0px;
 }
 
 .app-advert .mat-card .app-advert-header-icon {
@@ -74,25 +105,37 @@
     height: 70px;
 }
 
-.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle {
+.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle-container {
     position: absolute;
     width: 50px;
     height: 50px;
     top: 0px;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 50%;
-    overflow: hidden;
     z-index: 2;
 }
 
-.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle img {
+.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle-container .app-advert-header-icon-circle {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    /* overflow: hidden; */
+    opacity: 0.25;
+    z-index: 3;
+}
+
+.app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle-container img {
     position: absolute;
     width: 30px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 3;
+    opacity: 0;
+    z-index: 4;
 }
 
 .app-advert .mat-card .image-category {

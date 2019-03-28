@@ -21,5 +21,6 @@ export const environment = {
   catalogRouterAlias: 'stories',
   uploadRouterAlias: 'upload-story',
   maxcategoryeditnamelength: 30,
-  adZoneMaxAdverts: 4
+  adZoneMaxAdverts: 4,
+  adZoneMinImages: 4
 };

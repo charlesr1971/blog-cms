@@ -8,6 +8,8 @@ import './icons';
 
 import 'gsap';
 
+/* import 'waypoints'; */
+
 if (environment.production) {
   enableProdMode();
 }

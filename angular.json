@@ -32,7 +32,8 @@
               "src/assets/js/tinymce/tinymce.min.js",
               "src/assets/js/tinymce/themes/modern/theme.js",
               "src/assets/js/tinymce/themes/mobile/theme.js",
-              "src/assets/js/tinymce/plugins/fullscreen/plugin.js"
+              "src/assets/js/tinymce/plugins/fullscreen/plugin.js",
+              "node_modules/waypoints/lib/noframework.waypoints.min.js"
             ]
           },
           "configurations": {

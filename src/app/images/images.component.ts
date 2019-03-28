@@ -256,6 +256,18 @@ export class ImagesComponent implements OnInit, OnDestroy {
       this.images = [];
     });
 
+
+    /* this.route.params.subscribe( (params) => {
+      if(this.debug) {
+        console.log('images.component: this.route.params.subscribe ',params);
+      }
+      if (params['formType'] && params['formType'] === 'search') { 
+        this.searchDo = true;
+        this.tagsDo = false;
+        this.images = [];
+      }
+    }); */
+
     this.httpService.pageTagsDo.subscribe( (data: any) => {
       if(this.debug) {
         console.log('images.component: this.httpService.pageTagsDo: data ',data);

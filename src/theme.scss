@@ -66,10 +66,6 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text, 0.5) !important;
     }
 
-    .app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle {
-        background: mat-color($dark-accent, default);
-    }
-
     .mat-card .image-category {
         background: mat-color($dark-primary, default, 0.5);
     }
@@ -311,6 +307,18 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-accent, lighter);
     }
 
+    .app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle-container .app-advert-header-icon-circle {
+        background: mat-color($dark-accent, default);
+    }
+
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block {
+        background: mat-color($dark-foreground-palette, text, 0.075);
+    }
+
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i {
+        color: mat-color($dark-accent, lighter);
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -426,10 +434,6 @@ $light-background-palette: map-get($light-theme, background);
 
     .mat-card .social-media-container {
         background: mat-color($light-background-palette, background);
-    }
-
-    .app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle {
-        background: mat-color($light-accent, default);
     }
 
     .mat-card .image-category {
@@ -678,6 +682,18 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     .mat-dialog-container .form-field-container .form-field-text .mat-icon {
+        color: mat-color($light-accent, lighter);
+    }
+
+    .app-advert .mat-card .app-advert-header-icon .app-advert-header-icon-circle-container .app-advert-header-icon-circle {
+        background: mat-color($light-accent, default);
+    }
+
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block {
+        background: mat-color($light-foreground-palette, text, 0.025);
+    }
+
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i {
         color: mat-color($light-accent, lighter);
     }
 
