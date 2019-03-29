@@ -22,7 +22,7 @@ import { Image } from './image.model';
 import { HttpService } from '../services/http/http.service';
 import { environment } from '../../environments/environment';
 
-declare var ease, TweenMax, TimelineMax, Elastic: any, Bounce: any, Back: any;
+declare var TweenMax: any, Elastic: any, Back: any;
 
 const moment = _moment;
 
@@ -189,6 +189,7 @@ export class ImageComponent implements OnInit, OnDestroy {
         }
         if(child) {
           this.renderer.addClass(child,'single-image-display');
+          this.renderer.removeClass(child,'multiple-image-display');
           const parent = this.documentBody.querySelector('#infinite-scroller-images');
           if(parent){
             const parentWidth = parent.clientWidth;

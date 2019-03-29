@@ -137,7 +137,8 @@ const appRoutes: Routes = [
     MatPaginatorModule,
     MatSortModule,
     RouterModule.forRoot(
-      appRoutes/* ,
+      appRoutes,
+      {onSameUrlNavigation: "reload"}/* ,
       { enableTracing: true }
       ,{  onSameUrlNavigation: 'reload' } */
     ),

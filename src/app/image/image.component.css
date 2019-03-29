@@ -10,7 +10,7 @@
 }
 
 .mat-card.single-image-display {
-    display: block !important;
+    display: inline-block !important;
 }
 
 .mat-card-header > div {

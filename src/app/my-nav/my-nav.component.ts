@@ -18,7 +18,7 @@ import { UserService } from '../user/user.service';
 import { environment } from '../../environments/environment';
 
 
-declare var ease, TweenMax, Elastic: any;
+declare var TweenMax: any, Elastic: any;
 
 @Component({
   selector: 'app-my-nav',
@@ -395,9 +395,14 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   search(): void {
     this.galleryIsActive = true;
-    //this.router.navigate([this.catalogRouterAliasLower, {formType: 'search'}]);
-    this.router.navigateByUrl('/' + this.uploadRouterAliasLower, {skipLocationChange: true}).then(()=>
-          this.router.navigate([this.catalogRouterAliasLower, {formType: 'search'}]));
+    if(this.debug) {
+      console.log('my-nav.component: search(): this.catalogRouterAliasLower 1 ', this.catalogRouterAliasLower);
+    }
+    this.router.navigate([this.catalogRouterAliasLower, {formType: 'search'}]);
+    if(this.debug) {
+      console.log('my-nav.component: search(): this.catalogRouterAliasLower 2 ', this.catalogRouterAliasLower);
+    }
+    this.httpService.searchDo.next(true);
   }
 
   toUploadPhoto(): void {
@@ -417,8 +422,9 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.galleryIsActive = false;
-    this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then(()=>
-          this.router.navigate([this.uploadRouterAliasLower, {formType: 'logout'}]));
+    this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then( () => {
+      return this.router.navigate([this.uploadRouterAliasLower, {formType: 'logout'}]);
+    });
   }
 
   ngOnDestroy() {

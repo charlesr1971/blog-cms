@@ -28,7 +28,7 @@ import { JwtService } from '../../services/jwt/jwt.service';
 import { environment } from '../../../environments/environment';
 import { max } from 'moment';
 
-declare var ease, TweenMax, Elastic: any;
+declare var TweenMax: any, Elastic: any;
 
 @Component({
   selector: 'app-profile',

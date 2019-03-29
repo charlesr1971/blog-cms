@@ -333,6 +333,43 @@ body.profile .mat-tree .mat-form-field {
     visibility: visible;
 }
 
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    animation: matProgressSpinnerRotate 2s linear infinite;
+    transform-origin: center center;
+    margin: auto;
+  }
+
+  .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
+    stroke-dasharray: 25, 80;
+    stroke-dashoffset: 0;
+    animation: matProgressSpinnerDash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes matProgressSpinnerRotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes matProgressSpinnerDash {
+    0% {
+      stroke-dasharray: 25, 80;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 30, 80;
+      stroke-dashoffset: -14px;
+    }
+    100% {
+      stroke-dasharray: 30, 80;
+      stroke-dashoffset: -56px;
+    }
+
+  }
+
 /* media queries */
 
 /* smart phones */

@@ -1,4 +1,4 @@
-declare var ease, TweenMax, Elastic: any;
+declare var Elastic: any;
 
 export function addImage(tweenMax: any, renderer: any, parentElement: any, imageUrl: string, childElementId: string): void {
     const debug = false;

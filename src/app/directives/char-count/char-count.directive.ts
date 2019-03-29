@@ -2,7 +2,7 @@ import { Directive, ElementRef, Input, HostListener, Renderer2, AfterViewInit } 
 
 import { environment } from '../../../environments/environment';
 
-declare var ease, TweenMax, TimelineMax, Elastic: any;
+declare var TweenMax: any, Elastic: any;
 
 @Directive({
   selector: '[appCharCount]'

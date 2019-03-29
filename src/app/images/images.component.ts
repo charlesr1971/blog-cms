@@ -84,6 +84,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
   userid: number = 0;
   singleImageId: string = '';
   isGalleryPage: boolean = true;
+  isSection: boolean = false;
 
   debug: boolean = false;
 
@@ -119,8 +120,11 @@ export class ImagesComponent implements OnInit, OnDestroy {
             console.log('images.component: params ',params);
           }
           this.singleImageId = params['fileid'];
+          this.isSection = true;
           this.images = [];
+          this.removeAdverts();
           this.httpService.fetchImage(params['fileid']).do(this.processImageData).subscribe();
+          this.resizeConntainer();
           this.scrollCallbackImages = null;
 
         }
@@ -159,21 +163,27 @@ export class ImagesComponent implements OnInit, OnDestroy {
 
     this.httpService.galleryPage.subscribe( (page) => {
       if(page > 0) {
+        this.searchDo = false;
+        this.tagsDo = false;
+        this.isSection = true;
         this.images = [];
+        this.removeAdverts();
         this.currentPage = page;
         if(this.debug) {
           console.log('images.component: galleryPage.subscribe: this.currentPage: ', this.currentPage);
         }
         this.httpService.fetchImages(this.currentPage).do(this.processData).subscribe();
         this.scrollCallbackImages = null;
-        this.searchDo = false;
-        this.tagsDo = false;
       }
     });
 
     this.httpService.galleryAuthor.subscribe( (data) => {
       if(data['userid'] > 0) {
+        this.searchDo = false;
+        this.tagsDo = false;
+        this.isSection = true;
         this.images = [];
+        this.removeAdverts();
         this.currentAuthorPage = data['page'];
         this.currentUserid = data['userid'];
         if(this.debug) {
@@ -182,14 +192,16 @@ export class ImagesComponent implements OnInit, OnDestroy {
         }
         this.httpService.fetchImagesByUserid(this.currentUserid,this.currentAuthorPage).do(this.processDataByUserid).subscribe();
         this.scrollCallbackImages = null;
-        this.searchDo = false;
-        this.tagsDo = false;
       }
     });
 
     this.httpService.galleryCategory.subscribe( (data) => {
       if(data['category'] !== '') {
+        this.searchDo = false;
+        this.tagsDo = false;
+        this.isSection = true;
         this.images = [];
+        this.removeAdverts();
         this.currentCategoryPage = data['page'];
         this.currentCategory = data['category'];
         if(this.debug) {
@@ -198,14 +210,16 @@ export class ImagesComponent implements OnInit, OnDestroy {
         }
         this.httpService.fetchImagesByCategory(this.currentCategory,this.currentCategoryPage).do(this.processDataByCategory).subscribe();
         this.scrollCallbackImages = null;
-        this.searchDo = false;
-        this.tagsDo = false;
       }
     });
 
     this.httpService.galleryDate.subscribe( (data) => {
       if(!isNaN(data['year']) && !isNaN(data['month'])) {
+        this.searchDo = false;
+        this.tagsDo = false;
+        this.isSection = true;
         this.images = [];
+        this.removeAdverts();
         this.currentDatePage = data['page'];
         this.currentYear = data['year'];
         this.currentMonth = data['month'];
@@ -216,8 +230,6 @@ export class ImagesComponent implements OnInit, OnDestroy {
         }
         this.httpService.fetchImagesByDate(this.currentYear,this.currentMonth,this.currentDatePage).do(this.processDataByDate).subscribe();
         this.scrollCallbackImages = null;
-        this.searchDo = false;
-        this.tagsDo = false;
       }
     });
 
@@ -251,22 +263,14 @@ export class ImagesComponent implements OnInit, OnDestroy {
     this.fetchImageTitlesSubscription = this.httpService.fetchImageTitles('',this.searchPage).do(this.processImageTitlesData).subscribe();
 
     this.httpService.searchDo.subscribe( (data) => {
+      if(this.debug) {
+        console.log('images.component: this.httpService.searchDo: data ',data);
+      }  
       this.searchDo = data;
       this.tagsDo = false;
       this.images = [];
+      this.removeAdverts();
     });
-
-
-    /* this.route.params.subscribe( (params) => {
-      if(this.debug) {
-        console.log('images.component: this.route.params.subscribe ',params);
-      }
-      if (params['formType'] && params['formType'] === 'search') { 
-        this.searchDo = true;
-        this.tagsDo = false;
-        this.images = [];
-      }
-    }); */
 
     this.httpService.pageTagsDo.subscribe( (data: any) => {
       if(this.debug) {
@@ -277,6 +281,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.tagsDo = true;
         this.fetchPagesTags(data);
         this.images = [];
+        this.removeAdverts();
       }
     });
 
@@ -328,13 +333,17 @@ export class ImagesComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize', ['$event']) onResize(event?) {
+    this.resizeConntainer();
+  }
+
+  resizeConntainer(): void{
     this.screenHeight = window.innerHeight;
     if(this.debug) {
-      console.log('images.component: this.screenHeight ',this.screenHeight);
+      console.log('images.component: resizeConntainer(): this.screenHeight ',this.screenHeight);
     }
     this.screenWidth = window.innerWidth;
     if(this.debug) {
-      console.log('this.screenWidth',this.screenWidth);
+      console.log('this.screenWidth: resizeConntainer(): this.screenWidth ',this.screenWidth);
     }
     setTimeout( () => {
       if(this.screenHeight > 0) {
@@ -530,8 +539,15 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      if(this.images.length > 1) {
+        this.singleImageId = '';
+      }
+      else{
+        this.singleImageId = this.images[0]['id'];
+      }
       if(this.debug) {
         console.log('images.component: processTagsData: this.images: ', this.images);
+        console.log('images.component: this.singleImageId ',this.singleImageId);
       }
     }
   }
@@ -563,6 +579,12 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      if(this.images.length > 1) {
+        this.singleImageId = '';
+      }
+      else{
+        this.singleImageId = this.images[0]['id'];
+      }
       if(this.debug) {
         console.log('images.component: processData: this.images: ', this.images);
       }
@@ -592,6 +614,12 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      if(this.images.length > 1) {
+        this.singleImageId = '';
+      }
+      else{
+        this.singleImageId = this.images[0]['id'];
+      }
       if(this.debug) {
         console.log('images.component: processDataByUserid: this.images: ', this.images);
       }
@@ -621,6 +649,12 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      if(this.images.length > 1) {
+        this.singleImageId = '';
+      }
+      else{
+        this.singleImageId = this.images[0]['id'];
+      }
       if(this.debug) {
         console.log('images.component: processDataByCategory: this.images: ', this.images);
       }
@@ -650,6 +684,12 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      if(this.images.length > 1) {
+        this.singleImageId = '';
+      }
+      else{
+        this.singleImageId = this.images[0]['id'];
+      }
       if(this.debug) {
         console.log('images.component: processDataByDate: this.images: ', this.images);
       }
@@ -793,6 +833,16 @@ export class ImagesComponent implements OnInit, OnDestroy {
     this.sortImages();
     if(this.debug) {
       console.log('images.component: removeImage: this.images: ', this.images);
+    }
+  }
+
+  removeAdverts(): void {
+    const adverts = Array.prototype.slice.call(this.documentBody.querySelectorAll('.app-advert'));
+    if(Array.isArray(adverts) && adverts.length > 0) {
+      adverts.map( (advert) => {
+        //this.renderer.setStyle(advert,'display','none');
+        advert.remove();
+      });
     }
   }
 

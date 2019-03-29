@@ -1,5 +1,5 @@
 
-<div id="infinite-scroller-images" appAdZone appAdZoneParentElementId="infinite-scroller-images" appAdZoneChildElementSelector=".multiple-image-display" [appAdZoneSingleImageId]="singleImageId" [appAdZoneSearchDo]="searchDo" [appAdZoneTagsDo]="tagsDo" #infiniteScrollerImagesContainer infiniteScroller scrollPerecnt="70" immediateCallback="true" [scrollCallback]="scrollCallbackImages" style="overflow:auto;">
+<div id="infinite-scroller-images" appAdZone appAdZoneParentElementId="infinite-scroller-images" [appAdZoneSingleImageId]="singleImageId" [appAdZoneSearchDo]="searchDo" [appAdZoneTagsDo]="tagsDo" [appAdZoneIsSection]="isSection" #infiniteScrollerImagesContainer infiniteScroller scrollPerecnt="70" immediateCallback="true" [scrollCallback]="scrollCallbackImages" style="overflow:auto;">
     <form novalidate [formGroup]="searchForm" [ngStyle]="{'display': searchDo ? 'block' : 'none'}" #searchFormContainer>
         <div class="form-field-container">
             <div class="form-field-legend">Search<mat-icon (click)="closeSearch()">close</mat-icon></div>

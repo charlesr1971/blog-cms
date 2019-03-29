@@ -6,7 +6,7 @@ import { HttpService } from '../../../services/http/http.service';
 
 import { environment } from '../../../../environments/environment';
 
-declare var ease, TweenMax, Elastic: any;
+declare var TweenMax: any, Elastic: any;
 
 @Component({
   selector: 'app-category-edit',

@@ -17,7 +17,7 @@ import { Image } from '../image/image.model';
 import { HttpService } from '../services/http/http.service';
 import { environment } from '../../environments/environment';
 
-declare var ease, TweenMax, TimelineMax, Elastic: any;
+declare var TweenMax: any, Elastic: any;
 
 @Component({
   selector: 'app-toolbar',

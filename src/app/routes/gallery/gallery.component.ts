@@ -75,10 +75,13 @@ export class GalleryComponent implements OnInit {
 
       this.route.params.subscribe( (params) => {
         if(this.debug) {
-          console.log('gallery.component: this.route.params.subscribe ',params);
+          console.log('gallery.component: this.route.params.subscribe 1 ',params);
         }
         if (params['formType'] && params['formType'] === 'search') { 
           this.httpService.searchDo.next(true);
+          if(this.debug) {
+            console.log('gallery.component: this.route.params.subscribe 2 ',params);
+          }
         }
       });
 

@@ -315,6 +315,10 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-foreground-palette, text, 0.075);
     }
 
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
+        stroke: mat-color($dark-foreground-palette, text);
+    }
+
     .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i {
         color: mat-color($dark-accent, lighter);
     }
@@ -691,6 +695,10 @@ $light-background-palette: map-get($light-theme, background);
 
     .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block {
         background: mat-color($light-foreground-palette, text, 0.025);
+    }
+
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
+        stroke: mat-color($light-foreground-palette, text);
     }
 
     .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i {
