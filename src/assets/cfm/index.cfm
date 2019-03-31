@@ -54,7 +54,7 @@
       
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
-      <meta name="twitter:card" content="#request.twitterCard#" />
+      <meta name="twitter:card" content="#request.twitterCardType#" />
       <meta name="twitter:site" content="#request.twitterSite#" />
       <meta name="twitter:creator" content="#request.twitterCreator#" />
       <meta property="og:url" content="#request.ogUrl#" />
@@ -63,7 +63,7 @@
       <meta property="og:image" content="#request.twittercard#" />
       <title>#request.title# S.P.A</title>
       <script type="text/javascript">
-		location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#&htmlTitle=#URLEncodedFormat(request.htmlTitle)#&twitterCard=#URLEncodedFormat(request.twitterCard)#&twitterSite=#URLEncodedFormat(request.twitterSite)#&twitterCreator=#URLEncodedFormat(request.twitterCreator)#&ogUrl=#URLEncodedFormat(request.ogUrl)#&ogTitle=#URLEncodedFormat(request.ogTitle)#&ogDescription=#URLEncodedFormat(request.ogDescription)#&ogImage=#URLEncodedFormat(request.ogImage)#&adZoneUrl=#URLEncodedFormat(request.adzoneurl)#";
+		location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#&htmlTitle=#URLEncodedFormat(request.htmlTitle)#&request.twitterCardType=#URLEncodedFormat(request.request.twitterCardType)#&twitterSite=#URLEncodedFormat(request.twitterSite)#&twitterCreator=#URLEncodedFormat(request.twitterCreator)#&ogUrl=#URLEncodedFormat(request.ogUrl)#&ogTitle=#URLEncodedFormat(request.ogTitle)#&ogDescription=#URLEncodedFormat(request.ogDescription)#&ogImage=#URLEncodedFormat(request.ogImage)#&adZoneUrl=#URLEncodedFormat(request.adzoneurl)#";
 	  </script>
     </head>
     <body>

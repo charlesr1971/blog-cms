@@ -16,7 +16,7 @@
   request.localHost = "community.establishmindfulness/material/ngMat02";
   request.remoteHost = "community.establishmindfulness.com";
   
-  request.twitterCard = "summary";
+  request.twitterCardType = "summary";
   request.twitterSite = "@charlesr1971";
   request.twitterCreator = "@charlesr1971";
   request.ogUrl = request.protocol & "://" & request.remoteHost & "/";

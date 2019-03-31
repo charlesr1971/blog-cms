@@ -17,7 +17,7 @@ export class HttpService {
   
   websiteTitle: string = environment.title;
   htmlTitle: string = environment.htmlTitle;
-  twitterCard: string = '';
+  twitterCardType: string = '';
   twitterSite: string = '';
   twitterCreator: string = '';
   ogUrl: string = '';
@@ -104,10 +104,10 @@ export class HttpService {
       this.htmlTitle = htmlTitle;
     }
 
-    const twitterCard = getUrlParameter('twitterCard');
+    const twitterCardType = getUrlParameter('twitterCardType');
 
-    if(twitterCard !== '0' || twitterCard !== '') {
-      this.twitterCard = twitterCard;
+    if(twitterCardType !== '0' || twitterCardType !== '') {
+      this.twitterCardType = twitterCardType;
     }
 
     const twitterSite = getUrlParameter('twitterSite');

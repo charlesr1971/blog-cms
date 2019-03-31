@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.setTitle(this.httpService.htmlTitle);
 
-    this.meta.addTag({name:'twitter:card',content:this.httpService.twitterCard});
+    this.meta.addTag({name:'twitter:card',content:this.httpService.twitterCardType});
     this.meta.addTag({name:'twitter:site',content:this.httpService.twitterSite});
     this.meta.addTag({name:'twitter:creator',content:this.httpService.twitterCreator});
     this.meta.addTag({name:'og:url',content:this.httpService.ogUrl});
