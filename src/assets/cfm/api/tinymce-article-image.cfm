@@ -4,6 +4,8 @@
 
 <cfparam name="filename" default="" />
 <cfparam name="fileid" default="0" />
+<cfparam name="newfileid" default="#LCase(CreateUUID())#" />
+<cfparam name="newfilename" default="" />
 <cfparam name="uploadfolder" default="#request.tinymcearticleuploadfolder#" />
 <cfparam name="extensions" default="gif,png,jpg,jpeg" />
 <cfparam name="timestamp" default="#DateFormat(Now(),'yyyymmdd')##TimeFormat(Now(),'HHmmss')#" />
@@ -52,9 +54,18 @@
       </cfif>
       <cfif DirectoryExists(imageSystemPath)>
         <cflock name="write_file_#timestamp#" type="exclusive" timeout="30">
-          <cffile action="write" file="#imageSystemPath#\#data['filename']#" output="#data['content']#" />
+		  <cfset newfilename = newfileid & "." & data['extension']>
+          <cfset imageSystemFilePath = imageSystemPath & "\" & newfilename>
+          <cffile action="write" file="#imageSystemFilePath#" output="#data['content']#" />
         </cflock>
         <cfset data['success'] = true>
+        <cfset _isWebImageFile = IsWebImageFile(path=imageSystemFilePath)>
+		<cfif NOT _isWebImageFile>
+          <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+            <cffile action="delete"  file="#imageSystemFilePath#" />
+          </cflock>
+          <cfset data['success'] = false>
+        </cfif>
       </cfif>
     <cfelse>
       <cfset maxcontentlengthInMb = NumberFormat(maxcontentlength/1000000,".__")>
@@ -77,7 +88,7 @@
   <cfset data['disableImageUpload'] = 1>
 </cfif>
 <cfif success>
-  <cfset data['location'] = uploadfolder & "/" & fileid & "/" & filename>
+  <cfset data['location'] = uploadfolder & "/" & fileid & "/" & local.newfilename>
 </cfif>
 
 <cfoutput>

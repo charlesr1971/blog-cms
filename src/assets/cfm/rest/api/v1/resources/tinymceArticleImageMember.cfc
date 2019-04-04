@@ -68,6 +68,8 @@
     <cfset local.uploadfolder = request.tinymcearticleuploadfolder>
     <cfset local.extensions = "gif,png,jpg,jpeg">
     <cfset local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss')>
+    <cfset local.newfileid = LCase(CreateUUID())>
+    <cfset local.newfilename = "">
     <cfset local.fileid = arguments.fileid>
     <cfset local.filename = "">
     <cfset local.maxcontentlength = request.maxcontentlength>
@@ -134,10 +136,19 @@
             </cflock>
           </cfif>
           <cfif DirectoryExists(local.imageSystemPath)>
+			<cfset local.newfilename = local.newfileid & "." & local.data['extension']>
+            <cfset local.imageSystemFilePath = local.imageSystemPath & "\" & local.newfilename>
             <cflock name="write_file_#local.timestamp#" type="exclusive" timeout="30">
-              <cffile action="write" file="#local.imageSystemPath#\#local.data['filename']#" output="#local.data['content']#" />
+              <cffile action="write" file="#local.imageSystemFilePath#" output="#local.data['content']#" />
             </cflock>
             <cfset local.data['success'] = true>
+            <cfset local.isWebImageFile = request.utils.IsWebImageFile(path=local.imageSystemFilePath)>
+            <cfif NOT local.isWebImageFile>
+              <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+                <cffile action="delete"  file="#local.imageSystemFilePath#" />
+              </cflock>
+              <cfset local.data['success'] = false>
+            </cfif>
           </cfif>
         <cfelse>
           <cfset local.maxcontentlengthInMb = NumberFormat(local.maxcontentlength/1000000,".__")>
@@ -158,7 +169,7 @@
       <cfset local.data['disableImageUpload'] = 1>
     </cfif>
     <cfif local.success>
-      <cfset local.data['location'] = local.uploadfolder & "/" & local.fileid & "/" & local.filename>
+      <cfset local.data['location'] = local.uploadfolder & "/" & local.fileid & "/" & local.newfilename>
     </cfif>
     <cfreturn representationOf(local.data) />
   </cffunction>

@@ -199,35 +199,47 @@
         <cfset local.title = Trim(local.title)>
         <cfset local.title = request.utils.FormatTitle(local.title)>
         <cfif DirectoryExists(local.imageSystemPath)>
-          <cfset local.data['success'] = true>
+          <cfset local.imageSystemFilePath = local.imageSystemPath & "\" & local.fileid & "." & local.data['fileExtension']>
           <cflock name="write_file_#local.timestamp#" type="exclusive" timeout="30">
-            <cffile action="write" file="#local.imageSystemPath#/#local.fileid#.#local.data['fileExtension']#" output="#local.data['selectedFile']#" />
+            <cffile action="write" file="#local.imageSystemFilePath#" output="#local.data['selectedFile']#" />
           </cflock>
+          <cfset local.data['success'] = true>
           <cfset local.imagePath = REReplaceNoCase(local.imagePath,"^/","")>
           <cfset local.data['imagePath'] = local.imagePath & "/" & local.fileid & "." & local.data['fileExtension']>
-        </cfif>
-        <cfset local.filename = local.fileid & "." & local.data['fileExtension']>
-        <cfset local.tags = request.utils.FormatTags(local.data['tags'])>
-        <cfset local.data['article'] = request.utils.FormatTextForDatabase(local.data['article'])>
-        <cftry>
-          <cfset local.publishArticleDate = request.utils.CreateDateTimeFromMomentDate(local.data['publishArticleDate'])>
-          <cfif NOT ISDATE(local.publishArticleDate)>
-            <cfset local.publishArticleDate = Now()>
+          <cfset local.isWebImageFile = request.utils.IsWebImageFile(path=local.imageSystemFilePath)>
+		  <cfif NOT local.isWebImageFile>
+            <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+              <cffile action="delete"  file="#local.imageSystemFilePath#" />
+            </cflock>
+            <cfset local.data['success'] = false>
           </cfif>
-          <cfcatch>
-            <cfset local.publishArticleDate = Now()>
-          </cfcatch>
-        </cftry>
-        <CFQUERY DATASOURCE="#request.domain_dsn#" result="local.queryInsertResult">
-          INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-          VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(local.fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(local.data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.submissiondate#">)
-        </CFQUERY>
-        <cfset local.data['fileid'] = local.queryInsertResult.generatedkey>
-        <cfif IsArray(local.data['tinymceArticleDeletedImages'])>
-          <cfset request.utils.RemoveTinymceArticleImage(local.data['tinymceArticleDeletedImages'])>
         </cfif>
-        <cfset local.data['publishArticleDate'] = local.publishArticleDate>
-        <cfset local.data['error'] = "">
+        <cfif local.data['success']>
+		  <cfset local.filename = local.fileid & "." & local.data['fileExtension']>
+          <cfset local.tags = request.utils.FormatTags(local.data['tags'])>
+          <cfset local.data['article'] = request.utils.FormatTextForDatabase(local.data['article'])>
+          <cftry>
+            <cfset local.publishArticleDate = request.utils.CreateDateTimeFromMomentDate(local.data['publishArticleDate'])>
+            <cfif NOT ISDATE(local.publishArticleDate)>
+              <cfset local.publishArticleDate = Now()>
+            </cfif>
+            <cfcatch>
+              <cfset local.publishArticleDate = Now()>
+            </cfcatch>
+          </cftry>
+          <CFQUERY DATASOURCE="#request.domain_dsn#" result="local.queryInsertResult">
+            INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
+            VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(local.fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(local.data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.submissiondate#">)
+          </CFQUERY>
+          <cfset local.data['fileid'] = local.queryInsertResult.generatedkey>
+          <cfif IsArray(local.data['tinymceArticleDeletedImages'])>
+            <cfset request.utils.RemoveTinymceArticleImage(local.data['tinymceArticleDeletedImages'])>
+          </cfif>
+          <cfset local.data['publishArticleDate'] = local.publishArticleDate>
+          <cfset local.data['error'] = "">
+        <cfelse>
+		  <cfset local.data['error'] = "The image uploaded was not the correct file type">
+        </cfif>
       <cfelse>
         <cfset local.maxcontentlengthInMb = NumberFormat(local.maxcontentlength/1000000,".__")>
         <cfset local.data['error'] = "The image uploaded must be less than " & local.maxcontentlengthInMb & "MB">
@@ -236,7 +248,6 @@
       <cfif local.data['content_length'] LT local.maxcontentlength>
         <cfset local.imageSystemPath = request.filepath & "\user-avatars">
         <cfif DirectoryExists(local.imageSystemPath)>
-          <cfset local.data['success'] = true>
           <cfif local.qGetUserID.RecordCount>
             <cfif local.qGetUser.RecordCount>
               <cfif Len(Trim(local.qGetUser.Filename))>
@@ -249,18 +260,31 @@
               </cfif>
             </cfif>
           </cfif>
+          <cfset local.imageSystemFilePath = local.imageSystemPath & "\" & local.fileid & "." & local.data['fileExtension']>
           <cflock name="write_file_#local.timestamp#" type="exclusive" timeout="30">
-            <cffile action="write" file="#local.imageSystemPath#/#local.fileid#.#local.data['fileExtension']#" output="#local.data['selectedFile']#" />
+            <cffile action="write" file="#local.imageSystemFilePath#" output="#local.data['selectedFile']#" />
           </cflock>
+          <cfset local.data['success'] = true>
+          <cfset local.isWebImageFile = request.utils.IsWebImageFile(path=local.imageSystemFilePath)>
+		  <cfif NOT local.isWebImageFile>
+            <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+              <cffile action="delete"  file="#local.imageSystemFilePath#" />
+            </cflock>
+            <cfset local.data['success'] = false>
+          </cfif>
         </cfif>
-        <cfset local.filename = local.fileid & "." & local.data['fileExtension']>
-        <CFQUERY DATASOURCE="#request.domain_dsn#">
-          UPDATE tblUser
-          SET Clientfilename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,Filename = <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">
-          WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">
-        </CFQUERY>
-        <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.filename>
-        <cfset local.data['error'] = "">
+        <cfif local.data['success']>
+		  <cfset local.filename = local.fileid & "." & local.data['fileExtension']>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            UPDATE tblUser
+            SET Clientfilename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,Filename = <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">
+          </CFQUERY>
+          <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.filename>
+          <cfset local.data['error'] = "">
+        <cfelse>
+		  <cfset local.data['error'] = "The image uploaded was not the correct file type">
+        </cfif>
       <cfelse>
         <cfset local.maxcontentlengthInMb = NumberFormat(local.maxcontentlength/1000000,".__")>
         <cfset local.data['error'] = "The image uploaded must be less than " & local.maxcontentlengthInMb & "MB">
@@ -268,7 +292,7 @@
     <cfelse>
       <cfset local.data['error'] = "Data uploaded was insufficient to complete the submission">
     </cfif>
-    <cfset local.adminuserid = getRandomAdminUserID(roleid="6,7")>
+    <cfset local.adminuserid = request.utils.GetRandomAdminUserID(roleid="6,7")>
     <CFQUERY NAME="local.qGetAdmin" DATASOURCE="#request.domain_dsn#">
       SELECT * 
       FROM tblUser 
@@ -490,7 +514,7 @@
     <cfelse>
       <cfset local.data['error'] = "Record for this file cannot be found">
     </cfif>
-    <cfset local.adminuserid = getRandomAdminUserID(roleid="6,7")>
+    <cfset local.adminuserid = request.utils.GetRandomAdminUserID(roleid="6,7")>
     <CFQUERY NAME="local.qGetAdmin" DATASOURCE="#request.domain_dsn#">
       SELECT * 
       FROM tblUser 

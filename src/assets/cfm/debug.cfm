@@ -124,7 +124,7 @@
 
 <strong>emailtemplateheaderbackground:</strong> #emailtemplateheaderbackground#<br /><br />
 
-<cfset randomAdminUserID = getRandomAdminUserID(roleid="6,7")>
+<cfset randomAdminUserID = GetRandomAdminUserID(roleid="6,7")>
 
 <strong>randomAdminUserID:</strong> #randomAdminUserID#<br /><br />
 
@@ -262,7 +262,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   <!---<cfdump var="#request.profanityList#" />--->
   
-  <cfset string = "Shit">
+  <!---<cfset string = "Shit">--->
   
   <!---<cfset string = REReplaceNoCase(string,"[[:punct:]]","","ALL")>
   <cfset array = ListToArray(string," ")>
@@ -271,12 +271,35 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   <strong>string:</strong> #string#<br /><br />--->
 
-  <cfset hasProfanity = request.utils.HasProfanity(string=string)>
+  <!---<cfset hasProfanity = request.utils.HasProfanity(string=string)>
   
-  <strong>hasProfanity:</strong> #hasProfanity#<br /><br />
+  <strong>hasProfanity:</strong> #hasProfanity#<br /><br />--->
   
 
 
 
+
+  <!---<cfset path1 = "C:\ColdFusion11\cfusion\wwwroot\community.establishmindfulness\material\ngMat02\src\assets\cfm\article-images\47\10772cc1-d77d-caa7-784cabf742432526.jpg">
+  <cfset path2 = "C:\ColdFusion11\cfusion\wwwroot\establishmindfulness\resources\ai\angular-chat-modal.ai">--->
+  
+  <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\spinner-black-50.gif">
+  <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
+  <strong>isWebImageFile:</strong> GIF: #isWebImageFile#<br /><br />
+  
+  <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\test-image-upload.jpg">
+  <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
+  <strong>isWebImageFile:</strong> JPG: #isWebImageFile#<br /><br />
+  
+  <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\shadow-left.png">
+  <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
+  <strong>isWebImageFile:</strong> PNG: #isWebImageFile#<br /><br />
+  
+  <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\test-image-upload-1.jpeg">
+  <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
+  <strong>isWebImageFile:</strong> JPEG: #isWebImageFile#<br /><br />
+  
+  <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\advertising-icon-trimmed.svg">
+  <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
+  <strong>isWebImageFile:</strong> SVG: #isWebImageFile#<br /><br />
 
 </cfoutput>

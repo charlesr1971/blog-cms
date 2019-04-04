@@ -448,6 +448,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
           if(this.debug) {
             console.log('tree-dynamic: before this this.fetchImage');
           }
+          if(this.debug) {
+            console.log('tree-dynamic: ngOnInit: this.fileImageId: ', this.fileImageId);
+          }
           this.fetchImage(params['fileid']);
         }
         if(this.debug) {
@@ -567,6 +570,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
   }
 
   fetchImage(id: string): void {
+    if(this.debug) {
+      console.log('tree-dynamic: fetchImage(): id: ', id);
+    }
     this.httpService.fetchImage(id).do(this.processImageData).subscribe();
   }
 
@@ -651,6 +657,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
       this.formData['article'] = data['article'];
       this.publishArticleDate.patchValue(moment(new Date(data['publishArticleDate']),'MMMM DD, YYYY'));
       this.fileImageId = data['fileid'];
+      if(this.debug) {
+        console.log('tree-dynamic: processImageData: this.fileImageId: ', this.fileImageId);
+      }
       if((typeof data['tags'] === 'string' || data['tags'] instanceof String) && data['tags'] !== '') {
         const tags = JSON.parse(data['tags']);
         tags.sort(sortTags);
@@ -1201,7 +1210,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if(this.debug) {
         console.log('tree-dynamic: openArticleDialog: beforeClose: this.tinyMceArticleContent: ', this.tinyMceArticleContent);
       }
-      this.httpService.articleDialogOpened.next(0);
+      const data = {
+        height: 0,
+        fileImageId: this.fileImageId
+      };
+      this.httpService.articleDialogOpened.next(data);
     });
     dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
@@ -1215,7 +1228,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
       }
       if(height > 0 ) {
         this.dialogArticleHeight = height;
-        this.httpService.articleDialogOpened.next(this.dialogArticleHeight);
+        const data = {
+          height: this.dialogArticleHeight,
+          fileImageId: this.fileImageId
+        };
+        this.httpService.articleDialogOpened.next(data);
       }
       if(this.debug) {
         console.log('tree-dynamic: dialog: this.dialogArticleHeight: ', this.dialogArticleHeight);

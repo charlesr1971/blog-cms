@@ -86,13 +86,24 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
       console.log('tinymce.component afterViewInit');
     }
 
-    this.httpService.articleDialogOpened.subscribe( (height: number) => {
+    if(this.debug) {
+      console.log('tinymce.component: ngAfterViewInit: this.fileImageId 1: ', this.fileImageId);
+    }
+
+    this.httpService.articleDialogOpened.subscribe( (data: any) => {
+
+      const height = data['height'];
+      this.fileImageId = data['fileImageId'];
 
       if(this.debug) {
         console.log('tinymce.component: ngAfterViewInit: articleDialogOpened: height: ',height);
       }
 
       if(height > 0) {
+
+        if(this.debug) {
+          console.log('tinymce.component: ngAfterViewInit: this.fileImageId 2: ', this.fileImageId);
+        }
 
         const that = this;
         var tinymce_config = {};
@@ -297,8 +308,9 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
   }
 
   private unsavedChanges(article1: string, article2: string): boolean {
-    const _article1 = article1.replace(/[\s]+/ig,'').toLowerCase().trim();
-    const _article2 = article2.replace(/[\s]+/ig,'').toLowerCase().trim();
+    const regex = new RegExp(environment.ajax_dir,'ig')
+    const _article1 = article1.replace(/[\s]+/ig,'').replace(regex,'').toLowerCase().trim();
+    const _article2 = article2.replace(/[\s]+/ig,'').replace(regex,'').toLowerCase().trim();
     if(this.debug) {
       console.log('tinymce.component: unsavedChanges: _article1: ', _article1);
       console.log('tinymce.component: unsavedChanges: _article2: ', _article2);
@@ -316,6 +328,7 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
       }
       if(this.debug) {
         console.log('tinymce.component: setup: init');
+        console.log('tinymce.component: setup: this.fileImageId: ', this.fileImageId);
       }
     });
     editor.on('keyup keydown change', (event) => {

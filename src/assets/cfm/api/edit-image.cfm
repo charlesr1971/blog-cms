@@ -172,7 +172,7 @@
   <cfset data['error'] = "Record for this file cannot be found">
 </cfif>
 
-<cfset adminuserid = getRandomAdminUserID(roleid="6,7")>
+<cfset adminuserid = GetRandomAdminUserID(roleid="6,7")>
 
 <CFQUERY NAME="qGetAdmin" DATASOURCE="#request.domain_dsn#">
   SELECT * 

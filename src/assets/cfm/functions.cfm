@@ -833,6 +833,13 @@
 	return local.documentFilenameArray;
   }
   
+  public string function TinymceArticleChangeImages(string html = "", string srcBefore = "", string srcAfter = "") output="false" {
+	var local = {};
+	local.regex = "(.*<img\s+[^>]*?src=[#chr(34)##chr(39)#]+)#arguments.srcBefore#([#chr(34)##chr(39)#]+.*)";
+	local.result = REReplaceNoCase(arguments.html,local.regex,"\1#arguments.srcAfter#\2");
+	return local.result;
+  }
+  
   public void function RemoveTinymceArticleOrphanImage(string html = "", numeric fileid = 0) output="false" {
 	var local = {};
 	local.document = arguments.html;
@@ -1249,6 +1256,33 @@
 		local.result = true;
 		break;
 	  }
+	}
+	return local.result;
+  }
+  
+  public boolean function IsWebImageFile(string path = "") output="false" {
+	var local = {};
+	local.result = false;
+	local.files = createObject("java","java.nio.file.Files");
+	local.file = createObject("java","java.io.File").init(arguments.path);
+	try {
+	  local.mime = local.files.probeContentType(local.file.toPath());
+	  switch(local.mime){
+		case "image/jpeg":
+		  local.result = true;
+		  break;
+		case "image/jpg":
+		  local.result = true;
+		  break;
+		case "image/png":
+		  local.result = true;
+		  break;
+		case "image/gif":
+		  local.result = true;
+		  break;
+	  }
+	} 
+	catch (any e) {
 	}
 	return local.result;
   }

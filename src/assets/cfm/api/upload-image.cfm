@@ -127,35 +127,47 @@
     <cfset title = Trim(title)>
     <cfset title = FormatTitle(title)>
     <cfif DirectoryExists(imageSystemPath)>
-      <cfset data['success'] = true>
+      <cfset imageSystemFilePath = imageSystemPath & "\" & fileid & "." & data['fileExtension']>
       <cflock name="write_file_#timestamp#" type="exclusive" timeout="30">
-        <cffile action="write" file="#imageSystemPath#/#fileid#.#data['fileExtension']#" output="#data['selectedFile']#" />
+        <cffile action="write" file="#imageSystemFilePath#" output="#data['selectedFile']#" />
       </cflock>
+      <cfset data['success'] = true>
       <cfset imagePath = REReplaceNoCase(imagePath,"^/","")>
       <cfset data['imagePath'] = imagePath & "/" & fileid & "." & data['fileExtension']>
-    </cfif>
-    <cfset filename = fileid & "." & data['fileExtension']>
-    <cfset tags = FormatTags(data['tags'])>
-    <cfset data['article'] = FormatTextForDatabase(data['article'])>
-    <cftry>
-	  <cfset publishArticleDate = CreateDateTimeFromMomentDate(data['publishArticleDate'])>
-      <cfif NOT ISDATE(publishArticleDate)>
-        <cfset publishArticleDate = Now()>
+      <cfset _isWebImageFile = IsWebImageFile(path=imageSystemFilePath)>
+	  <cfif NOT _isWebImageFile>
+        <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+          <cffile action="delete"  file="#imageSystemFilePath#" />
+        </cflock>
+        <cfset data['success'] = false>
       </cfif>
-      <cfcatch>
-        <cfset publishArticleDate = Now()>
-      </cfcatch>
-    </cftry>
-    <CFQUERY DATASOURCE="#request.domain_dsn#" result="queryInsertResult">
-      INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-      VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
-    </CFQUERY>
-    <cfset data['fileid'] = queryInsertResult.generatedkey>
-    <cfif IsArray(data['tinymceArticleDeletedImages'])>
-	  <cfset RemoveTinymceArticleImage(data['tinymceArticleDeletedImages'])>
     </cfif>
-    <cfset data['publishArticleDate'] = publishArticleDate>
-    <cfset data['error'] = "">
+    <cfif data['success']>
+	  <cfset filename = fileid & "." & data['fileExtension']>
+      <cfset tags = FormatTags(data['tags'])>
+      <cfset data['article'] = FormatTextForDatabase(data['article'])>
+      <cftry>
+        <cfset publishArticleDate = CreateDateTimeFromMomentDate(data['publishArticleDate'])>
+        <cfif NOT ISDATE(publishArticleDate)>
+          <cfset publishArticleDate = Now()>
+        </cfif>
+        <cfcatch>
+          <cfset publishArticleDate = Now()>
+        </cfcatch>
+      </cftry>
+      <CFQUERY DATASOURCE="#request.domain_dsn#" result="queryInsertResult">
+        INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
+        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
+      </CFQUERY>
+      <cfset data['fileid'] = queryInsertResult.generatedkey>
+      <cfif IsArray(data['tinymceArticleDeletedImages'])>
+        <cfset RemoveTinymceArticleImage(data['tinymceArticleDeletedImages'])>
+      </cfif>
+      <cfset data['publishArticleDate'] = publishArticleDate>
+      <cfset data['error'] = "">
+    <cfelse>
+	  <cfset data['error'] = "The image uploaded was not the correct file type">
+    </cfif>
   <cfelse>
 	<cfset maxcontentlengthInMb = NumberFormat(maxcontentlength/1000000,".__")>
     <cfset data['error'] = "The image uploaded must be less than " & maxcontentlengthInMb & "MB">
@@ -164,7 +176,6 @@
   <cfif data['content_length'] LT maxcontentlength>
 	<cfset imageSystemPath = request.filepath & "\user-avatars">
 	<cfif DirectoryExists(imageSystemPath)>
-      <cfset data['success'] = true>
       <cfif qGetUserID.RecordCount>
         <cfif qGetUser.RecordCount>
 		  <cfif Len(Trim(qGetUser.Filename))>
@@ -177,18 +188,31 @@
           </cfif>
         </cfif>
       </cfif>
+      <cfset imageSystemFilePath = imageSystemPath & "\" & fileid & "." & data['fileExtension']>
       <cflock name="write_file_#timestamp#" type="exclusive" timeout="30">
-        <cffile action="write" file="#imageSystemPath#/#fileid#.#data['fileExtension']#" output="#data['selectedFile']#" />
+        <cffile action="write" file="#imageSystemFilePath#" output="#data['selectedFile']#" />
       </cflock>
+      <cfset data['success'] = true>
+      <cfset _isWebImageFile = IsWebImageFile(path=imageSystemFilePath)>
+	  <cfif NOT _isWebImageFile>
+        <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+          <cffile action="delete"  file="#imageSystemFilePath#" />
+        </cflock>
+        <cfset data['success'] = false>
+      </cfif>
     </cfif>
-    <cfset filename = fileid & "." & data['fileExtension']>
-    <CFQUERY NAME="qUpdateUser" DATASOURCE="#request.domain_dsn#">
-      UPDATE tblUser
-      SET Clientfilename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,Filename = <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">
-      WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">
-    </CFQUERY>
-    <cfset data['avatarSrc'] = request.avatarbasesrc & filename>
-    <cfset data['error'] = "">
+    <cfif data['success']>
+	  <cfset filename = fileid & "." & data['fileExtension']>
+      <CFQUERY NAME="qUpdateUser" DATASOURCE="#request.domain_dsn#">
+        UPDATE tblUser
+        SET Clientfilename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,Filename = <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">
+        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">
+      </CFQUERY>
+      <cfset data['avatarSrc'] = request.avatarbasesrc & filename>
+      <cfset data['error'] = "">
+    <cfelse>
+	  <cfset data['error'] = "The image uploaded was not the correct file type">
+    </cfif>
   <cfelse>
 	<cfset maxcontentlengthInMb = NumberFormat(maxcontentlength/1000000,".__")>
     <cfset data['error'] = "The image uploaded must be less than " & maxcontentlengthInMb & "MB">
@@ -197,7 +221,7 @@
   <cfset data['error'] = "Data uploaded was insufficient to complete the submission">
 </cfif>
 
-<cfset adminuserid = getRandomAdminUserID(roleid="6,7")>
+<cfset adminuserid = GetRandomAdminUserID(roleid="6,7")>
 
 <CFQUERY NAME="qGetAdmin" DATASOURCE="#request.domain_dsn#">
   SELECT * 

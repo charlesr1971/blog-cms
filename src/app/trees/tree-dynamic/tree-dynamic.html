@@ -51,7 +51,7 @@
   <mat-icon class="dialog-article-help-notification-close" (click)="closeArticleHelpNotificationDialog()" ngbTooltip="Close" [disableTooltip]="disableArticleTooltip" [container]="'body'">close</mat-icon>
 </ng-template>
 
-<ng-template class="dialog-article" #dialogArticle>
+<ng-template class="dialog-article" #dialogArticle *ngIf="fileImageId > 0">
   <div class="dialog-article-container">
     <app-tinymce [tinyMceArticleElementId]="tinyMceArticleElementId" [tinyMceArticleContent]="tinyMceArticleContent" [fileImageId]="fileImageId" [tinymceArticleImageCount]="tinymceArticleImageCount" [tinymceArticleImages]="tinymceArticleImages" [isMobile]="isMobile" [tinyMceArticleMaxWordCount]="tinyMceArticleMaxWordCount" (onEditorChange)="tinyMceArticleKeyupHandler($event)"></app-tinymce>
     <div class="button-actions" *ngIf="!isMobile">
