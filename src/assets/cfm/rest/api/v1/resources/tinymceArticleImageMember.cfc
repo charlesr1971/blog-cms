@@ -91,7 +91,6 @@
     <cfset local.success = local.data['success']>
     <cfset local.requestData = GetHttpRequestData()>
     <cfset local.requestBody = local.requestData.headers>
-    <!---<cfdump var="#local.requestData#" />--->
     <cftry>
       <cfset local.data['content'] = local.requestData.content>
       <cfloop collection = "#local.requestData.headers#" item="http_item">
@@ -110,7 +109,6 @@
 		<cfset local.data['error'] = cfcatch.message>
       </cfcatch>
     </cftry>
-    <!---<cfdump var="#local.data#" output="C:\Users\Charles Robertson\Desktop\debugXXX.htm" format="html" />--->
     <cfinclude template="../../../../jwt-decrypt.cfm">
 	<cfif StructKeyExists(local.data['jwtObj'],"jwtAuthenticated") AND NOT local.data['jwtObj']['jwtAuthenticated']>
       <cfreturn representationOf(local.data).withStatus(403,"Not Authorized") />
@@ -119,13 +117,11 @@
     <cfif StructKeyExists(local.data['jwtObj'],"userToken") AND Len(Trim(local.data['jwtObj']['userToken']))>
 	  <cfset local.imagemembersecurityusertoken = local.data['jwtObj']['userToken']>
     </cfif>
-    <!---<cfdump var="#local.data['jwtObj']#" abort />--->
     <cfset local.imagemembersecurityfileuuid = arguments.fileid>
     <cfinclude template="../../../../file-security.cfm">
 	<cfif NOT local.authorized>
       <cfreturn representationOf(local.data).withStatus(403,"Not Authorized") />
     </cfif>
-    <!---<cfdump var="#local.data#" abort />--->
     <cfif Len(Trim(local.data['filename'])) AND IsBinary(local.data['content']) AND IsNumeric(local.data['content-length']) AND Val(local.fileid)>
       <cfif ListFindNoCase(locaL.extensions,local.data['extension'])>
         <cfif local.data['content-length'] LT local.maxcontentlength>
@@ -137,17 +133,36 @@
           </cfif>
           <cfif DirectoryExists(local.imageSystemPath)>
 			<cfset local.newfilename = local.newfileid & "." & local.data['extension']>
-            <cfset local.imageSystemFilePath = local.imageSystemPath & "\" & local.newfilename>
-            <cflock name="write_file_#local.timestamp#" type="exclusive" timeout="30">
-              <cffile action="write" file="#local.imageSystemFilePath#" output="#local.data['content']#" />
-            </cflock>
-            <cfset local.data['success'] = true>
-            <cfset local.isWebImageFile = request.utils.IsWebImageFile(path=local.imageSystemFilePath)>
-            <cfif NOT local.isWebImageFile>
-              <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
-                <cffile action="delete"  file="#local.imageSystemFilePath#" />
+            <cfset local.secureRandomSystemSecurePath = request.securefilepath & "\" & LCase(CreateUUID())>
+            <cfset local.imageSystemSecureFilePath = local.secureRandomSystemSecurePath & "\" & local.newfilename>
+            <cfif NOT DirectoryExists(local.secureRandomSystemSecurePath)>
+              <cflock name="create_directory_#local.timestamp#" type="exclusive" timeout="30">
+                <cfdirectory action="create" directory="#local.secureRandomSystemSecurePath#" />
               </cflock>
-              <cfset local.data['success'] = false>
+              <cflock name="write_file_#local.timestamp#" type="exclusive" timeout="30">
+                <cffile action="write" file="#local.imageSystemSecureFilePath#" output="#local.data['content']#" />
+              </cflock>
+            </cfif>
+            <cfif FileExists(local.imageSystemSecureFilePath) AND DirectoryExists(local.imageSystemPath)>
+              <cfset local.isWebImageFile = request.utils.IsWebImageFile(path=local.imageSystemSecureFilePath)>
+              <cfif NOT local.isWebImageFile>
+                <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+                  <cffile action="delete"  file="#local.imageSystemSecureFilePath#" />
+                </cflock>
+                <cfset local.data['success'] = false>
+              <cfelse>
+                <cflock name="move_file_#local.timestamp#" type="exclusive" timeout="30">
+                  <cffile action="move" source="#local.imageSystemSecureFilePath#" destination="#local.imageSystemPath#">
+                </cflock>
+                <cfset local.data['success'] = true>
+              </cfif>
+            <cfelse>
+			  <cfset local.data['success'] = false>
+            </cfif>
+			<cfif DirectoryExists(local.secureRandomSystemSecurePath)>
+              <cflock name="delete_directory_#local.timestamp#" type="exclusive" timeout="30">
+                <cfdirectory action="delete" directory="#local.secureRandomSystemSecurePath#" recurse="yes" />
+              </cflock>
             </cfif>
           </cfif>
         <cfelse>

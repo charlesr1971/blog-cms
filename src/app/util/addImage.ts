@@ -8,7 +8,7 @@ export function addImage(tweenMax: any, renderer: any, parentElement: any, image
     renderer.setAttribute(img,'id',childElementId);
     const uploadedImage = document.getElementById(childElementId);
     avatarContainer.innerHTML = '';
-    if(uploadedImage) {
+    if(avatarContainer && uploadedImage) {
         renderer.removeChild(avatarContainer,uploadedImage);
         if(debug) {
             console.log('addImage(): remove image');
@@ -17,11 +17,18 @@ export function addImage(tweenMax: any, renderer: any, parentElement: any, image
     if(debug) {
         console.log('addImage(): arguments: ', arguments);
     }
-    if(imageUrl && imageUrl !== '' && imageUrl !== 'assets/cfm/user-avatars/') {
+    if(avatarContainer && imageUrl && imageUrl !== '' && imageUrl !== 'assets/cfm/user-avatars/') {
+        
         renderer.appendChild(avatarContainer,img);
-        tweenMax.fromTo('#' + childElementId, 1, {scale:0, ease:Elastic.easeOut, opacity: 0}, {scale:1, ease:Elastic.easeOut, opacity: 1});
-        if(debug) {
-            console.log('addImage(): add image');
-        }
+        setTimeout( () => {
+            const uploadedImage = document.getElementById(childElementId);
+            if(uploadedImage) {
+                tweenMax.fromTo(uploadedImage, 1, {scale:0, ease:Elastic.easeOut, opacity: 0}, {scale:1, ease:Elastic.easeOut, opacity: 1});
+                if(debug) {
+                    console.log('addImage(): add image');
+                }
+            }
+        });
+        
     }
 };

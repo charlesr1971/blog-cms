@@ -28,8 +28,6 @@
 
 <cfset requestData = GetHttpRequestData()>
 
-<!---<cfdump var="#requestData#" />--->
-
 <cftry>
   <cfset data['content'] = requestData.content>
   <cfloop collection = "#requestData.headers#" item="http_item">
@@ -41,8 +39,6 @@
   </cfcatch>
 </cftry>
 
-<!---<cfdump var="#data#" abort />--->
-
 <cfif Len(Trim(data['filename'])) AND IsBinary(data['content']) AND IsNumeric(data['content-length']) AND Val(fileid)>
   <cfif ListFindNoCase(extensions,data['extension'])>
     <cfif data['content-length'] LT maxcontentlength>
@@ -53,18 +49,37 @@
         </cflock>
       </cfif>
       <cfif DirectoryExists(imageSystemPath)>
-        <cflock name="write_file_#timestamp#" type="exclusive" timeout="30">
-		  <cfset newfilename = newfileid & "." & data['extension']>
-          <cfset imageSystemFilePath = imageSystemPath & "\" & newfilename>
-          <cffile action="write" file="#imageSystemFilePath#" output="#data['content']#" />
-        </cflock>
-        <cfset data['success'] = true>
-        <cfset _isWebImageFile = IsWebImageFile(path=imageSystemFilePath)>
-		<cfif NOT _isWebImageFile>
-          <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
-            <cffile action="delete"  file="#imageSystemFilePath#" />
+		<cfset newfilename = newfileid & "." & data['extension']>
+        <cfset secureRandomSystemSecurePath = request.securefilepath & "\" & LCase(CreateUUID())>
+		<cfset imageSystemSecureFilePath = secureRandomSystemSecurePath & "\" & newfilename>
+        <cfif NOT DirectoryExists(secureRandomSystemSecurePath)>
+          <cflock name="create_directory_#timestamp#" type="exclusive" timeout="30">
+            <cfdirectory action="create" directory="#secureRandomSystemSecurePath#" />
           </cflock>
+          <cflock name="write_file_#timestamp#" type="exclusive" timeout="30">
+            <cffile action="write" file="#imageSystemSecureFilePath#" output="#data['content']#" />
+          </cflock>
+        </cfif>
+        <cfif FileExists(imageSystemSecureFilePath) AND DirectoryExists(imageSystemPath)>
+          <cfset isWebImageFile = IsWebImageFile(path=imageSystemSecureFilePath)>
+          <cfif NOT isWebImageFile>
+            <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+              <cffile action="delete"  file="#imageSystemSecureFilePath#" />
+            </cflock>
+            <cfset data['success'] = false>
+          <cfelse>
+            <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
+              <cffile action="move" source="#imageSystemSecureFilePath#" destination="#imageSystemPath#">
+            </cflock>
+            <cfset data['success'] = true>
+          </cfif>
+        <cfelse>
           <cfset data['success'] = false>
+        </cfif>
+		<cfif DirectoryExists(secureRandomSystemSecurePath)>
+          <cflock name="delete_directory_#timestamp#" type="exclusive" timeout="30">
+            <cfdirectory action="delete" directory="#secureRandomSystemSecurePath#" recurse="yes" />
+          </cflock>
         </cfif>
       </cfif>
     <cfelse>

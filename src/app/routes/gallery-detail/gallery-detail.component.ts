@@ -36,7 +36,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
   currentUser: BehaviorSubject<User> = new BehaviorSubject<User>(null);
   currentUserid: number = 0;
   categoryImagesUrl: string = '';
-  disableCommentTooltip: boolean = false;
+  disableCommentTooltip: boolean = true;
   disableFavouriteTooltip: boolean = false;
   hasAside: boolean = false;
   hideCommentInput: boolean = false;

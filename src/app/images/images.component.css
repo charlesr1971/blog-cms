@@ -44,7 +44,7 @@
     display: inline;
 }
 
-.app-advert .mat-card{
+.app-advert .mat-card {
     position: relative;
     display: inline-block;
     width: 27%;
@@ -173,7 +173,7 @@
 
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
 
-    .app-advert .mat-card{
+    .app-advert .mat-card {
         width: 42%;
     }
 
@@ -183,7 +183,7 @@
 
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
-    .app-advert .mat-card{
+    .app-advert .mat-card {
         display: block;
         max-width: 100%;
         width: auto;
@@ -207,7 +207,7 @@
 
 @media only screen and (min-device-width : 481px) and (max-device-width : 667px) {
 
-    .app-advert .mat-card{
+    .app-advert .mat-card {
         display: block;
         max-width: 100%;
         width: auto;

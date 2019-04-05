@@ -309,8 +309,8 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
 
   private unsavedChanges(article1: string, article2: string): boolean {
     const regex = new RegExp(environment.ajax_dir,'ig')
-    const _article1 = article1.replace(/[\s]+/ig,'').replace(regex,'').toLowerCase().trim();
-    const _article2 = article2.replace(/[\s]+/ig,'').replace(regex,'').toLowerCase().trim();
+    const _article1 = article1.replace(/[\s]+/ig,'').replace(regex,'').replace(/assets\/cfm/ig,'').toLowerCase().trim();
+    const _article2 = article2.replace(/[\s]+/ig,'').replace(regex,'').replace(/assets\/cfm/ig,'').toLowerCase().trim();
     if(this.debug) {
       console.log('tinymce.component: unsavedChanges: _article1: ', _article1);
       console.log('tinymce.component: unsavedChanges: _article2: ', _article2);

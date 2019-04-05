@@ -340,35 +340,34 @@ body.profile .mat-tree .mat-form-field {
     animation: matProgressSpinnerRotate 2s linear infinite;
     transform-origin: center center;
     margin: auto;
-  }
+}
 
-  .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
+.app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
     stroke-dasharray: 25, 80;
     stroke-dashoffset: 0;
     animation: matProgressSpinnerDash 1.5s ease-in-out infinite;
-  }
+}
 
-  @keyframes matProgressSpinnerRotate {
+@keyframes matProgressSpinnerRotate {
     100% {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
+}
 
-  @keyframes matProgressSpinnerDash {
+@keyframes matProgressSpinnerDash {
     0% {
-      stroke-dasharray: 25, 80;
-      stroke-dashoffset: 0;
+        stroke-dasharray: 25, 80;
+        stroke-dashoffset: 0;
     }
     50% {
-      stroke-dasharray: 30, 80;
-      stroke-dashoffset: -14px;
+        stroke-dasharray: 30, 80;
+        stroke-dashoffset: -14px;
     }
     100% {
-      stroke-dasharray: 30, 80;
-      stroke-dashoffset: -56px;
+        stroke-dasharray: 30, 80;
+        stroke-dashoffset: -56px;
     }
-
-  }
+}
 
 /* media queries */
 

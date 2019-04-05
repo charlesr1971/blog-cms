@@ -43,6 +43,7 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
   isMobile: boolean = false;
   adZoneUrl: string = '';
   maxRate: number = 4;
+  metaDataMaxWidth: number = 240;
 
   debug: boolean = false;
 
@@ -64,6 +65,15 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+
+    if(environment.adZoneEnable) {
+      this.buildAdZones();
+    }
+
+  }
+
+
+  buildAdZones(): void {
 
     if(this.appAdZoneSingleImageId === '' && !this.appAdZoneSearchDo && !this.appAdZoneTagsDo && !this.appAdZoneIsSection) {
 
@@ -201,6 +211,8 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
                 iframeHeight = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
               }
 
+              const rowHasSingleCell = this.metaDataMaxWidth >= adZoneWidth ? false : true;
+
               const iframe = this.renderer.createElement('iframe');
               const iframeSrc = this.adZoneUrl + '?adzones=' + adZones + '&adzonewidth=' + adZoneWidth + '&adzoneheight=' + adZoneHeight + '&adzonedisplay=' + adZoneDisplay + '&adzonecategoryid=' + adZoneCategoryId + '&adzonecontentboxstyle=' + adZoneContentBoxStyle + '&adzoneusecontentbox=' + adzoneUseContentBox + '&adzoneremoteaccess=' + adZoneRemoteAccess + '&adzonedivider=' + adZoneDivider + '&adzonemobileformat=' + adZoneMobileFormat + '&adzoneremotemobileviewportmargin=' + adZoneRemoteMobileViewportMargin + '&adzonemobileisscaled=' + adZoneMobileIsScaled + '&adzoneremotedividerheight=' + adZoneRemoteDividerHeight + '&adzoneremoteidentifier=' + adZoneRemoteIdentifier;
               this.renderer.setAttribute(iframe,'id','app-advert-iframe-' + lastChild['id']);
@@ -214,31 +226,46 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               const advertTable = this.renderer.createElement('table');
               this.renderer.setAttribute(advertTable,'class','app-advert-table');
               const advertTableRow = this.renderer.createElement('tr');
-              const advertTableCell1 = this.renderer.createElement('td');
-              this.renderer.setAttribute(advertTableCell1,'id','app-advert-table-cell-1-' + lastChild['id']);
-              const advertTableCell2 = this.renderer.createElement('td');
-              this.renderer.setStyle(advertTableCell2,'width','10px');
+
+              let advertTableCell1: HTMLElement;
+              let advertTableCell2: HTMLElement;
+
+              if(!rowHasSingleCell) {
+                advertTableCell1 = this.renderer.createElement('td');
+                this.renderer.setAttribute(advertTableCell1,'id','app-advert-table-cell-1-' + lastChild['id']);
+                advertTableCell2 = this.renderer.createElement('td');
+                this.renderer.setStyle(advertTableCell2,'width','10px');
+              }
+
               const advertTableCell3 = this.renderer.createElement('td');
               this.renderer.setStyle(advertTableCell3,'width',adZoneWidth + 'px');
-              advertTableRow.appendChild(advertTableCell1);
-              advertTableRow.appendChild(advertTableCell2);
+
+              if(!rowHasSingleCell) {
+                advertTableRow.appendChild(advertTableCell1);
+                advertTableRow.appendChild(advertTableCell2);
+              }
+
               advertTableRow.appendChild(advertTableCell3);
 
-              let temp = adZones.split(',');
+              if(!rowHasSingleCell) {
 
-              if(temp.length > 0) {
-                for (var i = 0; i < temp.length; i++) {
-                  const advertTableCell1Block = this.renderer.createElement('div');
-                  this.renderer.setAttribute(advertTableCell1Block,'class','app-advert-table-cell-block');
-                  this.renderer.setAttribute(advertTableCell1Block,'id','app-advert-table-cell-block-' + (i + 1) + '-' + lastChild['id']);
-                  this.renderer.setStyle(advertTableCell1Block,'height',adZoneHeight + 'px');
-                  advertTableCell1.appendChild(advertTableCell1Block);
-                  advertTableCell1Block.innerHTML = '<svg class="custom-mat-progress-spinner" width="100" height="100" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg>';
-                  const advertTableCell1BlockDivider = this.renderer.createElement('div');
-                  this.renderer.setAttribute(advertTableCell1BlockDivider,'class','app-advert-table-cell-block-divider');
-                  this.renderer.setStyle(advertTableCell1BlockDivider,'height',adZoneRemoteDividerHeight + 'px');
-                  advertTableCell1.appendChild(advertTableCell1BlockDivider);
+                let temp = adZones.split(',');
+
+                if(temp.length > 0) {
+                  for (var i = 0; i < temp.length; i++) {
+                    const advertTableCell1Block = this.renderer.createElement('div');
+                    this.renderer.setAttribute(advertTableCell1Block,'class','app-advert-table-cell-block');
+                    this.renderer.setAttribute(advertTableCell1Block,'id','app-advert-table-cell-block-' + (i + 1) + '-' + lastChild['id']);
+                    this.renderer.setStyle(advertTableCell1Block,'height',adZoneHeight + 'px');
+                    advertTableCell1.appendChild(advertTableCell1Block);
+                    advertTableCell1Block.innerHTML = '<svg class="custom-mat-progress-spinner" width="100" height="100" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg>';
+                    const advertTableCell1BlockDivider = this.renderer.createElement('div');
+                    this.renderer.setAttribute(advertTableCell1BlockDivider,'class','app-advert-table-cell-block-divider');
+                    this.renderer.setStyle(advertTableCell1BlockDivider,'height',adZoneRemoteDividerHeight + 'px');
+                    advertTableCell1.appendChild(advertTableCell1BlockDivider);
+                  }
                 }
+                
               }
 
               advertTable.appendChild(advertTableRow);

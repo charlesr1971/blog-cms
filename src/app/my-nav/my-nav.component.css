@@ -47,10 +47,13 @@
   margin-right: 5px;
 }
 
-.mat-toolbar #avatarNavContainer img {
+.mat-toolbar #avatarNavContainer {
   position: absolute;
   top: 16px;
   right: 20px;
+}
+
+.mat-toolbar #avatarNavContainer img {
   width: 32px;
   border-radius: 50%;
   overflow: hidden;

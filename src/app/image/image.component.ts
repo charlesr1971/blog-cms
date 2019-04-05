@@ -84,7 +84,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   tags = [];
   tagDisplay: boolean = false;
   currentUserid: number = 0;
-  disableCommentTooltip: boolean = false;
+  disableCommentTooltip: boolean = true;
   disableFavouriteTooltip: boolean = false;
   showFavouriteTooltipMax: number = 99;
   isPublished: boolean = false;

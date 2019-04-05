@@ -48,7 +48,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   @Input() commentsState: string = 'out';
   @Input() currentUser: User;
   @Input() commentsTotal: number = 0;
-  @Input() disableCommentTooltip: boolean = false;
+  @Input() disableCommentTooltip: boolean = true;
 
   isMobile: boolean = false;
 

@@ -4,6 +4,8 @@
   request.appreloadkey = this.name;
   request.appreloadValidated = false;
   
+  local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
+  
   if((StructKeyExists(url,"appreload") AND NOT isLocalhost(CGI.REMOTE_ADDR) AND CompareNocase(url.appReload,request.appreloadkey) EQ 0) OR (StructKeyExists(url,"appreload") AND isLocalhost(CGI.REMOTE_ADDR))){
 	request.appreloadValidated = true;
   }
@@ -66,6 +68,33 @@
   request.filepath = request.basePath;
   request.assetdirectory = "";
   request.assetdir = "";
+  
+  if(IsLocalHost(CGI.REMOTE_ADDR)){
+	if(CompareNoCase(local.identity,"parent") EQ 0){
+	  request.securefilepath = ExpandPath('../../../../secure');
+	}
+	else{
+	  request.securefilepath = ExpandPath('../../../../../../../secure');
+	}
+  }
+  else{
+	if(CompareNoCase(local.identity,"parent") EQ 0){
+	  request.securefilepath = ExpandPath('../../../secure');
+	}
+	else{
+	  request.securefilepath = ExpandPath('../../../../../../secure');
+	}
+  }
+  
+  if(NOT DirectoryExists(request.securefilepath)){
+	try{
+	  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
+		cfdirectory(action="create",directory=request.securefilepath);
+	  }
+	}
+	catch( any e ){
+	}
+  }
   
   if( Len( Trim( request.assetdirectory ) ) ){
 	request.assetdir = "/" & Mid( request.assetdirectory, 1, Len( request.assetdirectory )-1 );

@@ -55,7 +55,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   @Input() commentsState: string = 'out';
   @Input() scrollToCommentsPanel: boolean = false;
   @Input() currentUser: User;
-  @Input() disableCommentTooltip: boolean = false;
+  @Input() disableCommentTooltip: boolean = true;
 
   @Input() CommentElementsPrefix: CommentElementsPrefix  = {
     parentClose: '',
@@ -111,7 +111,6 @@ export class CommentsComponent implements OnInit, OnDestroy {
       this.isMobile = this.deviceDetectorService.isMobile();
 
       if(this.isMobile) {
-        this.disableCommentTooltip = true;
         this.sendDisableCommentTooltip.emit(this.disableCommentTooltip);
         this.disableCommentExpandTooltip = true;
         this.disableCommentGeneralTooltip = true;
@@ -350,7 +349,10 @@ export class CommentsComponent implements OnInit, OnDestroy {
   }
 
   disabledCommentTooltip(): boolean {
-    return this.comments.length > this.showCommentTooltipMax;
+    if(this.debug) {
+      console.log('comments.component: disabledCommentTooltip(): this.comments.length: ', this.comments.length);
+    }
+    return this.comments.length < this.showCommentTooltipMax;
   }
 
   sortComments(): void {

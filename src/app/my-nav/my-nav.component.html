@@ -8,7 +8,7 @@
     [attr.role]="(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async) ? 'over' : 'side'"
     [opened]="!(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async)">
-    <mat-toolbar color="primary">Menu</mat-toolbar>
+    <mat-toolbar color="primary"><!-- Menu --></mat-toolbar>
     <div class="mat-nav-list-container">
       <mat-nav-list id="mat-nav-list">
         <a mat-list-item routerLink="" [ngClass]="{'gallery-is-active': galleryIsActive}" (click)="toGallery()">{{ catalogRouterAliasUpper }}</a>

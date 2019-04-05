@@ -43,7 +43,7 @@
 			variables.framework.showDocsWhenDashboardDisabled = true;
 			
 			include "../../../on-request-start-application.cfm";
-			
+						
 			variables.framework.allowCrossDomain = request.ngAccessControlAllowOrigin;
 			
 			return super.onRequestStart(TARGETPATH);
