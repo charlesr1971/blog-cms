@@ -175,9 +175,9 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-foreground-palette, text, 0.035);
     }
 
-    .gallery-detail-comments-container .mat-card-content.comments {
+    /* .gallery-detail-comments-container .mat-card-content.comments {
         border-top: solid 20px mat-color($dark-foreground-palette, text, 0.035);
-    }
+    } */
 
     div.comment-child {
         background: mat-color($dark-foreground-palette, text, 0.16);
@@ -195,8 +195,16 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text);
     }
 
+    .mat-card.mat-card-unapproved .mat-card-content.comments {
+        background: mat-color($dark-background-palette, background, 0.35);
+    }
+
     .mat-card-content.comments > div.comment {
         background: mat-color($dark-background-palette, background);
+    }
+
+    .mat-card.mat-card-unapproved .mat-card-content.comments > div.comment {
+        background: none;
     }
 
     div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid {
@@ -401,7 +409,7 @@ $light-background-palette: map-get($light-theme, background);
 @mixin light {
 
     .mat-card.mat-card-unapproved {
-        background: mat-color($light-primary, lighter, 0.75);
+        background: mat-color($light-primary, lighter, 0.25);
     }
 
     .mat-card .image-created-at {
@@ -424,9 +432,9 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-background-palette, background);
     }
 
-    .mat-card.mat-card-unapproved > .mat-card-actions {
+    /* .mat-card.mat-card-unapproved > .mat-card-actions {
         background: mat-color($light-background-palette, background, 0.25);
-    }
+    } */
     
     .social-media-container {
         background: mat-color($light-background-palette, background);
@@ -549,12 +557,13 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-primary, default, 0.05);
     }
 
-    .gallery-detail-comments-container .mat-card-content.comments {
+    /* .gallery-detail-comments-container .mat-card-content.comments {
         border-top: solid 20px mat-color($light-primary, default, 0.05);
-    }
+    } */
 
     div.comment-child {
-        background: mat-color($light-primary, default, 0.1);
+        /* background: mat-color($light-primary, default, 0.1); */
+        background: mat-color($light-background-palette, card, 0.75);
     }
 
     div.comment-parent div.comment-date, div.comment-child div.comment-date {
@@ -569,12 +578,12 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text, 0.75);
     }
 
+    /* .mat-card.mat-card-unapproved .mat-card-content.comments {
+        background: mat-color($light-background-palette, background, 0.25);
+    } */
+
     .mat-card-content.comments > div.comment {
         background: mat-color($light-background-palette, background);
-    }
-
-    .mat-card.mat-card-unapproved .mat-card-content.comments {
-        background: mat-color($light-background-palette, background, 0.25);
     }
 
     .mat-card.mat-card-unapproved .mat-card-content.comments > div.comment {
@@ -614,7 +623,8 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     .mat-app-background.basic-container.gallery-detail {
-        background: mat-color($light-background-palette, app-bar);
+        //background: mat-color($light-background-palette, app-bar);
+        background: mat-color($light-background-palette, card, 0.5);
     }
 
     .gallery-detail-title:after {
@@ -642,7 +652,7 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     aside.gallery-detail-aside {
-        background: mat-color($light-primary, default, 0.26);
+        background: mat-color($light-primary, default, 0.05);
     }
 
     .ng2-dropdown-menu {

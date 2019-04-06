@@ -103,8 +103,8 @@
     top: 13px;
   }
 
-  .mat-toolbar #avatarNavContainer img {
-    top: 13px;
+  .mat-toolbar #avatarNavContainer {
+    top: 12px;
   }
 
   .mat-nav-list-container a:last-child {

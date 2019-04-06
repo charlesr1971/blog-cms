@@ -58,10 +58,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.meta.addTag({name:'twitter:card',content:this.httpService.twitterCardType});
     this.meta.addTag({name:'twitter:site',content:this.httpService.twitterSite});
     this.meta.addTag({name:'twitter:creator',content:this.httpService.twitterCreator});
-    this.meta.addTag({name:'og:url',content:this.httpService.ogUrl});
-    this.meta.addTag({name:'og:title',content:this.httpService.ogTitle});
-    this.meta.addTag({name:'og:description',content:this.httpService.ogDescription});
-    this.meta.addTag({name:'og:image',content:this.httpService.ogImage});
+    this.meta.addTag({name:'twitter:title',content:this.httpService.ogTitle});
+    this.meta.addTag({name:'twitter:description',content:this.httpService.ogDescription});
+    this.meta.addTag({name:'twitter:image',content:this.httpService.ogImage});
+    this.meta.addTag({property:'og:url',content:this.httpService.ogUrl});
+    this.meta.addTag({property:'og:title',content:this.httpService.ogTitle});
+    this.meta.addTag({property:'og:description',content:this.httpService.ogDescription});
+    this.meta.addTag({property:'og:image',content:this.httpService.ogImage});
 
     if(!this.cookieService.check('userToken') || (this.cookieService.check('userToken') && this.cookieService.get('userToken') === '')) {
       this.httpService.browserCacheCleared = true;

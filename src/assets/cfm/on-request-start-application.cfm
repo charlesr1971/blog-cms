@@ -96,6 +96,13 @@
 	}
   }
   
+  if(CompareNoCase(local.identity,"parent") EQ 0){
+	request.webrootfilepath = ExpandPath('../../');
+  }
+  else{
+	request.webrootfilepath = ExpandPath('../../../../../');
+  }
+  
   if( Len( Trim( request.assetdirectory ) ) ){
 	request.assetdir = "/" & Mid( request.assetdirectory, 1, Len( request.assetdirectory )-1 );
   }
@@ -159,9 +166,10 @@
   if(!IsLocalHost(CGI.REMOTE_ADDR)){
 	request.restApiEndpoint = request.uploadfolder & "/rest/api/v1";
   }
-    
-  request.remoteuploadfolder = request.protocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/cfm";
-  request.emailimagesrc = request.protocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/images";
+   
+  request.remotedomainurl = request.remoteprotocol & "://" & request.remoteHost; 
+  request.remoteuploadfolder = request.remoteprotocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/cfm";
+  request.emailimagesrc = request.remoteprotocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/images";
   request.emailimagealt = request.title & "S.P.A";  
   
   request.jwtexpiryminutes = 60;

@@ -282,7 +282,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   <!---<cfset path1 = "C:\ColdFusion11\cfusion\wwwroot\community.establishmindfulness\material\ngMat02\src\assets\cfm\article-images\47\10772cc1-d77d-caa7-784cabf742432526.jpg">
   <cfset path2 = "C:\ColdFusion11\cfusion\wwwroot\establishmindfulness\resources\ai\angular-chat-modal.ai">--->
   
-  <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\spinner-black-50.gif">
+  <!---<cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\spinner-black-50.gif">
   <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
   <strong>isWebImageFile:</strong> GIF: #isWebImageFile#<br /><br />
   
@@ -300,6 +300,12 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   <cfset path = "C:\domains\community.establishmindfulness.com\wwwroot\assets\images\advertising-icon-trimmed.svg">
   <cfset isWebImageFile = request.utils.IsWebImageFile(path=path)>
-  <strong>isWebImageFile:</strong> SVG: #isWebImageFile#<br /><br />
+  <strong>isWebImageFile:</strong> SVG: #isWebImageFile#<br /><br />--->
+  
+  
+  
+  <cfset buildSitemap = request.utils.BuildSitemap(writeFile=true,unapproved=true)>
+  
+  <cfdump var="#buildSitemap#" />
 
 </cfoutput>

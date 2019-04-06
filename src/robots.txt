@@ -1,0 +1,8 @@
+#robots.txt for https://community.establishmindfulness.com/
+User-agent: *
+#Sitemap: https://community.establishmindfulness.com/sitemap.xml
+Disallow: /.git/
+Disallow: /BIN/  
+Disallow: /assets/ 
+Disallow: /WEB-INF/
+Disallow: /*?*

@@ -122,6 +122,7 @@
     <cfset author = Trim(author)>
     <cfset author = FormatTitle(author)>
     <cfset title = REReplaceNoCase(data['title'],"[[:punct:]]","","ALL")>
+    <cfset title = REReplaceNoCase(title,"[0-9]+","","ALL")>
 	<cfset title = REReplaceNoCase(title,"[\s]+"," ","ALL")>
     <cfset title = Trim(title)>
     <cfset title = FormatTitle(title)>

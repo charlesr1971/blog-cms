@@ -42,9 +42,9 @@
 	<cfset title = url.title>
   </cfif>
   
-  <cfif request.appreloadValidated>
+  <!---<cfif request.appreloadValidated>
 	<cfabort />
-  </cfif>
+  </cfif>--->
 
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
@@ -57,14 +57,19 @@
       <meta name="twitter:card" content="#request.twitterCardType#" />
       <meta name="twitter:site" content="#request.twitterSite#" />
       <meta name="twitter:creator" content="#request.twitterCreator#" />
+      <meta name="twitter:title" content="#request.ogTitle#" />
+      <meta name="twitter:description" content="#request.ogDescription#" />
+      <meta name="twitter:image" content="#request.twittercard#" />
       <meta property="og:url" content="#request.ogUrl#" />
       <meta property="og:title" content="#request.ogTitle#" />
       <meta property="og:description" content="#request.ogDescription#" />
       <meta property="og:image" content="#request.twittercard#" />
       <title>#request.title# S.P.A</title>
-      <script type="text/javascript">
-		location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#&htmlTitle=#URLEncodedFormat(request.htmlTitle)#&twitterCardType=#URLEncodedFormat(request.twitterCardType)#&twitterSite=#URLEncodedFormat(request.twitterSite)#&twitterCreator=#URLEncodedFormat(request.twitterCreator)#&ogUrl=#URLEncodedFormat(request.ogUrl)#&ogTitle=#URLEncodedFormat(request.ogTitle)#&ogDescription=#URLEncodedFormat(request.ogDescription)#&ogImage=#URLEncodedFormat(request.ogImage)#&adZoneUrl=#URLEncodedFormat(request.adzoneurl)#";
-	  </script>
+      <cfif NOT request.appreloadValidated>
+		<script type="text/javascript">
+          location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#&htmlTitle=#URLEncodedFormat(request.htmlTitle)#&twitterCardType=#URLEncodedFormat(request.twitterCardType)#&twitterSite=#URLEncodedFormat(request.twitterSite)#&twitterCreator=#URLEncodedFormat(request.twitterCreator)#&ogUrl=#URLEncodedFormat(request.ogUrl)#&ogTitle=#URLEncodedFormat(request.ogTitle)#&ogDescription=#URLEncodedFormat(request.ogDescription)#&ogImage=#URLEncodedFormat(request.ogImage)#&adZoneUrl=#URLEncodedFormat(request.adzoneurl)#";
+        </script>
+      </cfif>
     </head>
     <body>
         

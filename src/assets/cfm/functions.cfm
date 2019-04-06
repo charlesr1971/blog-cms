@@ -1288,4 +1288,57 @@
   }
   
   
+  public string function SeoTitleFormat(string title = "") output="false" {
+	var local = {};
+	local.result = arguments.title;
+    local.result = Trim(LCase(local.result));
+	local.result = REReplaceNoCase(local.result,"[\s]+","-","ALL");
+    return local.result;
+  }
+  
+  public string function BuildSitemap(boolean writeFile = false, boolean unapproved = false) output="false" {
+	  var local = {};
+	  local.result = "";
+	  local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
+	  local.newline = Chr(13) & Chr(10);
+	  local.onetab = Chr(9);
+	  local.twotab = Chr(9) & Chr(9);
+	  local.threetab = Chr(9) & Chr(9) & Chr(9);
+	  local.queryObj = new Query();	 
+	  local.queryObj.setDatasource(request.domain_dsn);
+	  if(arguments.unapproved){
+		local.queryObj.addParam(name="Approved",value="1,0",cfsqltype="cf_sql_tinyint",list="yes"); 
+	  }
+	  else{
+		local.queryObj.addParam(name="Approved",value=1,cfsqltype="cf_sql_tinyint"); 
+	  }
+	  local.queryObj.addParam(name="Article",value="",cfsqltype="cf_sql_longvarchar"); 
+	  if(arguments.unapproved){
+		local.queryObj = local.queryObj.execute(sql="SELECT * FROM tblFile WHERE Approved IN (:Approved) AND Article <> :Article");
+	  }
+	  else{
+		local.queryObj = local.queryObj.execute(sql="SELECT * FROM tblFile WHERE Approved = :Approved AND Article <> :Article");
+	  }
+	  local.queryObj = local.queryObj.getResult(); 
+	  if(local.queryObj.RecordCount) {
+		savecontent variable="local.result" { 
+		  WriteOutput('<?xml version="1.0" encoding="UTF-8"?>' & local.newline & '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' & local.newline & local.onetab & '<url>' & local.newline & local.twotab & '<loc>' & request.remotedomainurl & '</loc>' & local.newline & local.onetab & '</url>' & local.newline & ''); 
+		  for(local.row in local.queryObj){
+			  WriteOutput(local.onetab & '<url>' & local.newline & local.twotab & '<loc>' & request.remotedomainurl & '/' & request.catalogRouterAlias & '/' & local.row['File_ID']  & '/' & SeoTitleFormat(title=local.row['Title']) & '</loc>' & local.newline & local.onetab & '</url>' & local.newline & ''); 
+		  }
+		  WriteOutput('</urlset>'); 
+		}
+	  }
+	  if(arguments.writeFile){
+		cflock (name="write_document_#local.timestamp#", type="exclusive", timeout="30") {
+		  FileWrite(request.webrootfilepath & "\sitemap.xml",local.result);
+		}
+	  }
+	  return local.result;
+  }
+  
+  
+  
+  
+  
 </cfscript>

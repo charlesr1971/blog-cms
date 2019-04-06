@@ -193,6 +193,7 @@
         <cfset local.author = Trim(local.author)>
         <cfset local.author = request.utils.FormatTitle(local.author)>
         <cfset local.title = REReplaceNoCase(local.data['title'],"[[:punct:]]","","ALL")>
+        <cfset local.title = REReplaceNoCase(local.title,"[0-9]+","","ALL")>
         <cfset local.title = REReplaceNoCase(local.title,"[\s]+"," ","ALL")>
         <cfset local.title = Trim(local.title)>
         <cfset local.title = request.utils.FormatTitle(local.title)>
@@ -521,9 +522,14 @@
           <cfset local.publishArticleDate = Now()>
         </cfcatch>
       </cftry>
+	  <cfset local.title = REReplaceNoCase(local.data['title'],"[[:punct:]]","","ALL")>
+      <cfset local.title = REReplaceNoCase(local.title,"[0-9]+","","ALL")>
+      <cfset local.title = REReplaceNoCase(local.title,"[\s]+"," ","ALL")>
+      <cfset local.title = Trim(local.title)>
+      <cfset local.title = request.utils.FormatTitle(local.title)>
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblFile
-        SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['title']#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">
+        SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">
         WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['fileUuid']#"> 
       </CFQUERY>
       <cfif IsjSON(local.data['tinymceArticleDeletedImages'])>

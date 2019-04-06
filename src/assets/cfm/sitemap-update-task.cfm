@@ -13,7 +13,7 @@ Dependency: none
 
 <cfoutput>
 
-  <cfparam name="title" default="Twiiter Card Rotator">
+  <cfparam name="title" default="Sitemap Update">
   <cfparam name="lockname" default="#LCase(REReplaceNoCase(title,'[\s:]+','','ALL'))#">
   <cfparam name="timestamp" default="#DateFormat(Now(),'yyyymmdd')##TimeFormat(Now(),'HHmmss')#">
   <cfparam name="prefix1" default="Date">
@@ -27,16 +27,16 @@ Dependency: none
   
   <cfif request.appreloadValidated OR isLocalhost(CGI.REMOTE_ADDR)>
   
-    <cfset twitterCardObj = GetRandomTwitterCard()>
-    
+	<cfset sitemapXml = request.utils.BuildSitemap(writeFile=true,unapproved=true)>
+
     <cftry>
-      <cfif NOT StructIsEmpty(twitterCardObj) AND StructKeyExists(twitterCardObj,"path") AND Len(Trim(twitterCardObj['path'])) AND StructKeyExists(twitterCardObj,"url") AND Len(Trim(twitterCardObj['url']))>
+      <cfif Len(Trim(sitemapXml))>
         <cfsavecontent variable="messagedata">
-          Twitter card was replaced successfully<br />
+          Sitemap was successfully updated<br />
         </cfsavecontent>
       <cfelse>
         <cfsavecontent variable="messagedata">
-          Twitter card could not be replaced<br />
+          Sitemap could not be updated<br />
         </cfsavecontent>
       </cfif>
       <cfset amessage = amessage & messagedata>
@@ -46,7 +46,7 @@ Dependency: none
       </cfcatch>
     </cftry>
     
-    <cfdump var="#twitterCardObj#" />
+    <cfdump var="#sitemapXml#" />
     
     <cfset plaintextmessage = REReplaceNoCase(amessage,"<br />","#request.newline#","ALL")>
     

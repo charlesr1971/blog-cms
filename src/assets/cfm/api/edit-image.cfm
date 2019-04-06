@@ -140,9 +140,14 @@
 	  <cfset publishArticleDate = Now()>
     </cfcatch>
   </cftry>
+  <cfset title = REReplaceNoCase(data['title'],"[[:punct:]]","","ALL")>
+  <cfset title = REReplaceNoCase(title,"[0-9]+","","ALL")>
+  <cfset title = REReplaceNoCase(title,"[\s]+"," ","ALL")>
+  <cfset title = Trim(title)>
+  <cfset title = FormatTitle(title)>
   <CFQUERY NAME="qUpdateFile" DATASOURCE="#request.domain_dsn#">
     UPDATE tblFile
-    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['title']#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">
+    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">
     WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
   </CFQUERY>
   <cfif IsjSON(data['tinymceArticleDeletedImages'])>
