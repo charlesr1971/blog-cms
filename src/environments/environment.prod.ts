@@ -23,5 +23,6 @@ export const environment = {
   maxcategoryeditnamelength: 30,
   adZoneEnable: true,
   adZoneMaxAdverts: 4,
-  adZoneMinImages: 4
+  adZoneMinImages: 4,
+  articleDescriptionCardDisplayLength: 230
 };

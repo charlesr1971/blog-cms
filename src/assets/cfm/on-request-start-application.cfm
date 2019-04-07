@@ -276,7 +276,7 @@
 	  request.encrypter = application.encrypter;
   }
   
-  if(NOT StructKeyExists(application,"twittercard") OR request.appreloadValidated) {
+  if(NOT StructKeyExists(application,"twittercard")) {
 	cflock (name="twittercard", type="exclusive", timeout="30") {
 	  application.twittercard = request.protocol & "://" & request.remoteHost & "/" & request.websiteRootDirectory & "assets/images/twitter-card.png";
 	}
@@ -287,6 +287,8 @@
   }
   
   request.ogImage = request.twittercard;
+  
+  request.unsecureTwittercard = ReplaceNoCase(request.twittercard,"https:","http:");
   
   if(NOT StructKeyExists(application,"utils") OR request.appreloadValidated) {
 	try{

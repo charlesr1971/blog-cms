@@ -24,7 +24,7 @@
     </div>
     <mat-card-content class="description" id="image-description-{{ image.id }}">
       <p>
-        {{ image.description }}
+        {{ image.description | textOverflowEllipsis: 230 }}
       </p>
     </mat-card-content>
     <mat-card-content class="article" id="image-article-{{ image.id }}" [ngStyle]="{'visibility': isPublished && image.article != '' && image.article != null ? 'visible' : 'hidden'}">

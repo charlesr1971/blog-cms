@@ -520,7 +520,14 @@ export class TreeDynamic implements OnInit, OnDestroy {
             console.log('tree-dynamic: this.httpService.tinymceArticleMetaData: dialogarticlemaxwordcountnotification: ', dialogarticlemaxwordcountnotification);
           }
           if(!dialogarticlemaxwordcountnotification) {
-            this.openArticleMaxWordCountNotificationDialog();
+            try {
+              this.openArticleMaxWordCountNotificationDialog();
+            }
+            catch(e) {
+              if(this.debug) {
+                console.log('tree-dynamic: this.httpService.tinymceArticleMetaData: error: ', e);
+              }
+            }
           }
         }
       }

@@ -186,8 +186,8 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               this.el.nativeElement.insertBefore(div,lastChild['item']);
               
               let adZones = '1,2,1,2,-1';
-              let adZoneWidth = 180;
-              let adZoneHeight = 100;
+              let adZoneWidth: any = 180;
+              let adZoneHeight: any = 100;
               let adZoneDisplay = "block";
               let adZoneCategoryId = 0;
               let adZoneContentBoxStyle ="";
@@ -200,25 +200,46 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               let adZoneRemoteDividerHeight = 10;
               let adZoneRemoteIdentifier = lastChild['id'];
               let adZoneRemoteClass = this.formatAdZoneRemoteClass('hidden-elements');
-              let iframeWidth = 180;
-              let iframeHeight = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
+              let iframeWidth: any = 180;
+              let iframeHeight: any = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
+              let rowHasSingleCell = false;
+
+              if(this.debug) {
+                console.log('adZoneDirective.directive: subscriptionAdzoneMutation: adZones: ', adZones);
+              }
               
-              if(Math.abs(this.adverts.length % 2) == 1) {
+              if(Math.abs(this.adverts.length % 2) === 0) {
                 adZones = '5,5';
                 adZoneWidth = 240;
                 adZoneHeight = 200;
                 iframeWidth = 240;
                 iframeHeight = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
+                rowHasSingleCell = false;
+                if(this.debug) {
+                  console.log('adZoneDirective.directive: subscriptionAdzoneMutation: adZones: ', adZones);
+                }
               }
 
-              const rowHasSingleCell = this.metaDataMaxWidth >= adZoneWidth ? false : true;
+              if(Math.abs(this.adverts.length % 3) === 0) {
+                adZones = '7,7';
+                adZoneWidth = '100%';
+                adZoneHeight = 210;
+                adZoneMobileFormat = true;
+                adZoneMobileIsScaled = true;
+                iframeWidth = '100%';
+                iframeHeight = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
+                rowHasSingleCell = true;
+                if(this.debug) {
+                  console.log('adZoneDirective.directive: subscriptionAdzoneMutation: adZones: ', adZones);
+                }
+              }
 
               const iframe = this.renderer.createElement('iframe');
               const iframeSrc = this.adZoneUrl + '?adzones=' + adZones + '&adzonewidth=' + adZoneWidth + '&adzoneheight=' + adZoneHeight + '&adzonedisplay=' + adZoneDisplay + '&adzonecategoryid=' + adZoneCategoryId + '&adzonecontentboxstyle=' + adZoneContentBoxStyle + '&adzoneusecontentbox=' + adzoneUseContentBox + '&adzoneremoteaccess=' + adZoneRemoteAccess + '&adzonedivider=' + adZoneDivider + '&adzonemobileformat=' + adZoneMobileFormat + '&adzoneremotemobileviewportmargin=' + adZoneRemoteMobileViewportMargin + '&adzonemobileisscaled=' + adZoneMobileIsScaled + '&adzoneremotedividerheight=' + adZoneRemoteDividerHeight + '&adzoneremoteidentifier=' + adZoneRemoteIdentifier;
               this.renderer.setAttribute(iframe,'id','app-advert-iframe-' + lastChild['id']);
               this.renderer.setAttribute(iframe,'name','app-advert-iframe-' + lastChild['id']);
               this.renderer.setAttribute(iframe,'src',iframeSrc);
-              this.renderer.setAttribute(iframe,'width',iframeWidth + '');
+              this.renderer.setAttribute(iframe,'width',adZoneWidth + '');
               this.renderer.setAttribute(iframe,'height',iframeHeight + '');
               this.renderer.setAttribute(iframe,'scrolling','no');
               this.renderer.setAttribute(iframe,'frameborder','0');
@@ -238,7 +259,7 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               }
 
               const advertTableCell3 = this.renderer.createElement('td');
-              this.renderer.setStyle(advertTableCell3,'width',adZoneWidth + 'px');
+              this.renderer.setStyle(advertTableCell3,'width',iframeWidth + 'px');
 
               if(!rowHasSingleCell) {
                 advertTableRow.appendChild(advertTableCell1);

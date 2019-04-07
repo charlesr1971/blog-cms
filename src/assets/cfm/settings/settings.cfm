@@ -24,6 +24,7 @@
   request.twitterSite = "@charlesr1971";
   request.twitterCreator = "@charlesr1971";
   request.ogUrl = request.remoteprotocol & "://" & request.remoteHost & "/";
+  request.unsecureOgUrl = ReplaceNoCase(request.ogUrl,"https:","http:");
   request.ogTitle = request.htmlTitle;
   request.ogDescription = "This website allows users to upload their favourite photos to the gallery. The following technologies power this website. An Angular 7x front-end with a Google Material UI. An Adobe Coldfusion back-end, using a Lucee 5 Application server with a MySQL database.";
   request.ogImage = "";

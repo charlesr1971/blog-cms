@@ -337,9 +337,9 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
       this.httpService.tinymceArticleOnChange.next(content);
       const backSpaceKey = 8;
       if(event.keyCode !== backSpaceKey) {
-        this.httpService.tinymceArticleMetaData.next(metaData);
         if('words' in metaData && !isNaN(metaData['words']) && this.tinyMceArticleMaxWordCount > 0) {
           if(metaData['words'] > this.tinyMceArticleMaxWordCount) {
+            this.httpService.tinymceArticleMetaData.next(metaData);
             return false;
           }
         }

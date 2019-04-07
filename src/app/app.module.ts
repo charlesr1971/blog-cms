@@ -69,6 +69,7 @@ import { ModalPositionCache } from './directives/dialog-draggable-title/modal-po
 
 import { environment } from '../environments/environment';
 import { AdZoneDirective } from './directives/ad-zone/ad-zone.directive';
+import { TextOverflowEllipsisPipe } from './pipes/text-overflow-ellipsis/text-overflow-ellipsis.pipe';
 
 
 const appRoutes: Routes = [
@@ -116,7 +117,8 @@ const appRoutes: Routes = [
     ConvertIdToPathPipe,
     DialogDraggableTitleDirective,
     CategoryEditComponent,
-    AdZoneDirective
+    AdZoneDirective,
+    TextOverflowEllipsisPipe
   ],
   imports: [
     BrowserModule,
