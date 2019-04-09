@@ -70,6 +70,7 @@ import { ModalPositionCache } from './directives/dialog-draggable-title/modal-po
 import { environment } from '../environments/environment';
 import { AdZoneDirective } from './directives/ad-zone/ad-zone.directive';
 import { TextOverflowEllipsisPipe } from './pipes/text-overflow-ellipsis/text-overflow-ellipsis.pipe';
+import { GoogleRecaptchaDirective } from './directives/google-recaptcha/google-recaptcha.directive';
 
 
 const appRoutes: Routes = [
@@ -118,7 +119,8 @@ const appRoutes: Routes = [
     DialogDraggableTitleDirective,
     CategoryEditComponent,
     AdZoneDirective,
-    TextOverflowEllipsisPipe
+    TextOverflowEllipsisPipe,
+    GoogleRecaptchaDirective
   ],
   imports: [
     BrowserModule,

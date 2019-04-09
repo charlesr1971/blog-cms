@@ -41,6 +41,7 @@
   request.emailPort = 25;
   request.emailUseSsl = "no";
   request.emailUseTls = "no";
+  request.googleRecaptchaSecretKey = "";
   local.queryObj = new Query();	 
   local.queryObj.setDatasource(request.domain_dsn);
   local.queryObj.setName("qGetSettings");
@@ -55,6 +56,7 @@
 	request.emailPort = local.qGetSettings.Email_port;
 	request.emailUseSsl = YesNoFormat(local.qGetSettings.Email_use_ssl);
 	request.emailUseTls = YesNoFormat(local.qGetSettings.Email_use_tls);
+	request.googleRecaptchaSecretKey = local.qGetSettings.Google_recaptcha_secret_key;
   }
   
   if(CompareNoCase(local.identity,"parent") EQ 0){

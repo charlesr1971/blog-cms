@@ -258,6 +258,8 @@
 
       <mat-checkbox formControlName="keeploggedin">Keep me logged in</mat-checkbox><br /><br />
 
+      <div appGoogleRecaptcha key="{{ googleRecaptchaSiteKey }}" formControlName="captcha"></div>
+
       <button mat-raised-button data-role="submit" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
 
     </div>

@@ -214,6 +214,7 @@ export class DynamicDataSource {
     {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
 
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    
   ],
 })
 export class TreeDynamic implements OnInit, OnDestroy {
@@ -267,6 +268,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   surname: FormControl;
   email: FormControl;
   password: FormControl;
+  captcha:  FormControl;
   keeploggedin: FormControl;
   submitArticleNotification: FormControl;
   
@@ -303,6 +305,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
   catalogRouterAliasTitle: string = titleFromAlias(environment.catalogRouterAlias);
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
+  googleRecaptchaSiteKey: string = environment.googleRecaptchaSiteKey;
 
   debug: boolean = false;
 
@@ -850,7 +853,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.loginForm = new FormGroup({
           email: this.email,
           password: this.password,
-          keeploggedin: this.keeploggedin
+          keeploggedin: this.keeploggedin,
+          captcha: this.captcha,
         });
       }
     }
@@ -913,6 +917,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       ]);
       if(this.userid === 0 && this.signUpValidated === 1) {
         this.keeploggedin = new FormControl();
+        this.captcha = new FormControl();
       }
       if(this.debug) {
         console.log('tree-dynamic: createFormControls: 3');
