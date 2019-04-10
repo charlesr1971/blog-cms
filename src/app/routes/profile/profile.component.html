@@ -11,16 +11,16 @@
         <mat-form-field class="example-full-width">
           <input matInput placeholder="First Name" value="" formControlName="forename" id="forename" required>
         </mat-form-field><br />
-        <div [hidden]="forename.valid || forename.pristine" class="alert alert-danger">
+        <!-- <div [hidden]="forename.valid || forename.pristine" class="alert alert-danger">
           First name is required
-        </div><br />
+        </div><br /> -->
 
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Last Name" value="" formControlName="surname" id="surname" required>
         </mat-form-field><br />
-        <div [hidden]="surname.valid || surname.pristine" class="alert alert-danger">
+        <!-- <div [hidden]="surname.valid || surname.pristine" class="alert alert-danger">
           Last name is required
-        </div><br />
+        </div><br /> -->
 
         <mat-form-field class="example-full-width">
           <div class="app-password-container">
@@ -28,9 +28,9 @@
             <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
           </div>
         </mat-form-field><br />
-        <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+        <!-- <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
           Password is required
-        </div><br />
+        </div><br /> -->
 
         <mat-checkbox formControlName="emailNotification">Notify me about photo comments</mat-checkbox><br /><br />
 

@@ -26,42 +26,29 @@ class ReCaptchaAsyncValidator {
 
   constructor( private http : HttpClient, private httpService: HttpService) {
 
-    this.url = this.httpService.restApiUrl + this.httpService.restApiUrlEndpoint + '/recaptcha/';
+    this.url = this.httpService.useRestApi ? this.httpService.restApiUrl + this.httpService.restApiUrlEndpoint + '/recaptcha/' : this.httpService.apiUrl + '/recaptcha.cfm';
 
   }
 
   validateToken( token : string ) {
 
-    //if(this.debug) {
+    if(this.debug) {
       console.log('ReCaptchaAsyncValidator: validateToken: token:',token);
-    //}
+    }
 
     return ( _ : AbstractControl ) => {
       return this.http.get(this.url, { params: { token } }).map(data => {
-        //const body = 'success' in data ? data['body'] : null;
-        //if(this.debug) {
+        if(this.debug) {
           console.log('ReCaptchaAsyncValidator: validateToken: data:',data);
-        //}
+        }
         if(data && 'success' in data && !data['success']) {
           return { tokenInvalid: true }
         }
         return null;
       });
     }
-
-    /* let req = null;
-    req = new HttpRequest('GET', this.url + '/' + token);
-    return this.http.request(req)
-    .map( (data) => {
-      const body = 'body' in data ? data['body'] : null;
-      if('success' in body && !body['success']) {
-        return { tokenInvalid: true }
-      }
-      return null;
-    }) */
     
   }
-
 
 }
 
@@ -90,6 +77,7 @@ export class GoogleRecaptchaDirective implements OnInit, AfterViewInit, ControlV
   @Input() key : string;
   @Input() config : ReCaptchaConfig = {};
   @Input() lang : string;
+  @Input() appGoogleRecaptchaId: string;
 
   @Output() captchaResponse = new EventEmitter<string>();
   @Output() captchaExpired = new EventEmitter();
@@ -142,7 +130,9 @@ export class GoogleRecaptchaDirective implements OnInit, AfterViewInit, ControlV
    */
   private setValidators() {
     this.control.setValidators(Validators.required);
-    this.control.updateValueAndValidity();
+    setTimeout( () => {
+      this.control.updateValueAndValidity();
+    });
   }
 
   writeValue( obj : any ) : void {
@@ -186,9 +176,6 @@ export class GoogleRecaptchaDirective implements OnInit, AfterViewInit, ControlV
    */
   verifyToken( token : string ) {
     const val = this.reCaptchaAsyncValidator.validateToken(token);
-    //if(this.debug) {
-      console.log('GoogleRecaptchaDirective: verifyToken: val: ', val);
-    //}
     this.control.setAsyncValidators(val);
     this.control.updateValueAndValidity();
   }
@@ -225,15 +212,17 @@ export class GoogleRecaptchaDirective implements OnInit, AfterViewInit, ControlV
    * Add the script
    */
   addScript() {
-    //if(this.debug) {
-      console.log('GoogleRecaptchaDirective: addScript');
-    //}
-    let script = document.createElement('script');
-    const lang = this.lang ? '&hl=' + this.lang : '';
-    script.src = `https://www.google.com/recaptcha/api.js?onload=reCaptchaLoad&render=explicit${lang}`;
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+    const googlerecaptcha  = document.getElementById(this.appGoogleRecaptchaId);
+    const googlerecaptchascript  = document.getElementById('google-recaptcha-script');
+    if(!googlerecaptcha){
+      let script = document.createElement('script');
+      const lang = this.lang ? '&hl=' + this.lang : '';
+      script.src = `https://www.google.com/recaptcha/api.js?onload=reCaptchaLoad&render=explicit${lang}`;
+      script.async = true;
+      script.defer = true;
+      script.id = 'google-recaptcha-script';
+      document.body.appendChild(script);
+    }
   }
 
 }

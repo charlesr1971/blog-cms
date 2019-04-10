@@ -331,6 +331,10 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-accent, lighter);
     }
 
+    .app-custom-recaptcha {
+        background: mat-color($dark-foreground-palette, text, 0.075);
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -557,10 +561,6 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-primary, default, 0.05);
     }
 
-    /* .gallery-detail-comments-container .mat-card-content.comments {
-        border-top: solid 20px mat-color($light-primary, default, 0.05);
-    } */
-
     div.comment-child {
         /* background: mat-color($light-primary, default, 0.1); */
         background: mat-color($light-background-palette, card, 0.75);
@@ -577,10 +577,6 @@ $light-background-palette: map-get($light-theme, background);
     div.comment-parent div.comment-container span, div.comment-child div.comment-container span {
         color: mat-color($light-foreground-palette, text, 0.75);
     }
-
-    /* .mat-card.mat-card-unapproved .mat-card-content.comments {
-        background: mat-color($light-background-palette, background, 0.25);
-    } */
 
     .mat-card-content.comments > div.comment {
         background: mat-color($light-background-palette, background);
@@ -713,6 +709,10 @@ $light-background-palette: map-get($light-theme, background);
 
     .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block div div i {
         color: mat-color($light-accent, lighter);
+    }
+
+    .app-custom-recaptcha {
+        background: mat-color($light-foreground-palette, text, 0.025);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

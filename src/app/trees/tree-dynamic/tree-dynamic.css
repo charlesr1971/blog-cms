@@ -192,6 +192,10 @@ button[data-role='submit'] {
   cursor: pointer;
 }
 
+button[data-role='submit'] {
+  margin-top: 40px;
+}
+
 /* media queries */
 
 /* smart phones */

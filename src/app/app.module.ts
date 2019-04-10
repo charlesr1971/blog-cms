@@ -71,6 +71,7 @@ import { environment } from '../environments/environment';
 import { AdZoneDirective } from './directives/ad-zone/ad-zone.directive';
 import { TextOverflowEllipsisPipe } from './pipes/text-overflow-ellipsis/text-overflow-ellipsis.pipe';
 import { GoogleRecaptchaDirective } from './directives/google-recaptcha/google-recaptcha.directive';
+import { CustomRecaptchaDirective } from './directives/custom-recaptcha/custom-recaptcha.directive';
 
 
 const appRoutes: Routes = [
@@ -120,7 +121,8 @@ const appRoutes: Routes = [
     CategoryEditComponent,
     AdZoneDirective,
     TextOverflowEllipsisPipe,
-    GoogleRecaptchaDirective
+    GoogleRecaptchaDirective,
+    CustomRecaptchaDirective
   ],
   imports: [
     BrowserModule,

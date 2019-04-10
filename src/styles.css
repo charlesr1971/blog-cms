@@ -32,6 +32,10 @@ body.gallery app-my-nav {
     overflow: hidden !important; 
 }
 
+body.upload-photo .mat-checkbox label {
+    margin-bottom: 20px !important;
+}
+
 .sidenav {
     width: 225px !important;
 }
@@ -369,6 +373,23 @@ body.profile .mat-tree .mat-form-field {
     }
 }
 
+.app-custom-recaptcha {
+    position: relative;
+    height: 150px;
+    width: 48%;
+    /* margin-bottom: 40px; */
+    border-radius: 4px;
+    font-size: 64px;
+    letter-spacing: 10px;
+    font-weight: bold;
+    line-height: 150px;
+    text-align: center;
+}
+
+.app-custom-recaptcha span {
+    vertical-align: baseline;
+}
+
 /* media queries */
 
 /* smart phones */
@@ -404,6 +425,10 @@ body.profile .mat-tree .mat-form-field {
 
     body.profile .mat-tree .mat-form-field[data-role-level='2'] {
         width: 47% !important;
+    }
+
+    .app-custom-recaptcha {
+        width: 100%;
     }
 
 }

@@ -91,9 +91,9 @@
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Author" value="" formControlName="name" id="name" required>
       </mat-form-field><br />
-      <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
         Author is required and must be less than {{maxNameLength}} characters
-      </div><br />
+      </div><br /> -->
 
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Image Title" value="" formControlName="title" id="title" required>
@@ -195,35 +195,54 @@
       <mat-form-field class="example-full-width">
         <input matInput placeholder="First Name" value="" formControlName="forename" id="forename" required>
       </mat-form-field><br />
-      <div [hidden]="forename.valid || forename.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="forename.valid || forename.pristine" class="alert alert-danger">
         First name is required
-      </div><br />
+      </div><br /> -->
 
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Last Name" value="" formControlName="surname" id="surname" required>
       </mat-form-field><br />
-      <div [hidden]="surname.valid || surname.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="surname.valid || surname.pristine" class="alert alert-danger">
         Last name is required
-      </div><br />
+      </div><br /> -->
 
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>
+        <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required autocomplete="off">
       </mat-form-field><br />
-      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
         E-mail is required
-      </div><br />
+      </div><br /> -->
 
       <mat-form-field class="example-full-width">
         <div class="app-password-container">
           <mat-icon id="app-password">visibility</mat-icon>
-          <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
+          <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword autocomplete="off">
         </div>
       </mat-form-field><br />
-      <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
         Password is required
-      </div><br />
+      </div><br /> -->
 
-      <button mat-raised-button data-role="submit" (click)="signUpFormSubmit()" [disabled]="!isSignUpValid" color="accent">Submit</button>
+      <!-- <button mat-raised-button data-role="submit" (click)="signUpFormSubmit()" [disabled]="!isSignUpValid" color="accent">Submit</button> -->
+
+      <div *ngIf="recaptchaType==='google'">
+        <br />
+        <div appGoogleRecaptcha key="{{ googleRecaptchaSiteKey }}" formControlName="captcha" (captchaResponse)="captchaResponse($event)" (captchaExpired)="captchaExpired($event)">ReCaptcha loading...</div>
+      </div>
+
+      <button mat-raised-button data-role="submit" [disabled]="signUpForm.invalid" (click)="signUpFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='google'">Submit</button>
+
+      <div appCustomRecaptcha *ngIf="recaptchaType==='custom'">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Copy characters below" value="" formControlName="captcha" type="text" id="captcha" required>
+        </mat-form-field><br />
+      </div>
+
+      <button mat-raised-button data-role="submit" [disabled]="signUpFormDisabled" (click)="signUpFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='custom'">Submit</button>
+
+      <div *ngIf="recaptchaType===''">
+        <button mat-raised-button data-role="submit" [disabled]="signUpFormDisabled" (click)="signUpFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
+      </div>
 
     </div>
 
@@ -242,9 +261,9 @@
       <mat-form-field class="example-full-width">
         <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>
       </mat-form-field><br />
-      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
         E-mail is required
-      </div><br />
+      </div><br /> -->
 
       <mat-form-field class="example-full-width">
         <div class="app-password-container">
@@ -252,15 +271,29 @@
           <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
         </div>
       </mat-form-field><br />
-      <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+      <!-- <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
         Password is required
-      </div><br />
+      </div><br /> -->
 
-      <mat-checkbox formControlName="keeploggedin">Keep me logged in</mat-checkbox><br /><br />
+      <mat-checkbox formControlName="keeploggedin">Keep me logged in</mat-checkbox><br />
 
-      <div appGoogleRecaptcha key="{{ googleRecaptchaSiteKey }}" formControlName="captcha"></div>
+      <div *ngIf="recaptchaType==='google'">
+        <div id="google-recaptcha-{{ googleRecaptchaId }}" appGoogleRecaptcha key="{{ googleRecaptchaSiteKey }}" appGoogleRecaptchaId="google-recaptcha-{{ googleRecaptchaId }}" formControlName="captcha" (captchaResponse)="captchaResponse($event)" (captchaExpired)="captchaExpired($event)">ReCaptcha loading...</div>
+      </div>
 
-      <button mat-raised-button data-role="submit" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
+      <button mat-raised-button data-role="submit" [disabled]="loginForm.invalid" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='google'">Submit</button>
+
+      <div appCustomRecaptcha *ngIf="recaptchaType==='custom'">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Copy characters below" value="" formControlName="captcha" type="text" id="captcha" required>
+        </mat-form-field><br />
+      </div>
+
+      <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='custom'">Submit</button>
+
+      <div *ngIf="recaptchaType===''">
+        <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
+      </div>
 
     </div>
 

@@ -25,5 +25,6 @@ export const environment = {
   adZoneMaxAdverts: 4,
   adZoneMinImages: 4,
   articleDescriptionCardDisplayLength: 230,
-  googleRecaptchaSiteKey: '6LfdMJ0UAAAAAGwwq6LrMwNtd5XD3827HU7xwuu5'
+  googleRecaptchaSiteKey: '6LeoNp0UAAAAAKvqhb08rV2BLdBp6h3hgHTGDopU',
+  recaptchaType: 'custom'
 };

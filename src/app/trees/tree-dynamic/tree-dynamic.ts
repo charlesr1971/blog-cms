@@ -306,6 +306,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
   catalogRouterAliasTitle: string = titleFromAlias(environment.catalogRouterAlias);
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   googleRecaptchaSiteKey: string = environment.googleRecaptchaSiteKey;
+  recaptchaType: string = environment.recaptchaType;
+  signUpFormDisabled: boolean = true;
+  loginFormDisabled: boolean = true;
+  googleRecaptchaId: number = this.getRandomInt(1000000,9999999);
 
   debug: boolean = false;
 
@@ -354,6 +358,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
     this.userService.currentUser.subscribe( (user: User) => {
       this.currentUser = user;
       this.signUpValidated = this.currentUser['signUpValidated'];
+      this.treeForm = null;
+      this.signUpForm = null;
+      this.loginForm = null;
       this.createFormControls();
       this.createForm();
       this.monitorFormValueChanges();
@@ -445,6 +452,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
             console.log('tree-dynamic: editFile: params["fileid"] ',params['fileid']);
             console.log('tree-dynamic: editFile');
           }
+          this.treeForm = null;
+          this.signUpForm = null;
+          this.loginForm = null;
           this.createFormControls();
           this.createForm();
           this.monitorFormValueChanges();
@@ -460,6 +470,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic: this.signUpValidated: ',this.signUpValidated);
         }
         if (params['formType']) {
+          this.treeForm = null;
+          this.signUpForm = null;
+          this.loginForm = null;
           this.createFormControls();
           this.createForm();
           this.monitorFormValueChanges();
@@ -797,6 +810,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.httpService.userId.next(this.userid);
         this.jwtService.setJwtToken(data['jwtToken']);
         if(this.userid > 0) {
+          this.treeForm = null;
+          this.signUpForm = null;
+          this.loginForm = null;
           this.createFormControls();
           this.createForm();
           this.monitorFormValueChanges();
@@ -842,20 +858,40 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
     else{
       if(this.userid === 0 && this.signUpValidated === 0) {
-        this.signUpForm = new FormGroup({
-          forename: this.forename,
-          surname: this.surname,
-          email: this.email,
-          password: this.password
-        });
+        if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
+          this.signUpForm = new FormGroup({
+            forename: this.forename,
+            surname: this.surname,
+            email: this.email,
+            password: this.password,
+            captcha: this.captcha
+          });
+        }
+        else{
+          this.signUpForm = new FormGroup({
+            forename: this.forename,
+            surname: this.surname,
+            email: this.email,
+            password: this.password
+          });
+        }
       }
       else{
-        this.loginForm = new FormGroup({
-          email: this.email,
-          password: this.password,
-          keeploggedin: this.keeploggedin,
-          captcha: this.captcha,
-        });
+        if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
+          this.loginForm = new FormGroup({
+            email: this.email,
+            password: this.password,
+            keeploggedin: this.keeploggedin,
+            captcha: this.captcha
+          });
+        }
+        else{
+          this.loginForm = new FormGroup({
+            email: this.email,
+            password: this.password,
+            keeploggedin: this.keeploggedin
+          });
+        }
       }
     }
     if(this.debug) {
@@ -907,17 +943,38 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic: createFormControls: 2');
         }
       }
+      const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
       this.email = new FormControl('', [
         Validators.required,
+        Validators.pattern(emailPattern),
         Validators.minLength(1)
       ]);
       this.password = new FormControl('', [
         Validators.required,
         Validators.minLength(1)
       ]);
+      if(this.userid === 0 && this.signUpValidated === 0) {
+        if(this.recaptchaType === 'google') {
+          this.captcha = new FormControl();
+        }
+        else if(this.recaptchaType === 'custom') {
+          this.captcha = new FormControl('', [
+            Validators.required,
+            Validators.minLength(1)
+          ]);
+        }
+      }
       if(this.userid === 0 && this.signUpValidated === 1) {
         this.keeploggedin = new FormControl();
-        this.captcha = new FormControl();
+        if(this.recaptchaType === 'google') {
+          this.captcha = new FormControl();
+        }
+        else if(this.recaptchaType === 'custom') {
+          this.captcha = new FormControl('', [
+            Validators.required,
+            Validators.minLength(1)
+          ]);
+        }
       }
       if(this.debug) {
         console.log('tree-dynamic: createFormControls: 3');
@@ -926,7 +983,20 @@ export class TreeDynamic implements OnInit, OnDestroy {
   }
 
   monitorFormValueChanges(): void {
+    
+    if(this.debug) {
+      console.log('tree-dynamic: monitorFormValueChanges: this.signUpValidated: ',this.signUpValidated);
+    }
     if(this.treeForm) {
+      if(this.debug) {
+        console.log('tree-dynamic: monitorFormValueChanges: this.signUpForm: ',this.signUpForm);
+      }
+      if(this.debug) {
+        console.log('tree-dynamic: monitorFormValueChanges: this.loginForm: ',this.loginForm);
+      }
+      if(this.debug) {
+        console.log('tree-dynamic: monitorFormValueChanges: this.treeForm: ',this.treeForm);
+      }
       this.name.valueChanges
       .pipe(
         debounceTime(400),
@@ -934,7 +1004,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(name => {
         if(this.debug) {
-          console.log('name: ',name);
+          console.log('tree-dynamic: monitorFormValueChanges: name: ',name);
         }
         this.formData['name'] = name;
         this.httpService.subjectImagePath.next(this.formData);
@@ -946,7 +1016,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(title => {
         if(this.debug) {
-          console.log('title: ',title);
+          console.log('tree-dynamic: monitorFormValueChanges: title: ',title);
         }
         this.formData['title'] = title;
         this.httpService.subjectImagePath.next(this.formData);
@@ -958,7 +1028,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(description => {
         if(this.debug) {
-          console.log('description: ',description);
+          console.log('tree-dynamic: monitorFormValueChanges: description: ',description);
         }
         this.formData['description'] = description;
         this.httpService.subjectImagePath.next(this.formData);
@@ -970,11 +1040,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(tags => {
         if(this.debug) {
-          console.log('tags: ',tags);
+          console.log('tree-dynamic: monitorFormValueChanges: tags: ',tags);
         }
         this.formData['tags'] = tags;
         if(this.debug) {
-          console.log('tree-dynamic: this.formData["tags"]: ', this.formData['tags']);
+          console.log('tree-dynamic: monitorFormValueChanges: this.formData["tags"]: ', this.formData['tags']);
         }
         this.httpService.subjectImagePath.next(this.formData);
       });
@@ -985,11 +1055,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(publishArticleDate => {
         if(this.debug) {
-          console.log('publishArticleDate: ',publishArticleDate);
+          console.log('tree-dynamic: monitorFormValueChanges: publishArticleDate: ',publishArticleDate);
         }
         this.formData['publishArticleDate'] = publishArticleDate;
         if(this.debug) {
-          console.log('tree-dynamic: this.formData["publishArticleDate"]: ', this.formData['publishArticleDate']);
+          console.log('tree-dynamic: monitorFormValueChanges: this.formData["publishArticleDate"]: ', this.formData['publishArticleDate']);
         }
         this.httpService.subjectImagePath.next(this.formData);
       });
@@ -1002,7 +1072,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(forename => {
         if(this.debug) {
-          console.log('forename: ',forename);
+          console.log('tree-dynamic: monitorFormValueChanges: forename: ',forename);
         }
         this.formData['forename'] = forename;
         this.isSignUpValid = this.isSignUpFormValid();
@@ -1014,13 +1084,22 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(surname => {
         if(this.debug) {
-          console.log('surname: ',surname);
+          console.log('tree-dynamic: monitorFormValueChanges: surname: ',surname);
         }
         this.formData['surname'] = surname;
         this.isSignUpValid = this.isSignUpFormValid();
       });
     }
     if(this.signUpForm || this.loginForm) {
+      if(this.debug) {
+        console.log('tree-dynamic: monitorFormValueChanges: this.signUpForm: ',this.signUpForm);
+      }
+      if(this.debug) {
+        console.log('tree-dynamic: monitorFormValueChanges: this.loginForm: ',this.loginForm);
+      }
+      if(this.debug) {
+        console.log('tree-dynamic: monitorFormValueChanges: this.treeForm: ',this.treeForm);
+      }
       this.email.valueChanges
       .pipe(
         debounceTime(400),
@@ -1028,14 +1107,16 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(email => {
         if(this.debug) {
-          console.log('email: ',email);
+          console.log('tree-dynamic: monitorFormValueChanges: email: ',email);
         }
         this.formData['email'] = email;
         if(this.signUpForm) {
           this.isSignUpValid = this.isSignUpFormValid();
+          this.signUpFormDisabledState();
         }
         else{
           this.isLoginValid = this.isLoginFormValid();
+          this.loginFormDisabledState();
         }
       });
       this.password.valueChanges
@@ -1050,11 +1131,28 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.formData['password'] = password;
         if(this.signUpForm) {
           this.isSignUpValid = this.isSignUpFormValid();
+          this.signUpFormDisabledState();
         }
         else{
           this.isLoginValid = this.isLoginFormValid();
+          this.loginFormDisabledState();
         }
       });
+    }
+    if(this.signUpForm) {
+      if(this.recaptchaType === 'custom') {
+        this.captcha.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(captcha => {
+          this.signUpFormDisabled = this.isCaptchaValid(captcha) && !this.signUpForm.invalid ? false : true;
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: this.signUpFormDisabled: ',this.signUpFormDisabled);
+          }
+        });
+      }
     }
     if(this.loginForm) {
       this.keeploggedin.valueChanges
@@ -1064,10 +1162,74 @@ export class TreeDynamic implements OnInit, OnDestroy {
       )
       .subscribe(keeploggedin => {
         if(this.debug) {
-          console.log('keeploggedin: ',keeploggedin);
+          console.log('tree-dynamic: monitorFormValueChanges: keeploggedin: ',keeploggedin);
         }
         this.formData['keeploggedin'] = keeploggedin ? 1 : 0;
       });
+      if(this.recaptchaType === 'custom') {
+        this.captcha.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(captcha => {
+          this.loginFormDisabled = this.isCaptchaValid(captcha) && !this.loginForm.invalid ? false : true;
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: this.loginFormDisabled: ',this.loginFormDisabled);
+          }
+        });
+      }
+    }
+  }
+
+  isCaptchaValid(captchaText: string): boolean {
+    let result = false;
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text');
+    if(appcustomrecaptchatext) {
+      if(this.debug) {
+        console.log('tree-dynamic: isCaptchaValid: appcustomrecaptchatext: ',appcustomrecaptchatext.innerText.trim(),' captchaText: ',captchaText.trim());
+      }
+      result = appcustomrecaptchatext.innerText.trim() === captchaText.trim() ? true : false;
+      if(this.debug) {
+        console.log('tree-dynamic: isCaptchaValid: result: ',result);
+      }
+    }
+    return result;
+  }
+
+  signUpFormDisabledState(): void {
+    if(this.debug) {
+      console.log('tree-dynamic: signUpFormDisabledState: this.signUpForm.invalid: ',this.signUpForm.invalid);
+    }
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text');
+    if(this.recaptchaType === 'custom') {
+      if(appcustomrecaptchatext) {
+        this.signUpFormDisabled = this.isCaptchaValid(this.captcha.value) && !this.signUpForm.invalid ? false : true;
+      }
+      else{
+        this.signUpFormDisabled = !this.signUpForm.invalid ? false : true;
+      }
+    }
+    else if(this.recaptchaType === ''){
+      this.signUpFormDisabled = !this.signUpForm.invalid ? false : true;
+    }
+  }
+
+  loginFormDisabledState(): void {
+    if(this.debug) {
+      console.log('tree-dynamic: loginFormDisabledState: this.loginForm.invalid: ',this.loginForm.invalid);
+    }
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text');
+    if(this.recaptchaType === 'custom') {
+      if(appcustomrecaptchatext) {
+        this.loginFormDisabled = this.isCaptchaValid(this.captcha.value) && !this.loginForm.invalid ? false : true;
+      }
+      else{
+        this.loginFormDisabled = !this.loginForm.invalid ? false : true;
+      }
+    }
+    else if(this.recaptchaType === ''){
+      this.loginFormDisabled = !this.loginForm.invalid ? false : true;
     }
   }
 
@@ -1367,6 +1529,24 @@ export class TreeDynamic implements OnInit, OnDestroy {
     config.panelClass = ['custom-class'];
     config.duration = 5000;
     this.matSnackBar.open(message, action, config);
+  }
+
+  captchaResponse(event: any): void {
+    if(this.debug) {
+      console.log('tree-dynamic: captchaResponse: event: ', event);
+    }
+  }
+
+  captchaExpired(event: any): void {
+    if(this.debug) {
+      console.log('tree-dynamic: captchaExpired: event: ', event);
+    }
+  }
+
+  getRandomInt(min: number = 1000000, max: number = 9999999): number {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
   }
 
   ngOnDestroy() {
