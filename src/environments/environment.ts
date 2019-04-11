@@ -30,7 +30,9 @@ export const environment = {
   adZoneMinImages: 4,
   articleDescriptionCardDisplayLength: 230,
   googleRecaptchaSiteKey: '6LeVNp0UAAAAAFYz5WClmneRth1BuOiWXHfTxHZa',
-  recaptchaType: 'custom'
+  recaptchaType: 'custom',
+  customRecaptchaRotationMax: 0,
+  customRecaptchaStrLength: 4
 };
 
 /*

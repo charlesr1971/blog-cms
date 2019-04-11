@@ -331,8 +331,13 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-accent, lighter);
     }
 
-    .app-custom-recaptcha {
+    .app-custom-recaptcha-2 {
         background: mat-color($dark-foreground-palette, text, 0.075);
+    }
+
+    .google-recaptcha-loading:after {
+        background: mat-color($dark-primary, lighter);
+        color: mat-color($dark-background-palette, background, 0.5);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
@@ -711,8 +716,13 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-accent, lighter);
     }
 
-    .app-custom-recaptcha {
+    .app-custom-recaptcha-2 {
         background: mat-color($light-foreground-palette, text, 0.025);
+    }
+
+    .google-recaptcha-loading:after {
+        background: mat-color($light-primary, lighter);
+        color: mat-color($light-background-palette, background, 0.5);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

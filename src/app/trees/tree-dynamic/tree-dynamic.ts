@@ -21,6 +21,7 @@ import { SeoTitleFormatPipe } from '../../pipes/seo-title-format/seo-title-forma
 import { getUriMatches } from '../../util/regexUtils';
 import { titleFromAlias } from '../../util/titleFromAlias';
 import { updateCdkOverlayThemeClass } from '../../util/updateCdkOverlayThemeClass';
+import { CustomRecaptchaDirective } from '../../directives/custom-recaptcha/custom-recaptcha.directive';
 
 import * as _moment from 'moment';
 
@@ -227,6 +228,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   @ViewChild('dialogArticleMaxWordCountNotification') private dialogArticleMaxWordCountNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogArticleHelpNotification') private dialogArticleHelpNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogArticleHelpNotificationText') dialogArticleHelpNotificationText: ElementRef;
+  @ViewChild(CustomRecaptchaDirective) customRecaptchaDirective;
 
 
   public tinyMceSettings = {
@@ -309,7 +311,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
   recaptchaType: string = environment.recaptchaType;
   signUpFormDisabled: boolean = true;
   loginFormDisabled: boolean = true;
-  googleRecaptchaId: number = this.getRandomInt(1000000,9999999);
+  googleRecaptchaId1: number = this.getRandomInt(1000000,9999999);
+  googleRecaptchaId2: number = this.getRandomInt(1000000,9999999);
+  customRecaptchaRotationMax: number = environment.customRecaptchaRotationMax;
+  customRecaptchaStrLength: number = environment.customRecaptchaStrLength;
+  disableCustomCaptchaGeneralTooltip: boolean = false;
 
   debug: boolean = false;
 
@@ -386,6 +392,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
     if(this.isMobile) {
       this.disableArticleTooltip = true;
+      this.disableCustomCaptchaGeneralTooltip = true;
     }
 
   }
@@ -943,7 +950,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic: createFormControls: 2');
         }
       }
-      const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
+      const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
       this.email = new FormControl('', [
         Validators.required,
         Validators.pattern(emailPattern),
@@ -1112,11 +1119,15 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.formData['email'] = email;
         if(this.signUpForm) {
           this.isSignUpValid = this.isSignUpFormValid();
-          this.signUpFormDisabledState();
+          if(this.recaptchaType !== 'google') {
+            this.signUpFormDisabledState();
+          }
         }
         else{
           this.isLoginValid = this.isLoginFormValid();
-          this.loginFormDisabledState();
+          if(this.recaptchaType !== 'google') {
+            this.loginFormDisabledState();
+          }
         }
       });
       this.password.valueChanges
@@ -1131,11 +1142,15 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.formData['password'] = password;
         if(this.signUpForm) {
           this.isSignUpValid = this.isSignUpFormValid();
-          this.signUpFormDisabledState();
+          if(this.recaptchaType !== 'google') {
+            this.signUpFormDisabledState();
+          }
         }
         else{
           this.isLoginValid = this.isLoginFormValid();
-          this.loginFormDisabledState();
+          if(this.recaptchaType !== 'google') {
+            this.loginFormDisabledState();
+          }
         }
       });
     }
@@ -1184,12 +1199,12 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   isCaptchaValid(captchaText: string): boolean {
     let result = false;
-    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text');
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
     if(appcustomrecaptchatext) {
       if(this.debug) {
         console.log('tree-dynamic: isCaptchaValid: appcustomrecaptchatext: ',appcustomrecaptchatext.innerText.trim(),' captchaText: ',captchaText.trim());
       }
-      result = appcustomrecaptchatext.innerText.trim() === captchaText.trim() ? true : false;
+      result = window.atob(appcustomrecaptchatext.innerText.trim()) === captchaText.trim() ? true : false;
       if(this.debug) {
         console.log('tree-dynamic: isCaptchaValid: result: ',result);
       }
@@ -1201,7 +1216,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('tree-dynamic: signUpFormDisabledState: this.signUpForm.invalid: ',this.signUpForm.invalid);
     }
-    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text');
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
     if(this.recaptchaType === 'custom') {
       if(appcustomrecaptchatext) {
         this.signUpFormDisabled = this.isCaptchaValid(this.captcha.value) && !this.signUpForm.invalid ? false : true;
@@ -1219,7 +1234,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('tree-dynamic: loginFormDisabledState: this.loginForm.invalid: ',this.loginForm.invalid);
     }
-    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text');
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
     if(this.recaptchaType === 'custom') {
       if(appcustomrecaptchatext) {
         this.loginFormDisabled = this.isCaptchaValid(this.captcha.value) && !this.loginForm.invalid ? false : true;
@@ -1547,6 +1562,12 @@ export class TreeDynamic implements OnInit, OnDestroy {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  resetCustomCaptcha(): void {
+    this.signUpFormDisabled = true;
+    this.loginFormDisabled = true;
+    this.customRecaptchaDirective.resetCustomCaptcha();
   }
 
   ngOnDestroy() {

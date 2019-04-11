@@ -375,6 +375,23 @@ body.profile .mat-tree .mat-form-field {
 
 .app-custom-recaptcha {
     position: relative;
+}
+
+.app-custom-recaptcha i {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#app-custom-recaptcha-1 {
+    display: none;
+}
+
+.app-custom-recaptcha-2 {
+    position: relative;
     height: 150px;
     width: 48%;
     /* margin-bottom: 40px; */
@@ -386,8 +403,27 @@ body.profile .mat-tree .mat-form-field {
     text-align: center;
 }
 
-.app-custom-recaptcha span {
+.app-custom-recaptcha-2 span {
     vertical-align: baseline;
+}
+
+.app-custom-recaptcha-2 span {
+    display: inline-block;
+    font-family: 'Shadows Into Light', cursive;
+    opacity: 0;
+}
+
+.google-recaptcha-loading:after {
+    display: block;
+    width: 48%;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    content: 'ReCaptcha loading...';
+}
+
+.google-recaptcha-loading.loaded:after {
+    display: none;
 }
 
 /* media queries */
@@ -427,7 +463,11 @@ body.profile .mat-tree .mat-form-field {
         width: 47% !important;
     }
 
-    .app-custom-recaptcha {
+    .app-custom-recaptcha-1, .app-custom-recaptcha-2 {
+        width: 100%;
+    }
+
+    .google-recaptcha-loading:after {
         width: 100%;
     }
 
