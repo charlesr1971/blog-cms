@@ -566,6 +566,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
     const initialBoolValue = this.currentUser ? !!+this.currentUser['submitArticleNotification'] : true;
     this.submitArticleNotification = new FormControl(initialBoolValue);
     if(this.debug) {
+      console.log('tree-dynamic: ngOnInit: initialNumericValue: ',initialNumericValue);
+      console.log('tree-dynamic: ngOnInit: initialBoolValue: ',initialBoolValue);
       console.log('tree-dynamic: ngOnInit: this.formData["submitArticleNotification"]: ',this.formData['submitArticleNotification']);
     }
     this.submitArticleNotificationForm = new FormGroup({

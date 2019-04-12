@@ -482,7 +482,7 @@
       
       <cfif StructKeyExists(local.requestBody,"upload-type")>
 		<cfif StructKeyExists(local.requestBody,"article")>
-          <cfset local.data['article'] = Trim(local.requestBody['article'])>
+          <cfset local.data['article'] = DeserializeJSON(Trim(local.requestBody['article']))>
         </cfif>
       <cfelse>
 		<cfset local.data['article'] =  DeserializeJSON(Trim(ToString(getHttpRequestData().content)))>

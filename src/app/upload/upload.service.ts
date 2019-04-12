@@ -58,7 +58,7 @@ export class UploadService {
       this.name = data['name'];
       this.title = data['title'];
       this.description = data['description'];
-      this.article = data['article'];
+      this.article = JSON.stringify(data['article']);
       this.tags = JSON.stringify(data['tags']);
       this.publishArticleDate = data['publishArticleDate'];
       this.tinymceArticleDeletedImages = JSON.stringify(data['tinymceArticleDeletedImages']);
@@ -104,6 +104,8 @@ export class UploadService {
         console.log('upload: this.mode ',this.mode);
         console.log('upload: this.fileUuid ',this.fileUuid);
       }
+
+      console.log('upload: this.article ',this.article);
 
       let httpOptions = {};
 
