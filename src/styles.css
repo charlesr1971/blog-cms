@@ -73,7 +73,7 @@ body.upload-photo .mat-checkbox label {
 }
 
 body.upload-photo .alert {
-    width: 48% !important;
+    width: 100% !important;
 }
 
 .modal-alert .modal-header {
@@ -436,7 +436,7 @@ body.profile .mat-tree .mat-form-field {
         width: 100%;
     }
 
-    body.upload-photo .alert {
+    body.upload-photo .alert.alert-full-width {
         width: 100% !important;
     }
 

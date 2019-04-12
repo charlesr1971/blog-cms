@@ -9,6 +9,7 @@
 <cfparam name="emailsubject" default="Image post creation notification e-mail from #request.title#" />
 <cfparam name="fileid" default="#LCase(CreateUUID())#" />
 <cfparam name="filetoken" default="#LCase(CreateUUID())#" />
+<cfparam name="roleid" default="0" />
 <cfparam name="filename" default="" />
 <cfparam name="maxcontentlength" default="#request.maxcontentlength#" />
 <cfparam name="submissiondate" default="#Now()#" />
@@ -109,6 +110,7 @@
   </CFQUERY>
   <cfif qGetUser.RecordCount>
     <cfset data['userId'] = qGetUser.User_ID>
+    <cfset roleid = qGetUser.Role_ID>
   </cfif>
 </cfif>
 
@@ -175,9 +177,10 @@
           <cfset publishArticleDate = Now()>
         </cfcatch>
       </cftry>
+      <cfset approved = ListFindNoCase("6,7",roleid) ? 1 : 0> 
       <CFQUERY DATASOURCE="#request.domain_dsn#" result="queryInsertResult">
         INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="0">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
+        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
       </CFQUERY>
       <cfset data['fileid'] = queryInsertResult.generatedkey>
       <cfif IsArray(data['tinymceArticleDeletedImages'])>
@@ -261,71 +264,72 @@
   <cfset data['error'] = "Data uploaded was insufficient to complete the submission">
 </cfif>
 
-<cfset adminuserid = GetRandomAdminUserID(roleid="6,7")>
-
-<CFQUERY NAME="qGetAdmin" DATASOURCE="#request.domain_dsn#">
-  SELECT * 
-  FROM tblUser 
-  WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#adminuserid#">
-</CFQUERY>
-<CFQUERY NAME="qGetFileAuthor" DATASOURCE="#request.domain_dsn#">
-  SELECT * 
-  FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
-  WHERE tblFile.File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['fileid']#">
-</CFQUERY>
-<cfif NOT Len(Trim(data['error'])) AND CompareNoCase(data['uploadType'],"gallery") EQ 0 AND qGetAdmin.RecordCount AND Len(Trim(qGetAdmin.E_mail)) AND FindNoCase("@",qGetAdmin.E_mail) AND qGetFileAuthor.RecordCount>
-  <cfset salutation = CapFirst(LCase(qGetAdmin.Forename))>
-  <cfsavecontent variable="emailtemplatemessage">
-    <cfoutput>
-      <h1>Hi<cfif Len(Trim(salutation))> #salutation#</cfif></h1>
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr valign="middle">
-          <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
-          <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
-          <td style="font-size:16px;">
-            <strong>The following post has been created, entitled '#FormatTitle(data['title'])#'</strong><br /><br />
-            #CapFirstSentence(data['description'],true)#
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <p><strong>Author:</strong></p>
-            #CapFirst(LCase(qGetFileAuthor.Forename))# #CapFirst(LCase(qGetFileAuthor.Surname))#<br />
-            <em>#DateFormat(submissiondate,"medium")# #TimeFormat(submissiondate,"medium")#</em>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <p><strong>Name:</strong></p>
-            #data['name']#<br />
-          </td>
-        </tr>
-        <cfif Len(Trim(imagePath))>
-          <tr>
-            <td colspan="3">
-              <p><strong>Image Path:</strong></p>
-              #imagePath#
+<cfif NOT ListFindNoCase("6,7",roleid)>
+  <cfset adminuserid = GetRandomAdminUserID(roleid="6,7")>
+  <CFQUERY NAME="qGetAdmin" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser 
+    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#adminuserid#">
+  </CFQUERY>
+  <CFQUERY NAME="qGetFileAuthor" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
+    WHERE tblFile.File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['fileid']#">
+  </CFQUERY>
+  <cfif NOT Len(Trim(data['error'])) AND CompareNoCase(data['uploadType'],"gallery") EQ 0 AND qGetAdmin.RecordCount AND Len(Trim(qGetAdmin.E_mail)) AND FindNoCase("@",qGetAdmin.E_mail) AND qGetFileAuthor.RecordCount>
+    <cfset salutation = CapFirst(LCase(qGetAdmin.Forename))>
+    <cfsavecontent variable="emailtemplatemessage">
+      <cfoutput>
+        <h1>Hi<cfif Len(Trim(salutation))> #salutation#</cfif></h1>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr valign="middle">
+            <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
+            <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
+            <td style="font-size:16px;">
+              <strong>The following post has been created, entitled '#FormatTitle(data['title'])#'</strong><br /><br />
+              #CapFirstSentence(data['description'],true)#
             </td>
           </tr>
-        </cfif>
-        <tr>
-          <td colspan="3">
-            <img src="#uploadfolder#/#qGetFileAuthor.ImagePath#" style="width:100%" border="0" /><br />
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <p><strong>To approve the post, please follow the link below</strong></p>
-            <a href="#uploadfolder#/index.cfm?fileToken=#filetoken#" style="display:block;width:200px;margin:20px auto 0px;text-align:center;padding:20px 30px;border-radius:4px;background:#emailtemplateheaderbackground#;color:##ffffff;text-decoration:none;font-weight:bold;">Approve Post</a>
-          </td>
-        </tr>
-      </table>
-    </cfoutput>
-  </cfsavecontent>
-  <cfmail to="#qGetAdmin.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#emailsubject#" type="html">
-    <cfinclude template="../../../../email-template.cfm">
-  </cfmail>
-  <cfset data['emailSent'] = 1>
+          <tr>
+            <td colspan="3">
+              <p><strong>Author:</strong></p>
+              #CapFirst(LCase(qGetFileAuthor.Forename))# #CapFirst(LCase(qGetFileAuthor.Surname))#<br />
+              <em>#DateFormat(submissiondate,"medium")# #TimeFormat(submissiondate,"medium")#</em>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <p><strong>Name:</strong></p>
+              #data['name']#<br />
+            </td>
+          </tr>
+          <cfif Len(Trim(imagePath))>
+            <tr>
+              <td colspan="3">
+                <p><strong>Image Path:</strong></p>
+                #imagePath#
+              </td>
+            </tr>
+          </cfif>
+          <tr>
+            <td colspan="3">
+              <img src="#uploadfolder#/#qGetFileAuthor.ImagePath#" style="width:100%" border="0" /><br />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <p><strong>To approve the post, please follow the link below</strong></p>
+              <a href="#uploadfolder#/index.cfm?fileToken=#filetoken#" style="display:block;width:200px;margin:20px auto 0px;text-align:center;padding:20px 30px;border-radius:4px;background:#emailtemplateheaderbackground#;color:##ffffff;text-decoration:none;font-weight:bold;">Approve Post</a>
+            </td>
+          </tr>
+        </table>
+      </cfoutput>
+    </cfsavecontent>
+    <cfmail to="#qGetAdmin.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#emailsubject#" type="html">
+      <cfinclude template="../../../../email-template.cfm">
+    </cfmail>
+    <cfset data['emailSent'] = 1>
+  </cfif>
 </cfif>
 
 <cfif IsBinary(data['selectedFile'])>

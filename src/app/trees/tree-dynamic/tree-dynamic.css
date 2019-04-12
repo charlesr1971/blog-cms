@@ -64,7 +64,7 @@
   height: 200px;
 }
 
-.mat-tree {
+div.mat-tree-container {
   float: left;
   width: 48%;
   -webkit-box-sizing: border-box;
@@ -192,7 +192,7 @@ button[data-role='submit'] {
   cursor: pointer;
 }
 
-button[data-role='submit'] {
+.form-field-text button[data-role='submit'] {
   margin-top: 40px;
 }
 
@@ -210,7 +210,7 @@ button[data-role='submit'] {
     width: 35%;
   }
 	
-  .mat-tree {
+  div.mat-tree-container {
     float: none;
     width: 100%;
     margin-bottom: 20px;

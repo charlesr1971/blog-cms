@@ -15,23 +15,6 @@ export class AuthInterceptor implements HttpInterceptor {
         private httpService: HttpService) { 
     }
 
-    /* intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const jwtToken = this.jwtService.getJwtToken();
-        if (jwtToken) {
-            const headers = new HttpHeaders({
-                'Authorization': "Bearer " + jwtToken,
-                'userToken': this.cookieService.get('userToken')
-            });
-            const cloned = req.clone({
-                headers: headers
-            });
-            return next.handle(cloned);
-        }
-        else {
-            return next.handle(req);
-        }
-    } */
-
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const jwtToken = this.jwtService.getJwtToken();
         if (jwtToken) {
@@ -44,18 +27,5 @@ export class AuthInterceptor implements HttpInterceptor {
             return next.handle(req);
         }
     }
-
-    /* intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const jwtToken = this.jwtService.getJwtToken();
-        if (jwtToken) {
-            const cloned = req.clone({
-                headers: req.headers.set("Authorization","Bearer " + jwtToken)
-            });
-            return next.handle(cloned);
-        }
-        else {
-            return next.handle(req);
-        }
-    } */
     
 }

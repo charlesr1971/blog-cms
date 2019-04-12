@@ -15,7 +15,7 @@ declare global {
 }
 
 @Injectable()
-class ReCaptchaAsyncValidator {
+export class ReCaptchaAsyncValidator {
 
   url: string = '';
   debug: boolean = false;

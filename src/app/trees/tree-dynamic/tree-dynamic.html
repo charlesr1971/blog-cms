@@ -138,31 +138,35 @@
 
     <div class="form-field-text">
 
-      <div [hidden]="!hasError" class="alert alert-danger" [innerHtml]="safeHtml">
-      </div>
-      
-      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-          <button mat-icon-button disabled></button>
-          <!-- {{node.item}} -->
-          <a (click)="addPath($event,node.item)">{{ node.item | pathFormat }}</a>
-          <mat-icon class="mat-icon-rtl-mirror grade" [attr.id]="'directory-' + (node.item | pathFormat)" color="accent">
-            {{directorySelected == node.item ? 'grade' : ''}}
-          </mat-icon>
-        </mat-tree-node>
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-          <button mat-icon-button
-                  [attr.aria-label]="'toggle ' + node.filename" matTreeNodeToggle>
-            <mat-icon class="mat-icon-rtl-mirror">
-              {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+      <div class="mat-tree-container">
+
+        <div [hidden]="!hasError" class="alert alert-full-width alert-danger" [innerHtml]="safeHtml">
+        </div>
+        
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+          <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+            <button mat-icon-button disabled></button>
+            <!-- {{node.item}} -->
+            <a (click)="addPath($event,node.item)">{{ node.item | pathFormat }}</a>
+            <mat-icon class="mat-icon-rtl-mirror grade" [attr.id]="'directory-' + (node.item | pathFormat)" color="accent">
+              {{directorySelected == node.item ? 'grade' : ''}}
             </mat-icon>
-          </button>
-          {{ node.item | pathFormat }}
-          <mat-progress-bar *ngIf="node.isLoading"
-                            mode="indeterminate"
-                            class="tree-progress-bar"></mat-progress-bar>
-        </mat-tree-node>
-      </mat-tree>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+            <button mat-icon-button
+                    [attr.aria-label]="'toggle ' + node.filename" matTreeNodeToggle>
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+              </mat-icon>
+            </button>
+            {{ node.item | pathFormat }}
+            <mat-progress-bar *ngIf="node.isLoading"
+                              mode="indeterminate"
+                              class="tree-progress-bar"></mat-progress-bar>
+          </mat-tree-node>
+        </mat-tree>
+
+      </div>
 
       <div class="uploaded-image-container-outer">
         <div class="uploaded-image-container" id="uploaded-image-container" #uploadedImageContainer *ngIf="isEditImageValid" [innerHTML]="htmlStr"></div>
@@ -170,9 +174,11 @@
 
       <div style="clear:both;"></div>
 
+      <app-upload *ngIf="userid > 0 && mode == 'edit'"></app-upload>
+
       <div class="form-button-container">
         <button mat-raised-button data-role="submit" (click)="editImage(editImageId)" *ngIf="mode == 'edit'" color="accent">Submit</button>
-        <button mat-raised-button (click)="back(editImageId)" *ngIf="mode == 'edit'">Back</button>
+        <button mat-raised-button (click)="back(editImageId)" *ngIf="mode == 'edit'" [ngStyle]="{'margin-top': mode == 'edit' ? '40px' : '0px'}">Back</button>
       </div>
 
       <app-upload *ngIf="userid > 0 && mode == 'add'"></app-upload>

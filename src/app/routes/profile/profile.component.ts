@@ -193,7 +193,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
           description: '',
           article: '',
           uploadType: 'avatar',
-          userToken: this.currentUser['userToken']
+          userToken: this.currentUser['userToken'],
+          mode: 'add',
+          fileUuid: ''
         }
         if(this.debug) {
           console.log('profile.component: data: ',data);

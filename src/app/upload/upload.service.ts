@@ -28,6 +28,8 @@ export class UploadService {
   useRestApi: boolean = false;
   restApiUrlEndpoint: string = '';
   categoryImagesUrl: string = '';
+  mode: string = 'add';
+  fileUuid: string = '';
 
   subscriptionImageError: Subject<any> = new Subject<any>();
   subscriptionImageUrl: Subject<any> = new Subject<any>();
@@ -62,6 +64,8 @@ export class UploadService {
       this.tinymceArticleDeletedImages = JSON.stringify(data['tinymceArticleDeletedImages']);
       this.userToken = data['userToken'];
       this.uploadType = data['uploadType'];
+      this.mode = data['mode'];
+      this.fileUuid = data['fileUuid'];
     });
 
     this.cfid = '' + this.httpService.cfid + '';
@@ -96,27 +100,56 @@ export class UploadService {
         console.log('upload: this.publishArticleDate ',this.publishArticleDate);
         console.log('upload: this.tinymceArticleDeletedImages ',this.tinymceArticleDeletedImages);
         console.log('upload: this.userToken ',this.userToken);
+        console.log('upload: this.uploadType ',this.uploadType);
+        console.log('upload: this.mode ',this.mode);
+        console.log('upload: this.fileUuid ',this.fileUuid);
       }
 
-      const httpOptions = {
-        reportProgress: true,
-        headers: new HttpHeaders({
-          'File-Name': file.name || '',
-          'Image-Path': this.imagePath || '',
-          'Name': this.name || '',
-          'Title': this.title || '',
-          'Description': this.description || '',
-          'Article': this.article || '',
-          'Tags': this.tags || '',
-          'Publish-article-date': this.publishArticleDate || '',
-          'Tinymce-article-deleted-images': this.tinymceArticleDeletedImages || '',
-          'File-Extension': fileExtension || '',
-          'User-Token': this.userToken || '',
-          'Cfid': this.cfid || '',
-          'Cftoken': this.cftoken || '',
-          'Upload-Type': this.uploadType || ''
-        })
-      };
+      let httpOptions = {};
+
+      if(this.useRestApi && this.mode === 'edit') {
+        httpOptions = {
+          reportProgress: true,
+          headers: new HttpHeaders({
+            'File-Name': file.name || '',
+            'Image-Path': this.imagePath || '',
+            'Name': this.name || '',
+            'Title': this.title || '',
+            'Description': this.description || '',
+            'Article': this.article || '',
+            'Tags': this.tags || '',
+            'Publish-article-date': this.publishArticleDate || '',
+            'Tinymce-article-deleted-images': this.tinymceArticleDeletedImages || '',
+            'File-Extension': fileExtension || '',
+            'User-Token': this.userToken || '',
+            'Cfid': this.cfid || '',
+            'Cftoken': this.cftoken || '',
+            'Upload-Type': this.uploadType || '',
+            'X-HTTP-METHOD-OVERRIDE': 'PUT'
+          })
+        };
+      }
+      else{
+        httpOptions = {
+          reportProgress: true,
+          headers: new HttpHeaders({
+            'File-Name': file.name || '',
+            'Image-Path': this.imagePath || '',
+            'Name': this.name || '',
+            'Title': this.title || '',
+            'Description': this.description || '',
+            'Article': this.article || '',
+            'Tags': this.tags || '',
+            'Publish-article-date': this.publishArticleDate || '',
+            'Tinymce-article-deleted-images': this.tinymceArticleDeletedImages || '',
+            'File-Extension': fileExtension || '',
+            'User-Token': this.userToken || '',
+            'Cfid': this.cfid || '',
+            'Cftoken': this.cftoken || '',
+            'Upload-Type': this.uploadType || ''
+          })
+        };
+      }
 
       if(this.debug) {
         console.log('upload: httpOptions ',httpOptions);
@@ -128,10 +161,10 @@ export class UploadService {
       let req = null;
 
       if(this.useRestApi) {
-        req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/image/empty', file, httpOptions);
+        req = this.mode === 'add' ? new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/image/empty', file, httpOptions) : new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/image/' + this.fileUuid, file, httpOptions);
       }
       else{
-        req = new HttpRequest('POST', this.apiUrl + '/upload-image.cfm', file, httpOptions);
+        req = this.mode === 'add' ? new HttpRequest('POST', this.apiUrl + '/upload-image.cfm', file, httpOptions) : new HttpRequest('POST', this.apiUrl + '/edit-image.cfm', file, httpOptions);
       }
 
       // create a new progress-subject for every file

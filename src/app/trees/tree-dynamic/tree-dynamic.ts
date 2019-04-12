@@ -218,6 +218,7 @@ export class DynamicDataSource {
     
   ],
 })
+
 export class TreeDynamic implements OnInit, OnDestroy {
 
   private userToken: string = '';
@@ -715,6 +716,15 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if(this.submitArticleNotification) {
         this.submitArticleNotification.patchValue(!!+data['submitArticleNotification']);
       }
+
+      this.formData['imagePath'] = this.imagePath;
+      this.formData['userToken'] = this.userToken;
+      this.formData['uploadType'] = 'gallery';
+      this.formData['mode'] = this.mode;
+      this.formData['fileUuid'] = this.editImageId;
+      
+      this.httpService.subjectImagePath.next(this.formData);
+
     }
   }
 
@@ -1319,6 +1329,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
     this.formData['imagePath'] = this.imagePath;
     this.formData['userToken'] = this.userToken;
     this.formData['uploadType'] = 'gallery';
+    this.formData['mode'] = this.mode;
+    this.formData['fileUuid'] = this.mode === 'edit' ? this.editImageId : '';
     this.httpService.subjectImagePath.next(this.formData);
     this.directorySelected = this.imagePath;
     const gradeEl = this.documentBody.getElementById('directory-' + this.pathFormat(this.imagePath));
@@ -1423,9 +1435,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
         };
         this.httpService.articleDialogOpened.next(data);
       }
-      if(this.debug) {
+      //if(this.debug) {
         console.log('tree-dynamic: dialog: this.dialogArticleHeight: ', this.dialogArticleHeight);
-      }
+      //}
     });
   }
 

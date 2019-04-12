@@ -7,6 +7,7 @@
 <cfparam name="submissiondate" default="#Now()#" />
 <cfparam name="emailsubject" default="Image post update notification e-mail from #request.title#" />
 <cfparam name="filetoken" default="#LCase(CreateUUID())#" />
+<cfparam name="roleid" default="0" />
 <cfparam name="data" default="" />
 
 <cfinclude template="../functions.cfm">
@@ -111,6 +112,16 @@
   FROM tblFile 
   WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
 </CFQUERY>
+<cfif qGetFile.RecordCount>
+  <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser 
+    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetFile.User_ID#">
+  </CFQUERY>
+  <cfif qGetUser.RecordCount>
+    <cfset roleid = qGetUser.Role_ID>
+  </cfif>
+</cfif>
 <cfif qGetFile.RecordCount AND Len(Trim(data['imagePath']))>
   <cfset data['fileid'] = qGetFile.File_ID>
   <cfset imagePath = REReplaceNoCase(data['imagePath'],"[/]+","/","ALL")>
@@ -145,9 +156,10 @@
   <cfset title = REReplaceNoCase(title,"[\s]+"," ","ALL")>
   <cfset title = Trim(title)>
   <cfset title = FormatTitle(title)>
+  <cfset approved = ListFindNoCase("6,7",roleid) ? 1 : 0> 
   <CFQUERY NAME="qUpdateFile" DATASOURCE="#request.domain_dsn#">
     UPDATE tblFile
-    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">
+    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">
     WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
   </CFQUERY>
   <cfif IsjSON(data['tinymceArticleDeletedImages'])>
@@ -177,95 +189,96 @@
   <cfset data['error'] = "Record for this file cannot be found">
 </cfif>
 
-<cfset adminuserid = GetRandomAdminUserID(roleid="6,7")>
-
-<CFQUERY NAME="qGetAdmin" DATASOURCE="#request.domain_dsn#">
-  SELECT * 
-  FROM tblUser 
-  WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#adminuserid#">
-</CFQUERY>
-<CFQUERY NAME="qGetFileAuthor" DATASOURCE="#request.domain_dsn#">
-  SELECT * 
-  FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
-  WHERE tblFile.File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['fileid']#">
-</CFQUERY>
-<cfif NOT Len(Trim(data['error'])) AND qGetAdmin.RecordCount AND Len(Trim(qGetAdmin.E_mail)) AND FindNoCase("@",qGetAdmin.E_mail) AND qGetFileAuthor.RecordCount>
-  <cfset salutation = CapFirst(LCase(qGetAdmin.Forename))>
-  <cfsavecontent variable="emailtemplatemessage">
-    <cfoutput>
-      <h1>Hi<cfif Len(Trim(salutation))> #salutation#</cfif></h1>
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr valign="middle">
-          <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
-          <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
-          <td style="font-size:16px;">
-            <strong>The following post, entitled '#FormatTitle(data['title'])#', has been updated</strong><br /><br />
-            #CapFirstSentence(data['description'],true)#
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <p><strong>Author:</strong></p>
-            #CapFirst(LCase(qGetFileAuthor.Forename))# #CapFirst(LCase(qGetFileAuthor.Surname))#<br />
-            <em>#DateFormat(submissiondate,"medium")# #TimeFormat(submissiondate,"medium")#</em>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <p><strong>Name:</strong></p>
-            #data['name']#<br />
-          </td>
-        </tr>
-        <cfif Len(Trim(imagePath))>
-          <tr>
-            <td colspan="3">
-              <p><strong>Image Path:</strong></p>
-              #imagePath#
+<cfif NOT ListFindNoCase("6,7",roleid)>
+  <cfset adminuserid = GetRandomAdminUserID(roleid="6,7")>
+  <CFQUERY NAME="qGetAdmin" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser 
+    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#adminuserid#">
+  </CFQUERY>
+  <CFQUERY NAME="qGetFileAuthor" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
+    WHERE tblFile.File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['fileid']#">
+  </CFQUERY>
+  <cfif NOT Len(Trim(data['error'])) AND qGetAdmin.RecordCount AND Len(Trim(qGetAdmin.E_mail)) AND FindNoCase("@",qGetAdmin.E_mail) AND qGetFileAuthor.RecordCount>
+    <cfset salutation = CapFirst(LCase(qGetAdmin.Forename))>
+    <cfsavecontent variable="emailtemplatemessage">
+      <cfoutput>
+        <h1>Hi<cfif Len(Trim(salutation))> #salutation#</cfif></h1>
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr valign="middle">
+            <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
+            <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
+            <td style="font-size:16px;">
+              <strong>The following post, entitled '#FormatTitle(data['title'])#', has been updated</strong><br /><br />
+              #CapFirstSentence(data['description'],true)#
             </td>
           </tr>
-        </cfif>
-        <cfif Len(Trim(tags))>
           <tr>
             <td colspan="3">
-              <p><strong>Tags:</strong></p>
-              #tags#<br />
+              <p><strong>Author:</strong></p>
+              #CapFirst(LCase(qGetFileAuthor.Forename))# #CapFirst(LCase(qGetFileAuthor.Surname))#<br />
+              <em>#DateFormat(submissiondate,"medium")# #TimeFormat(submissiondate,"medium")#</em>
             </td>
           </tr>
-        </cfif>
-        <tr>
-          <td colspan="3">
-            <img src="#uploadfolder#/#qGetFileAuthor.ImagePath#" style="width:100%" border="0" /><br />
-          </td>
-        </tr>
-        <cfif Len(Trim(data['article']))>
           <tr>
             <td colspan="3">
-              <p><strong>Article:</strong></p>
-              #data['article']#<br />
+              <p><strong>Name:</strong></p>
+              #data['name']#<br />
             </td>
           </tr>
-        </cfif>
-        <cfif Len(Trim(publishArticleDate))>
+          <cfif Len(Trim(imagePath))>
+            <tr>
+              <td colspan="3">
+                <p><strong>Image Path:</strong></p>
+                #imagePath#
+              </td>
+            </tr>
+          </cfif>
+          <cfif Len(Trim(tags))>
+            <tr>
+              <td colspan="3">
+                <p><strong>Tags:</strong></p>
+                #tags#<br />
+              </td>
+            </tr>
+          </cfif>
           <tr>
             <td colspan="3">
-              <p><strong>Publish Article Date:</strong></p>
-              #publishArticleDate#<br />
+              <img src="#uploadfolder#/#qGetFileAuthor.ImagePath#" style="width:100%" border="0" /><br />
             </td>
           </tr>
-        </cfif>
-        <tr>
-          <td colspan="3">
-            <p><strong>To approve the updates, please follow the link below</strong></p>
-            <a href="#uploadfolder#/index.cfm?fileToken=#filetoken#" style="display:block;width:200px;margin:20px auto 0px;text-align:center;padding:20px 30px;border-radius:4px;background:#emailtemplateheaderbackground#;color:##ffffff;text-decoration:none;font-weight:bold;">Approve Updates</a>
-          </td>
-        </tr>
-      </table>
-    </cfoutput>
-  </cfsavecontent>
-  <cfmail to="#qGetAdmin.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#emailsubject#" type="html">
-    <cfinclude template="../../../../email-template.cfm">
-  </cfmail>
-  <cfset data['emailSent'] = 1>
+          <cfif Len(Trim(data['article']))>
+            <tr>
+              <td colspan="3">
+                <p><strong>Article:</strong></p>
+                #data['article']#<br />
+              </td>
+            </tr>
+          </cfif>
+          <cfif Len(Trim(publishArticleDate))>
+            <tr>
+              <td colspan="3">
+                <p><strong>Publish Article Date:</strong></p>
+                #publishArticleDate#<br />
+              </td>
+            </tr>
+          </cfif>
+          <tr>
+            <td colspan="3">
+              <p><strong>To approve the updates, please follow the link below</strong></p>
+              <a href="#uploadfolder#/index.cfm?fileToken=#filetoken#" style="display:block;width:200px;margin:20px auto 0px;text-align:center;padding:20px 30px;border-radius:4px;background:#emailtemplateheaderbackground#;color:##ffffff;text-decoration:none;font-weight:bold;">Approve Updates</a>
+            </td>
+          </tr>
+        </table>
+      </cfoutput>
+    </cfsavecontent>
+    <cfmail to="#qGetAdmin.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#emailsubject#" type="html">
+      <cfinclude template="../../../../email-template.cfm">
+    </cfmail>
+    <cfset data['emailSent'] = 1>
+  </cfif>
 </cfif>
 
 <cfoutput>
