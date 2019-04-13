@@ -1,5 +1,5 @@
 
-<cfcomponent extends="taffy.core.resource" taffy_uri="/users/archive">
+<cfcomponent extends="taffy.core.resource" taffy_uri="/users/archive" taffy_docs_hide>
 
   <cffunction name="get">
 	<cfset var local = StructNew()>
