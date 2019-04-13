@@ -73,6 +73,8 @@ import { TextOverflowEllipsisPipe } from './pipes/text-overflow-ellipsis/text-ov
 import { GoogleRecaptchaDirective } from './directives/google-recaptcha/google-recaptcha.directive';
 import { CustomRecaptchaDirective } from './directives/custom-recaptcha/custom-recaptcha.directive';
 
+import { AgGridModule } from 'ag-grid-angular';
+
 
 const appRoutes: Routes = [
   { path: environment.catalogRouterAlias, component: GalleryComponent },
@@ -171,7 +173,8 @@ const appRoutes: Routes = [
     TagInputModule,
     EditorModule,
     OverlayModule,
-    NgbModule
+    NgbModule,
+    AgGridModule.withComponents([])
   ],
   entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent], // Add the DialogComponent as entry component
   providers: [

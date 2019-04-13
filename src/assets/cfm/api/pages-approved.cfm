@@ -39,7 +39,7 @@
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
-  FROM tblFile 
+  FROM tblFile  
   WHERE Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#">
 </CFQUERY>
 
@@ -58,7 +58,7 @@
     </cfif>
     <CFQUERY NAME="qGetFileTitles" DATASOURCE="#request.domain_dsn#">
       SELECT * 
-      FROM tblFile 
+      FROM tblFile  
       WHERE Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#">
       ORDER BY Title ASC
     </CFQUERY>

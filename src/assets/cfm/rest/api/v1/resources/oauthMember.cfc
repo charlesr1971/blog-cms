@@ -53,13 +53,16 @@
       </cfcatch>
     </cftry>
     <!---<cfdump var="#local.data#" abort />--->
+    <!---<cfoutput>local.data['password']: #local.data['password']#</cfoutput>--->
     <cfif NOT Len(Trim(local.data['commentToken']))>
+    <!---x1x--->
       <CFQUERY NAME="local.qGetSalt" DATASOURCE="#request.domain_dsn#">
         SELECT * 
         FROM tblUser 
         WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND SignUpValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
       </CFQUERY>
       <cfif local.qGetSalt.RecordCount>
+      <!---x2x--->
         <cfset local.salt = "">
         <cfset local.hashencryptedstring = "">
         <cfif local.qGetSalt.RecordCount>
@@ -82,20 +85,26 @@
           FROM tblUser 
           WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND Salt = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.salt#"> 
         </CFQUERY>
+        <!---<cfoutput>local.password: #local.password#</cfoutput>
+        <cfoutput>local.hashmatched: #local.hashmatched#</cfoutput>--->
         <cfif local.qGetUser.RecordCount AND Len(Trim(local.data['password'])) AND local.hashmatched>
+        <!---x3x--->
           <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
             SELECT * 
             FROM tblUserToken 
             WHERE User_token = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['userToken']#">
           </CFQUERY>
           <cfif NOT local.qGetUserID.RecordCount AND Len(Trim(local.data['userToken']))>
+          <!---x4x--->
             <CFQUERY DATASOURCE="#request.domain_dsn#">
               INSERT INTO tblUserToken (User_ID,User_token) 
               VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['userToken']#">)
             </CFQUERY>
             <cfset local.data['usertokenmatch'] = "No user token match, so new one was inserted">
           <cfelse>
+          <!---x5x--->
             <cfif local.qGetUser.User_ID NEQ local.qGetUserID.User_ID>
+            <!---x6x--->
               <cfset local.data['userToken'] = LCase(CreateUUID())>
               <CFQUERY NAME="qUpdateUserToken" DATASOURCE="#request.domain_dsn#">
                 UPDATE tblUserToken
@@ -104,10 +113,12 @@
               </CFQUERY>
               <cfset local.data['usertokenmatch'] = "User token match, but belonged to different user, so old token updated with new token">
             <cfelse>
+            <!---x7x--->
 			  <cfset local.data['usertokenmatch'] = "User token match">
             </cfif>
           </cfif>
           <cfif Len(Trim(local.data['theme']))>
+          <!---x8x--->
             <CFQUERY DATASOURCE="#request.domain_dsn#">
               UPDATE tblUser
               SET Keep_logged_in = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['keeploggedin']#">,Theme =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.data['theme'],'-')#">  
@@ -120,6 +131,7 @@
             WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#"> 
           </CFQUERY>
           <cfif local.qGetUser.RecordCount>
+          <!---x9x--->
 			<cfset local.data['userid'] = local.qGetUser.User_ID>
             <cfset local.data['forename'] = local.qGetUser.Forename>
             <cfset local.data['surname'] = local.qGetUser.Surname>
@@ -142,14 +154,17 @@
         </cfif>
         <cfset local.data['error'] = "">
       <cfelse>
+      <!---x10x--->
         <CFQUERY NAME="local.qGetEmail" DATASOURCE="#request.domain_dsn#">
           SELECT * 
           FROM tblUser 
           WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#">
         </CFQUERY>
         <cfif local.qGetEmail.RecordCount>
+        <!---x11x--->
 		  <cfset local.data['error'] = "User has registered but has not validated e-mail">
         <cfelse>
+        <!---x12x--->
 		   <cfset local.data['error'] = "User has not registered">
         </cfif>
       </cfif>
@@ -229,6 +244,7 @@
       </cfif>
     </cfif>
 	<cfset local.data['jwtToken'] = request.utils.EncryptJwt(usertoken=local.data['userToken'],jwtid=local.jwtid,data=local.data)>
+    <!---<cfabort />--->
     <cfreturn representationOf(local.data) />
   </cffunction>
 

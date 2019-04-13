@@ -35,7 +35,7 @@
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
-  FROM tblFile 
+  FROM tblFile  
   WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
 </CFQUERY>
 <cfif qGetFile.RecordCount>

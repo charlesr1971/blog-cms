@@ -280,6 +280,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   treeControl: FlatTreeControl<DynamicFlatNode>;
   dataSource: DynamicDataSource;
+
   isMobile: boolean = false;
   hasError: boolean = false;
   safeHtml: SafeHtml;
@@ -718,15 +719,18 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if(this.submitArticleNotification) {
         this.submitArticleNotification.patchValue(!!+data['submitArticleNotification']);
       }
-
       this.formData['imagePath'] = this.imagePath;
       this.formData['userToken'] = this.userToken;
       this.formData['uploadType'] = 'gallery';
       this.formData['mode'] = this.mode;
       this.formData['fileUuid'] = this.editImageId;
-      
       this.httpService.subjectImagePath.next(this.formData);
 
+      this.dataSource.data.map( (node) => {
+        console.log(node);
+      });
+
+      
     }
   }
 
@@ -1437,9 +1441,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
         };
         this.httpService.articleDialogOpened.next(data);
       }
-      //if(this.debug) {
+      if(this.debug) {
         console.log('tree-dynamic: dialog: this.dialogArticleHeight: ', this.dialogArticleHeight);
-      //}
+      }
     });
   }
 

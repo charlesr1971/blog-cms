@@ -414,13 +414,11 @@
     <cfset var emailtemplateheaderbackground = request.utils.getMaterialThemePrimaryColour(theme=request.theme)>
     <cfset var emailtemplatemessage = "">
     <cfset var local = StructNew()>
-    
     <cfset local.maxcontentlength = request.maxcontentlength>
     <cfset local.imagePath = "">
     <cfset local.imageNewFilePath = ""> 
     <cfset local.extensions = "gif,png,jpg,jpeg">
     <cfset local.oldimagePath = "">
-    
     <cfset local.uploadfolder = request.uploadfolder>
     <cfset local.tags = "">
     <cfset local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss')>
@@ -457,19 +455,15 @@
     <cfset local.data['error'] = "">
     <cfset local.requestBody = getHttpRequestData().headers>
     <cftry>
-    
 	  <cfif StructKeyExists(local.requestBody,"file-name")>
 		<cfset local.data['clientfileName'] = Trim(local.requestBody['file-name'])>
       </cfif>
-      
 	  <cfif StructKeyExists(local.requestBody,"image-path")>
         <cfset local.data['imagePath'] = Trim(local.requestBody['image-path'])>
       </cfif>
       <cfif StructKeyExists(local.requestBody,"imagePath")>
         <cfset local.data['imagePath'] = Trim(local.requestBody['imagePath'])>
       </cfif>
-     
-      
       <cfif StructKeyExists(local.requestBody,"name")>
 		<cfset local.data['name'] =  Trim(local.requestBody['name'])>
       </cfif>
@@ -479,7 +473,6 @@
       <cfif StructKeyExists(local.requestBody,"description")>
 		<cfset local.data['description'] =  Trim(local.requestBody['description'])>
       </cfif>
-      
       <cfif StructKeyExists(local.requestBody,"upload-type")>
 		<cfif StructKeyExists(local.requestBody,"article")>
           <cfset local.data['article'] = DeserializeJSON(Trim(local.requestBody['article']))>
@@ -490,7 +483,6 @@
           <cfset local.data['article'] =  local.data['article']['article']>
         </cfif>
       </cfif>
-      
       <cfif StructKeyExists(local.requestBody,"tags")>
 		<cfset local.data['tags'] =  Trim(local.requestBody['tags'])>
       </cfif>
@@ -500,19 +492,15 @@
       <cfif StructKeyExists(local.requestBody,"tinymceArticleDeletedImages")>
 		<cfset local.data['tinymceArticleDeletedImages'] =  Trim(local.requestBody['tinymceArticleDeletedImages'])>
       </cfif>
-      
       <cfif StructKeyExists(local.requestBody,"file-extension")>
 		<cfset local.data['fileExtension'] = Trim(local.requestBody['file-extension'])>
       </cfif>
-      
       <cfif StructKeyExists(local.requestBody,"upload-type")>
 		<cfset local.data['selectedFile'] = getHttpRequestData().content>
       </cfif>
-      
       <cfif StructKeyExists(local.requestBody,"content-length")>
 		<cfset local.data['content_length'] = Trim(local.requestBody['content-length'])>
       </cfif>
-      
       <cfif StructKeyExists(local.requestBody,"submitArticleNotification")>
 		<cfset local.data['submitArticleNotification'] =  Trim(local.requestBody['submitArticleNotification'])>
       </cfif>
@@ -528,7 +516,6 @@
       <cfif StructKeyExists(local.requestBody,"Authorization")>
         <cfset local.jwtString = request.utils.GetJwtString(Trim(local.requestBody['Authorization']))>
       </cfif>
-      
       <cfcatch>
         <cfset local.data['error'] = cfcatch.message>
       </cfcatch>
@@ -632,22 +619,14 @@
     <cfelse>
       <cfset local.data['error'] = "Record for this file cannot be found">
     </cfif>
-    
-    <!---<cfdump var="#local.data['selectedFile']#" label="selectedFile" />
-    <cfdump var="#local.data#" label="local.data" abort />--->
-    
-    <!---<cfdump var="#local.imageSystemDirectoryPath#" />--->
-    
     <cfif local.data['success'] AND Len(Trim(local.data['imagePath'])) AND Len(Trim(local.data['fileExtension'])) AND ListFindNoCase(local.extensions,local.data['fileExtension']) AND IsBinary(local.data['selectedFile']) AND IsNumeric(local.data['content_length'])>
 	  <cfif local.data['content_length'] LT local.maxcontentlength>
 		<cfset local.data['success'] = false>
         <cfif DirectoryExists(local.imageSystemDirectoryPath)>
-        <!---x2x--->
           <cfset local.newfilename = local.data['fileUuid'] & "." & local.data['fileExtension']>
           <cfset local.secureRandomSystemSecurePath = request.securefilepath & "\" & LCase(CreateUUID())>
           <cfset local.imageSystemSecureFilePath = local.secureRandomSystemSecurePath & "\" & local.newfilename>
           <cfif NOT DirectoryExists(local.secureRandomSystemSecurePath)>
-          <!---x3x--->
             <cflock name="create_directory_#local.timestamp#" type="exclusive" timeout="30">
               <cfdirectory action="create" directory="#local.secureRandomSystemSecurePath#" />
             </cflock>
@@ -656,43 +635,33 @@
             </cflock>
           </cfif>
           <cfif FileExists(local.imageSystemSecureFilePath) AND DirectoryExists(local.imageSystemDirectoryPath)>
-            <!---x4x--->
             <cfset local.isWebImageFile = request.utils.IsWebImageFile(path=local.imageSystemSecureFilePath)>
             <cfif NOT local.isWebImageFile>
-            <!---x5x--->
               <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
                 <cffile action="delete"  file="#local.imageSystemSecureFilePath#" />
               </cflock>
               <cfset local.data['success'] = false>
             <cfelse>
-            <!---x6x--->
               <cflock name="move_file_#local.timestamp#" type="exclusive" timeout="30">
                 <cffile action="move" source="#local.imageSystemSecureFilePath#" destination="#local.imageSystemDirectoryPath#">
               </cflock>
               <cfset local.data['success'] = true>
             </cfif>
           <cfelse>
-          <!---x7x--->
             <cfset local.data['success'] = false>
           </cfif>
           <cfif DirectoryExists(local.secureRandomSystemSecurePath)>
-          <!---x8x--->
             <cflock name="delete_directory_#local.timestamp#" type="exclusive" timeout="30">
               <cfdirectory action="delete" directory="#local.secureRandomSystemSecurePath#" recurse="yes" />
             </cflock>
           </cfif>
         </cfif>
         <cfif local.data['success']>
-        <!---x9x--->
 		  <cfset local.filename = local.data['fileUuid'] & "." & local.data['fileExtension']>
           <cfset local.imagePath = REReplaceNoCase(local.data['imagePath'],"[/]+","/","ALL")>
 		  <cfset local.imagePath = REReplaceNoCase(local.imagePath,"^[/]+","")>
           <cfset local.imagePath = local.imagePath & "/" & local.filename>
-          <!---<cfdump var="#local.imagePath#" />
-          <cfdump var="#local.oldimagePath#" />
-          <cfdump var="#local.source#" />--->
 		  <cfif CompareNoCase(Trim(LCase(local.imagePath)),Trim(LCase(local.oldimagePath))) NEQ 0 AND FileExists(local.source)>
-            <!---x10x--->
             <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
               <cffile action="delete" file="#local.source#" />
             </cflock>
@@ -704,16 +673,13 @@
           </CFQUERY>
           <cfset local.imageNewFilePath = local.imagePath>
         <cfelse>
-        <!---x11x--->
 		  <cfset local.data['error'] = "The image uploaded was not the correct file type">
         </cfif>
       <cfelse>
-      <!---x12x--->
         <cfset local.maxcontentlengthInMb = NumberFormat(local.maxcontentlength/1000000,".__")>
         <cfset local.data['error'] = "The image uploaded must be less than " & local.maxcontentlengthInMb & "MB">
       </cfif>
     </cfif>
-
     <cfif NOT ListFindNoCase("6,7",local.roleid)>
 	  <cfset local.adminuserid = request.utils.GetRandomAdminUserID(roleid="6,7")>
       <CFQUERY NAME="local.qGetAdmin" DATASOURCE="#request.domain_dsn#">
@@ -811,7 +777,6 @@
     <cfif IsBinary(local.data['selectedFile'])>
       <cfset local.data['selectedFile'] = "">
     </cfif>
-    <!---<cfabort />--->
     <cfreturn representationOf(local.data) />
   </cffunction>
   

@@ -1,13 +1,25 @@
 
 <cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />
-<cfheader name="Access-Control-Allow-Headers" value="content-type,Authorization,userToken" />
+<cfif StructKeyExists(getHttpRequestData().headers,"upload-type")>
+  <cfheader name="Access-Control-Allow-Headers" value="fileUuid,file-name,image-path,name,title,description,article,tags,publish-article-date,tinymce-article-deleted-images,file-extension,user-token,content-type,cfid,cftoken,upload-type,Authorization,userToken" />
+<cfelse>
+  <cfheader name="Access-Control-Allow-Headers" value="content-type,Authorization,userToken" />
+</cfif>
 
+<cfparam name="maxcontentlength" default="#request.maxcontentlength#" />
+<cfparam name="imagePath" default="" />
+<cfparam name="imageNewFilePath" default="" /> 
+<cfparam name="extensions" default="gif,png,jpg,jpeg" />
+<cfparam name="oldimagePath" default="" />
 <cfparam name="uploadfolder" default="#request.uploadfolder#" />
+<cfparam name="tags" default="" />
 <cfparam name="timestamp" default="#DateFormat(Now(),'yyyymmdd')##TimeFormat(Now(),'HHmmss')#" />
 <cfparam name="submissiondate" default="#Now()#" />
 <cfparam name="emailsubject" default="Image post update notification e-mail from #request.title#" />
+<cfparam name="fileid" default="#LCase(CreateUUID())#" />
 <cfparam name="filetoken" default="#LCase(CreateUUID())#" />
 <cfparam name="roleid" default="0" />
+<cfparam name="source" default="" />
 <cfparam name="data" default="" />
 
 <cfinclude template="../functions.cfm">
@@ -16,6 +28,7 @@
 
 <cfset data = StructNew()>
 <cfset data['fileid'] = 0>
+<cfset data['clientfileName'] = "">
 <cfset data['fileUuid'] = "">
 <cfset data['imagePath'] = "">
 <cfset data['name'] = "">
@@ -25,94 +38,161 @@
 <cfset data['tags'] = "">
 <cfset data['publishArticleDate'] = Now()>
 <cfset data['tinymceArticleDeletedImages'] = ArrayNew(1)>
+<cfset data['fileExtension'] = "">
+<cfset data['selectedFile'] = "">
+<cfset data['success'] = false>
+<cfset data['content_length'] = 0>
 <cfset data['tinymceArticleImageCount'] = 0>
 <cfset data['submitArticleNotification'] = 1>
+<cfset data['uploadType'] = "">
 <cfset data['emailSent'] = 0>
 <cfset data['error'] = "">
 
-<cfset requestBody = toString(getHttpRequestData().content)>
-<cfset requestBody = Trim(requestBody)>
-<cftry>
-  <cfset requestBody = DeserializeJSON(requestBody)>
-  <cfif StructKeyExists(requestBody,"fileUuid")>
-	<cfset data['fileUuid'] = Trim(requestBody['fileUuid'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"imagePath")>
-  	<cfset data['imagePath'] = Trim(requestBody['imagePath'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"name")>
-  	<cfset data['name'] =  Trim(requestBody['name'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"title")>
-  	<cfset data['title'] =  Trim(requestBody['title'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"description")>
-  	<cfset data['description'] =  Trim(requestBody['description'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"article")>
-  	<cfset data['article'] =  Trim(requestBody['article'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"tags")>
-  	<cfset data['tags'] =  Trim(requestBody['tags'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"publishArticleDate")>
-  	<cfset data['publishArticleDate'] =  Trim(requestBody['publishArticleDate'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"tinymceArticleDeletedImages")>
-  	<cfset data['tinymceArticleDeletedImages'] =  Trim(requestBody['tinymceArticleDeletedImages'])>
-  </cfif>
-  <cfif StructKeyExists(requestBody,"submitArticleNotification")>
-  	<cfset data['submitArticleNotification'] =  Trim(requestBody['submitArticleNotification'])>
-  </cfif>
-  <cfcatch>
-    <cftry>
-      <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
-      <cfset requestBody = DeserializeJSON(requestBody)>
-      <cfif StructKeyExists(requestBody,"fileUuid")>
-		<cfset data['fileUuid'] = Trim(requestBody['fileUuid'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"imagePath")>
-        <cfset data['imagePath'] = Trim(requestBody['imagePath'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"name")>
-        <cfset data['name'] =  Trim(requestBody['name'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"title")>
-        <cfset data['title'] =  Trim(requestBody['title'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"description")>
-        <cfset data['description'] =  Trim(requestBody['description'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"article")>
-        <cfset data['article'] =  Trim(requestBody['article'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"tags")>
-        <cfset data['tags'] =  Trim(requestBody['tags'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"publishArticleDate")>
-        <cfset data['publishArticleDate'] =  Trim(requestBody['publishArticleDate'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"tinymceArticleDeletedImages")>
-        <cfset data['tinymceArticleDeletedImages'] =  Trim(requestBody['tinymceArticleDeletedImages'])>
-      </cfif>
-      <cfif StructKeyExists(requestBody,"submitArticleNotification")>
-        <cfset data['submitArticleNotification'] =  Trim(requestBody['submitArticleNotification'])>
-      </cfif>
-      <cfcatch>
-		<cfset data['error'] = cfcatch.message>
-      </cfcatch>
-    </cftry>
-  </cfcatch>
-</cftry>
+<cfif StructKeyExists(getHttpRequestData().headers,"upload-type")>
+
+  <cftry>
+	<cfif StructKeyExists(getHttpRequestData().headers,"fileUuid")>
+      <cfset data['fileUuid'] = getHttpRequestData().headers['fileUuid']>
+    </cfif>
+	<cfif StructKeyExists(getHttpRequestData().headers,"file-name")>
+      <cfset data['clientfileName'] = getHttpRequestData().headers['file-name']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"image-path")>
+      <cfset data['imagePath'] = getHttpRequestData().headers['image-path']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"name")>
+      <cfset data['name'] = getHttpRequestData().headers['name']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"title")>
+      <cfset data['title'] = getHttpRequestData().headers['title']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"description")>
+      <cfset data['description'] = getHttpRequestData().headers['description']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"article")>
+      <cfset data['article'] = getHttpRequestData().headers['article']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"tags")>
+      <cfset data['tags'] = getHttpRequestData().headers['tags']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"publish-article-date")>
+      <cfset data['publishArticleDate'] = getHttpRequestData().headers['publish-article-date']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"tinymce-article-deleted-images")>
+      <cfset data['tinymceArticleDeletedImages'] = getHttpRequestData().headers['tinymce-article-deleted-images']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"file-extension")>
+      <cfset data['fileExtension'] = getHttpRequestData().headers['file-extension']>
+    </cfif>
+    <cfset data['selectedFile'] = getHttpRequestData().content>
+    <cfif StructKeyExists(getHttpRequestData().headers,"content-length")>
+      <cfset data['content_length'] = getHttpRequestData().headers['content-length']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"user-token")>
+      <cfset data['userToken'] = getHttpRequestData().headers['user-token']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"cfid")>
+      <cfset data['cfid'] = getHttpRequestData().headers['cfid']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"cftoken")>
+    <cfset data['cftoken'] = getHttpRequestData().headers['cftoken']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"upload-type")>
+      <cfset data['uploadType'] = getHttpRequestData().headers['upload-type']>
+    </cfif>
+    <cfcatch>
+      <cfset data['error'] = cfcatch.message>
+    </cfcatch>
+  </cftry>
+
+<cfelse>
+
+  <cfset requestBody = toString(getHttpRequestData().content)>
+  <cfset requestBody = Trim(requestBody)>
+  <cftry>
+    <cfset requestBody = DeserializeJSON(requestBody)>
+    <cfif StructKeyExists(requestBody,"fileUuid")>
+      <cfset data['fileUuid'] = Trim(requestBody['fileUuid'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"imagePath")>
+      <cfset data['imagePath'] = Trim(requestBody['imagePath'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"name")>
+      <cfset data['name'] =  Trim(requestBody['name'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"title")>
+      <cfset data['title'] =  Trim(requestBody['title'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"description")>
+      <cfset data['description'] =  Trim(requestBody['description'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"article")>
+      <cfset data['article'] =  Trim(requestBody['article'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"tags")>
+      <cfset data['tags'] =  Trim(requestBody['tags'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"publishArticleDate")>
+      <cfset data['publishArticleDate'] =  Trim(requestBody['publishArticleDate'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"tinymceArticleDeletedImages")>
+      <cfset data['tinymceArticleDeletedImages'] =  Trim(requestBody['tinymceArticleDeletedImages'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"submitArticleNotification")>
+      <cfset data['submitArticleNotification'] =  Trim(requestBody['submitArticleNotification'])>
+    </cfif>
+    <cfcatch>
+      <cftry>
+        <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
+        <cfset requestBody = DeserializeJSON(requestBody)>
+        <cfif StructKeyExists(requestBody,"fileUuid")>
+          <cfset data['fileUuid'] = Trim(requestBody['fileUuid'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"imagePath")>
+          <cfset data['imagePath'] = Trim(requestBody['imagePath'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"name")>
+          <cfset data['name'] =  Trim(requestBody['name'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"title")>
+          <cfset data['title'] =  Trim(requestBody['title'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"description")>
+          <cfset data['description'] =  Trim(requestBody['description'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"article")>
+          <cfset data['article'] =  Trim(requestBody['article'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"tags")>
+          <cfset data['tags'] =  Trim(requestBody['tags'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"publishArticleDate")>
+          <cfset data['publishArticleDate'] =  Trim(requestBody['publishArticleDate'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"tinymceArticleDeletedImages")>
+          <cfset data['tinymceArticleDeletedImages'] =  Trim(requestBody['tinymceArticleDeletedImages'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"submitArticleNotification")>
+          <cfset data['submitArticleNotification'] =  Trim(requestBody['submitArticleNotification'])>
+        </cfif>
+        <cfcatch>
+          <cfset data['error'] = cfcatch.message>
+        </cfcatch>
+      </cftry>
+    </cfcatch>
+  </cftry>
+  
+</cfif>
 
 <cfset emailpassword = Decrypt(request.emailPassword,request.emailSalt,request.crptographyalgorithm,request.crptographyencoding)>
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
-  FROM tblFile 
+  FROM tblFile  
   WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
 </CFQUERY>
 <cfif qGetFile.RecordCount>
+  <cfset oldimagePath = qGetFile.ImagePath>
   <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
     SELECT * 
     FROM tblUser 
@@ -122,17 +202,19 @@
     <cfset roleid = qGetUser.Role_ID>
   </cfif>
 </cfif>
+<cfset imageSystemDirectoryPath = "">
 <cfif qGetFile.RecordCount AND Len(Trim(data['imagePath']))>
   <cfset data['fileid'] = qGetFile.File_ID>
   <cfset imagePath = REReplaceNoCase(data['imagePath'],"[/]+","/","ALL")>
   <cfset imageSystemPath = ReplaceNoCase(imagePath,"/","\","ALL")>
+  <cfset imageSystemDirectoryPath = request.filepath & "\" & imageSystemPath>
   <cfset imageSystemPath = request.filepath & imageSystemPath & "\" & qGetFile.Filename>
   <cfset imagePath = REReplaceNoCase(imagepath,"^[/]+","")>
   <cfset imagepath = imagePath & "/" & qGetFile.Filename>
   <cfset category = ListLast(data['imagePath'],"/")>
+  <cfset sourceimagepath = ReplaceNoCase(qGetFile.ImagePath,"/","\","ALL")>
+  <cfset source = request.filepath & "\" & sourceimagepath>
   <cfif CompareNoCase(qGetFile.ImagePath,imagepath) NEQ 0>
-	<cfset sourceimagepath = ReplaceNoCase(qGetFile.ImagePath,"/","\","ALL")>
-	<cfset source = request.filepath & "\" & sourceimagepath>
     <cfif FileExists(source)>
       <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
         <cffile action="move" source="#source#" destination="#imageSystemPath#" />
@@ -140,7 +222,6 @@
     </cfif>
   </cfif>
   <cfset tags = FormatTags(data['tags'])>
-  <!---<cfdump var="#data['article']#" format="html" output="C:\Users\Charles Robertson\Desktop\edit-image-1.htm" />--->
   <cfset data['article'] = FormatTextForDatabase(data['article'])>
   <cftry>
 	<cfset publishArticleDate = CreateDateTimeFromMomentDate(data['publishArticleDate'])>
@@ -184,9 +265,73 @@
       WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetFile.User_ID#">
     </CFQUERY>
   </cfif>
+  <cfset data['success'] = true>
+  <cfset imageNewFilePath = imagePath>
   <cfset data['error'] = "">
 <cfelse>
   <cfset data['error'] = "Record for this file cannot be found">
+</cfif>
+
+<cfif data['success'] AND Len(Trim(data['imagePath'])) AND Len(Trim(data['fileExtension'])) AND ListFindNoCase(extensions,data['fileExtension']) AND IsBinary(data['selectedFile']) AND IsNumeric(data['content_length'])>
+  <cfif data['content_length'] LT maxcontentlength>
+    <cfset data['success'] = false>
+    <cfif DirectoryExists(imageSystemDirectoryPath)>
+      <cfset newfilename = data['fileUuid'] & "." & data['fileExtension']>
+      <cfset secureRandomSystemSecurePath = request.securefilepath & "\" & LCase(CreateUUID())>
+      <cfset imageSystemSecureFilePath = secureRandomSystemSecurePath & "\" & newfilename>
+      <cfif NOT DirectoryExists(secureRandomSystemSecurePath)>
+        <cflock name="create_directory_#timestamp#" type="exclusive" timeout="30">
+          <cfdirectory action="create" directory="#secureRandomSystemSecurePath#" />
+        </cflock>
+        <cflock name="write_file_#timestamp#" type="exclusive" timeout="30">
+          <cffile action="write" file="#imageSystemSecureFilePath#" output="#data['selectedFile']#" />
+        </cflock>
+      </cfif>
+      <cfif FileExists(imageSystemSecureFilePath) AND DirectoryExists(imageSystemDirectoryPath)>
+        <cfset isWebImageFile = IsWebImageFile(path=imageSystemSecureFilePath)>
+        <cfif NOT isWebImageFile>
+          <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+            <cffile action="delete"  file="#imageSystemSecureFilePath#" />
+          </cflock>
+          <cfset data['success'] = false>
+        <cfelse>
+          <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
+            <cffile action="move" source="#imageSystemSecureFilePath#" destination="#imageSystemDirectoryPath#">
+          </cflock>
+          <cfset data['success'] = true>
+        </cfif>
+      <cfelse>
+        <cfset data['success'] = false>
+      </cfif>
+      <cfif DirectoryExists(secureRandomSystemSecurePath)>
+        <cflock name="delete_directory_#timestamp#" type="exclusive" timeout="30">
+          <cfdirectory action="delete" directory="#secureRandomSystemSecurePath#" recurse="yes" />
+        </cflock>
+      </cfif>
+    </cfif>
+    <cfif data['success']>
+      <cfset filename = data['fileUuid'] & "." & data['fileExtension']>
+      <cfset imagePath = REReplaceNoCase(data['imagePath'],"[/]+","/","ALL")>
+      <cfset imagePath = REReplaceNoCase(imagePath,"^[/]+","")>
+      <cfset imagePath = imagePath & "/" & filename>
+      <cfif CompareNoCase(Trim(LCase(imagePath)),Trim(LCase(oldimagePath))) NEQ 0 AND FileExists(source)>
+        <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+          <cffile action="delete" file="#source#" />
+        </cflock>
+      </cfif>
+      <CFQUERY DATASOURCE="#request.domain_dsn#">
+        UPDATE tblFile
+        SET Clientfilename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,Filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filename#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagePath#">,Size = <cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#"> 
+        WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
+      </CFQUERY>
+      <cfset imageNewFilePath = imagePath>
+    <cfelse>
+      <cfset data['error'] = "The image uploaded was not the correct file type">
+    </cfif>
+  <cfelse>
+    <cfset maxcontentlengthInMb = NumberFormat(maxcontentlength/1000000,".__")>
+    <cfset data['error'] = "The image uploaded must be less than " & maxcontentlengthInMb & "MB">
+  </cfif>
 </cfif>
 
 <cfif NOT ListFindNoCase("6,7",roleid)>
@@ -279,6 +424,11 @@
     </cfmail>
     <cfset data['emailSent'] = 1>
   </cfif>
+</cfif>
+
+<cfset data['imagePath'] = imageNewFilePath> 
+<cfif IsBinary(data['selectedFile'])>
+  <cfset data['selectedFile'] = ToBase64(ToString(data['selectedFile']),"utf-8")>
 </cfif>
 
 <cfoutput>

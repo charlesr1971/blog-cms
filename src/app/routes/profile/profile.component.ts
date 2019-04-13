@@ -46,8 +46,20 @@ declare var TweenMax: any, Elastic: any;
       })),
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
-  ]),
-    trigger('profileCategoryEditFadeInOutAnimation', [
+    ]),
+      trigger('profileCategoryEditFadeInOutAnimation', [
+        state('in', style({
+          opacity: 1,
+          display: 'block'
+        })),
+        state('out', style({
+          opacity: 0,
+          display: 'none'
+        })),
+        transition('out => in', animate('250ms ease-in')),
+        transition('in => out', animate('250ms ease-out'))
+    ]),
+    trigger('profileUserArchiveEditFadeInOutAnimation', [
       state('in', style({
         opacity: 1,
         display: 'block'
@@ -58,7 +70,7 @@ declare var TweenMax: any, Elastic: any;
       })),
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
-  ]),
+    ]),
   ]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
@@ -71,6 +83,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
+  @Input() profileUserArchiveEditState: string = 'out';
 
   themeObj = {};
   themeRemove: string = '';
@@ -114,6 +127,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   deleteProfileSubscription: Subscription;
   imagesUnapprovedByUseridSubscription: Subscription;
   imagesApprovedByUseridSubscription: Subscription;
+  usersArchiveSubscription: Subscription;
   currentUser: User;
   closeResult: string;
   categoryImagesUrl: string = '';
@@ -121,6 +135,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   disableCommentGeneralTooltip: boolean = false;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   dialogEditCategoriesHeight: number = 0;
+  userAccountDeleteSchema: number = 2;
+  userArchiveColumnDefs = [];
+  userArchiveRowData = [];
 
   debug: boolean = false;
 
@@ -142,6 +159,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if(environment.debugComponentLoadingOrder) {
         console.log('profile.component loaded');
       }
+
+      this.userAccountDeleteSchema = this.httpService.userAccountDeleteSchema;
 
       this.themeObj = this.httpService.themeObj;
       this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
@@ -225,6 +244,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       });
 
+      this.usersArchiveSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveData).subscribe();
+
   }
 
   ngOnInit() {
@@ -293,6 +314,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
       console.log('profile.component: editProfileFormSubmit: body',body);
     }
     this.editProfileSubscription = this.httpService.editUser(body).do(this.processEditProfileData).subscribe();
+  }
+
+  private processUsersArchiveData = (data) => {
+    //if(this.debug) {
+      console.log('profile.component: processUsersArchiveData: data',data);
+    //}
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userArchiveColumnDefs = data['columnDefs'];
+        this.userArchiveRowData = data['rowData'];
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.openSnackBar(data['error'], 'Error');
+        }
+      }
+    }
   }
 
   private processEditProfileData = (data) => {
@@ -716,6 +757,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
+  openProfileUserArchiveEdit(event: any): void {
+    this.profileUserArchiveEditState = this.profileUserArchiveEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
   toggleUnapprovedImages(event: any): void {
     event.stopPropagation();
     const imagethumbnailcontainerunapproved = this.documentBody.querySelector('#image-thumbnail-container-unapproved');
@@ -851,6 +897,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if (this.imagesApprovedByUseridSubscription) {
       this.imagesApprovedByUseridSubscription.unsubscribe();
+    }
+
+    if(this.usersArchiveSubscription) {
+      this.usersArchiveSubscription.unsubscribe();
     }
 
   }

@@ -25,6 +25,7 @@ export class HttpService {
   ogDescription: string = '';
   ogImage: string = '';
   adZoneUrl: string = '';
+  userAccountDeleteSchema: number = 2;
   port: string = '';
   signUpValidated: number = 0;
   viewCommentid: number = 0;
@@ -150,6 +151,12 @@ export class HttpService {
 
     if(adZoneUrl !== '0' || adZoneUrl !== '') {
       this.adZoneUrl = adZoneUrl;
+    }
+
+    const userAccountDeleteSchema = getUrlParameter('userAccountDeleteSchema');
+
+    if(userAccountDeleteSchema !== '0' || userAccountDeleteSchema !== '') {
+      this.userAccountDeleteSchema = userAccountDeleteSchema;
     }
 
     const port = getUrlParameter('port');
@@ -1264,6 +1271,23 @@ export class HttpService {
     }
     else{
       req = new HttpRequest('GET', this.apiUrl + '/jwt.cfm?userToken=' + userToken);
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  fetchUsersArchive(): Observable<any> {
+    let req = null;
+    if(this.useRestApi) {
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/archive');
+    }
+    else{
+      req = new HttpRequest('GET', this.apiUrl + '/users-archive.cfm');
     }
     return this.http.request(req)
     .map( (data) => {

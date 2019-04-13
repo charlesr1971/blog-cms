@@ -34,6 +34,8 @@
     "@ngx-share/core": "^6.0.1",
     "@tinymce/tinymce-angular": "^2.3.3",
     "@types/waypoints": "^4.0.1",
+    "ag-grid-angular": "^20.2.0",
+    "ag-grid-community": "^20.2.0",
     "angular-material-fileupload": "^1.0.0",
     "angular-waypoints": "^2.0.0",
     "angular2-lightbox": "^1.4.0",

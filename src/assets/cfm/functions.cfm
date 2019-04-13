@@ -1338,6 +1338,15 @@
   }
   
   
+  public array function QueryToArray( query query = QueryNew("")) output="false" {
+	var rows = [];
+	for(var obj in arguments.query) {
+		ArrayAppend(rows,obj);
+	}
+	return rows;
+  }
+  
+  
   
   
   

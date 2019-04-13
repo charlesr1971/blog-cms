@@ -37,7 +37,7 @@
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
-  FROM tblFile 
+  FROM tblFile  
   WHERE <cfif NOT Val(fileid)>File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#"><cfelse>File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#fileid#"></cfif> AND (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(userid)> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#">)</cfif>)
 </CFQUERY>
 

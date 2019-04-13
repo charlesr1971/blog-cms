@@ -322,6 +322,7 @@
   <cffunction name="delete">
     <cfargument name="usertoken" type="string" required="yes" />
 	<cfset var local = StructNew()>
+    <cfset local.submissiondate = Now()>
     <cfset local.jwtString = "">
     <cfset local.data = StructNew()>
 	<cfset local.data['userid'] = 0>
@@ -357,77 +358,130 @@
       FROM tblUser 
       WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
     </CFQUERY>
-    <cfif local.qGetUser.RecordCount>
-      <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
-        SELECT * 
-        FROM tblFile 
-        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
-      </CFQUERY>
-      <cfloop query="local.qGetFile">
-        <cfset local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss')>
-        <cfset local.sourceimagepath = ReplaceNoCase(local.qGetFile.ImagePath,"/","\","ALL")>
-        <cfset local.source = request.filepath & "\" & local.sourceimagepath>
-        <cfif FileExists(local.source)>
-          <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
-            <cffile action="delete"  file="#local.source#" />
-          </cflock>
-        </cfif>
-        <cfset local.source = request.filepath & "\user-avatars\" & local.qGetUser.Filename>
-        <cfif FileExists(local.source)>
-          <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
-            <cffile action="delete"  file="#local.source#" />
-          </cflock>
-        </cfif>
-        <cfset local.directory = request.filepath & "\article-images\" & local.qGetFile.File_ID>
-        <cfdirectory action="list" directory="#local.directory#" name="local.qGetArticleImages" type="file" recurse="no" />
-        <cfif local.qGetArticleImages.RecordCount>
-          <cfif DirectoryExists(local.directory)>
-			<cfset local._directory = local.directory>
-            <cfloop query="local.qGetArticleImages">
-			  <cfset local.source = local._directory & "\" & local.qGetArticleImages.Name>
+    <cfswitch expression="#request.userAccountDeleteSchema#">
+      <cfcase value="1">
+		<cfif local.qGetUser.RecordCount>
+          <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
+            SELECT * 
+            FROM tblFile 
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+          </CFQUERY>
+          <cfloop query="local.qGetFile">
+            <cfset local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss')>
+            <cfset local.sourceimagepath = ReplaceNoCase(local.qGetFile.ImagePath,"/","\","ALL")>
+            <cfset local.source = request.filepath & "\" & local.sourceimagepath>
+            <cfif FileExists(local.source)>
               <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
                 <cffile action="delete"  file="#local.source#" />
               </cflock>
-            </cfloop>
-            <cftry>
-              <cflock name="delete_file_directory_#local.timestamp#" type="exclusive" timeout="30">
-                <cfdirectory action="delete" directory="#local.directory#">
+            </cfif>
+            <cfset local.source = request.filepath & "\user-avatars\" & local.qGetUser.Filename>
+            <cfif FileExists(local.source)>
+              <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+                <cffile action="delete"  file="#local.source#" />
               </cflock>
-              <cfcatch>
-              </cfcatch>
-            </cftry>
-          </cfif>
+            </cfif>
+            <cfset local.directory = request.filepath & "\article-images\" & local.qGetFile.File_ID>
+            <cfdirectory action="list" directory="#local.directory#" name="local.qGetArticleImages" type="file" recurse="no" />
+            <cfif local.qGetArticleImages.RecordCount>
+              <cfif DirectoryExists(local.directory)>
+                <cfset local._directory = local.directory>
+                <cfloop query="local.qGetArticleImages">
+                  <cfset local.source = local._directory & "\" & local.qGetArticleImages.Name>
+                  <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+                    <cffile action="delete"  file="#local.source#" />
+                  </cflock>
+                </cfloop>
+                <cftry>
+                  <cflock name="delete_file_directory_#local.timestamp#" type="exclusive" timeout="30">
+                    <cfdirectory action="delete" directory="#local.directory#">
+                  </cflock>
+                  <cfcatch>
+                  </cfcatch>
+                </cftry>
+              </cfif>
+            </cfif>
+          </cfloop>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            DELETE 
+            FROM tblUser
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+          </CFQUERY>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            DELETE 
+            FROM tblUsertoken
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+          </CFQUERY>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            DELETE 
+            FROM tblFile
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+          </CFQUERY>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            DELETE 
+            FROM tblFileUser
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+          </CFQUERY>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            DELETE
+            FROM tblComment
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+          </CFQUERY>
+          <cfset local.data['error'] = "">
+        <cfelse>
+          <cfset local.data['error'] = "User is not registered">
         </cfif>
-      </cfloop>
-      <CFQUERY DATASOURCE="#request.domain_dsn#">
-        DELETE 
-        FROM tblUser
-        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
-      </CFQUERY>
-      <CFQUERY DATASOURCE="#request.domain_dsn#">
-        DELETE 
-        FROM tblUsertoken
-        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
-      </CFQUERY>
-      <CFQUERY DATASOURCE="#request.domain_dsn#">
-        DELETE 
-        FROM tblFile
-        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
-      </CFQUERY>
-      <CFQUERY DATASOURCE="#request.domain_dsn#">
-        DELETE 
-        FROM tblFileUser
-        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
-      </CFQUERY>
-      <CFQUERY DATASOURCE="#request.domain_dsn#">
-        DELETE
-        FROM tblComment
-        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
-      </CFQUERY>
-      <cfset local.data['error'] = "">
-    <cfelse>
-      <cfset local.data['error'] = "User is not registered">
-    </cfif>
+      </cfcase>
+      <cfcase value="2">
+		<cfif local.qGetUser.RecordCount>
+          <cftransaction>
+            <CFQUERY DATASOURCE="#request.domain_dsn#">
+              INSERT INTO tblUserArchive (User_ID,Role_ID,Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,SignUpValidated,Clientfilename,Filename,Email_notification,Keep_logged_in,Submit_article_notification,Cookie_acceptance,Theme) 
+              VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.Role_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Salt#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Salt)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Password#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Password)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.E_mail#" null="#yesNoFormat(NOT len(trim(local.qGetUser.E_mail)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Forename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Forename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Surname#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Surname)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Cfid#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Cftoken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.SignUpToken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SignUpToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SignUpValidated#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Clientfilename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Filename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Email_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Keep_logged_in#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Submit_article_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Cookie_acceptance#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Theme#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Theme)))#">)
+            </CFQUERY>
+            <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
+              SELECT * 
+              FROM tblFile 
+              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+            </CFQUERY>
+            <cfloop query="local.qGetFile">
+              <CFQUERY DATASOURCE="#request.domain_dsn#">
+                INSERT INTO tblFileArchive (File_ID,User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Likes,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
+                VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.File_ID#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.User_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.File_uuid#" null="#yesNoFormat(NOT len(trim(local.qGetFile.File_uuid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Category#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Category)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Clientfilename#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Filename#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.qGetFile.ImagePath#" null="#yesNoFormat(NOT len(trim(local.qGetFile.ImagePath)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Author#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Author)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Title#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Title)))#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.qGetFile.Description#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Description)))#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.qGetFile.Article#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Article)))#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.Size#">,<cfqueryparam cfsqltype="cf_sql_integer" value="0">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Cfid#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.Cftoken#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.qGetFile.Tags#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Tags)))#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.qGetFile.Publish_article_date#" null="#yesNoFormat(NOT len(trim(local.qGetFile.Publish_article_date)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetFile.Approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetFile.FileToken#" null="#yesNoFormat(NOT len(trim(local.qGetFile.FileToken)))#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.qGetFile.Submission_date#">)
+              </CFQUERY>
+            </cfloop>
+            <CFQUERY DATASOURCE="#request.domain_dsn#">
+              DELETE 
+              FROM tblUser
+              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+            </CFQUERY>
+            <CFQUERY DATASOURCE="#request.domain_dsn#">
+              DELETE 
+              FROM tblUsertoken
+              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+            </CFQUERY>
+            <CFQUERY DATASOURCE="#request.domain_dsn#">
+              DELETE 
+              FROM tblFile
+              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+            </CFQUERY>
+            <CFQUERY DATASOURCE="#request.domain_dsn#">
+              DELETE 
+              FROM tblFileUser
+              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+            </CFQUERY>
+            <CFQUERY DATASOURCE="#request.domain_dsn#">
+              DELETE
+              FROM tblComment
+              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
+            </CFQUERY>
+          </cftransaction>
+		  <cfset local.data['error'] = "">
+        <cfelse>
+          <cfset local.data['error'] = "User is not registered">
+        </cfif>
+      </cfcase>
+    </cfswitch>
     <cfreturn representationOf(local.data) />
   </cffunction>
 

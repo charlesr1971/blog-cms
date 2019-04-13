@@ -304,8 +304,20 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   
   
-  <cfset buildSitemap = request.utils.BuildSitemap(writeFile=true,unapproved=true)>
+  <!---<cfset buildSitemap = request.utils.BuildSitemap(writeFile=true,unapproved=true)>
   
-  <cfdump var="#buildSitemap#" />
+  <cfdump var="#buildSitemap#" />--->
+  
+  
+  <cfset data = StructNew()>
+  <cfset data['salt'] = request.crptographykey>
+  
+  <strong>data['salt']:</strong> #data['salt']#<br />
+  
+  <cfset encryptedstring = request.utils.Encrypts("paulmeek",data['salt'])>
+  
+  <cfset data['password'] = request.utils.Hashed(encryptedstring,request.lckbcryptlib)>
+  
+  <strong>data['password']:</strong> #data['password']#<br />
 
 </cfoutput>

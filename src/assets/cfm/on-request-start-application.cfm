@@ -201,7 +201,7 @@
   local.queryObj = new Query();	 
   local.queryObj.setDatasource(request.domain_dsn);
   local.queryObj.setName("qGetComment");
-  local.queryResult = queryObj.execute(sql="SELECT * FROM tblComment");
+  local.queryResult = queryObj.execute(sql="SELECT * FROM tblComment INNER JOIN tblUser ON tblComment.User_ID = tblUser.User_ID");
   local.qGetComment = local.queryResult.getResult(); 
   local.records = local.qGetComment.RecordCount;
   request.commentbatch = 0;

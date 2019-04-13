@@ -61,6 +61,15 @@
 
         <div class="panel" *ngIf="currentUser.roleid >= 6">
           <h2 class="panel-legend">
+            <span>Edit Archived Users</span><mat-icon (click)="openProfileUserArchiveEdit($event)">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileUserArchiveEditFadeInOutAnimation]="{value: profileUserArchiveEditState}" style="padding-bottom:0px;">
+            <ag-grid-angular style="width:100%;height:500px;" class="ag-theme-balham" [rowData]="userArchiveRowData" [columnDefs]="userArchiveColumnDefs"></ag-grid-angular>
+          </div>
+        </div>
+
+        <div class="panel" *ngIf="currentUser.roleid >= 6">
+          <h2 class="panel-legend">
             <span>Edit Categories</span><span class="help" (click)="openEditCategoriesHelpNotificationDialog()">?</span><mat-icon (click)="openProfileCategoryEdit($event)">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileCategoryEditFadeInOutAnimation]="{value: profileCategoryEditState}" style="padding-bottom:0px;">
@@ -122,7 +131,7 @@
 
         <div class="form-button-container">
           <button mat-raised-button data-role="submit" (click)="editProfileFormSubmit()" [disabled]="!isEditProfileValid" color="accent">Submit</button>
-          <button mat-raised-button data-role="warning" (click)="deleteProfileFormSubmit()" color="warn">Delete Account</button>
+          <button mat-raised-button data-role="warning" (click)="deleteProfileFormSubmit()" color="warn" *ngIf="userAccountDeleteSchema != 0">Delete Account</button>
           <div style="clear:both;"></div>
         </div>
 

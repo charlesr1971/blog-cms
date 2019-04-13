@@ -37,5 +37,7 @@
   }
   
   request.catalogRouterAlias = "stories";
+  request.userAccountDeleteSchema = 2; //0=no delete, 1=delete, 2=archive
+
 
 </cfscript>

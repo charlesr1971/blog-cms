@@ -131,6 +131,28 @@ export class UploadService {
           })
         };
       }
+      else if(!this.useRestApi && this.mode === 'edit') {
+        httpOptions = {
+          reportProgress: true,
+          headers: new HttpHeaders({
+            'fileUuid': this.fileUuid || '',
+            'File-Name': file.name || '',
+            'Image-Path': this.imagePath || '',
+            'Name': this.name || '',
+            'Title': this.title || '',
+            'Description': this.description || '',
+            'Article': this.article || '',
+            'Tags': this.tags || '',
+            'Publish-article-date': this.publishArticleDate || '',
+            'Tinymce-article-deleted-images': this.tinymceArticleDeletedImages || '',
+            'File-Extension': fileExtension || '',
+            'User-Token': this.userToken || '',
+            'Cfid': this.cfid || '',
+            'Cftoken': this.cftoken || '',
+            'Upload-Type': this.uploadType || ''
+          })
+        };
+      }
       else{
         httpOptions = {
           reportProgress: true,

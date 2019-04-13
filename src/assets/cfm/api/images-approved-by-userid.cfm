@@ -35,7 +35,7 @@
 
   <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
     SELECT * 
-    FROM tblFile 
+    FROM tblFile  
     WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#"> AND Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> 
   </CFQUERY>
   
