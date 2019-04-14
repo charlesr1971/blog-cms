@@ -16,6 +16,8 @@ import { DialogAccountDeleteComponent } from '../../dialog-account-delete/dialog
 import { UtilsService } from '../../services/utils/utils.service';
 import { CategoryEditComponent } from '../../help/dialogs/category-edit/category-edit.component';
 import * as _ from 'lodash';
+import { AgGridNg2 } from 'ag-grid-angular';
+import { SafePipe } from '../../pipes/safe/safe.pipe';
 
 import { UploadService } from '../../upload/upload.service';
 import { HttpService } from '../../services/http/http.service';
@@ -71,7 +73,8 @@ declare var TweenMax: any, Elastic: any;
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
-  ]
+  ],
+  providers: [SafePipe]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
@@ -81,9 +84,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('approvedImagesSelect') approvedImagesSelect;
   @ViewChild('dialogEditCategoriesHelpNotification') private dialogEditCategoriesHelpNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
+  @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
-  @Input() profileUserArchiveEditState: string = 'out';
+  @Input() profileUserArchiveEditState: string = 'in';
+
 
   themeObj = {};
   themeRemove: string = '';
@@ -127,7 +132,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   deleteProfileSubscription: Subscription;
   imagesUnapprovedByUseridSubscription: Subscription;
   imagesApprovedByUseridSubscription: Subscription;
-  usersArchiveSubscription: Subscription;
+  usersArchiveGetSubscription: Subscription;
+  usersArchivePostSubscription: Subscription;
   currentUser: User;
   closeResult: string;
   categoryImagesUrl: string = '';
@@ -136,9 +142,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   dialogEditCategoriesHeight: number = 0;
   userAccountDeleteSchema: number = 2;
+  userArchiveHasNoData: boolean = false;
+
+  gridApiUserArchive;
+  gridColumnApiUserArchive;
   userArchiveColumnDefs = [];
   userArchiveRowData = [];
+  userArchiveDefaultColDef =  {};
+  userArchiveThemeIsLight: boolean = true;
+  userArchiveDomLayout: string = '';
+  userArchiveRowClassRules = {};
 
+  
   debug: boolean = false;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document,
@@ -154,17 +169,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private jwtService: JwtService,
     public matSnackBar: MatSnackBar,
     private utilsService: UtilsService,
+    private safePipe: SafePipe,
     public dialog: MatDialog) { 
 
       if(environment.debugComponentLoadingOrder) {
         console.log('profile.component loaded');
       }
 
+      //this.gridApiUserArchive.sizeColumnsToFit();
+
       this.userAccountDeleteSchema = this.httpService.userAccountDeleteSchema;
 
       this.themeObj = this.httpService.themeObj;
       this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
       this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+
+      this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
 
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
@@ -244,7 +264,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       });
 
-      this.usersArchiveSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveData).subscribe();
+      //this.userArchiveDomLayout = "normal";
+
+      /* this.userArchiveRowClassRules = {
+        "user-archive-row-even": function(params) {
+          if (params.node.rowIndex % 2 === 0) {
+            return 'user-archive-row-odd';
+          }
+        }
+      }; */
+      
+      this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveGetData).subscribe();
 
   }
 
@@ -316,10 +346,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.editProfileSubscription = this.httpService.editUser(body).do(this.processEditProfileData).subscribe();
   }
 
-  private processUsersArchiveData = (data) => {
-    //if(this.debug) {
-      console.log('profile.component: processUsersArchiveData: data',data);
-    //}
+  private processUsersArchiveGetData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersArchiveGetData: data',data);
+    }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
         this.userArchiveColumnDefs = data['columnDefs'];
@@ -331,6 +361,29 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
         else{
           this.openSnackBar(data['error'], 'Error');
+          this.userArchiveHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersArchivePostData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersArchivePostData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userArchiveColumnDefs = data['columnDefs'];
+        this.userArchiveRowData = data['rowData'];
+        this.refreshUserArchive();
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.openSnackBar(data['error'], 'Error');
+          this.userArchiveHasNoData = true;
         }
       }
     }
@@ -369,6 +422,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.httpService.themeType.next(themeType);
         this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+        this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.openSnackBar('Changes have been submitted...', 'Success');
       }
       else{
@@ -869,16 +923,48 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.httpService.editCategoriesDialogOpened.next(this.dialogEditCategoriesHeight);
       }
       if(this.debug) {
-        console.log('cookieAcceptanceSnackBarComponent.component: dialog: this.dialogEditCategoriesHeight: ', this.dialogEditCategoriesHeight);
+        console.log('tree-dynamic: dialog: this.dialogEditCategoriesHeight: ', this.dialogEditCategoriesHeight);
       }
     });
   }
 
-  openSnackBar(message: string, action: string) {
+  openSnackBar(message: string, action: string): void {
     const config = new MatSnackBarConfig();
     config.panelClass = ['custom-class'];
     config.duration = 5000;
     this.matSnackBar.open(message, action, config);
+  }
+
+  userArchiveAutoSizeAll(): void {
+    var allColumnIds = [];
+    this.gridColumnApiUserArchive.getAllColumns().forEach(function(column) {
+      allColumnIds.push(column.colId);
+    });
+    this.gridColumnApiUserArchive.autoSizeColumns(allColumnIds);
+  }
+
+  onUserArchiveGridReady(params): void {
+    this.gridApiUserArchive = params.api;
+    this.gridColumnApiUserArchive = params.columnApi;
+    this.gridApiUserArchive.setDomLayout("autoHeight");
+    setTimeout( () => {
+      this.userArchiveAutoSizeAll();
+    });
+  }
+
+  getUserArchiveSelectedRows(): void {
+    const selectedNodes = this.agGridUserArchive.api.getSelectedNodes();
+    const selectedData = selectedNodes.map( node => node.data );
+    const selectedDataStringPresentation = selectedData.map( node => node.USER_ID).join(',');
+    if(this.debug) {
+      console.log('tree-dynamic: getUserArchiveSelectedRows: selectedDataStringPresentation: ', selectedDataStringPresentation);
+    }
+    this.usersArchivePostSubscription = this.httpService.addUsersFromArchive(selectedDataStringPresentation).do(this.processUsersArchivePostData).subscribe();
+  }
+
+  refreshUserArchive(): void {
+    var params = {force:true};
+    this.gridApiUserArchive.refreshCells(params);
   }
 
   ngOnDestroy() {
@@ -899,8 +985,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.imagesApprovedByUseridSubscription.unsubscribe();
     }
 
-    if(this.usersArchiveSubscription) {
-      this.usersArchiveSubscription.unsubscribe();
+    if(this.usersArchiveGetSubscription) {
+      this.usersArchiveGetSubscription.unsubscribe();
+    }
+
+    if(this.usersArchivePostSubscription) {
+      this.usersArchivePostSubscription.unsubscribe();
     }
 
   }

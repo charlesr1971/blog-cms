@@ -379,6 +379,44 @@ export class HttpService {
     );
   }
 
+  addUsersFromArchive(data: any): Observable<any> {
+    let req = null;
+    let headers = null;
+    if(this.useRestApi) {
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'userids': data || ''
+        })
+      };
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/archive','',headers);
+      if(this.debug) {
+        console.log('http.service: addUsersFromArchive: headers ',headers);
+      }
+    }
+    else{
+      const body = {
+        userids: data
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('POST', this.apiUrl + '/add-users-archive.cfm', body, headers);
+      if(this.debug) {
+        console.log('http.service: addUsersFromArchive: body ',body);
+        console.log('http.service: addUsersFromArchive: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   fetchSignUp(formData: any): Observable<any> {
     let req = null;
     let headers = null;

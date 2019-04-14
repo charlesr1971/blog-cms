@@ -426,6 +426,44 @@ body.profile .mat-tree .mat-form-field {
     display: none;
 }
 
+.custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+    padding: 20px;
+    font-weight: normal !important;
+}
+
+.ag-theme-balham, .ag-theme-dark {
+    background-color: transparent !important;
+}
+
+.ag-cell {
+    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    line-height: 35px !important;
+}
+
+.ag-header-cell-text {
+    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    line-height: 35px !important;
+}
+
+.ag-paging-panel {
+    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    border-top: none !important;
+    padding: 30px 0px 30px 0px !important;
+}
+
+.ag-paging-panel button {
+    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+}
+
+.ag-theme-balham button[ref="btFirst"], .ag-theme-balham button[ref="btPrevious"], .ag-theme-balham button[ref="btLast"], .ag-theme-balham button[ref="btNext"], .ag-theme-dark button[ref="btFirst"], .ag-theme-dark button[ref="btPrevious"], .ag-theme-dark button[ref="btLast"], .ag-theme-dark button[ref="btNext"] {
+    width: auto !important;
+    text-indent: initial !important;
+    padding: 1px 6px !important;
+}
+
 /* media queries */
 
 /* smart phones */
@@ -469,6 +507,15 @@ body.profile .mat-tree .mat-form-field {
 
     .google-recaptcha-loading:after {
         width: 100%;
+    }
+
+    .ag-paging-panel .ag-paging-row-summary-panel {
+        font-size: 9px !important;
+    }
+
+    .ag-paging-panel > span {
+        font-size: 9px !important;
+        margin-left: 5px !important;
     }
 
 }

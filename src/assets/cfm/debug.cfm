@@ -309,7 +309,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   <cfdump var="#buildSitemap#" />--->
   
   
-  <cfset data = StructNew()>
+  <!---<cfset data = StructNew()>
   <cfset data['salt'] = request.crptographykey>
   
   <strong>data['salt']:</strong> #data['salt']#<br />
@@ -318,6 +318,32 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   <cfset data['password'] = request.utils.Hashed(encryptedstring,request.lckbcryptlib)>
   
-  <strong>data['password']:</strong> #data['password']#<br />
+  <strong>data['password']:</strong> #data['password']#<br />--->
+  
+  
+  <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser 
+    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="28">
+  </CFQUERY>
+  
+  <cfset counter = 105>
+  
+  <cfif qGetUser.RecordCount>
+  
+    <cfloop from="1" to="30" index="i">
+    
+      <cfset counter = Val(counter + i)>
+      
+      <cfset data = request.utils.GenerateSimulationData()>
+      
+      <CFQUERY DATASOURCE="#request.domain_dsn#">
+        INSERT INTO tblUserArchive (User_ID,Role_ID,Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,SignUpValidated,Clientfilename,Filename,Email_notification,Keep_logged_in,Submit_article_notification,Cookie_acceptance,Theme) 
+        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#counter#">,<cfqueryparam cfsqltype="cf_sql_integer" value="2">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Salt#" null="#yesNoFormat(NOT len(trim(qGetUser.Salt)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Password#" null="#yesNoFormat(NOT len(trim(qGetUser.Password)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data.email#" null="#yesNoFormat(NOT len(trim(data.email)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data.forename#" null="#yesNoFormat(NOT len(trim(data.forename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data.surname#" null="#yesNoFormat(NOT len(trim(data.surname)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Cfid#" null="#yesNoFormat(NOT len(trim(qGetUser.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Cftoken#" null="#yesNoFormat(NOT len(trim(qGetUser.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.SignUpToken#" null="#yesNoFormat(NOT len(trim(qGetUser.SignUpToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#qGetUser.SignUpValidated#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Clientfilename#" null="#yesNoFormat(NOT len(trim(qGetUser.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Filename#" null="#yesNoFormat(NOT len(trim(qGetUser.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#qGetUser.Email_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#qGetUser.Keep_logged_in#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#qGetUser.Submit_article_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#qGetUser.Cookie_acceptance#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetUser.Theme#" null="#yesNoFormat(NOT len(trim(qGetUser.Theme)))#">)
+      </CFQUERY>
+      
+    </cfloop>
+  
+  </cfif>
 
 </cfoutput>

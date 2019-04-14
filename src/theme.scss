@@ -159,8 +159,25 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text);
     }
 
-    .category-edit-tree-container {
-        background: mat-color($dark-foreground-palette, text, 0.035);
+    .category-edit-tree-container, .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+        background: mat-color($dark-foreground-palette, text, 0.02);
+    }
+
+    .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+        color: mat-color($dark-foreground-palette, text, 0.5); 
+    }
+
+    .ag-paging-panel {
+        /* background: mat-color($dark-foreground-palette, text, 0.05) !important; */
+        background: mat-color($dark-foreground-palette, text, 0.0) !important;
+    }
+
+    .ag-row-hover {
+        background-color: mat-color($dark-primary, default) !important;
+    }
+    
+    .ag-paging-panel button {
+        color: mat-color($dark-foreground-palette, text) !important; 
     }
 
     .category-edit-tree {
@@ -550,8 +567,25 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text);
     }
 
-    .category-edit-tree-container {
-        background: mat-color($light-foreground-palette, text, 0.035);
+    .category-edit-tree-container, .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+        background: mat-color($light-foreground-palette, text, 0.02);
+    }
+
+    .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+        color: mat-color($light-foreground-palette, text, 0.5); 
+    }
+
+    .ag-paging-panel {
+        /* background: mat-color($light-foreground-palette, text, 0.078) !important; */
+        background: mat-color($light-foreground-palette, text, 0.0) !important;
+    }
+
+    .ag-row-hover {
+        background-color: mat-color($light-primary, lighter) !important;
+    }
+
+    .ag-paging-panel button {
+        color: mat-color($light-foreground-palette, text) !important; 
     }
 
     .category-edit-tree {

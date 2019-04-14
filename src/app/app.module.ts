@@ -74,6 +74,7 @@ import { GoogleRecaptchaDirective } from './directives/google-recaptcha/google-r
 import { CustomRecaptchaDirective } from './directives/custom-recaptcha/custom-recaptcha.directive';
 
 import { AgGridModule } from 'ag-grid-angular';
+import { SafePipe } from './pipes/safe/safe.pipe';
 
 
 const appRoutes: Routes = [
@@ -124,7 +125,8 @@ const appRoutes: Routes = [
     AdZoneDirective,
     TextOverflowEllipsisPipe,
     GoogleRecaptchaDirective,
-    CustomRecaptchaDirective
+    CustomRecaptchaDirective,
+    SafePipe
   ],
   imports: [
     BrowserModule,
