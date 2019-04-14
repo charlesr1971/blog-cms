@@ -42,7 +42,7 @@
 		<cfset local.obj = StructNew()>
         <cfset local.columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
         <cfset local.obj['headerName'] = request.utils.CapFirstAll(str=local.columnName)>
-        <cfset local.obj['field'] = local.column>
+        <cfset local.obj['field'] = Trim(LCase(local.column))>
         <cfset ArrayAppend(local.data['columnDefs'],local.obj)>
       </cfloop>
       <cfif ArrayLen(local.data['columnDefs'])>
@@ -159,7 +159,7 @@
 		<cfset local.obj = StructNew()>
         <cfset local.columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
         <cfset local.obj['headerName'] = request.utils.CapFirstAll(str=local.columnName)>
-        <cfset local.obj['field'] = local.column>
+        <cfset local.obj['field'] = Trim(LCase(local.column))>
         <cfset ArrayAppend(local.data['columnDefs'],local.obj)>
       </cfloop>
       <cfif ArrayLen(local.data['columnDefs'])>

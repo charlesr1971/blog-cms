@@ -100,7 +100,7 @@
 	<cfset obj = StructNew()>
 	<cfset columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
 	<cfset obj['headerName'] = CapFirstAll(str=columnName)>
-	<cfset obj['field'] = column>
+	<cfset obj['field'] = Trim(LCase(column))>
 	<cfset ArrayAppend(data['columnDefs'],obj)>
   </cfloop>
   <cfif ArrayLen(data['columnDefs'])>

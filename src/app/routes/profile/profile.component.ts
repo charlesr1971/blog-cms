@@ -360,7 +360,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.httpService.jwtHandler(data['jwtObj']);
         }
         else{
-          this.openSnackBar(data['error'], 'Error');
+          //this.openSnackBar(data['error'], 'Error');
           this.userArchiveHasNoData = true;
         }
       }
@@ -382,7 +382,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.httpService.jwtHandler(data['jwtObj']);
         }
         else{
-          this.openSnackBar(data['error'], 'Error');
+          //this.openSnackBar(data['error'], 'Error');
           this.userArchiveHasNoData = true;
         }
       }
@@ -955,7 +955,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   getUserArchiveSelectedRows(): void {
     const selectedNodes = this.agGridUserArchive.api.getSelectedNodes();
     const selectedData = selectedNodes.map( node => node.data );
-    const selectedDataStringPresentation = selectedData.map( node => node.USER_ID).join(',');
+    const selectedDataStringPresentation = selectedData.map( node => node.user_id).join(',');
     if(this.debug) {
       console.log('tree-dynamic: getUserArchiveSelectedRows: selectedDataStringPresentation: ', selectedDataStringPresentation);
     }

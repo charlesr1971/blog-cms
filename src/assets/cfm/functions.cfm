@@ -1338,10 +1338,20 @@
   }
   
   
-  public array function QueryToArray( query query = QueryNew("")) output="false" {
+  public array function QueryToArray(query query = QueryNew(""), boolean isColumnNameUpperCase = false) output="false" {
+	var local = {};
 	var rows = [];
-	for(var obj in arguments.query) {
-		ArrayAppend(rows,obj);
+	for(local.obj in arguments.query) {
+		local.temp = {};
+		for(local.key in local.obj) {
+		  if(NOT arguments.isColumnNameUpperCase) {	
+			local.temp[LCase(local.key)] = local.obj[local.key];
+		  }
+		  else{
+			local.temp[UCase(local.key)] = local.obj[local.key];
+		  }
+		}
+		ArrayAppend(rows,local.temp);
 	}
 	return rows;
   }

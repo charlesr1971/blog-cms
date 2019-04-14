@@ -321,7 +321,13 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   <strong>data['password']:</strong> #data['password']#<br />--->
   
   
-  <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+  
+  
+  
+  
+  
+  
+  <!---<CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
     SELECT * 
     FROM tblUser 
     WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="28">
@@ -344,6 +350,17 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
       
     </cfloop>
   
-  </cfif>
+  </cfif>--->
+  
+  
+  <CFQUERY NAME="qGetUserArchive" DATASOURCE="#request.domain_dsn#">
+    SELECT Surname, Forename ,E_mail, User_ID  
+    FROM tblUserArchive 
+    ORDER BY Surname ASC
+  </CFQUERY>
+  
+  <cfset data = request.utils.QueryToArray(query=qGetUserArchive)>
+  
+  <cfdump var="#data#" />
 
 </cfoutput>
