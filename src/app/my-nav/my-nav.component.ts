@@ -407,7 +407,10 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   toUploadPhoto(): void {
     this.galleryIsActive = false;
-    this.router.navigate([this.uploadRouterAliasLower, {formType: 'uploadPhoto'}]);
+    //this.router.navigate([this.uploadRouterAliasLower, {formType: 'uploadPhoto'}]);
+    this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then( () => {
+      return this.router.navigate([this.uploadRouterAliasLower, {formType: 'uploadPhoto'}]);
+    });
   }
 
   toProfile(): void {
@@ -417,7 +420,10 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   login(): void {
     this.galleryIsActive = false;
-    this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
+    //this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
+    this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then( () => {
+      return this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
+    });
   }
 
   logout(): void {

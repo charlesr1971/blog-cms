@@ -25,6 +25,8 @@
 <cfset data['keeploggedin'] = 0>
 <cfset data['submitArticleNotification'] = 1>
 <cfset data['cookieAcceptance'] = 0>
+<cfset data['forgottenPasswordToken'] = "">
+<cfset data['forgottenPasswordValidated'] = 0>
 <cfset data['createdat'] = "">
 <cfset data['error'] = "">
 
@@ -83,6 +85,8 @@
     <cfset data['keeploggedin'] = qGetUser.Keep_logged_in>
     <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
     <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
+    <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
+    <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
     <cfset data['createdat'] = qGetUser.Submission_date>
   </cfif>
   <cfset data['error'] = "">

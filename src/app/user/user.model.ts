@@ -22,6 +22,8 @@ export class User {
   cookieAcceptance: number;
   theme: string;
   roleid: number;
+  forgottenPasswordToken: string;
+  forgottenPasswordValidated: number;
 
   constructor(obj?: any) {
 
@@ -43,6 +45,8 @@ export class User {
     this.cookieAcceptance = obj && obj.cookieAcceptance || 0;
     this.theme = obj && obj.theme || null;
     this.roleid = obj && obj.roleid || 2;
+    this.forgottenPasswordToken = obj && obj.forgottenPasswordToken || null;
+    this.forgottenPasswordValidated = obj && obj.forgottenPasswordValidated || 0;
 
   }
   

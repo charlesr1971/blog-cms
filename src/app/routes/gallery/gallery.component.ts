@@ -25,6 +25,7 @@ export class GalleryComponent implements OnInit {
   private ngdomid: string;
   private sub: Subscription;
 
+  catalogRouterAliasLower: string = environment.catalogRouterAlias;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
 
   currentUser: User;
@@ -103,6 +104,19 @@ export class GalleryComponent implements OnInit {
         this.openSnackBar('E-mail address has been successfully validated', 'Success');
         this.router.navigate([this.uploadRouterAliasLower, {formType: 'login'}]);
       }
+
+      this.httpService.navigateToProfile.subscribe( (data) => {
+        if(this.debug) {
+          console.log('gallery.component: this.httpService.navigateToProfile: data: ', data);
+        }
+        if(this.httpService.isForgottenPasswordValidated === 1){
+          this.httpService.isForgottenPasswordValidated = 0;
+          this.openSnackBar('Forgotten password token successfully validated', 'Success');
+          this.router.navigateByUrl('/' + this.uploadRouterAliasLower, {skipLocationChange: true}).then( () => {
+            return this.router.navigate(['profile']);
+          });
+        }
+      });
 
       this.userService.currentUser.subscribe( (user: User) => {
         if(user) {

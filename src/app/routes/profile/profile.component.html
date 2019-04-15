@@ -65,7 +65,7 @@
           </h2>
           <div class="panel-content" [@profileUserArchiveEditFadeInOutAnimation]="{value: profileUserArchiveEditState}" style="padding-bottom:0px;">
             <div class="custom-ag-grid-data-container" *ngIf="!userArchiveHasNoData">
-              <ag-grid-angular #agGridUserArchive style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userArchiveThemeIsLight,'ag-theme-dark': !userArchiveThemeIsLight}" [rowData]="userArchiveRowData" [columnDefs]="userArchiveColumnDefs" (gridReady)="onUserArchiveGridReady($event)" rowSelection="multiple" [rowClassRules]="userArchiveRowClassRules" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="20" rowMultiSelectWithClick="true" suppressCellSelection="true"></ag-grid-angular>
+              <ag-grid-angular #agGridUserArchive style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userArchiveThemeIsLight,'ag-theme-dark': !userArchiveThemeIsLight}" [rowData]="userArchiveRowData" [columnDefs]="userArchiveColumnDefs" (gridReady)="onUserArchiveGridReady($event)" rowSelection="multiple" [rowClassRules]="userArchiveRowClassRules" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [frameworkComponents]="frameworkComponents"></ag-grid-angular>
               <button mat-raised-button (click)="getUserArchiveSelectedRows()">Unarchive</button>
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userArchiveHasNoData">

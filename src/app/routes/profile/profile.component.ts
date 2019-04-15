@@ -18,6 +18,7 @@ import { CategoryEditComponent } from '../../help/dialogs/category-edit/category
 import * as _ from 'lodash';
 import { AgGridNg2 } from 'ag-grid-angular';
 import { SafePipe } from '../../pipes/safe/safe.pipe';
+import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
 
 import { UploadService } from '../../upload/upload.service';
 import { HttpService } from '../../services/http/http.service';
@@ -143,6 +144,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   dialogEditCategoriesHeight: number = 0;
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
+
+  contextUserArchive;
+  frameworkComponentsUserArchive;
 
   gridApiUserArchive;
   gridColumnApiUserArchive;
@@ -275,6 +279,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }; */
       
       this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveGetData).subscribe();
+
+      this.contextUserArchive = {
+        componentParent: this
+      };
+      this.frameworkComponentsUserArchive = {
+        formatEmailRenderer: FormatEmailRenderer
+      };
 
   }
 
@@ -423,7 +434,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
-        this.openSnackBar('Changes have been submitted...', 'Success');
+        this.openSnackBar('Changes have been submitted', 'Success');
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {

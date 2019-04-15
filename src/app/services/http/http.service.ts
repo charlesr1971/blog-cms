@@ -28,6 +28,8 @@ export class HttpService {
   userAccountDeleteSchema: number = 2;
   port: string = '';
   signUpValidated: number = 0;
+  forgottenPasswordToken: string = '';
+  forgottenPasswordValidated: number = 0;
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -43,6 +45,7 @@ export class HttpService {
   tinymcearticlemaximages: number = 2;
   currentUserAuthenticated: number = 0;
   isSignUpValidated: number = 0;
+  isForgottenPasswordValidated: number = 0;
   subjectImagePath: Subject<any> = new Subject<any>();
   scrollCallbackImagesData: Subject<any> = new Subject<any>();
   galleryPage: Subject<any> = new Subject<any>();
@@ -75,6 +78,7 @@ export class HttpService {
   galleryImageAdded: Subject<any> = new Subject<any>();
   browserCacheCleared: boolean = false;
   isLoggedIn: boolean = false;
+  navigateToProfile: Subject<any> = new Subject<any>();
 
   debug: boolean = false;
 
@@ -179,6 +183,15 @@ export class HttpService {
     }
     this.themeObj = this.createTheme(getUrlParameter('theme'));
     this.isSignUpValidated = getUrlParameter('signUpValidated') !== '' ? parseInt(getUrlParameter('signUpValidated').toString()) : 0;
+    const forgottenPasswordToken = getUrlParameter('forgottenPasswordToken');
+    if(forgottenPasswordToken !== '0' || forgottenPasswordToken !== '') {
+      this.forgottenPasswordToken = forgottenPasswordToken;
+    }
+    const forgottenPasswordValidated = getUrlParameter('forgottenPasswordValidated');
+    if(forgottenPasswordValidated !== '0' || forgottenPasswordValidated !== '') {
+      this.forgottenPasswordValidated = forgottenPasswordValidated;
+    }
+    this.isForgottenPasswordValidated = getUrlParameter('forgottenPasswordValidated') !== '' ? parseInt(getUrlParameter('forgottenPasswordValidated').toString()) : 0;
     if(this.debug) {
       console.log('http.service: this.port ',this.port);
       console.log('http.service: this.apiUrl ',this.apiUrl);
@@ -187,8 +200,10 @@ export class HttpService {
       console.log('http.service: this.commentToken ',this.commentToken);
       console.log('http.service: this.themeObj ',this.themeObj);
       console.log('http.service: this.isSignUpValidated ',this.isSignUpValidated);
+      console.log('http.service: this.forgottenPasswordToken ',this.forgottenPasswordToken);
+      console.log('http.service: this.forgottenPasswordValidated ',this.forgottenPasswordValidated);
+      console.log('http.service: this.isForgottenPasswordValidated ',this.isForgottenPasswordValidated);
     }
-
     this.userService.currentUser.subscribe( (user: User) => {
       if(user){
         this.currentUserAuthenticated = user['authenticated'];
@@ -284,7 +299,9 @@ export class HttpService {
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
           theme: data['theme'],
-          roleid: data['roleid']
+          roleid: data['roleid'],
+          forgottenPasswordToken: data['forgottenPasswordToken'],
+          forgottenPasswordValidated: data['forgottenPasswordValidated']
         });
         if(this.commentToken === '' && data['keeploggedin'] === 1 && data['userid'] > 0) {
           user['authenticated'] = data['userid'];
@@ -628,6 +645,44 @@ export class HttpService {
     );
   }
 
+  fetchForgottenPassword(formData: any): Observable<any> {
+    let req = null;
+    let headers = null;
+    if(this.useRestApi) {
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'email': formData['email'] || ''
+        })
+      };
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/forgotten/password','',headers);
+      if(this.debug) {
+        console.log('http.service: fetchForgottenPassword: headers ',headers);
+      }
+    }
+    else{
+      const body = {
+        email: formData['email']
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('POST', this.apiUrl + '/forgotten-password.cfm', body, headers);
+      if(this.debug) {
+        console.log('http.service: fetchForgottenPassword: body ',body);
+        console.log('http.service: fetchForgottenPassword: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   fetchLogin(formData: any): Observable<any> {
     let req = null;
     let headers = null;
@@ -639,6 +694,8 @@ export class HttpService {
           'email': formData['email'] || '',
           'password': formData['password'] || '',
           'commentToken': formData['commentToken'] || '',
+          'forgottenPasswordToken': formData['forgottenPasswordToken'] || '',
+          'forgottenPasswordValidated': formData['forgottenPasswordValidated'] || 0,
           'theme': formData['theme'] || ''
         })
       };
@@ -654,6 +711,8 @@ export class HttpService {
         password: formData['password'],
         userToken: formData['userToken'],
         commentToken: formData['commentToken'],
+        forgottenPasswordToken: formData['forgottenPasswordToken'],
+        forgottenPasswordValidated: formData['forgottenPasswordValidated'],
         keeploggedin: keeploggedin,
         theme: formData['theme']
       };

@@ -36,6 +36,9 @@
 <cfset data['commentid'] = 0>
 <cfset data['fileUuid'] = "">
 <cfset data['cookieAcceptance'] = 0>
+<cfset data['forgottenPasswordToken'] = "">
+<cfset data['forgottenPasswordValidated'] = 0>
+<cfset data['isForgottenPasswordValidated'] = 0>
 <cfset data['createdAt'] = "">
 <cfset data['error'] = "">
 
@@ -61,6 +64,12 @@
   <cfif StructKeyExists(requestBody,"theme")>
   	<cfset data['theme'] = Trim(requestBody['theme'])>
   </cfif>
+  <cfif StructKeyExists(requestBody,"forgottenPasswordToken")>
+  	<cfset data['forgottenPasswordToken'] = Trim(requestBody['forgottenPasswordToken'])>
+  </cfif>
+  <cfif StructKeyExists(requestBody,"forgottenPasswordValidated")>
+  	<cfset data['forgottenPasswordValidated'] = Trim(requestBody['forgottenPasswordValidated'])>
+  </cfif>
   <cfcatch>
     <cftry>
       <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
@@ -83,6 +92,12 @@
       <cfif StructKeyExists(requestBody,"theme")>
 		<cfset data['theme'] = Trim(requestBody['theme'])>
       </cfif>
+      <cfif StructKeyExists(requestBody,"forgottenPasswordToken")>
+		<cfset data['forgottenPasswordToken'] = Trim(requestBody['forgottenPasswordToken'])>
+      </cfif>
+      <cfif StructKeyExists(requestBody,"forgottenPasswordValidated")>
+        <cfset data['forgottenPasswordValidated'] = Trim(requestBody['forgottenPasswordValidated'])>
+      </cfif>
       <cfcatch>
 		<cfset data['error'] = cfcatch.message>
       </cfcatch>
@@ -90,7 +105,12 @@
   </cfcatch>
 </cftry>
 
-<cfif NOT Len(Trim(data['commentToken']))>
+<cfset isForgottenPasswordValidated = false>
+<cfif Len(Trim(data['forgottenPasswordToken'])) AND Val(data['forgottenPasswordValidated'])>
+  <cfset isForgottenPasswordValidated = true>
+</cfif>
+
+<cfif NOT Len(Trim(data['commentToken'])) AND NOT isForgottenPasswordValidated>
   <CFQUERY NAME="qGetSalt" DATASOURCE="#request.domain_dsn#">
     SELECT * 
     FROM tblUser 
@@ -173,6 +193,8 @@
         <cfset data['keeploggedin'] = data['keeploggedin']>
         <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
         <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
+        <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
+        <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
         <cfset data['createdAt'] = qGetUser.Submission_date>
       </cfif>
     </cfif>
@@ -189,7 +211,7 @@
        <cfset data['error'] = "User has not registered">
     </cfif>
   </cfif>
-<cfelse>
+<cfelseif Len(Trim(data['commentToken'])) AND NOT isForgottenPasswordValidated>
   <CFQUERY NAME="qGetComment" DATASOURCE="#request.domain_dsn#">
     SELECT * 
     FROM tblComment 
@@ -259,6 +281,90 @@
         <cfset data['commentid'] = qGetComment.Comment_ID>
         <cfset data['fileUuid'] = qGetComment.File_uuid>
         <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
+        <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
+        <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
+        <cfset data['createdAt'] = qGetUser.Submission_date>
+        <cfset data['error'] = "">
+      </cfif>
+    </cfif>
+  </cfif>
+<cfelseif isForgottenPasswordValidated>
+  <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser 
+    WHERE ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['forgottenPasswordToken']#"> AND ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+  </CFQUERY>
+  <cfif qGetUser.RecordCount>
+    <CFQUERY DATASOURCE="#request.domain_dsn#">
+      UPDATE tblUser
+      SET ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="">, ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
+      WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+    </CFQUERY>
+    <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+      SELECT * 
+      FROM tblUser 
+      WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+    </CFQUERY>
+    <cfif qGetUser.RecordCount>
+      <CFQUERY NAME="qGetUserID" DATASOURCE="#request.domain_dsn#">
+        SELECT * 
+        FROM tblUserToken 
+        WHERE User_token = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['userToken']#">
+      </CFQUERY>
+      <cfif NOT qGetUserID.RecordCount AND Len(Trim(data['userToken']))>
+        <CFQUERY DATASOURCE="#request.domain_dsn#">
+          INSERT INTO tblUserToken (User_ID,User_token) 
+          VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['userToken']#">)
+        </CFQUERY>
+        <cfset data['usertokenmatch'] = "no user token match, so new one was inserted">
+      <cfelse>
+        <cfif qGetUser.User_ID NEQ qGetUserID.User_ID>
+          <cfset data['userToken'] = LCase(CreateUUID())>
+          <CFQUERY DATASOURCE="#request.domain_dsn#">
+            UPDATE tblUserToken
+            SET User_token = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['userToken']#"> 
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+          </CFQUERY>
+          <cfset data['usertokenmatch'] = "user token match, but belonged to different user, so old token updated with new token">
+        </cfif>
+        <cfset data['usertokenmatch'] = "user token match">
+      </cfif>
+      <cfif Len(Trim(data['theme']))>
+        <CFQUERY DATASOURCE="#request.domain_dsn#">
+          UPDATE tblUser
+          SET Theme =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(data['theme'],'-')#">  
+          WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+        </CFQUERY>
+      </cfif>
+      <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+        SELECT * 
+        FROM tblUser 
+        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#"> 
+      </CFQUERY>
+      <cfif qGetUser.RecordCount>
+        <cfset data['userid'] = qGetUser.User_ID>
+        <cfset data['forename'] = qGetUser.Forename>
+        <cfset data['surname'] = qGetUser.Surname>
+        <cfset data['email'] = qGetUser.E_mail>
+        <cfset data['salt'] = qGetUser.Salt>
+        <cfset data['password'] = qGetUser.Password>
+        <cfset data['authenticated'] = 1>
+        <cfset data['cfid'] = qGetUser.Cfid>
+        <cfset data['cftoken'] = qGetUser.Cftoken>
+        <cfset data['signUpToken'] = qGetUser.SignUpToken>
+        <cfset data['signUpValidated'] = qGetUser.SignUpValidated>
+        <cfset data['avatarSrc'] = request.avatarbasesrc & qGetUser.Filename>
+        <cfset data['emailNotification'] = qGetUser.Email_notification>
+        <cfset data['theme'] = themeObj['stem'] & "-" & qGetUser.Theme>
+        <cfset data['roleid'] = qGetUser.Role_ID>
+        <cfset data['keeploggedin'] = qGetUser.Keep_logged_in>
+        <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
+        <cfset data['commentid'] = qGetComment.Comment_ID>
+        <cfset data['fileUuid'] = qGetComment.File_uuid>
+        <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
+        <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
+        <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
+        <cfset data['isForgottenPasswordValidated'] = 1>
         <cfset data['createdAt'] = qGetUser.Submission_date>
         <cfset data['error'] = "">
       </cfif>

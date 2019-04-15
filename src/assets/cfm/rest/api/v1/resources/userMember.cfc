@@ -23,6 +23,8 @@
     <cfset local.data['keeploggedin'] = 0>
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['cookieAcceptance'] = 0>
+    <cfset local.data['forgottenPasswordToken'] = "">
+    <cfset local.data['forgottenPasswordValidated'] = 0>
     <cfset local.data['createdat'] = "">
     <cfset local.data['error'] = "">
     <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
@@ -52,6 +54,8 @@
         <cfset local.data['keeploggedin'] = local.qGetUser.Keep_logged_in>
         <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
         <cfset local.data['cookieAcceptance'] = local.qGetUser.Cookie_acceptance>
+        <cfset local.data['forgottenPasswordToken'] = local.qGetUser.ForgottenPasswordToken>
+        <cfset local.data['forgottenPasswordValidated'] = local.qGetUser.ForgottenPasswordValidated>
         <cfset local.data['createdat'] = local.qGetUser.Submission_date>
       </cfif>
       <cfset local.data['error'] = "">

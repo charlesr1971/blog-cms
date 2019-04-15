@@ -5,6 +5,8 @@
   <cfparam name="id" default="">
   <cfparam name="title" default="">
   <cfparam name="signUpValidated" default="0">
+  <cfparam name="forgottenPasswordToken" default="">
+  <cfparam name="forgottenPasswordValidated" default="0">
   
   <cfif StructKeyExists(url,"signUpToken")>
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
@@ -22,6 +24,23 @@
     </cfif>
   </cfif>
   
+  <cfif StructKeyExists(url,"forgottenPasswordToken")>
+    <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+      SELECT * 
+      FROM tblUser 
+      WHERE ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#url.forgottenPasswordToken#">
+    </CFQUERY>
+    <cfif qGetUser.RecordCount>
+      <CFQUERY NAME="qUpdateForgottenPasswordValidated" DATASOURCE="#request.domain_dsn#">
+        UPDATE tblUser
+        SET ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+      </CFQUERY>
+      <cfset forgottenPasswordToken = url.forgottenPasswordToken>
+      <cfset forgottenPasswordValidated = 1>
+    </cfif>
+  </cfif>
+
   <cfif StructKeyExists(url,"commentToken")>
 	<cfset commentToken = url.commentToken>
   </cfif>
@@ -67,7 +86,7 @@
       <title>#request.title# S.P.A</title>
       <cfif NOT request.appreloadValidated>
 		<script type="text/javascript">
-          location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#&htmlTitle=#URLEncodedFormat(request.htmlTitle)#&twitterCardType=#URLEncodedFormat(request.twitterCardType)#&twitterSite=#URLEncodedFormat(request.twitterSite)#&twitterCreator=#URLEncodedFormat(request.twitterCreator)#&ogUrl=#URLEncodedFormat(request.ogUrl)#&ogTitle=#URLEncodedFormat(request.ogTitle)#&ogDescription=#URLEncodedFormat(request.ogDescription)#&ogImage=#URLEncodedFormat(request.ogImage)#&adZoneUrl=#URLEncodedFormat(request.adzoneurl)#&userAccountDeleteSchema=#request.userAccountDeleteSchema#";
+          location.href = "#request.ngIframeSrc#?port=#request.cfport#&cfid=#cookie.cfid#&cftoken=#cookie.cftoken#&ngdomid=#ngdomid#&maxcontentlength=#request.maxcontentlength#&tinymcearticlemaximages=#request.tinymcearticlemaximages#&commenttoken=#commentToken#&id=#id#&title=#URLEncodedFormat(title)#&signUpValidated=#signUpValidated#&theme=#request.theme#&websiteTitle=#URLEncodedFormat(request.title)#&htmlTitle=#URLEncodedFormat(request.htmlTitle)#&twitterCardType=#URLEncodedFormat(request.twitterCardType)#&twitterSite=#URLEncodedFormat(request.twitterSite)#&twitterCreator=#URLEncodedFormat(request.twitterCreator)#&ogUrl=#URLEncodedFormat(request.ogUrl)#&ogTitle=#URLEncodedFormat(request.ogTitle)#&ogDescription=#URLEncodedFormat(request.ogDescription)#&ogImage=#URLEncodedFormat(request.ogImage)#&adZoneUrl=#URLEncodedFormat(request.adzoneurl)#&userAccountDeleteSchema=#request.userAccountDeleteSchema#&forgottenPasswordToken=#forgottenPasswordToken#&forgottenPasswordValidated=#forgottenPasswordValidated#";
         </script>
       </cfif>
     </head>

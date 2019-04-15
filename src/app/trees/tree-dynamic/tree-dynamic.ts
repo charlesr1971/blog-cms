@@ -251,9 +251,12 @@ export class TreeDynamic implements OnInit, OnDestroy {
   imagePath: string;
   selectedFile: File;
   directorySelected: string;
+
   treeForm: FormGroup;
   signUpForm: FormGroup;
   loginForm: FormGroup;
+  forgottenPasswordForm: FormGroup;
+
   submitArticleNotificationForm: FormGroup;
   name: FormControl;
   maxNameLength: number = 20;
@@ -289,6 +292,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   isEditImageValid: boolean = true;
   signUpValidated: number = 0;
   signupSubscription: Subscription;
+  forgottenPasswordSubscription: Subscription;
   editImageSubscription: Subscription;
   currentUser: User;
   mode: string = 'add';
@@ -313,11 +317,15 @@ export class TreeDynamic implements OnInit, OnDestroy {
   recaptchaType: string = environment.recaptchaType;
   signUpFormDisabled: boolean = true;
   loginFormDisabled: boolean = true;
+  forgottenPasswordFormDisabled: boolean = true;
   googleRecaptchaId1: number = this.getRandomInt(1000000,9999999);
   googleRecaptchaId2: number = this.getRandomInt(1000000,9999999);
   customRecaptchaRotationMax: number = environment.customRecaptchaRotationMax;
   customRecaptchaStrLength: number = environment.customRecaptchaStrLength;
   disableCustomCaptchaGeneralTooltip: boolean = false;
+  isForgottenPasswordForm: boolean = false;
+  emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+  captchaIsValid: boolean = false;
 
   debug: boolean = false;
 
@@ -369,6 +377,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       this.treeForm = null;
       this.signUpForm = null;
       this.loginForm = null;
+      this.forgottenPasswordForm = null;
       this.createFormControls();
       this.createForm();
       this.monitorFormValueChanges();
@@ -415,12 +424,23 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic.component: this.cookieService.get("userToken")',this.cookieService.get('userToken'));
           console.log('tree-dynamic.component: ngOnInit: this.currentUser ',this.currentUser);
         }
+
+        
+
         if (params['formType'] && params['formType'] === 'login') { 
           this.signUpValidated = 1;
           if(this.debug) {
             console.log('tree-dynamic: login');
           }
         }
+
+        if (params['formType'] && params['formType'] === 'forgottenPassword') { 
+          this.isForgottenPasswordForm = true;
+          if(this.debug) {
+            console.log('tree-dynamic: forgotten password');
+          }
+        }
+
         if (params['formType'] && params['formType'] === 'logout') { 
           this.signUpValidated = 1;
           this.userid = 0;
@@ -464,6 +484,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.treeForm = null;
           this.signUpForm = null;
           this.loginForm = null;
+          this.forgottenPasswordForm = null;
           this.createFormControls();
           this.createForm();
           this.monitorFormValueChanges();
@@ -482,6 +503,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.treeForm = null;
           this.signUpForm = null;
           this.loginForm = null;
+          this.forgottenPasswordForm = null;
           this.createFormControls();
           this.createForm();
           this.monitorFormValueChanges();
@@ -670,13 +692,28 @@ export class TreeDynamic implements OnInit, OnDestroy {
       password: this.password.value,
       userToken: this.userToken,
       commentToken: '',
+      forgottenPasswordToken: '',
+      forgottenPasswordValidated: 0,
       keeploggedin: this.keeploggedin.value,
       theme: this.httpService.browserCacheCleared ? themeObj['default'] : this.currentUser['theme']
     };
     if(this.debug) {
-      console.log('login: body',body);
+      console.log('tree-dynamic: login: body',body);
     }
     this.signupSubscription = this.httpService.fetchLogin(body).do(this.processLoginData).subscribe();
+  }
+
+  forgottenPassword(): void {
+    this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then( () => {
+      return this.router.navigate([this.uploadRouterAliasLower, {formType: 'forgottenPassword'}]);
+    });
+  }
+
+  forgottenPasswordFormSubmit(): void {
+    const body = {
+      email: this.email.value
+    };
+    this.forgottenPasswordSubscription = this.httpService.fetchForgottenPassword(body).do(this.processForgottenPasswordData).subscribe();
   }
 
   private processImageData = (data) => {
@@ -750,7 +787,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic: processEditImageData: this.tinymceArticleImages',this.tinymceArticleImages);
         }
         this.hasUnsavedChanges = false;
-        this.openSnackBar('Changes have been submitted...', 'Success');
+        this.openSnackBar('Changes have been submitted', 'Success');
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -790,6 +827,18 @@ export class TreeDynamic implements OnInit, OnDestroy {
       }
       else{
         this.openSnackBar(data['error'], 'Error');
+      }
+    }
+  }
+
+  private processForgottenPasswordData = (data) => {
+    if(this.debug) {
+      console.log('tree-dynamic: processForgottenPasswordData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '') {
+        this.openSnackBar('Please check your e-mail to change your password', 'Success');
+        this.router.navigate([this.catalogRouterAliasLower]);
       }
     }
   }
@@ -836,16 +885,17 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.treeForm = null;
           this.signUpForm = null;
           this.loginForm = null;
+          this.forgottenPasswordForm = null;
           this.createFormControls();
           this.createForm();
           this.monitorFormValueChanges();
         }
         else{
           if(this.currentUser['signUpValidated']) {
-            this.openSnackBar('Login failed. Please try again...', 'Error');
+            this.openSnackBar('Login failed. Please try again', 'Error');
           }
           else{
-            this.openSnackBar('Login failed. Please sign-up...', 'Error');
+            this.openSnackBar('Login failed. Please sign-up', 'Error');
           }
         }
         const cookieAcceptance = this.cookieService.check('cookieAcceptance') ? parseInt(this.cookieService.get('cookieAcceptance')) : null;
@@ -870,362 +920,460 @@ export class TreeDynamic implements OnInit, OnDestroy {
   }
 
   createForm(): void {
-    if(this.userid > 0 && this.signUpValidated === 1) {
-      this.treeForm = new FormGroup({
-        name: this.name,
-        title: this.title,
-        description: this.description,
-        publishArticleDate: this.publishArticleDate,
-        tags: this.tags
-      });
-    }
-    else{
-      if(this.userid === 0 && this.signUpValidated === 0) {
-        if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
-          this.signUpForm = new FormGroup({
-            forename: this.forename,
-            surname: this.surname,
-            email: this.email,
-            password: this.password,
-            captcha: this.captcha
-          });
-        }
-        else{
-          this.signUpForm = new FormGroup({
-            forename: this.forename,
-            surname: this.surname,
-            email: this.email,
-            password: this.password
-          });
-        }
+    if(!this.isForgottenPasswordForm) {
+      if(this.userid > 0 && this.signUpValidated === 1) {
+        this.treeForm = new FormGroup({
+          name: this.name,
+          title: this.title,
+          description: this.description,
+          publishArticleDate: this.publishArticleDate,
+          tags: this.tags
+        });
       }
       else{
-        if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
-          this.loginForm = new FormGroup({
-            email: this.email,
-            password: this.password,
-            keeploggedin: this.keeploggedin,
-            captcha: this.captcha
-          });
+        if(this.userid === 0 && this.signUpValidated === 0) {
+          if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
+            this.signUpForm = new FormGroup({
+              forename: this.forename,
+              surname: this.surname,
+              email: this.email,
+              password: this.password,
+              captcha: this.captcha
+            });
+          }
+          else{
+            this.signUpForm = new FormGroup({
+              forename: this.forename,
+              surname: this.surname,
+              email: this.email,
+              password: this.password
+            });
+          }
         }
         else{
-          this.loginForm = new FormGroup({
-            email: this.email,
-            password: this.password,
-            keeploggedin: this.keeploggedin
-          });
+          if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
+            this.loginForm = new FormGroup({
+              email: this.email,
+              password: this.password,
+              keeploggedin: this.keeploggedin,
+              captcha: this.captcha
+            });
+          }
+          else{
+            this.loginForm = new FormGroup({
+              email: this.email,
+              password: this.password,
+              keeploggedin: this.keeploggedin
+            });
+          }
         }
       }
+      if(this.debug) {
+        console.log('this.treeForm ',this.treeForm);
+        console.log('this.signUpForm ',this.signUpForm);
+        console.log('this.loginForm ',this.loginForm);
+      }
     }
-    if(this.debug) {
-      console.log('this.treeForm ',this.treeForm);
-      console.log('this.signUpForm ',this.signUpForm);
-      console.log('this.loginForm ',this.loginForm);
+    else{
+      if(this.recaptchaType === 'google' || this.recaptchaType === 'custom') {
+        this.forgottenPasswordForm = new FormGroup({
+          email: this.email,
+          captcha: this.captcha
+        });
+      }
+      else{
+        this.forgottenPasswordForm = new FormGroup({
+          email: this.email
+        });
+      }
+      if(this.debug) {
+        console.log('this.forgottenPasswordForm ',this.forgottenPasswordForm);
+      }
     }
   }
 
   createFormControls(): void {
-    if(this.userid > 0 && this.signUpValidated === 1) {
-      this.name = new FormControl('', [
-        Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(this.maxNameLength)
-      ]);
-      this.title = new FormControl('', [
-        Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(this.maxTitleLength)
-      ]);
-      this.description = new FormControl('', [
-        Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(this.maxDescriptionLength)
-      ]);
-      this.tags = new FormControl('', [
-        Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(this.maxTagsLength)
-      ]);
-      this.publishArticleDate = new FormControl(moment());
-      this.submitArticleNotification = new FormControl();
-      if(this.debug) {
-        console.log('tree-dynamic: createFormControls: 1');
+    if(!this.isForgottenPasswordForm) {
+      if(this.userid > 0 && this.signUpValidated === 1) {
+        this.name = new FormControl('', [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(this.maxNameLength)
+        ]);
+        this.title = new FormControl('', [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(this.maxTitleLength)
+        ]);
+        this.description = new FormControl('', [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(this.maxDescriptionLength)
+        ]);
+        this.tags = new FormControl('', [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(this.maxTagsLength)
+        ]);
+        this.publishArticleDate = new FormControl(moment());
+        this.submitArticleNotification = new FormControl();
+        if(this.debug) {
+          console.log('tree-dynamic: createFormControls: 1');
+        }
+      }
+      else{
+        if(this.userid === 0 && this.signUpValidated === 0) {
+          this.forename = new FormControl('', [
+            Validators.required,
+            Validators.minLength(1)
+          ]);
+          this.surname = new FormControl('', [
+            Validators.required,
+            Validators.minLength(1)
+          ]);
+          if(this.debug) {
+            console.log('tree-dynamic: createFormControls: 2');
+          }
+        }
+        const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+        this.email = new FormControl('', [
+          Validators.required,
+          Validators.pattern(emailPattern),
+          Validators.minLength(1)
+        ]);
+        this.password = new FormControl('', [
+          Validators.required,
+          Validators.pattern('.*'),
+          Validators.minLength(1)
+        ]);
+        if(this.userid === 0 && this.signUpValidated === 0) {
+          if(this.recaptchaType === 'google') {
+            this.captcha = new FormControl();
+          }
+          else if(this.recaptchaType === 'custom') {
+            this.captcha = new FormControl('', [
+              Validators.required,
+              Validators.minLength(1)
+            ]);
+          }
+        }
+        if(this.userid === 0 && this.signUpValidated === 1) {
+          this.keeploggedin = new FormControl();
+          if(this.recaptchaType === 'google') {
+            this.captcha = new FormControl();
+          }
+          else if(this.recaptchaType === 'custom') {
+            this.captcha = new FormControl('', [
+              Validators.required,
+              Validators.minLength(1)
+            ]);
+          }
+        }
+        if(this.debug) {
+          console.log('tree-dynamic: createFormControls: 3');
+        }
       }
     }
     else{
-      if(this.userid === 0 && this.signUpValidated === 0) {
-        this.forename = new FormControl('', [
-          Validators.required,
-          Validators.minLength(1)
-        ]);
-        this.surname = new FormControl('', [
-          Validators.required,
-          Validators.minLength(1)
-        ]);
-        if(this.debug) {
-          console.log('tree-dynamic: createFormControls: 2');
-        }
-      }
-      const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+      //const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
       this.email = new FormControl('', [
         Validators.required,
-        Validators.pattern(emailPattern),
+        Validators.pattern(this.emailPattern),
         Validators.minLength(1)
       ]);
-      this.password = new FormControl('', [
-        Validators.required,
-        Validators.minLength(1)
-      ]);
-      if(this.userid === 0 && this.signUpValidated === 0) {
-        if(this.recaptchaType === 'google') {
-          this.captcha = new FormControl();
-        }
-        else if(this.recaptchaType === 'custom') {
-          this.captcha = new FormControl('', [
-            Validators.required,
-            Validators.minLength(1)
-          ]);
-        }
+      if(this.recaptchaType === 'google') {
+        this.captcha = new FormControl();
       }
-      if(this.userid === 0 && this.signUpValidated === 1) {
-        this.keeploggedin = new FormControl();
-        if(this.recaptchaType === 'google') {
-          this.captcha = new FormControl();
-        }
-        else if(this.recaptchaType === 'custom') {
-          this.captcha = new FormControl('', [
-            Validators.required,
-            Validators.minLength(1)
-          ]);
-        }
-      }
-      if(this.debug) {
-        console.log('tree-dynamic: createFormControls: 3');
+      else if(this.recaptchaType === 'custom') {
+        this.captcha = new FormControl('', [
+          Validators.required,
+          Validators.minLength(1)
+        ]);
       }
     }
   }
 
   monitorFormValueChanges(): void {
-    
-    if(this.debug) {
-      console.log('tree-dynamic: monitorFormValueChanges: this.signUpValidated: ',this.signUpValidated);
-    }
-    if(this.treeForm) {
+    if(!this.isForgottenPasswordForm) {
       if(this.debug) {
-        console.log('tree-dynamic: monitorFormValueChanges: this.signUpForm: ',this.signUpForm);
+        console.log('tree-dynamic: monitorFormValueChanges: this.signUpValidated: ',this.signUpValidated);
       }
-      if(this.debug) {
-        console.log('tree-dynamic: monitorFormValueChanges: this.loginForm: ',this.loginForm);
-      }
-      if(this.debug) {
-        console.log('tree-dynamic: monitorFormValueChanges: this.treeForm: ',this.treeForm);
-      }
-      this.name.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(name => {
+      if(this.treeForm) {
         if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: name: ',name);
+          console.log('tree-dynamic: monitorFormValueChanges: this.signUpForm: ',this.signUpForm);
         }
-        this.formData['name'] = name;
-        this.httpService.subjectImagePath.next(this.formData);
-      });
-      this.title.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(title => {
         if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: title: ',title);
+          console.log('tree-dynamic: monitorFormValueChanges: this.loginForm: ',this.loginForm);
         }
-        this.formData['title'] = title;
-        this.httpService.subjectImagePath.next(this.formData);
-      });
-      this.description.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(description => {
         if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: description: ',description);
+          console.log('tree-dynamic: monitorFormValueChanges: this.treeForm: ',this.treeForm);
         }
-        this.formData['description'] = description;
-        this.httpService.subjectImagePath.next(this.formData);
-      });
-      this.tags.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(tags => {
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: tags: ',tags);
-        }
-        this.formData['tags'] = tags;
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: this.formData["tags"]: ', this.formData['tags']);
-        }
-        this.httpService.subjectImagePath.next(this.formData);
-      });
-      this.publishArticleDate.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(publishArticleDate => {
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: publishArticleDate: ',publishArticleDate);
-        }
-        this.formData['publishArticleDate'] = publishArticleDate;
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: this.formData["publishArticleDate"]: ', this.formData['publishArticleDate']);
-        }
-        this.httpService.subjectImagePath.next(this.formData);
-      });
-    }
-    if(this.signUpForm) {
-      this.forename.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(forename => {
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: forename: ',forename);
-        }
-        this.formData['forename'] = forename;
-        this.isSignUpValid = this.isSignUpFormValid();
-      });
-      this.surname.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(surname => {
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: surname: ',surname);
-        }
-        this.formData['surname'] = surname;
-        this.isSignUpValid = this.isSignUpFormValid();
-      });
-    }
-    if(this.signUpForm || this.loginForm) {
-      if(this.debug) {
-        console.log('tree-dynamic: monitorFormValueChanges: this.signUpForm: ',this.signUpForm);
-      }
-      if(this.debug) {
-        console.log('tree-dynamic: monitorFormValueChanges: this.loginForm: ',this.loginForm);
-      }
-      if(this.debug) {
-        console.log('tree-dynamic: monitorFormValueChanges: this.treeForm: ',this.treeForm);
-      }
-      this.email.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(email => {
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: email: ',email);
-        }
-        this.formData['email'] = email;
-        if(this.signUpForm) {
-          this.isSignUpValid = this.isSignUpFormValid();
-          if(this.recaptchaType !== 'google') {
-            this.signUpFormDisabledState();
-          }
-        }
-        else{
-          this.isLoginValid = this.isLoginFormValid();
-          if(this.recaptchaType !== 'google') {
-            this.loginFormDisabledState();
-          }
-        }
-      });
-      this.password.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(password => {
-        if(this.debug) {
-          console.log('password: ',password);
-        }
-        this.formData['password'] = password;
-        if(this.signUpForm) {
-          this.isSignUpValid = this.isSignUpFormValid();
-          if(this.recaptchaType !== 'google') {
-            this.signUpFormDisabledState();
-          }
-        }
-        else{
-          this.isLoginValid = this.isLoginFormValid();
-          if(this.recaptchaType !== 'google') {
-            this.loginFormDisabledState();
-          }
-        }
-      });
-    }
-    if(this.signUpForm) {
-      if(this.recaptchaType === 'custom') {
-        this.captcha.valueChanges
+        this.name.valueChanges
         .pipe(
           debounceTime(400),
           distinctUntilChanged()
         )
-        .subscribe(captcha => {
-          this.signUpFormDisabled = this.isCaptchaValid(captcha) && !this.signUpForm.invalid ? false : true;
+        .subscribe(name => {
           if(this.debug) {
-            console.log('tree-dynamic: monitorFormValueChanges: this.signUpFormDisabled: ',this.signUpFormDisabled);
+            console.log('tree-dynamic: monitorFormValueChanges: name: ',name);
           }
+          this.formData['name'] = name;
+          this.httpService.subjectImagePath.next(this.formData);
         });
-      }
-    }
-    if(this.loginForm) {
-      this.keeploggedin.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
-      .subscribe(keeploggedin => {
-        if(this.debug) {
-          console.log('tree-dynamic: monitorFormValueChanges: keeploggedin: ',keeploggedin);
-        }
-        this.formData['keeploggedin'] = keeploggedin ? 1 : 0;
-      });
-      if(this.recaptchaType === 'custom') {
-        this.captcha.valueChanges
+        this.title.valueChanges
         .pipe(
           debounceTime(400),
           distinctUntilChanged()
         )
-        .subscribe(captcha => {
-          this.loginFormDisabled = this.isCaptchaValid(captcha) && !this.loginForm.invalid ? false : true;
+        .subscribe(title => {
           if(this.debug) {
-            console.log('tree-dynamic: monitorFormValueChanges: this.loginFormDisabled: ',this.loginFormDisabled);
+            console.log('tree-dynamic: monitorFormValueChanges: title: ',title);
+          }
+          this.formData['title'] = title;
+          this.httpService.subjectImagePath.next(this.formData);
+        });
+        this.description.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(description => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: description: ',description);
+          }
+          this.formData['description'] = description;
+          this.httpService.subjectImagePath.next(this.formData);
+        });
+        this.tags.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(tags => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: tags: ',tags);
+          }
+          this.formData['tags'] = tags;
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: this.formData["tags"]: ', this.formData['tags']);
+          }
+          this.httpService.subjectImagePath.next(this.formData);
+        });
+        this.publishArticleDate.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(publishArticleDate => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: publishArticleDate: ',publishArticleDate);
+          }
+          this.formData['publishArticleDate'] = publishArticleDate;
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: this.formData["publishArticleDate"]: ', this.formData['publishArticleDate']);
+          }
+          this.httpService.subjectImagePath.next(this.formData);
+        });
+      }
+      if(this.signUpForm) {
+        this.forename.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(forename => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: forename: ',forename);
+          }
+          this.formData['forename'] = forename;
+          if(this.signUpForm) {
+            //if(this.recaptchaType !== 'google') {
+              this.signUpFormDisabledState();
+            //}
+          }
+          else{
+            //if(this.recaptchaType !== 'google') {
+              this.loginFormDisabledState();
+            //}
           }
         });
+        this.surname.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(surname => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: surname: ',surname);
+          }
+          this.formData['surname'] = surname;
+          if(this.signUpForm) {
+            //if(this.recaptchaType !== 'google') {
+              this.signUpFormDisabledState();
+            //}
+          }
+          else{
+            //if(this.recaptchaType !== 'google') {
+              this.loginFormDisabledState();
+            //}
+          }
+        });
+      }
+      if(this.signUpForm || this.loginForm) {
+        if(this.debug) {
+          console.log('tree-dynamic: monitorFormValueChanges: this.signUpForm: ',this.signUpForm);
+        }
+        if(this.debug) {
+          console.log('tree-dynamic: monitorFormValueChanges: this.loginForm: ',this.loginForm);
+        }
+        if(this.debug) {
+          console.log('tree-dynamic: monitorFormValueChanges: this.treeForm: ',this.treeForm);
+        }
+        this.email.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(email => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: email: ',email);
+          }
+          this.formData['email'] = email;
+          if(this.signUpForm) {
+            //if(this.recaptchaType !== 'google') {
+              this.signUpFormDisabledState();
+            //}
+          }
+          else{
+            //if(this.recaptchaType !== 'google') {
+              this.loginFormDisabledState();
+            //}
+          }
+        });
+        this.password.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(password => {
+          if(this.debug) {
+            console.log('password: ',password);
+          }
+          this.formData['password'] = password;
+          if(this.signUpForm) {
+            //if(this.recaptchaType !== 'google') {
+              this.signUpFormDisabledState();
+            //}
+          }
+          else{
+            //if(this.recaptchaType !== 'google') {
+              this.loginFormDisabledState();
+            //}
+          }
+        });
+      }
+      if(this.signUpForm) {
+        if(this.recaptchaType === 'custom') {
+          this.captcha.valueChanges
+          .pipe(
+            debounceTime(400),
+            distinctUntilChanged()
+          )
+          .subscribe(captcha => {
+            this.signUpFormDisabled = this.isCustomCaptchaValid(captcha) && !this.signUpForm.invalid ? false : true;
+            if(this.debug) {
+              console.log('tree-dynamic: monitorFormValueChanges: this.signUpFormDisabled: ',this.signUpFormDisabled);
+            }
+          });
+        }
+      }
+      if(this.loginForm) {
+        this.keeploggedin.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(keeploggedin => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: keeploggedin: ',keeploggedin);
+          }
+          this.formData['keeploggedin'] = keeploggedin ? 1 : 0;
+        });
+        if(this.recaptchaType === 'custom') {
+          this.captcha.valueChanges
+          .pipe(
+            debounceTime(400),
+            distinctUntilChanged()
+          )
+          .subscribe(captcha => {
+            this.loginFormDisabled = this.isCustomCaptchaValid(captcha) && !this.loginForm.invalid ? false : true;
+            if(this.debug) {
+              console.log('tree-dynamic: monitorFormValueChanges: this.loginFormDisabled: ',this.loginFormDisabled);
+            }
+          });
+        }
+      }
+    }
+    else{
+      if(this.forgottenPasswordForm) {
+        if(this.debug) {
+          console.log('tree-dynamic: monitorFormValueChanges: this.forgottenPasswordForm: ',this.forgottenPasswordForm);
+        }
+        this.email.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(email => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: email: ',email);
+          }
+          this.formData['email'] = email;
+          //if(this.recaptchaType !== 'google') {
+            this.forgottenPasswordFormDisabledState();
+          //}
+        });
+        if(this.recaptchaType === 'custom') {
+          this.captcha.valueChanges
+          .pipe(
+            debounceTime(400),
+            distinctUntilChanged()
+          )
+          .subscribe(captcha => {
+            this.forgottenPasswordFormDisabled = this.isCustomCaptchaValid(captcha) && !this.forgottenPasswordForm.invalid ? false : true;
+            if(this.debug) {
+              console.log('tree-dynamic: monitorFormValueChanges: this.forgottenPasswordFormDisabled: ',this.forgottenPasswordFormDisabled);
+            }
+          });
+        }
       }
     }
   }
 
-  isCaptchaValid(captchaText: string): boolean {
+  isCustomCaptchaValid(captchaText: string): boolean {
     let result = false;
     const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
     if(appcustomrecaptchatext) {
       if(this.debug) {
-        console.log('tree-dynamic: isCaptchaValid: appcustomrecaptchatext: ',appcustomrecaptchatext.innerText.trim(),' captchaText: ',captchaText.trim());
+        console.log('tree-dynamic: isCustomCaptchaValid: appcustomrecaptchatext: ',appcustomrecaptchatext.innerText.trim(),' captchaText: ',captchaText.trim());
       }
       result = window.atob(appcustomrecaptchatext.innerText.trim()) === captchaText.trim() ? true : false;
       if(this.debug) {
-        console.log('tree-dynamic: isCaptchaValid: result: ',result);
+        console.log('tree-dynamic: isCustomCaptchaValid: result: ',result);
       }
     }
     return result;
+  }
+
+  isGoogleCaptchaValid(): boolean {
+    let captchaIsValid = true;
+    if(this.recaptchaType === 'google') {
+      captchaIsValid = this.captchaIsValid;
+    }
+    if(this.debug) {
+      console.log('tree-dynamic: isCustomCaptchaValid: isGoogleCaptchaValid: ',captchaIsValid);
+    }
+    return captchaIsValid;
   }
 
   signUpFormDisabledState(): void {
@@ -1235,7 +1383,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
     if(this.recaptchaType === 'custom') {
       if(appcustomrecaptchatext) {
-        this.signUpFormDisabled = this.isCaptchaValid(this.captcha.value) && !this.signUpForm.invalid ? false : true;
+        this.signUpFormDisabled = this.isCustomCaptchaValid(this.captcha.value) && !this.signUpForm.invalid ? false : true;
       }
       else{
         this.signUpFormDisabled = !this.signUpForm.invalid ? false : true;
@@ -1243,6 +1391,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
     else if(this.recaptchaType === ''){
       this.signUpFormDisabled = !this.signUpForm.invalid ? false : true;
+    }
+    else if(this.recaptchaType === 'google'){
+      this.signUpFormDisabled = !this.signUpForm.invalid && this.isGoogleCaptchaValid() ? false : true;
     }
   }
 
@@ -1253,7 +1404,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
     if(this.recaptchaType === 'custom') {
       if(appcustomrecaptchatext) {
-        this.loginFormDisabled = this.isCaptchaValid(this.captcha.value) && !this.loginForm.invalid ? false : true;
+        this.loginFormDisabled = this.isCustomCaptchaValid(this.captcha.value) && !this.loginForm.invalid ? false : true;
       }
       else{
         this.loginFormDisabled = !this.loginForm.invalid ? false : true;
@@ -1261,6 +1412,33 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
     else if(this.recaptchaType === ''){
       this.loginFormDisabled = !this.loginForm.invalid ? false : true;
+    }
+    else if(this.recaptchaType === 'google'){
+      this.loginFormDisabled = !this.loginForm.invalid && this.isGoogleCaptchaValid() ? false : true;
+      if(this.debug) {
+        console.log('tree-dynamic: loginFormDisabledState: this.loginFormDisabled: ',this.loginFormDisabled);
+      }
+    }
+  }
+
+  forgottenPasswordFormDisabledState(): void {
+    if(this.debug) {
+      console.log('tree-dynamic: forgottenPasswordFormDisabledState: this.forgottenPasswordForm.invalid: ',this.forgottenPasswordForm.invalid);
+    }
+    const appcustomrecaptchatext = this.documentBody.getElementById('app-custom-recaptcha-text-1');
+    if(this.recaptchaType === 'custom') {
+      if(appcustomrecaptchatext) {
+        this.forgottenPasswordFormDisabled = this.isCustomCaptchaValid(this.captcha.value) && !this.forgottenPasswordForm.invalid ? false : true;
+      }
+      else{
+        this.forgottenPasswordFormDisabled = !this.forgottenPasswordForm.invalid ? false : true;
+      }
+    }
+    else if(this.recaptchaType === ''){
+      this.forgottenPasswordFormDisabled = !this.forgottenPasswordForm.invalid ? false : true;
+    }
+    else if(this.recaptchaType === 'google'){
+      this.forgottenPasswordFormDisabled = !this.forgottenPasswordForm.invalid && this.isGoogleCaptchaValid() ? false : true;
     }
   }
 
@@ -1568,12 +1746,35 @@ export class TreeDynamic implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('tree-dynamic: captchaResponse: event: ', event);
     }
+    // bug fix for Chrome Google recaptcha directive
+    const pattern = new RegExp(this.emailPattern);
+    const emailIsValid = pattern.test(this.email.value);
+    if(this.signUpForm) {
+      this.signUpFormDisabled = this.forename.value !== '' && this.surname.value !== '' && emailIsValid && this.password.value !== '' ? false : true;
+    }
+    if(this.loginForm) {
+      this.loginFormDisabled = emailIsValid && this.password.value !== '' ? false : true;
+    }
+    if(this.forgottenPasswordForm) {
+      this.forgottenPasswordFormDisabled = emailIsValid ? false : true;
+    }
+    this.captchaIsValid = true;
   }
 
   captchaExpired(event: any): void {
     if(this.debug) {
       console.log('tree-dynamic: captchaExpired: event: ', event);
     }
+    if(this.signUpForm) {
+      this.signUpFormDisabled = true;
+    }
+    if(this.loginForm) {
+      this.loginFormDisabled = true;
+    }
+    if(this.forgottenPasswordForm) {
+      this.forgottenPasswordFormDisabled = true;
+    }
+    this.captchaIsValid = false;
   }
 
   getRandomInt(min: number = 1000000, max: number = 9999999): number {
@@ -1592,6 +1793,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
     if (this.signupSubscription) {
       this.signupSubscription.unsubscribe();
+    }
+
+    if (this.forgottenPasswordSubscription) {
+      this.forgottenPasswordSubscription.unsubscribe();
     }
 
     if (this.editImageSubscription) {

@@ -81,7 +81,7 @@
 
 
 
-<form novalidate [formGroup]="treeForm" *ngIf="userid > 0">
+<form novalidate [formGroup]="treeForm" *ngIf="!forgottenPasswordForm && userid > 0">
 
   <div class="form-field-container">
 
@@ -191,7 +191,7 @@
 
 
 
-<form novalidate [formGroup]="signUpForm" *ngIf="userid == 0 && signUpValidated == 0">
+<form novalidate [formGroup]="signUpForm" *ngIf="!forgottenPasswordForm && userid == 0 && signUpValidated == 0">
 
   <div class="form-field-container">
 
@@ -245,7 +245,7 @@
 
 
 
-<form novalidate [formGroup]="loginForm" *ngIf="userid == 0 && signUpValidated == 1">
+<form novalidate [formGroup]="loginForm" *ngIf="!forgottenPasswordForm && userid == 0 && signUpValidated == 1">
 
   <div class="form-field-container">
 
@@ -260,7 +260,7 @@
       <mat-form-field class="example-full-width">
         <div class="app-password-container">
           <mat-icon id="app-password">visibility</mat-icon>
-          <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword>
+          <input matInput placeholder="Password" value="" formControlName="password" type="password" id="password" required appPassword autocomplete="off">
         </div>
       </mat-form-field><br />
 
@@ -270,7 +270,8 @@
         <div class="google-recaptcha-loading" id="google-recaptcha-{{ googleRecaptchaId2 }}" appGoogleRecaptcha key="{{ googleRecaptchaSiteKey }}" appGoogleRecaptchaId="google-recaptcha-{{ googleRecaptchaId2 }}" formControlName="captcha" (captchaResponse)="captchaResponse($event)" (captchaExpired)="captchaExpired($event)"></div>
       </div>
 
-      <button mat-raised-button data-role="submit" [disabled]="loginForm.invalid" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='google'">Submit</button>
+      <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='google'">Submit</button>
+      <button mat-raised-button (click)="forgottenPassword()" style="margin-left:10px;" *ngIf="recaptchaType==='google'">Forgotten Password</button>
 
       <div class="app-custom-recaptcha" appCustomRecaptcha appCustomRecaptchaRotationMax="{{ customRecaptchaRotationMax }}" appCustomRecaptchaStrLength="{{ customRecaptchaStrLength }}" *ngIf="recaptchaType==='custom'">
         <mat-form-field class="example-full-width">
@@ -280,10 +281,46 @@
       </div>
 
       <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='custom'">Submit</button>
+      <button mat-raised-button (click)="forgottenPassword()" style="margin-left:10px;" *ngIf="recaptchaType==='custom'">Forgotten Password</button>
 
       <div *ngIf="recaptchaType===''">
         <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
+        <button mat-raised-button (click)="forgottenPassword()" style="margin-left:10px;">Forgotten Password</button>
       </div>
+
+    </div>
+
+  </div>
+
+</form>
+
+
+<form novalidate [formGroup]="forgottenPasswordForm" *ngIf="isForgottenPasswordForm">
+
+  <div class="form-field-container">
+
+    <div class="form-field-legend">Forgotten Password</div>
+
+    <div class="form-field-text">
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>
+      </mat-form-field><br />
+
+      <div *ngIf="recaptchaType==='google'">
+        <div class="google-recaptcha-loading" id="google-recaptcha-{{ googleRecaptchaId2 }}" appGoogleRecaptcha key="{{ googleRecaptchaSiteKey }}" appGoogleRecaptchaId="google-recaptcha-{{ googleRecaptchaId2 }}" formControlName="captcha" (captchaResponse)="captchaResponse($event)" (captchaExpired)="captchaExpired($event)"></div>
+      </div>
+
+      
+      <div class="app-custom-recaptcha" appCustomRecaptcha appCustomRecaptchaRotationMax="{{ customRecaptchaRotationMax }}" appCustomRecaptchaStrLength="{{ customRecaptchaStrLength }}" *ngIf="recaptchaType==='custom'">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Copy characters & numbers below" value="" formControlName="captcha" type="text" id="captcha" required>
+        </mat-form-field><br />
+        <i class="fa fa-refresh" (click)="resetCustomCaptcha($event)" ngbTooltip="Refresh Captcha" [disableTooltip]="disableCustomCaptchaGeneralTooltip" [container]="'body'"></i>
+      </div>
+
+      
+      <button mat-raised-button data-role="submit" [disabled]="forgottenPasswordFormDisabled" (click)="forgottenPasswordFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
 
     </div>
 

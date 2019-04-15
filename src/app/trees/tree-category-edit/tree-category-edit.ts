@@ -313,7 +313,7 @@ export class TreeCategoryEdit implements OnDestroy {
         if(this.debug) {
           console.log('treeCategoryEdit.component: database.dataChange: this.database.lastNodeIdCreatedBeforeUpddate: ',this.database.lastNodeIdCreatedBeforeUpddate);
         }
-        this.openSnackBar('Changes have been submitted...', 'Success');
+        this.openSnackBar('Changes have been submitted', 'Success');
         this.isUpdated = false;
         this.database.lastNodeIdCreatedBeforeUpddate = '';
       }
