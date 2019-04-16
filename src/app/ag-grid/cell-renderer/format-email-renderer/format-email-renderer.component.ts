@@ -7,7 +7,7 @@ import { ICellRendererAngularComp } from "ag-grid-angular";
 })
 export class FormatEmailRenderer implements ICellRendererAngularComp {
 
-  private params: any;
+  params: any;
 
   agInit(params: any): void {
     this.params = params;

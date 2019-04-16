@@ -106,7 +106,7 @@ export class GalleryComponent implements OnInit {
       }
 
       this.httpService.navigateToProfile.subscribe( (data) => {
-        if(this.debug) {
+        if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
           console.log('gallery.component: this.httpService.navigateToProfile: data: ', data);
         }
         if(this.httpService.isForgottenPasswordValidated === 1){

@@ -79,6 +79,7 @@ export class HttpService {
   browserCacheCleared: boolean = false;
   isLoggedIn: boolean = false;
   navigateToProfile: Subject<any> = new Subject<any>();
+  debugForgottenPasswordLoginWithToken: boolean = false;
 
   debug: boolean = false;
 
@@ -192,7 +193,7 @@ export class HttpService {
       this.forgottenPasswordValidated = forgottenPasswordValidated;
     }
     this.isForgottenPasswordValidated = getUrlParameter('forgottenPasswordValidated') !== '' ? parseInt(getUrlParameter('forgottenPasswordValidated').toString()) : 0;
-    if(this.debug) {
+    if(this.debug || this.debugForgottenPasswordLoginWithToken) {
       console.log('http.service: this.port ',this.port);
       console.log('http.service: this.apiUrl ',this.apiUrl);
       console.log('http.service: this.cfid ',this.cfid);
@@ -278,8 +279,8 @@ export class HttpService {
   // process data
 
   public processUserData = (data) => {
-    if(this.debug) {
-      console.log('http.service: processUserData: data ',data);
+    if(this.debug || this.debugForgottenPasswordLoginWithToken) {
+      console.log('http.service: processUserData 1: data ',data);
     }
     if(data) {
       if('error' in data && data['error'] === '') {
@@ -335,8 +336,8 @@ export class HttpService {
           console.log('http.service: this.cookieService.get("theme"): ',this.cookieService.get('theme'));
         }
       }
-      if(this.debug) {
-        console.log('http.service: processUserData: data ',data);
+      if(this.debug || this.debugForgottenPasswordLoginWithToken) {
+        console.log('http.service: processUserData 2: data ',data);
       }
     }
   }

@@ -74,7 +74,6 @@ declare var TweenMax: any, Elastic: any, Linear: any;
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
-    ,
     trigger('profileUserSuspendEditFadeInOutAnimation', [
       state('in', style({
         opacity: 1,

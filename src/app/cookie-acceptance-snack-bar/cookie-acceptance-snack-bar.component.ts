@@ -44,6 +44,10 @@ export class CookieAcceptanceSnackBarComponent implements OnInit, OnDestroy {
       console.log('cookieAcceptanceSnackBarComponent.component loaded');
     }
 
+    if(this.httpService.debugForgottenPasswordLoginWithToken) {
+      this.debug = true;
+    }
+
     const themeObj = this.httpService.themeObj;
     this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
     this.themeAdd = this.themeRemove === themeObj['light'] ? themeObj['dark'] : themeObj['light'];

@@ -173,14 +173,23 @@
         <CFQUERY NAME="local.qGetEmail" DATASOURCE="#request.domain_dsn#">
           SELECT * 
           FROM tblUser 
-          WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#">
+          WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
         </CFQUERY>
         <cfif local.qGetEmail.RecordCount>
         <!---x11x--->
 		  <cfset local.data['error'] = "User has registered but has not validated e-mail">
         <cfelse>
         <!---x12x--->
-		   <cfset local.data['error'] = "User has not registered">
+          <CFQUERY NAME="local.qGetEmail" DATASOURCE="#request.domain_dsn#">
+            SELECT * 
+            FROM tblUser 
+            WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+          </CFQUERY>
+          <cfif local.qGetEmail.RecordCount>
+			<cfset local.data['error'] = "User's account has been temporarily suspended for security reasons">
+          <cfelse>
+			<cfset local.data['error'] = "User has not registered">
+          </cfif>
         </cfif>
       </cfif>
     <cfelseif Len(Trim(local.data['commentToken'])) AND NOT local.isForgottenPasswordValidated>

@@ -285,49 +285,64 @@ export class ImagesComponent implements OnInit, OnDestroy {
       }
     });
 
-    if(this.debug) {
+    if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
       console.log('images.component: this.httpService.commentToken ',this.httpService.commentToken);
     }
 
-    this.userService.currentUser.first().subscribe( (user: User) => {
+    this.userService.currentUser.subscribe( (user: User) => {
 
-      if(this.httpService.commentToken !== '') {
-        const themeObj = this.httpService.themeObj;
-        const body = {
-          email: '',
-          password: '',
-          userToken: this.cookieService.check('userToken') ? this.cookieService.get('userToken') : '',
-          commentToken: this.httpService.commentToken,
-          forgottenPasswordToken: '',
-          forgottenPasswordValidated: 0,
-          keeploggedin: this.currentUser ? this.currentUser['keeploggedin'] : 0,
-          theme: this.httpService.browserCacheCleared ? themeObj['default'] : this.currentUser['theme']
-        };
-        if(this.debug) {
-          console.log('images.component: this.httpService.commentToken: body ',body);
-        }
-        this.loginWithTokenSubscription = this.httpService.fetchLogin(body).do(this.processLoginWithTokenData).subscribe();
-        this.httpService.commentToken = '';
+      if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
+        console.log('images.component: this.userService.currentUser.first().subscribe: user 1 ',user);
       }
-      else{
-        if(this.httpService.forgottenPasswordValidated > 0 && this.httpService.forgottenPasswordToken !== '') {
+
+      if(user) {
+
+        if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
+          console.log('images.component: this.userService.currentUser.first().subscribe: user 2 ',user);
+        }
+
+        if(this.httpService.commentToken !== '') {
           const themeObj = this.httpService.themeObj;
           const body = {
             email: '',
             password: '',
             userToken: this.cookieService.check('userToken') ? this.cookieService.get('userToken') : '',
-            commentToken: '',
-            forgottenPasswordToken: this.httpService.forgottenPasswordToken,
-            forgottenPasswordValidated: this.httpService.forgottenPasswordValidated,
+            commentToken: this.httpService.commentToken,
+            forgottenPasswordToken: '',
+            forgottenPasswordValidated: 0,
             keeploggedin: this.currentUser ? this.currentUser['keeploggedin'] : 0,
-            theme: this.httpService.browserCacheCleared ? themeObj['default'] : this.currentUser['theme']
+            theme: this.currentUser && this.httpService.browserCacheCleared ? themeObj['default'] : this.currentUser['theme']
           };
           if(this.debug) {
-            console.log('images.component: this.httpService.forgottenPasswordValidated: body ',body);
+            console.log('images.component: this.httpService.commentToken: body ',body);
           }
           this.loginWithTokenSubscription = this.httpService.fetchLogin(body).do(this.processLoginWithTokenData).subscribe();
           this.httpService.commentToken = '';
         }
+        else{
+          if(this.httpService.forgottenPasswordValidated > 0 && this.httpService.forgottenPasswordToken !== '') {
+            if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
+              console.log('images.component: this.httpService.forgottenPasswordValidated: inside 1 ');
+            }
+            const themeObj = this.httpService.themeObj;
+            const body = {
+              email: '',
+              password: '',
+              userToken: this.cookieService.check('userToken') ? this.cookieService.get('userToken') : '',
+              commentToken: '',
+              forgottenPasswordToken: this.httpService.forgottenPasswordToken,
+              forgottenPasswordValidated: this.httpService.forgottenPasswordValidated,
+              keeploggedin: this.currentUser ? this.currentUser['keeploggedin'] : 0,
+              theme: this.httpService.browserCacheCleared ? themeObj['default'] : this.currentUser['theme']
+            };
+            if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
+              console.log('images.component: this.httpService.forgottenPasswordValidated inside 2: body ',body);
+            }
+            this.loginWithTokenSubscription = this.httpService.fetchLogin(body).do(this.processLoginWithTokenData).subscribe();
+            this.httpService.forgottenPasswordToken = '';
+          }
+        }
+
       }
 
     });
@@ -435,7 +450,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
   }
 
   private processLoginWithTokenData = (data) => {
-    if(this.debug) {
+    if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
       console.log('images.component: processLoginWithTokenData: data',data);
     } 
     if(data) {
@@ -476,16 +491,16 @@ export class ImagesComponent implements OnInit, OnDestroy {
         if(data['fileUuid'] !== '' && !isNaN(data['commentid'])) {
           this.openComment(data['fileUuid'], data['commentid']);
         }
-        if(this.debug) {
+        if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
           console.log('images.component: processLoginWithTokenData: this.httpService.isForgottenPasswordValidated 1: ',this.httpService.isForgottenPasswordValidated);
         } 
         if(data['userid'] > 0 && this.httpService.isForgottenPasswordValidated === 1 && data['isForgottenPasswordValidated'] === 1) {
-          if(this.debug) {
+          if(this.debug || this.httpService.debugForgottenPasswordLoginWithToken) {
             console.log('images.component: processLoginWithTokenData: this.httpService.isForgottenPasswordValidated 2: ',this.httpService.isForgottenPasswordValidated);
           } 
           setTimeout( () => {
             this.httpService.navigateToProfile.next(true);
-          });
+          },1000);
         }
       }
     }
