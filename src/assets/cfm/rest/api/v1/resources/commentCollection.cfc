@@ -21,7 +21,7 @@
     <CFQUERY NAME="local.qGetComment" DATASOURCE="#request.domain_dsn#">
       SELECT * 
       FROM tblComment
-      WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileUuid#">
+      WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileUuid#"> AND Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
       ORDER BY Reply_to_comment_ID DESC, Comment_ID ASC
     </CFQUERY>
     <cfif local.qGetComment.RecordCount>

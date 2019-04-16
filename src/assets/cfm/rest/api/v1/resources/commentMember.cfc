@@ -13,7 +13,7 @@
     <CFQUERY NAME="local.qGetComment" DATASOURCE="#request.domain_dsn#">
       SELECT * 
       FROM tblComment
-      WHERE Comment_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.commentId#">
+      WHERE Comment_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.commentId#"> AND Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
     </CFQUERY>
     <cfif local.qGetComment.RecordCount>
       <cfset local.data['total'] = local.qGetComment.RecordCount>

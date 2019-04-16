@@ -1,0 +1,128 @@
+
+<cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />
+<cfheader name="Access-Control-Allow-Headers" value="content-type,Authorization,userToken" />
+
+<cfparam name="data" default="" />
+
+<cfinclude template="../functions.cfm">
+
+<cfset data = StructNew()>
+<cfset data['columnDefs'] = ArrayNew(1)>
+<cfset data['rowData'] = ArrayNew(1)>
+<cfset data['users'] =  ArrayNew(1)>
+<cfset data['userToken'] =  "">
+<cfset data['error'] = "">
+
+<cfset requestBody = toString(getHttpRequestData().content)>
+<cfset requestBody = Trim(requestBody)>
+<cftry>
+  <cfset requestBody = DeserializeJSON(requestBody)>
+  <cfif StructKeyExists(requestBody,"users")>
+  	<cfset data['users'] = requestBody['users']>
+  </cfif>
+  <cfcatch>
+    <cftry>
+      <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
+      <cfset requestBody = DeserializeJSON(requestBody)>
+      <cfif StructKeyExists(requestBody,"users")>
+		<cfset data['users'] = requestBody['users']>
+      </cfif>
+      <cfcatch>
+		<cfset data['error'] = cfcatch.message>
+      </cfcatch>
+    </cftry>
+  </cfcatch>
+</cftry>
+
+<cfset requestBody = getHttpRequestData().headers>
+<cftry>
+  <cfif StructKeyExists(requestBody,"userToken")>
+	<cfset userToken = Trim(requestBody['userToken'])>
+  </cfif>
+  <cfcatch>
+	<cfset data['error'] = cfcatch.message>
+  </cfcatch>
+</cftry>
+
+<cfloop from="1" to="#ArrayLen(data['users'])#" index="index">
+  <cfset obj = data['users'][index]>
+  <cfset userid = Val(Trim(obj['id']))>
+  <cfif userid>
+    <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+      SELECT * 
+      FROM tblUser 
+      WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#">
+    </CFQUERY>
+    <cfif qGetUser.RecordCount>
+      <cftransaction>
+        <CFQUERY DATASOURCE="#request.domain_dsn#">
+          UPDATE tblUser
+          SET Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#obj['suspend']#"> 
+          WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+        </CFQUERY>
+        <cfset approved = obj['suspend'] EQ 1 ? 0 : 1>
+        <CFQUERY DATASOURCE="#request.domain_dsn#">
+          UPDATE tblFile
+          SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#"> 
+          WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+        </CFQUERY>
+        <CFQUERY DATASOURCE="#request.domain_dsn#">
+          UPDATE tblComment
+          SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#"> 
+          WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+        </CFQUERY>
+      </cftransaction>
+    </cfif>
+  </cfif>
+</cfloop>
+<cfset columnOrder = "Surname,Forename,E_mail,Suspend,User_ID">
+<cfset columnWidth = "100,100,100,100,100">
+<cfset columnOrderTemp = "">
+<cfset temp = ArrayNew(1)>
+<cfset counter = 1>
+<CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+  SELECT Surname, Forename ,E_mail, Suspend, User_ID  
+  FROM tblUser 
+  ORDER BY Surname ASC
+</CFQUERY>
+<cfif qGetUser.RecordCount>
+  <cfset columns = qGetUser.columnList>
+  <cfloop list="#columns#" index="column">
+    <cfset obj = StructNew()>
+    <cfset columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
+    <cfset obj['headerName'] = CapFirstAll(str=columnName)>
+    <cfset obj['field'] = Trim(LCase(column))>
+    <cfset ArrayAppend(data['columnDefs'],obj)>
+  </cfloop>
+  <cfif ArrayLen(data['columnDefs'])>
+    <cfloop list="#columnOrder#" index="column">
+      <cfloop from="1" to="#ArrayLen(data['columnDefs'])#" index="index">
+        <cfset field = data['columnDefs'][index]['field']>
+        <cfif CompareNoCase(field,column) EQ 0 AND NOT ListFindNoCase(columnOrderTemp,column)>
+          <cfset obj = StructNew()>
+          <cfset obj['headerName'] = data['columnDefs'][index]['headerName']>
+          <cfif CompareNoCase(column,"E_mail") EQ 0>
+            <cfset obj['headerName'] = "E-mail">
+            <cfset obj['cellRenderer'] = "formatEmailRenderer">
+          </cfif>
+          <cfset obj['field'] = data['columnDefs'][index]['field']>
+          <cfif CompareNoCase(column,"Suspend") EQ 0>
+            <cfset obj['editable'] = true>
+            <cfset obj['cellEditor'] = "numericCellEditor">
+          </cfif>
+          <cfset ArrayAppend(temp,obj)>
+          <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
+          <cfset counter = counter + 1>
+        </cfif>
+      </cfloop>
+    </cfloop>
+    <cfset data['columnDefs'] = temp>
+  </cfif>
+  <cfset data['rowData'] = QueryToArray(query=qGetUser)>
+<cfelse>
+  <cfset data['error'] = "No archived users found">
+</cfif>
+
+<cfoutput>
+#SerializeJSON(data)#
+</cfoutput>

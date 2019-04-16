@@ -31,7 +31,7 @@ import { JwtService } from '../../services/jwt/jwt.service';
 import { environment } from '../../../environments/environment';
 import { max } from 'moment';
 
-declare var TweenMax: any, Elastic: any;
+declare var TweenMax: any, Elastic: any, Linear: any;
 
 @Component({
   selector: 'app-profile',
@@ -74,6 +74,19 @@ declare var TweenMax: any, Elastic: any;
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
+    ,
+    trigger('profileUserSuspendEditFadeInOutAnimation', [
+      state('in', style({
+        opacity: 1,
+        display: 'block'
+      })),
+      state('out', style({
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('out => in', animate('250ms ease-in')),
+      transition('in => out', animate('250ms ease-out'))
+    ]),
   ],
   providers: [SafePipe]
 })
@@ -86,9 +99,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('dialogEditCategoriesHelpNotification') private dialogEditCategoriesHelpNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
+  @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
   @Input() profileUserArchiveEditState: string = 'in';
+  @Input() profileUserSuspendEditState: string = 'in';
 
 
   themeObj = {};
@@ -134,7 +149,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   imagesUnapprovedByUseridSubscription: Subscription;
   imagesApprovedByUseridSubscription: Subscription;
   usersArchiveGetSubscription: Subscription;
+  usersSuspendGetSubscription: Subscription;
   usersArchivePostSubscription: Subscription;
+  usersSuspendPostSubscription: Subscription;
   currentUser: User;
   closeResult: string;
   categoryImagesUrl: string = '';
@@ -142,12 +159,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   disableCommentGeneralTooltip: boolean = false;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   dialogEditCategoriesHeight: number = 0;
+
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
-
   contextUserArchive;
   frameworkComponentsUserArchive;
-
   gridApiUserArchive;
   gridColumnApiUserArchive;
   userArchiveColumnDefs = [];
@@ -155,8 +171,25 @@ export class ProfileComponent implements OnInit, OnDestroy {
   userArchiveDefaultColDef =  {};
   userArchiveThemeIsLight: boolean = true;
   userArchiveDomLayout: string = '';
-  userArchiveRowClassRules = {};
+  defaultColDefUserArchive;
+  overlayLoadingTemplateUserArchive;
+  overlayNoRowsTemplateUserArchive;
 
+  userSuspendHasNoData: boolean = false;
+  contextUserSuspend;
+  frameworkComponentsUserSuspend;
+  gridApiUserSuspend;
+  gridColumnApiUserSuspend;
+  userSuspendColumnDefs = [];
+  userSuspendRowData = [];
+  userSuspendDefaultColDef =  {};
+  userSuspendThemeIsLight: boolean = true;
+  userSuspendDomLayout: string = '';
+  defaultColDefUserSuspend;
+  overlayLoadingTemplateUserSuspend;
+  overlayNoRowsTemplateUserSuspend;
+
+  components;
   
   debug: boolean = false;
 
@@ -189,6 +222,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
 
       this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+
+      this.userSuspendThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
 
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
@@ -268,17 +303,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       });
 
-      //this.userArchiveDomLayout = "normal";
-
-      /* this.userArchiveRowClassRules = {
-        "user-archive-row-even": function(params) {
-          if (params.node.rowIndex % 2 === 0) {
-            return 'user-archive-row-odd';
-          }
-        }
-      }; */
-      
-      this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveGetData).subscribe();
+      // ag-grid user archive
 
       this.contextUserArchive = {
         componentParent: this
@@ -286,6 +311,40 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.frameworkComponentsUserArchive = {
         formatEmailRenderer: FormatEmailRenderer
       };
+
+      this.defaultColDefUserArchive = {
+        resizable: true
+      };
+
+      this.overlayLoadingTemplateUserArchive =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+      this.overlayNoRowsTemplateUserArchive =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+      
+      this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveGetData).subscribe();
+
+      // ag-grid user suspend
+
+      this.components = { numericCellEditor: this.getNumericCellEditor() };
+
+      this.contextUserSuspend = {
+        componentParent: this
+      };
+      this.frameworkComponentsUserSuspend = {
+        formatEmailRenderer: FormatEmailRenderer
+      };
+
+      this.defaultColDefUserSuspend = {
+        enableCellChangeFlash: true,
+        resizable: true
+      };
+
+      this.overlayLoadingTemplateUserSuspend =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+      this.overlayNoRowsTemplateUserSuspend =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+
+      this.usersSuspendGetSubscription = this.httpService.fetchUsersSuspend().do(this.processUsersSuspendGetData).subscribe();
 
   }
 
@@ -371,7 +430,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.httpService.jwtHandler(data['jwtObj']);
         }
         else{
-          //this.openSnackBar(data['error'], 'Error');
           this.userArchiveHasNoData = true;
         }
       }
@@ -386,15 +444,55 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
         this.userArchiveColumnDefs = data['columnDefs'];
         this.userArchiveRowData = data['rowData'];
-        this.refreshUserArchive();
+        this.refreshAgGrid(this.gridApiUserArchive,'ag-grid-user-archive-updated-icon');
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
           this.httpService.jwtHandler(data['jwtObj']);
         }
         else{
-          //this.openSnackBar(data['error'], 'Error');
           this.userArchiveHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersSuspendGetData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersSuspendGetData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userSuspendColumnDefs = data['columnDefs'];
+        this.userSuspendRowData = data['rowData'];
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.userSuspendHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersSuspendPostData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersSuspendPostData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userSuspendColumnDefs = data['columnDefs'];
+        this.userSuspendRowData = data['rowData'];
+        this.refreshAgGrid(this.gridApiUserSuspend,'ag-grid-user-suspend-updated-icon');
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.userSuspendHasNoData = true;
         }
       }
     }
@@ -434,6 +532,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+        this.userSuspendThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.openSnackBar('Changes have been submitted', 'Success');
       }
       else{
@@ -946,6 +1045,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.matSnackBar.open(message, action, config);
   }
 
+  // specific user archive ag-grid functions
+
   userArchiveAutoSizeAll(): void {
     var allColumnIds = [];
     this.gridColumnApiUserArchive.getAllColumns().forEach(function(column) {
@@ -978,6 +1079,154 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.gridApiUserArchive.refreshCells(params);
   }
 
+  // specific user suspend ag-grid functions
+
+  userSuspendAutoSizeAll(): void {
+    var allColumnIds = [];
+    this.gridColumnApiUserSuspend.getAllColumns().forEach(function(column) {
+      allColumnIds.push(column.colId);
+    });
+    this.gridColumnApiUserSuspend.autoSizeColumns(allColumnIds);
+  }
+
+  onUserSuspendGridReady(params): void {
+    this.gridApiUserSuspend = params.api;
+    this.gridColumnApiUserSuspend = params.columnApi;
+    this.gridApiUserSuspend.setDomLayout("autoHeight");
+    if(this.debug) {
+      console.log('tree-dynamic: onUserSuspendGridReady');
+    }
+    setTimeout( () => {
+      this.userSuspendAutoSizeAll();
+    });
+  }
+
+  getUserSuspendSelectedRows(): void {
+    const selectedNodes = this.agGridUserSuspend.api.getSelectedNodes();
+    const selectedData = selectedNodes.map( node => node.data );
+    const data = [];
+    selectedData.map( (node) => {
+      const obj = {};
+      obj['id'] = node.user_id;
+      obj['suspend'] = node.suspend;
+      data.push(obj);
+    });
+    if(this.debug) {
+      console.log('tree-dynamic: getUserSuspendSelectedRows: data: ', data);
+    }
+    this.usersSuspendPostSubscription = this.httpService.editUserSuspend(JSON.stringify(data)).do(this.processUsersSuspendPostData).subscribe();
+  }
+
+  onUserSuspendRowValueChanged(event): void {
+    const data = this.getAllUserSuspendData();
+    if(this.debug) {
+      console.log('tree-dynamic: onUserSuspendRowValueChanged: data: ', data);
+    }
+  }
+
+  getAllUserSuspendData(): any {
+    let rowData = [];
+    this.agGridUserSuspend.api.forEachNode((node) => {
+      return rowData.push(node.data);
+    });
+    return rowData;  
+  }
+
+  onFlashUserSuspendColumns(columns: string[]): void {
+    this.agGridUserSuspend.api.flashCells({
+      columns: columns
+    });
+  }
+
+  getNumericCellEditor(): any {
+    function isCharNumeric(charStr) {
+      return !!/[01]{1,1}/.test(charStr);
+    }
+    function isKeyPressedNumeric(event) {
+      var charCode = getCharCodeFromEvent(event);
+      var charStr = String.fromCharCode(charCode);
+      return isCharNumeric(charStr);
+    }
+    function getCharCodeFromEvent(event) {
+      event = event || window.event;
+      return typeof event.which === "undefined" ? event.keyCode : event.which;
+    }
+    function NumericCellEditor() {}
+    NumericCellEditor.prototype.init = function(params) {
+      this.focusAfterAttached = params.cellStartedEdit;
+      this.eInput = document.createElement("input");
+      this.eInput.style.width = "100%";
+      this.eInput.style.height = "100%";
+      this.eInput.value = isCharNumeric(params.charPress) ? params.charPress : params.value;
+      var that = this;
+      this.eInput.addEventListener("keypress", function(event) {
+        if (!isKeyPressedNumeric(event)) {
+          that.eInput.focus();
+          if (event.preventDefault) event.preventDefault();
+        }
+      });
+    };
+    NumericCellEditor.prototype.getGui = function() {
+      return this.eInput;
+    };
+    NumericCellEditor.prototype.afterGuiAttached = function() {
+      if (this.focusAfterAttached) {
+        this.eInput.focus();
+        this.eInput.select();
+      }
+    };
+    NumericCellEditor.prototype.isCancelBeforeStart = function() {
+      return this.cancelBeforeStart;
+    };
+    NumericCellEditor.prototype.isCancelAfterEnd = function() {};
+    NumericCellEditor.prototype.getValue = function() {
+      return this.eInput.value;
+    };
+    NumericCellEditor.prototype.focusIn = function() {
+      var eInput = this.getGui();
+      eInput.focus();
+      eInput.select();
+      console.log("NumericCellEditor.focusIn()");
+    };
+    NumericCellEditor.prototype.focusOut = function() {
+      console.log("NumericCellEditor.focusOut()");
+    };
+    return NumericCellEditor;
+  }
+
+  // general ag-grid functions
+  
+  refreshAgGrid(grid: any, id: string): void {
+    const overshoot=5;
+    const period=0.25;
+    var params = {force:true};
+    grid.refreshCells(params);
+    const aggridusersuspendupdatedicon = this.documentBody.getElementById(id);
+    if(aggridusersuspendupdatedicon) {
+      TweenMax.to(aggridusersuspendupdatedicon,0.5,{
+        scale:0.25,
+        opacity:0.25,
+        onComplete:function(){
+          TweenMax.to(aggridusersuspendupdatedicon,1.4,{
+            scale:1,
+            opacity:1,
+            ease:Elastic.easeOut,
+            easeParams:[overshoot,period],
+            onComplete:function(){
+              TweenMax.delayedCall(5,tweenFunc);
+            }
+          })
+        }
+      });
+      var tweenFunc = function() {
+        TweenMax.to(aggridusersuspendupdatedicon,1,{
+          opacity:0,
+          ease:Linear.easeNone
+        })
+      }
+    }
+  }
+
   ngOnDestroy() {
 
     if (this.editProfileSubscription) {
@@ -1000,8 +1249,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.usersArchiveGetSubscription.unsubscribe();
     }
 
+    if(this.usersSuspendGetSubscription) {
+      this.usersSuspendGetSubscription.unsubscribe();
+    }
+
     if(this.usersArchivePostSubscription) {
       this.usersArchivePostSubscription.unsubscribe();
+    }
+
+    if(this.usersSuspendPostSubscription) {
+      this.usersSuspendPostSubscription.unsubscribe();
     }
 
   }

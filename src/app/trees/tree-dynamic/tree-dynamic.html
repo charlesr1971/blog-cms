@@ -271,7 +271,7 @@
       </div>
 
       <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='google'">Submit</button>
-      <button mat-raised-button (click)="forgottenPassword()" style="margin-left:10px;" *ngIf="recaptchaType==='google'">Forgotten Password</button>
+      <button mat-raised-button (click)="forgottenPassword()" style="margin-left:20px;" *ngIf="recaptchaType==='google'">Forgotten Password</button>
 
       <div class="app-custom-recaptcha" appCustomRecaptcha appCustomRecaptchaRotationMax="{{ customRecaptchaRotationMax }}" appCustomRecaptchaStrLength="{{ customRecaptchaStrLength }}" *ngIf="recaptchaType==='custom'">
         <mat-form-field class="example-full-width">
@@ -281,11 +281,11 @@
       </div>
 
       <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent" *ngIf="recaptchaType==='custom'">Submit</button>
-      <button mat-raised-button (click)="forgottenPassword()" style="margin-left:10px;" *ngIf="recaptchaType==='custom'">Forgotten Password</button>
+      <button mat-raised-button (click)="forgottenPassword()" style="margin-left:20px;" *ngIf="recaptchaType==='custom'">Forgotten Password</button>
 
       <div *ngIf="recaptchaType===''">
         <button mat-raised-button data-role="submit" [disabled]="loginFormDisabled" (click)="loginFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
-        <button mat-raised-button (click)="forgottenPassword()" style="margin-left:10px;">Forgotten Password</button>
+        <button mat-raised-button (click)="forgottenPassword()" style="margin-left:20px;">Forgotten Password</button>
       </div>
 
     </div>

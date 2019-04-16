@@ -167,8 +167,11 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text, 0.5); 
     }
 
+    .custom-ag-grid-data-container .mat-icon {
+        color: mat-color($dark-accent, default);
+    }
+
     .ag-paging-panel {
-        /* background: mat-color($dark-foreground-palette, text, 0.05) !important; */
         background: mat-color($dark-foreground-palette, text, 0.0) !important;
     }
 
@@ -178,6 +181,14 @@ $dark-background-palette: map-get($dark-theme, background);
     
     .ag-paging-panel button {
         color: mat-color($dark-foreground-palette, text) !important; 
+    }
+
+    .ag-grid-format-email-renderer {
+        color: mat-color($dark-foreground-palette, text, 0.5) !important; 
+    }
+
+    .ag-grid-format-email-renderer:hover {
+        color: mat-color($dark-foreground-palette, text) !important;
     }
 
     .category-edit-tree {
@@ -340,7 +351,7 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-foreground-palette, text, 0.075);
     }
 
-    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path,  .custom-ag-grid-data-container .custom-mat-progress-spinner .path {
         stroke: mat-color($dark-foreground-palette, text);
     }
 
@@ -575,6 +586,10 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text, 0.5); 
     }
 
+    .custom-ag-grid-data-container .mat-icon {
+        color: mat-color($light-accent, default);
+    }
+
     .ag-paging-panel {
         /* background: mat-color($light-foreground-palette, text, 0.078) !important; */
         background: mat-color($light-foreground-palette, text, 0.0) !important;
@@ -586,6 +601,14 @@ $light-background-palette: map-get($light-theme, background);
 
     .ag-paging-panel button {
         color: mat-color($light-foreground-palette, text) !important; 
+    }
+
+    .ag-grid-format-email-renderer {
+        color: mat-color($light-foreground-palette, text, 0.5) !important; 
+    }
+
+    .ag-grid-format-email-renderer:hover {
+        color: mat-color($light-foreground-palette, text) !important;
     }
 
     .category-edit-tree {
@@ -742,7 +765,7 @@ $light-background-palette: map-get($light-theme, background);
         background: mat-color($light-foreground-palette, text, 0.025);
     }
 
-    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path {
+    .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner .path, .custom-ag-grid-data-container .custom-mat-progress-spinner .path {
         stroke: mat-color($light-foreground-palette, text);
     }
 

@@ -65,11 +65,26 @@
           </h2>
           <div class="panel-content" [@profileUserArchiveEditFadeInOutAnimation]="{value: profileUserArchiveEditState}" style="padding-bottom:0px;">
             <div class="custom-ag-grid-data-container" *ngIf="!userArchiveHasNoData">
-              <ag-grid-angular #agGridUserArchive style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userArchiveThemeIsLight,'ag-theme-dark': !userArchiveThemeIsLight}" [rowData]="userArchiveRowData" [columnDefs]="userArchiveColumnDefs" (gridReady)="onUserArchiveGridReady($event)" rowSelection="multiple" [rowClassRules]="userArchiveRowClassRules" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [frameworkComponents]="frameworkComponents"></ag-grid-angular>
-              <button mat-raised-button (click)="getUserArchiveSelectedRows()">Unarchive</button>
+              <ag-grid-angular #agGridUserArchive style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userArchiveThemeIsLight,'ag-theme-dark': !userArchiveThemeIsLight}" [rowData]="userArchiveRowData" [columnDefs]="userArchiveColumnDefs" (gridReady)="onUserArchiveGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserArchive" [frameworkComponents]="frameworkComponentsUserArchive" [defaultColDef]="defaultColDefUserArchive" [overlayLoadingTemplate]="overlayLoadingTemplateUserArchive" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserArchive"></ag-grid-angular>
+              <button mat-raised-button (click)="getUserArchiveSelectedRows()">Unarchive Selected Rows</button><mat-icon id="ag-grid-user-archive-updated-icon">check_circle</mat-icon>
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userArchiveHasNoData">
-              No users are archived
+              No records found
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" *ngIf="currentUser.roleid >= 6">
+          <h2 class="panel-legend">
+            <span>Edit Suspended Users</span><mat-icon (click)="openProfileUserSuspendEdit($event)">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileUserSuspendEditFadeInOutAnimation]="{value: profileUserSuspendEditState}" style="padding-bottom:0px;">
+            <div class="custom-ag-grid-data-container" *ngIf="!userSuspendHasNoData">
+              <ag-grid-angular #agGridUserSuspend style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userSuspendThemeIsLight,'ag-theme-dark': !userSuspendThemeIsLight}" [rowData]="userSuspendRowData" [columnDefs]="userSuspendColumnDefs" (gridReady)="onUserSuspendGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserSuspend" [frameworkComponents]="frameworkComponentsUserSuspend" [components]="components" (rowDataChanged)="onUserSuspendRowValueChanged($event)" [defaultColDef]="defaultColDefUserSuspend" [stopEditingWhenGridLosesFocus]="true" [enableCellChangeFlash]="true" [overlayLoadingTemplate]="overlayLoadingTemplateUserSuspend" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserSuspend"></ag-grid-angular>
+              <button mat-raised-button (click)="getUserSuspendSelectedRows()">Suspend/Unsuspend Selected Rows</button><mat-icon id="ag-grid-user-suspend-updated-icon">check_circle</mat-icon>
+            </div>
+            <div class="custom-ag-grid-no-data-container" *ngIf="userSuspendHasNoData">
+              No records found
             </div>
           </div>
         </div>

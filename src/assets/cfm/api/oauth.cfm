@@ -114,7 +114,7 @@
   <CFQUERY NAME="qGetSalt" DATASOURCE="#request.domain_dsn#">
     SELECT * 
     FROM tblUser 
-    WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['email']#"> AND SignUpValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
+    WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['email']#"> AND SignUpValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> 
   </CFQUERY>
   <cfif qGetSalt.RecordCount>
     <cfset salt = "">
@@ -221,7 +221,7 @@
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
       SELECT * 
       FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
-      WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetComment.File_uuid#">
+      WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qGetComment.File_uuid#"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
     </CFQUERY>
     <cfif qGetUser.RecordCount>
       <CFQUERY NAME="qGetUserID" DATASOURCE="#request.domain_dsn#">
@@ -292,7 +292,7 @@
   <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
     SELECT * 
     FROM tblUser 
-    WHERE ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['forgottenPasswordToken']#"> AND ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+    WHERE ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['forgottenPasswordToken']#"> AND ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
   </CFQUERY>
   <cfif qGetUser.RecordCount>
     <CFQUERY DATASOURCE="#request.domain_dsn#">

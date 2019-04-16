@@ -54,12 +54,9 @@
               <cfset local.obj['headerName'] = local.data['columnDefs'][local.index]['headerName']>
               <cfif CompareNoCase(local.column,"E_mail") EQ 0>
 				<cfset local.obj['headerName'] = "E-mail">
+                <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
-              <cfif CompareNoCase(local.column,"User_ID") EQ 0>
-				<cfset local.obj['checkboxSelection'] = true>
-              </cfif>
-              <cfset local.obj['resizable'] = true>
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>
@@ -72,6 +69,7 @@
     <cfelse>
 	  <cfset local.data['error'] = "No archived users found">
     </cfif>
+    <!---<cfthread action="sleep" duration="100000" />--->
     <cfreturn representationOf(local.data) />
   </cffunction>
 
@@ -115,8 +113,8 @@
         <cfif local.qGetUserArchive.RecordCount>
           <cftransaction>
             <CFQUERY DATASOURCE="#request.domain_dsn#">
-              INSERT INTO tblUser (User_ID,Role_ID,Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,SignUpValidated,Clientfilename,Filename,Email_notification,Keep_logged_in,Submit_article_notification,Cookie_acceptance,Theme,ForgottenPasswordToken) 
-              VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUserArchive.User_ID#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUserArchive.Role_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Salt#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Salt)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Password#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Password)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.E_mail#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.E_mail)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Forename#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Forename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Surname#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Surname)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Cfid#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Cftoken#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.SignUpToken#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.SignUpToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.SignUpValidated#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Clientfilename#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Filename#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Email_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Keep_logged_in#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Submit_article_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Cookie_acceptance#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Theme#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Theme)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.ForgottenPasswordToken#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.ForgottenPasswordToken)))#">)
+              INSERT INTO tblUser (User_ID,Role_ID,Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,SignUpValidated,Clientfilename,Filename,Email_notification,Keep_logged_in,Submit_article_notification,Cookie_acceptance,Theme,ForgottenPasswordToken,ForgottenPasswordValidated,Suspend) 
+              VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUserArchive.User_ID#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUserArchive.Role_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Salt#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Salt)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Password#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Password)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.E_mail#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.E_mail)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Forename#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Forename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Surname#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Surname)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Cfid#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Cftoken#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.SignUpToken#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.SignUpToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.SignUpValidated#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Clientfilename#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Filename#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Email_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Keep_logged_in#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Submit_article_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Cookie_acceptance#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.Theme#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Theme)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUserArchive.ForgottenPasswordToken#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.ForgottenPasswordToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.ForgottenPasswordValidated#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.ForgottenPasswordValidated)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUserArchive.Suspend#" null="#yesNoFormat(NOT len(trim(local.qGetUserArchive.Suspend)))#">)
             </CFQUERY>
             <CFQUERY NAME="local.qGetFileArchive" DATASOURCE="#request.domain_dsn#">
               SELECT * 
@@ -171,12 +169,9 @@
               <cfset local.obj['headerName'] = local.data['columnDefs'][local.index]['headerName']>
               <cfif CompareNoCase(local.column,"E_mail") EQ 0>
 				<cfset local.obj['headerName'] = "E-mail">
+                <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
-              <cfif CompareNoCase(local.column,"User_ID") EQ 0>
-				<cfset local.obj['checkboxSelection'] = true>
-              </cfif>
-              <cfset local.obj['resizable'] = true>
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>

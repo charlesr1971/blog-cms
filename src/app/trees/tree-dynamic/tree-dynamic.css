@@ -182,7 +182,7 @@ button {
 }
 
 button[data-role='submit'] {
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .mat-icon.dialog-article-help-notification-close {

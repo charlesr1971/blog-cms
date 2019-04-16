@@ -574,6 +574,45 @@ export class HttpService {
     );
   }
 
+  editUserSuspend(data: any): Observable<any> {
+    let req = null;
+    let headers = null;
+    if(this.useRestApi) {
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'users': data || '',
+          'X-HTTP-METHOD-OVERRIDE': 'PUT'
+        })
+      };
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/suspend', '', headers);
+      if(this.debug) {
+        console.log('http.service: editUserSuspend: headers ',headers);
+      }
+    }
+    else{
+      const body = {
+        'users': data
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('POST', this.apiUrl + '/edit-users-suspend.cfm', body, headers);
+      if(this.debug) {
+        console.log('http.service: editUserSuspend: body ',body);
+        console.log('http.service: editUserSuspend: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   deleteUser(formData: any): Observable<any> {
     let req = null;
     let headers = null;
@@ -1385,6 +1424,23 @@ export class HttpService {
     }
     else{
       req = new HttpRequest('GET', this.apiUrl + '/users-archive.cfm');
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  fetchUsersSuspend(): Observable<any> {
+    let req = null;
+    if(this.useRestApi) {
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/suspend');
+    }
+    else{
+      req = new HttpRequest('GET', this.apiUrl + '/users-suspend.cfm');
     }
     return this.http.request(req)
     .map( (data) => {

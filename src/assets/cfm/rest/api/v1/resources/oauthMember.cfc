@@ -72,7 +72,7 @@
       <CFQUERY NAME="local.qGetSalt" DATASOURCE="#request.domain_dsn#">
         SELECT * 
         FROM tblUser 
-        WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND SignUpValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+        WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND SignUpValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
       </CFQUERY>
       <cfif local.qGetSalt.RecordCount>
       <!---x2x--->
@@ -96,7 +96,7 @@
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
           SELECT * 
           FROM tblUser 
-          WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND Salt = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.salt#"> 
+          WHERE E_mail = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#"> AND Salt = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.salt#">
         </CFQUERY>
         <!---<cfoutput>local.password: #local.password#</cfoutput>
         <cfoutput>local.hashmatched: #local.hashmatched#</cfoutput>--->
@@ -193,7 +193,7 @@
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
           SELECT * 
           FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
-          WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetComment.File_uuid#">
+          WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetComment.File_uuid#"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
         </CFQUERY>
         <cfif local.qGetUser.RecordCount>
           <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
@@ -263,7 +263,7 @@
       <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
         SELECT * 
         FROM tblUser 
-        WHERE ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['forgottenPasswordToken']#"> AND ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+        WHERE ForgottenPasswordToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['forgottenPasswordToken']#"> AND ForgottenPasswordValidated = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> AND Suspend = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0">
       </CFQUERY>
       <cfif local.qGetUser.RecordCount>
         <CFQUERY DATASOURCE="#request.domain_dsn#">

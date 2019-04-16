@@ -32,7 +32,7 @@
 <CFQUERY NAME="qGetComment" DATASOURCE="#request.domain_dsn#">
   SELECT * 
   FROM tblComment
-  WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#fileuuid#"><cfif Val(commentid)> AND Comment_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#commentid#"></cfif>
+  WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#fileuuid#"><cfif Val(commentid)> AND Comment_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#commentid#"></cfif> AND Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
   <!---ORDER BY Submission_date DESC--->
   ORDER BY Reply_to_comment_ID DESC, Comment_ID ASC
 </CFQUERY>

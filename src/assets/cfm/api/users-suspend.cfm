@@ -22,18 +22,18 @@
   </cfcatch>
 </cftry>
 
-<cfset columnOrder = "Surname,Forename,E_mail,User_ID">
-<cfset columnWidth = "100,100,100,100">
+<cfset columnOrder = "Surname,Forename,E_mail,Suspend,User_ID">
+<cfset columnWidth = "100,100,100,100,100">
 <cfset columnOrderTemp = "">
 <cfset temp = ArrayNew(1)>
 <cfset counter = 1>
-<CFQUERY NAME="qGetUserArchive" DATASOURCE="#request.domain_dsn#">
-  SELECT Surname, Forename ,E_mail, User_ID  
-  FROM tblUserArchive 
+<CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+  SELECT Surname, Forename ,E_mail, Suspend, User_ID  
+  FROM tblUser 
   ORDER BY Surname ASC
 </CFQUERY>
-<cfif qGetUserArchive.RecordCount>
-  <cfset columns = qGetUserArchive.columnList>
+<cfif qGetUser.RecordCount>
+  <cfset columns = qGetUser.columnList>
   <cfloop list="#columns#" index="column">
 	<cfset obj = StructNew()>
 	<cfset columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
@@ -50,9 +50,13 @@
 		  <cfset obj['headerName'] = data['columnDefs'][index]['headerName']>
 		  <cfif CompareNoCase(column,"E_mail") EQ 0>
 			<cfset obj['headerName'] = "E-mail">
-            <cfset obj['cellRenderer'] = "formatEmailRenderer">
+			<cfset obj['cellRenderer'] = "formatEmailRenderer">
 		  </cfif>
 		  <cfset obj['field'] = data['columnDefs'][index]['field']>
+		  <cfif CompareNoCase(column,"Suspend") EQ 0>
+			<cfset obj['editable'] = true>
+			<cfset obj['cellEditor'] = "numericCellEditor">
+		  </cfif>
 		  <cfset ArrayAppend(temp,obj)>
 		  <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
 		  <cfset counter = counter + 1>
@@ -61,7 +65,7 @@
 	</cfloop>
 	<cfset data['columnDefs'] = temp>
   </cfif>
-  <cfset data['rowData'] = QueryToArray(query=qGetUserArchive)>
+  <cfset data['rowData'] = QueryToArray(query=qGetUser)>
 <cfelse>
   <cfset data['error'] = "No archived users found">
 </cfif>

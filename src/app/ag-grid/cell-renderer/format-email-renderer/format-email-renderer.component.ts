@@ -3,17 +3,18 @@ import { ICellRendererAngularComp } from "ag-grid-angular";
 
 @Component({
   selector: 'email-cell',
-  template: `<a href="mailto:{{ params.value }}">{{ params.value }}</a>`
+  template: `<a href="mailto:{{ this.params.value }}" class="ag-grid-format-email-renderer">{{ this.params.value }}</a>`,
 })
 export class FormatEmailRenderer implements ICellRendererAngularComp {
 
-  public params: any;
+  private params: any;
 
   agInit(params: any): void {
-      this.params = params;
+    this.params = params;
   }
 
-  refresh(): boolean {
+  refresh(params: any): boolean {
+    this.params = params;
     return false;
   }
 
