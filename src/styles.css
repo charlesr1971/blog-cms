@@ -480,6 +480,7 @@ body.profile .mat-tree .mat-form-field {
 
 .ag-grid-format-email-renderer {
     text-decoration: none;
+    margin-right: 10px;
 }
 
 .ag-grid-format-email-renderer:hover {

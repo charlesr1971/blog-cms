@@ -2,15 +2,16 @@
 <cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />
 <cfheader name="Access-Control-Allow-Headers" value="content-type,Authorization,userToken" />
 
+<cfparam name="uploadfolder" default="#request.uploadfolder#" />
+<cfparam name="emailsubject" default="Forgotten password from #request.title#" />
+<cfparam name="forgottenpasswordtoken" default="#LCase(CreateUUID())#" />
 <cfparam name="data" default="" />
 
 <cfinclude template="../functions.cfm">
 
 <cfset emailtemplateheaderbackground = getMaterialThemePrimaryColour(theme=request.theme)>
 <cfset emailtemplatemessage = "">
-<cfset uploadfolder = request.uploadfolder>
-<cfset forgottenpasswordtoken = LCase(CreateUUID())>
-<cfset emailsubject = "Forgotten password from " & request.title>
+
 <cfset data = StructNew()>
 <cfset data['email'] =  "">
 <cfset data['userToken'] =  "">

@@ -1,3 +1,25 @@
+<ng-template class="dialog-email" #dialogEmail *ngIf="currentUser.roleid >= 6">
+  <div class="dialog-email-container">
+    <form novalidate [formGroup]="emailForm" autocomplete="off">
+        <div class="form-field-container">
+          <div class="form-field-legend">E-mail User</div>
+          <div class="form-field-text">
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="E-mail" value="" formControlName="email" id="email" readonly>
+            </mat-form-field><br />
+            <mat-form-field class="example-full-width">
+              <textarea matInput placeholder="Message" formControlName="message" id="message"></textarea>
+            </mat-form-field><br /><br /><br />
+          </div>
+        </div>
+    </form>
+    <div class="button-actions">
+      <button mat-raised-button data-role="submit" (click)="sendEmail()" color="accent">Submit</button>
+      <mat-icon class="email-close" (click)="closeEmailDialog()" ngbTooltip="Close" [disableTooltip]="disableEmailTooltip" [container]="'body'">close</mat-icon>
+    </div>
+  </div>
+</ng-template>
+
 <div class="mat-app-background basic-container">
 
   <form novalidate [formGroup]="editProfileForm" *ngIf="userid > 0" autocomplete="off">
@@ -81,9 +103,24 @@
           <div class="panel-content" [@profileUserSuspendEditFadeInOutAnimation]="{value: profileUserSuspendEditState}" style="padding-bottom:0px;">
             <div class="custom-ag-grid-data-container" *ngIf="!userSuspendHasNoData">
               <ag-grid-angular #agGridUserSuspend style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userSuspendThemeIsLight,'ag-theme-dark': !userSuspendThemeIsLight}" [rowData]="userSuspendRowData" [columnDefs]="userSuspendColumnDefs" (gridReady)="onUserSuspendGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserSuspend" [frameworkComponents]="frameworkComponentsUserSuspend" [components]="components" (rowDataChanged)="onUserSuspendRowValueChanged($event)" [defaultColDef]="defaultColDefUserSuspend" [stopEditingWhenGridLosesFocus]="true" [enableCellChangeFlash]="true" [overlayLoadingTemplate]="overlayLoadingTemplateUserSuspend" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserSuspend"></ag-grid-angular>
-              <button mat-raised-button (click)="getUserSuspendSelectedRows()">Suspend/Unsuspend Selected Rows</button><mat-icon id="ag-grid-user-suspend-updated-icon">check_circle</mat-icon>
+              <button mat-raised-button (click)="getUserSuspendSelectedRows()">Suspend Selected Rows</button><mat-icon id="ag-grid-user-suspend-updated-icon">check_circle</mat-icon>
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userSuspendHasNoData">
+              No records found
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" *ngIf="currentUser.roleid >= 6">
+          <h2 class="panel-legend">
+            <span>Reset User Passwords</span><mat-icon (click)="openProfileUserPasswordEdit($event)">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileUserPasswordEditFadeInOutAnimation]="{value: profileUserPasswordEditState}" style="padding-bottom:0px;">
+            <div class="custom-ag-grid-data-container" *ngIf="!userPasswordHasNoData">
+              <ag-grid-angular #agGridUserPassword style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userPasswordThemeIsLight,'ag-theme-dark': !userPasswordThemeIsLight}" [rowData]="userPasswordRowData" [columnDefs]="userPasswordColumnDefs" (gridReady)="onUserPasswordGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserPassword" [frameworkComponents]="frameworkComponentsUserPassword" (rowDataChanged)="onUserPasswordRowValueChanged($event)" [defaultColDef]="defaultColDefUserPassword" [stopEditingWhenGridLosesFocus]="true" [enableCellChangeFlash]="true" [overlayLoadingTemplate]="overlayLoadingTemplateUserPassword" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserPassword"></ag-grid-angular>
+              <button mat-raised-button (click)="getUserPasswordSelectedRows()">Update Selected Rows</button><mat-icon id="ag-grid-user-password-updated-icon">check_circle</mat-icon>
+            </div>
+            <div class="custom-ag-grid-no-data-container" *ngIf="userPasswordHasNoData">
               No records found
             </div>
           </div>

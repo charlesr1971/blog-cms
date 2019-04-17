@@ -575,34 +575,39 @@ export class HttpService {
     );
   }
 
-  editUserSuspend(data: any): Observable<any> {
+  editUserAdmin(data: any): Observable<any> {
+    if(this.debug) {
+      console.log('http.service: editUserAdmin: data ',data);
+    }
     let req = null;
     let headers = null;
     if(this.useRestApi) {
       headers = {
         reportProgress: false,
         headers: new HttpHeaders({
-          'users': data || '',
+          'users': JSON.stringify(data['users']) || '',
+          'task': data['task'] || '',
           'X-HTTP-METHOD-OVERRIDE': 'PUT'
         })
       };
-      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/suspend', '', headers);
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/admin', '', headers);
       if(this.debug) {
-        console.log('http.service: editUserSuspend: headers ',headers);
+        console.log('http.service: editUserAdmin: headers ',headers);
       }
     }
     else{
       const body = {
-        'users': data
+        users: data['users'],
+        task: data['task']
       };
       const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
       headers = {
         headers: requestHeaders
       };
-      req = new HttpRequest('POST', this.apiUrl + '/edit-users-suspend.cfm', body, headers);
+      req = new HttpRequest('POST', this.apiUrl + '/edit-users-admin.cfm', body, headers);
       if(this.debug) {
-        console.log('http.service: editUserSuspend: body ',body);
-        console.log('http.service: editUserSuspend: headers ',headers);
+        console.log('http.service: editUserAdmin: body ',body);
+        console.log('http.service: editUserAdmin: headers ',headers);
       }
     }
     return this.http.request(req)
@@ -1435,13 +1440,34 @@ export class HttpService {
     );
   }
 
-  fetchUsersSuspend(): Observable<any> {
+  fetchUsersAdmin(task: any): Observable<any> {
     let req = null;
+    let headers = null;
     if(this.useRestApi) {
-      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/suspend');
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'task': task || '',
+        })
+      };
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/admin', '', headers);
+      if(this.debug) {
+        console.log('http.service: fetchUsersAdmin: headers ',headers);
+      }
     }
     else{
-      req = new HttpRequest('GET', this.apiUrl + '/users-suspend.cfm');
+      const body = {
+        task: task
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('GET', this.apiUrl + '/edit-users-admin.cfm', body, headers);
+      if(this.debug) {
+        console.log('http.service: fetchUsersAdmin: body ',body);
+        console.log('http.service: fetchUsersAdmin: headers ',headers);
+      }
     }
     return this.http.request(req)
     .map( (data) => {

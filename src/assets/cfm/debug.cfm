@@ -353,7 +353,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   </cfif>--->
   
   
-  <CFQUERY NAME="qGetUserArchive" DATASOURCE="#request.domain_dsn#">
+  <!---<CFQUERY NAME="qGetUserArchive" DATASOURCE="#request.domain_dsn#">
     SELECT Surname, Forename ,E_mail, User_ID  
     FROM tblUserArchive 
     ORDER BY Surname ASC
@@ -361,6 +361,28 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   
   <cfset data = request.utils.QueryToArray(query=qGetUserArchive)>
   
-  <cfdump var="#data#" />
+  <cfdump var="#data#" />--->
+  
+  
+  <!---<cfset task = "suspend">
+  
+  #DeserializeJson(task)#--->
+  
+  
+<cfset data = []>
+
+<cfloop from="1" to="10" index="i">
+  <cfset obj = {}>
+  <cfset obj['id'] = i>
+  <cfset obj['suspend'] = RandRange(0,1)>
+  <cfset ArrayAppend(data,obj)>
+</cfloop>
+
+<cfset obj = {users: data, task: 'suspend'}>
+
+<cfset body = {users: obj['users'], task: obj['task']}>
+<cfset body = SerializeJson(body)>
+
+<cfdump var="#DeserializeJson(body)#" />
 
 </cfoutput>

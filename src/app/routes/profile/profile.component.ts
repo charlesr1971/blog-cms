@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import { AgGridNg2 } from 'ag-grid-angular';
 import { SafePipe } from '../../pipes/safe/safe.pipe';
 import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
+import { CustomEditHeader } from '../../ag-grid/header/custom-edit-header/custom-edit-header.component';
 
 import { UploadService } from '../../upload/upload.service';
 import { HttpService } from '../../services/http/http.service';
@@ -86,6 +87,18 @@ declare var TweenMax: any, Elastic: any, Linear: any;
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
+    trigger('profileUserPasswordEditFadeInOutAnimation', [
+      state('in', style({
+        opacity: 1,
+        display: 'block'
+      })),
+      state('out', style({
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('out => in', animate('250ms ease-in')),
+      transition('in => out', animate('250ms ease-out'))
+    ]),
   ],
   providers: [SafePipe]
 })
@@ -96,13 +109,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('unapprovedImagesSelect') unapprovedImagesSelect;
   @ViewChild('approvedImagesSelect') approvedImagesSelect;
   @ViewChild('dialogEditCategoriesHelpNotification') private dialogEditCategoriesHelpNotificationTpl: TemplateRef<any>;
+  @ViewChild('dialogEmail') private dialogEmailTpl: TemplateRef<any>;
   @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
+  @ViewChild('agGridUserPassword') agGridUserPassword: AgGridNg2;
+
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
   @Input() profileUserArchiveEditState: string = 'in';
   @Input() profileUserSuspendEditState: string = 'in';
+  @Input() profileUserPasswordEditState: string = 'in';
 
 
   themeObj = {};
@@ -120,6 +137,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   currentPageApproved: number = 1;
   
   editProfileForm: FormGroup;
+  emailForm: FormGroup;
 
   forename: FormControl;
   surname: FormControl;
@@ -132,10 +150,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   apiDocumentation: FormControl;
   apiEndpoint: FormControl;
 
+  email: FormControl;
+  message: FormControl;
+
   emailNotificationChecked = false;
   themeChecked = false;
   
-  formData = {};
+  formProfileData = {};
+  formEmailData = {};
   apiUrl: string = '';
 
   isMobile: boolean = false;
@@ -149,8 +171,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   imagesApprovedByUseridSubscription: Subscription;
   usersArchiveGetSubscription: Subscription;
   usersSuspendGetSubscription: Subscription;
+  usersPasswordGetSubscription: Subscription;
   usersArchivePostSubscription: Subscription;
   usersSuspendPostSubscription: Subscription;
+  usersPasswordPostSubscription: Subscription;
+  usersEmailPostSubscription: Subscription;
   currentUser: User;
   closeResult: string;
   categoryImagesUrl: string = '';
@@ -158,6 +183,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   disableCommentGeneralTooltip: boolean = false;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   dialogEditCategoriesHeight: number = 0;
+  dialogEmailHeight: number = 0;
+  emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+  emailFormDisabled: boolean = false;
 
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
@@ -187,6 +215,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
   defaultColDefUserSuspend;
   overlayLoadingTemplateUserSuspend;
   overlayNoRowsTemplateUserSuspend;
+
+  userPasswordHasNoData: boolean = false;
+  contextUserPassword;
+  frameworkComponentsUserPassword;
+  gridApiUserPassword;
+  gridColumnApiUserPassword;
+  userPasswordColumnDefs = [];
+  userPasswordRowData = [];
+  userPasswordDefaultColDef =  {};
+  userPasswordThemeIsLight: boolean = true;
+  userPasswordDomLayout: string = '';
+  defaultColDefUserPassword;
+  overlayLoadingTemplateUserPassword;
+  overlayNoRowsTemplateUserPassword;
 
   components;
   
@@ -224,6 +266,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       this.userSuspendThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
 
+      this.userPasswordThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
       }
@@ -241,9 +285,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.userService.currentUser.subscribe( (user: User) => {
         this.currentUser = user;
         this.userid = this.currentUser['userid'];
-        this.createFormControls();
-        this.createForm();
-        this.monitorFormValueChanges();
+        this.createProfileFormControls();
+        this.createProfileForm();
+        this.monitorProfileFormValueChanges();
         setTimeout( () => {
           this.forename.patchValue(this.currentUser['forename']);
           this.surname.patchValue(this.currentUser['surname']);
@@ -283,6 +327,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
             addImage(TweenMax, this.renderer, this.avatarContainer, this.currentUser['avatarSrc'], 'avatarImage');
           }
         });
+        this.createEmailFormControls();
+        this.createEmailForm();
+        this.monitorEmailFormValueChanges();
       });
 
       this.uploadService.subscriptionImageUrl.subscribe( (data: any) => {
@@ -330,12 +377,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
         componentParent: this
       };
       this.frameworkComponentsUserSuspend = {
-        formatEmailRenderer: FormatEmailRenderer
+        formatEmailRenderer: FormatEmailRenderer,
+        agColumnHeader: CustomEditHeader
       };
 
       this.defaultColDefUserSuspend = {
         enableCellChangeFlash: true,
-        resizable: true
+        resizable: true,
+        suppressMenu: false
       };
 
       this.overlayLoadingTemplateUserSuspend =
@@ -343,7 +392,31 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.overlayNoRowsTemplateUserSuspend =
       '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
 
-      this.usersSuspendGetSubscription = this.httpService.fetchUsersSuspend().do(this.processUsersSuspendGetData).subscribe();
+      this.usersSuspendGetSubscription = this.httpService.fetchUsersAdmin('suspend').do(this.processUsersSuspendGetData).subscribe();
+
+      // ag-grid user password
+
+
+      this.contextUserPassword = {
+        componentParent: this
+      };
+      this.frameworkComponentsUserPassword = {
+        formatEmailRenderer: FormatEmailRenderer,
+        agColumnHeader: CustomEditHeader
+      };
+
+      this.defaultColDefUserPassword = {
+        enableCellChangeFlash: true,
+        resizable: true,
+        suppressMenu: false
+      };
+
+      this.overlayLoadingTemplateUserPassword =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+      this.overlayNoRowsTemplateUserPassword =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+
+      this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password').do(this.processUsersPasswordGetData).subscribe();
 
   }
 
@@ -492,6 +565,66 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
         else{
           this.userSuspendHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersPasswordGetData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersPasswordGetData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userPasswordColumnDefs = data['columnDefs'];
+        this.userPasswordRowData = data['rowData'];
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.userPasswordHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersPasswordPostData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersPasswordPostData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userPasswordColumnDefs = data['columnDefs'];
+        this.userPasswordRowData = data['rowData'];
+        this.refreshAgGrid(this.gridApiUserPassword,'ag-grid-user-password-updated-icon');
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.userPasswordHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersEmailPostData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersEmailPostData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '') {
+        this.openSnackBar('E-mail sent successfully', 'Success');
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.openSnackBar(data['error'], 'Error');
         }
       }
     }
@@ -710,7 +843,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  createForm(): void {
+  createProfileForm(): void {
     this.editProfileForm = new FormGroup({
       forename: this.forename,
       surname: this.surname,
@@ -728,7 +861,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  createFormControls(): void {
+  createProfileFormControls(): void {
     this.forename = new FormControl('', [
       Validators.required,
       Validators.minLength(1)
@@ -747,7 +880,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.apiEndpoint = new FormControl(); 
   }
 
-  monitorFormValueChanges(): void {
+  monitorProfileFormValueChanges(): void {
     if(this.editProfileForm) {
       this.forename.valueChanges
       .pipe(
@@ -758,7 +891,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: forename: ',forename);
         }
-        this.formData['forename'] = forename;
+        this.formProfileData['forename'] = forename;
         this.isEditProfileValid = this.isEditProfileFormValid();
       });
       this.surname.valueChanges
@@ -770,7 +903,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: surname: ',surname);
         }
-        this.formData['surname'] = surname;
+        this.formProfileData['surname'] = surname;
         this.isEditProfileValid = this.isEditProfileFormValid();
       });
       this.password.valueChanges
@@ -782,7 +915,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: password: ',password);
         }
-        this.formData['password'] = password;
+        this.formProfileData['password'] = password;
         this.isEditProfileValid = this.isEditProfileFormValid();
       });
       this.emailNotification.valueChanges
@@ -794,7 +927,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: emailNotification: ',emailNotification);
         }
-        this.formData['emailNotification'] = emailNotification ? 1 : 0;
+        this.formProfileData['emailNotification'] = emailNotification ? 1 : 0;
       });
       this.theme.valueChanges
       .pipe(
@@ -807,6 +940,43 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  createEmailForm(): void {
+    this.emailForm = new FormGroup({
+      email: this.email,
+      message: this.message
+    });
+    if(this.debug) {
+      console.log('profile.component: this.emailForm ',this.emailForm);
+    }
+  }
+
+  createEmailFormControls(): void {
+    const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+    this.email = new FormControl('', [
+      Validators.required,
+      Validators.pattern(emailPattern),
+      Validators.minLength(1)
+    ]);
+    this.message = new FormControl('', [
+      Validators.required,
+      Validators.minLength(1)
+    ]);
+  }
+
+  monitorEmailFormValueChanges(): void {
+    this.message.valueChanges
+    .pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    )
+    .subscribe(message => {
+      if(this.debug) {
+        console.log('profile.component: monitorEmailFormValueChanges: message: ',message);
+      }
+      this.formEmailData['message'] = message;
+    });
   }
 
   pageCacheUnapprovedEntryRead(page: number): any {
@@ -1003,23 +1173,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
       id: 'dialog-edit-categories-help-notification'
     });
     if(this.debug) {
-      console.log('tree-dynamic: dialog edit categories help notification: before close: this.themeRemove: ', this.themeRemove);
-      console.log('tree-dynamic: dialog edit categories help notification: before close: this.themeAdd: ', this.themeAdd);
+      console.log('profile.component: dialog edit categories help notification: before close: this.themeRemove: ', this.themeRemove);
+      console.log('profile.component: dialog edit categories help notification: before close: this.themeAdd: ', this.themeAdd);
     }
     updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
-        console.log('tree-dynamic: dialog edit categories help notification: before close');
+        console.log('profile.component: dialog edit categories help notification: before close');
       }
       if(result) {
         if(this.debug) {
-          console.log('tree-dynamic: dialog edit categories help notification: before close: result: ', result);
+          console.log('profile.component: dialog edit categories help notification: before close: result: ', result);
         }
       }
     });
     dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
-        console.log('tree-dynamic: dialog edit categories help notification: after open');
+        console.log('profile.component: dialog edit categories help notification: after open');
       }
       const parent = document.querySelector('#dialog-edit-categories-help-notification');
       let height = parent.clientHeight ? parent.clientHeight : 0;
@@ -1032,7 +1202,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.httpService.editCategoriesDialogOpened.next(this.dialogEditCategoriesHeight);
       }
       if(this.debug) {
-        console.log('tree-dynamic: dialog: this.dialogEditCategoriesHeight: ', this.dialogEditCategoriesHeight);
+        console.log('profile.component: dialog edit categories help notification: this.dialogEditCategoriesHeight: ', this.dialogEditCategoriesHeight);
       }
     });
   }
@@ -1068,7 +1238,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const selectedData = selectedNodes.map( node => node.data );
     const selectedDataStringPresentation = selectedData.map( node => node.user_id).join(',');
     if(this.debug) {
-      console.log('tree-dynamic: getUserArchiveSelectedRows: selectedDataStringPresentation: ', selectedDataStringPresentation);
+      console.log('profile.component: getUserArchiveSelectedRows: selectedDataStringPresentation: ', selectedDataStringPresentation);
     }
     this.usersArchivePostSubscription = this.httpService.addUsersFromArchive(selectedDataStringPresentation).do(this.processUsersArchivePostData).subscribe();
   }
@@ -1093,7 +1263,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.gridColumnApiUserSuspend = params.columnApi;
     this.gridApiUserSuspend.setDomLayout("autoHeight");
     if(this.debug) {
-      console.log('tree-dynamic: onUserSuspendGridReady');
+      console.log('profile.component: onUserSuspendGridReady');
     }
     setTimeout( () => {
       this.userSuspendAutoSizeAll();
@@ -1111,15 +1281,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
       data.push(obj);
     });
     if(this.debug) {
-      console.log('tree-dynamic: getUserSuspendSelectedRows: data: ', data);
+      console.log('profile.component: getUserSuspendSelectedRows: data: ', data);
     }
-    this.usersSuspendPostSubscription = this.httpService.editUserSuspend(JSON.stringify(data)).do(this.processUsersSuspendPostData).subscribe();
+    const obj = {
+      users: data,
+      task: 'suspend'
+    };
+    this.usersSuspendPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersSuspendPostData).subscribe();
   }
 
   onUserSuspendRowValueChanged(event): void {
     const data = this.getAllUserSuspendData();
     if(this.debug) {
-      console.log('tree-dynamic: onUserSuspendRowValueChanged: data: ', data);
+      console.log('profile.component: onUserSuspendRowValueChanged: data: ', data);
     }
   }
 
@@ -1193,6 +1367,69 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return NumericCellEditor;
   }
 
+  // specific user password ag-grid functions
+
+  userPasswordAutoSizeAll(): void {
+    var allColumnIds = [];
+    this.gridColumnApiUserPassword.getAllColumns().forEach(function(column) {
+      allColumnIds.push(column.colId);
+    });
+    this.gridColumnApiUserPassword.autoSizeColumns(allColumnIds);
+  }
+
+  onUserPasswordGridReady(params): void {
+    this.gridApiUserPassword = params.api;
+    this.gridColumnApiUserPassword = params.columnApi;
+    this.gridApiUserPassword.setDomLayout("autoHeight");
+    if(this.debug) {
+      console.log('profile.component: onUserPasswordGridReady');
+    }
+    setTimeout( () => {
+      this.userPasswordAutoSizeAll();
+    });
+  }
+
+  getUserPasswordSelectedRows(): void {
+    const selectedNodes = this.agGridUserPassword.api.getSelectedNodes();
+    const selectedData = selectedNodes.map( node => node.data );
+    const data = [];
+    selectedData.map( (node) => {
+      const obj = {};
+      obj['id'] = node.user_id;
+      obj['password'] = node.password;
+      data.push(obj);
+    });
+    if(this.debug) {
+      console.log('profile.component: getUserPasswordSelectedRows: data: ', data);
+    }
+    const obj = {
+      users: data,
+      task: 'password'
+    };
+    this.usersPasswordPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersPasswordPostData).subscribe();
+  }
+
+  onUserPasswordRowValueChanged(event): void {
+    const data = this.getAllUserPasswordData();
+    if(this.debug) {
+      console.log('profile.component: onUserPasswordRowValueChanged: data: ', data);
+    }
+  }
+
+  getAllUserPasswordData(): any {
+    let rowData = [];
+    this.agGridUserPassword.api.forEachNode((node) => {
+      return rowData.push(node.data);
+    });
+    return rowData;  
+  }
+
+  onFlashUserPasswordColumns(columns: string[]): void {
+    this.agGridUserPassword.api.flashCells({
+      columns: columns
+    });
+  }
+
   // general ag-grid functions
   
   refreshAgGrid(grid: any, id: string): void {
@@ -1200,13 +1437,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const period=0.25;
     var params = {force:true};
     grid.refreshCells(params);
-    const aggridusersuspendupdatedicon = this.documentBody.getElementById(id);
-    if(aggridusersuspendupdatedicon) {
-      TweenMax.to(aggridusersuspendupdatedicon,0.5,{
+    const aggridusertaskupdatedicon = this.documentBody.getElementById(id);
+    if(aggridusertaskupdatedicon) {
+      TweenMax.to(aggridusertaskupdatedicon,0.5,{
         scale:0.25,
         opacity:0.25,
         onComplete:function(){
-          TweenMax.to(aggridusersuspendupdatedicon,1.4,{
+          TweenMax.to(aggridusertaskupdatedicon,1.4,{
             scale:1,
             opacity:1,
             ease:Elastic.easeOut,
@@ -1218,12 +1455,85 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       });
       var tweenFunc = function() {
-        TweenMax.to(aggridusersuspendupdatedicon,1,{
+        TweenMax.to(aggridusertaskupdatedicon,1,{
           opacity:0,
           ease:Linear.easeNone
         })
       }
     }
+  }
+
+  openEmailDialog(params) {
+    if(this.debug) {
+      console.log('profile.component: openEmailDialog: params: ', params);
+    }
+    const dialogRef = this.dialog.open(this.dialogEmailTpl, {
+      width: this.isMobile ? '100%' : '75%',
+      height: this.isMobile ? '100%' :'90%',
+      maxWidth: 1278,
+      id: 'dialog-email'
+    });
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
+    dialogRef.beforeClose().subscribe(result => {
+      if(this.debug) {
+        console.log('profile.component: dialog e-mail: before close');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('profile.component: dialog e-mail: before close: result: ', result);
+        }
+      }
+    });
+    dialogRef.afterOpen().subscribe( () => {
+      if(this.debug) {
+        console.log('profile.component: dialog e-mail: after open');
+      }
+      this.email.patchValue(params);
+      this.formEmailData['email'] = params;
+      const parent = this.documentBody.querySelector('#dialog-email');
+      const child = this.documentBody.querySelector('#message');
+      let height = parent.clientHeight ? parent.clientHeight : 0;
+      const offsetHeight = this.isMobile ? 485 : 372;
+      if(!isNaN(height) && (height - offsetHeight) > 0) {
+        height = height - offsetHeight;
+      }
+      if(height > 0 ) {
+        this.dialogEmailHeight = height;
+      }
+      if(child) {
+        this.renderer.setStyle(child,'height',height + 'px');
+      }
+      this.emailFormDisabled = true;
+      if(this.debug) {
+        console.log('profile.component: dialog: this.dialogEmailHeight: ', this.dialogEmailHeight);
+      }
+    });
+  }
+
+  closeEmailDialog(): void {
+    this.dialog.closeAll();
+  }
+
+  sendEmail(): void {
+    const data = [];
+    const dataObj = {};
+    dataObj['id'] = this.email.value;
+    dataObj['email'] = this.email.value;
+    const message = this.message.value.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    dataObj['message'] = message;
+    data.push(dataObj);
+    if(this.debug) {
+      console.log('profile.component: sendEmail: data: ', data);
+    }
+    const obj = {
+      users: data,
+      task: 'email'
+    };
+    this.email.patchValue('');
+    this.message.patchValue('');
+    this.formEmailData = {};
+    this.dialog.closeAll();
+    this.usersEmailPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersEmailPostData).subscribe();
   }
 
   ngOnDestroy() {
@@ -1258,6 +1568,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     if(this.usersSuspendPostSubscription) {
       this.usersSuspendPostSubscription.unsubscribe();
+    }
+
+    if(this.usersEmailPostSubscription) {
+      this.usersEmailPostSubscription.unsubscribe();
     }
 
   }

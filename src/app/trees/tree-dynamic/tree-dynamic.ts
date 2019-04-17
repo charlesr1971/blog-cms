@@ -1583,11 +1583,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
     updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
     dialogRef.beforeClose().subscribe(result => {
       if(this.debug) {
-        console.log('tree-dynamic: dialog aticle: before close');
+        console.log('tree-dynamic: dialog article: before close');
       }
       if(result) {
         if(this.debug) {
-          console.log('tree-dynamic: dialog aticle: before close: result: ', result);
+          console.log('tree-dynamic: dialog article: before close: result: ', result);
         }
       }
       this.tinyMceArticleContent = this.formData['article'];
@@ -1603,7 +1603,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     });
     dialogRef.afterOpen().subscribe( () => {
       if(this.debug) {
-        console.log('tree-dynamic: dialog aticle: after open');
+        console.log('tree-dynamic: dialog article: after open');
       }
       const parent = this.documentBody.querySelector('#dialog-article');
       let height = parent.clientHeight ? parent.clientHeight : 0;

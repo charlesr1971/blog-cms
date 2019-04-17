@@ -12,6 +12,7 @@
 <cfinclude template="../functions.cfm">
 
 <cfset emailtemplateheaderbackground = getMaterialThemePrimaryColour(theme=request.theme)>
+<cfset emailtemplatemessage = "">
 
 <cfset data = StructNew()>
 <cfset data['commentid'] = 0>

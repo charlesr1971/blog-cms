@@ -76,6 +76,7 @@ import { CustomRecaptchaDirective } from './directives/custom-recaptcha/custom-r
 import { AgGridModule } from 'ag-grid-angular';
 import { SafePipe } from './pipes/safe/safe.pipe';
 import { FormatEmailRenderer } from './ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
+import { CustomEditHeader } from './ag-grid/header/custom-edit-header/custom-edit-header.component';
 
 
 const appRoutes: Routes = [
@@ -128,7 +129,8 @@ const appRoutes: Routes = [
     GoogleRecaptchaDirective,
     CustomRecaptchaDirective,
     SafePipe,
-    FormatEmailRenderer
+    FormatEmailRenderer,
+    CustomEditHeader
   ],
   imports: [
     BrowserModule,
@@ -178,7 +180,7 @@ const appRoutes: Routes = [
     EditorModule,
     OverlayModule,
     NgbModule,
-    AgGridModule.withComponents([FormatEmailRenderer])
+    AgGridModule.withComponents([FormatEmailRenderer,CustomEditHeader])
   ],
   entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent], // Add the DialogComponent as entry component
   providers: [

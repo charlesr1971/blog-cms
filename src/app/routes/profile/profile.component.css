@@ -180,6 +180,78 @@ div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-lis
     overflow: auto;
 }
 
+
+
+.dialog-email-container {
+    position: relative;
+    height: 100%;
+}
+
+.form-field-container .form-field-text textarea#message {
+    height: 200px;
+}
+  
+.button-actions {
+    position: absolute;
+    width: 100%;
+    height: 36px;
+    left: 0px;
+    bottom: 0px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialog-email-container .button-actions .mat-raised-button {
+    margin-left: 0px;
+}
+
+.dialog-email-footer-data {
+    width: 225px;
+    height: 36px;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 14px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.dialog-email-footer-data i {
+    margin-right: 10px;
+}
+
+.mat-icon.email-close {
+    cursor: pointer;
+}
+
+.mat-dialog-actions {
+    padding: 12px 0;
+    padding-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: -24px;
+    place-content: space-evenly;
+}
+
+button {
+    padding: 0 10px;
+}
+
+button[data-role='submit'] {
+    margin-left: 20px;
+}
+
+.mat-icon.dialog-email-help-notification-close {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
 /* media queries */
 
 /* smart phones */

@@ -313,17 +313,17 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text, 1) !important;
     }
 
-    .dialog-article-footer-data {
+    .dialog-article-footer-data, .dialog-email-footer-data {
         color: mat-color($dark-accent, lighter);
         border: 1px dotted mat-color($dark-primary, lighter);
         background: mat-color($dark-foreground-palette, text, 0.075) !important;
     }
       
-    .dialog-article-footer-data i {
+    .dialog-article-footer-data i, .dialog-email-footer-data i {
         color: mat-color($dark-foreground-palette, text);
     }
 
-    .dialog-article-footer-data-warn {
+    .dialog-article-footer-data-warn, .dialog-email-footer-data-warn {
         color: mat-color($dark-warn);
     }
 
@@ -727,17 +727,17 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text, 1) !important;
     }
 
-    .dialog-article-footer-data {
+    .dialog-article-footer-data, .dialog-email-footer-data {
         color: mat-color($light-accent, lighter);
         border: 1px dotted mat-color($light-primary, lighter);
         background: mat-color($light-foreground-palette, text, 0.025) !important;
     }
       
-    .dialog-article-footer-data i {
+    .dialog-article-footer-data i, .dialog-email-footer-data i {
         color: mat-color($light-foreground-palette, text);
     }
 
-    .dialog-article-footer-data-warn {
+    .dialog-article-footer-data-warn, .dialog-email-footer-data-warn {
         color: mat-color($light-warn);
     }
 
