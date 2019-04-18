@@ -181,11 +181,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
   categoryImagesUrl: string = '';
   userid: number = 0;
   disableCommentGeneralTooltip: boolean = false;
+  tooltipAddIcon: string = 'open/close panel';
+  tooltipFullscreenIcon: string = 'expand/contract panel';
+  tooltipQuestionmarkSpan: string = 'help';
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   dialogEditCategoriesHeight: number = 0;
   dialogEmailHeight: number = 0;
   emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
   emailFormDisabled: boolean = false;
+  emailTemplateSalutation: string = '';
+  emailTemplateDate: string = '';
+  emailTemplateCredit: string = '';
 
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
@@ -215,6 +221,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   defaultColDefUserSuspend;
   overlayLoadingTemplateUserSuspend;
   overlayNoRowsTemplateUserSuspend;
+  cachedNodeDataUserSuspend = [];
 
   userPasswordHasNoData: boolean = false;
   contextUserPassword;
@@ -229,6 +236,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   defaultColDefUserPassword;
   overlayLoadingTemplateUserPassword;
   overlayNoRowsTemplateUserPassword;
+  cachedNodeDataUserPassword = [];
 
   components;
   
@@ -355,11 +363,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         componentParent: this
       };
       this.frameworkComponentsUserArchive = {
-        formatEmailRenderer: FormatEmailRenderer
+        formatEmailRenderer: FormatEmailRenderer,
+        agColumnHeader: CustomEditHeader
       };
 
       this.defaultColDefUserArchive = {
-        resizable: true
+        resizable: true,
+        suppressMenu: true,
+        sortable: true,
+        filter: true
       };
 
       this.overlayLoadingTemplateUserArchive =
@@ -384,7 +396,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.defaultColDefUserSuspend = {
         enableCellChangeFlash: true,
         resizable: true,
-        suppressMenu: false
+        suppressMenu: true,
+        sortable: true,
+        filter: true
       };
 
       this.overlayLoadingTemplateUserSuspend =
@@ -408,7 +422,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.defaultColDefUserPassword = {
         enableCellChangeFlash: true,
         resizable: true,
-        suppressMenu: false
+        suppressMenu: true,
+        sortable: true,
+        filter: true
       };
 
       this.overlayLoadingTemplateUserPassword =
@@ -1384,8 +1400,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('profile.component: onUserPasswordGridReady');
     }
+    
     setTimeout( () => {
       this.userPasswordAutoSizeAll();
+      const temp = [];
+      this.agGridUserPassword.api.forEachNode((node) => {
+        return temp.push(node.data);
+      });
+      //const obj = Object.assign(temp,[]);
+      this.cachedNodeDataUserPassword = Array.from(Object.create(temp));
+      //this.cachedNodeDataUserPassword = obj;
+      //if(this.debug) {
+        console.log('profile.component: onUserPasswordGridReady: this.cachedNodeDataUserPassword: ', this.cachedNodeDataUserPassword);
+      //}
     });
   }
 
@@ -1399,14 +1426,52 @@ export class ProfileComponent implements OnInit, OnDestroy {
       obj['password'] = node.password;
       data.push(obj);
     });
-    if(this.debug) {
+    /* if(this.debug) {
       console.log('profile.component: getUserPasswordSelectedRows: data: ', data);
     }
     const obj = {
       users: data,
       task: 'password'
     };
-    this.usersPasswordPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersPasswordPostData).subscribe();
+    this.usersPasswordPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersPasswordPostData).subscribe(); */
+
+    const temp = [];
+
+    /* this.cachedNodeDataUserPassword.map((node) => {
+      this.agGridUserPassword.api.getRenderedNodes().map( (obj) => {
+        if(obj.data.user_id === node.user_id && obj.data.password !== '') {
+          temp.push(node);
+        }
+      });
+      //let obj = this.agGridUserPassword.api.getRenderedNodes().find(obj => obj.data.user_id === node.user_id && obj.data.password !== '');
+    }); */
+
+    this.agGridUserPassword.api.getRenderedNodes().map( (obj) => {
+      if(obj.data.password !== '') {
+        temp.push(obj);
+      }
+    });
+
+    console.log('profile.component: onUserPasswordGridReady: selectedNodes.length: ', selectedNodes.length,' temp.length: ', temp.length);
+
+    if(selectedNodes.length !== temp.length) {
+      //if(this.debug) {
+        console.log('profile.component: onUserPasswordGridReady: changed node array length does NOT match cached node array length: ', this.cachedNodeDataUserPassword);
+      //}
+    }
+    else{
+      //if(this.debug) {
+        console.log('profile.component: onUserPasswordGridReady: changed node array length matches cached node array length: ', this.cachedNodeDataUserPassword);
+      //}
+    }
+
+    /* const arr = selectedNodes.map((node) => {
+      temp.filter( (obj) => {
+        return obj.data.user_id === node.data.user_id
+      });
+    }); */
+
+
   }
 
   onUserPasswordRowValueChanged(event): void {
@@ -1488,12 +1553,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if(this.debug) {
         console.log('profile.component: dialog e-mail: after open');
       }
-      this.email.patchValue(params);
-      this.formEmailData['email'] = params;
+      this.email.patchValue(params.data.e_mail);
+      this.formEmailData['email'] = params.data.e_mail;
       const parent = this.documentBody.querySelector('#dialog-email');
       const child = this.documentBody.querySelector('#message');
       let height = parent.clientHeight ? parent.clientHeight : 0;
-      const offsetHeight = this.isMobile ? 485 : 372;
+      //const offsetHeight = this.isMobile ? 485 : 372;
+      const offsetHeight = this.isMobile ? 661 : 548;
       if(!isNaN(height) && (height - offsetHeight) > 0) {
         height = height - offsetHeight;
       }
@@ -1507,6 +1573,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if(this.debug) {
         console.log('profile.component: dialog: this.dialogEmailHeight: ', this.dialogEmailHeight);
       }
+      this.emailTemplateSalutation = 'Hi ' + params.data.forename;
+      this.emailTemplateDate = ' ' + new Date().toString().replace(/[\s]+GMT.*/ig,'');
+      this.emailTemplateCredit = environment.title;
     });
   }
 
@@ -1531,9 +1600,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
     };
     this.email.patchValue('');
     this.message.patchValue('');
+    this.emailTemplateSalutation = '';
+    this.emailTemplateDate = '';
+    this.emailTemplateCredit = '';
     this.formEmailData = {};
     this.dialog.closeAll();
     this.usersEmailPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersEmailPostData).subscribe();
+  }
+
+  togglePanelWidth(event: any): void {
+    const target = event.target.parentElement.parentElement;
+    if(this.debug) {
+      console.log('profile.component: togglePanelWidth: target: ', target);
+      console.log('profile.component: togglePanelWidth: target.classList.contains(\'panel\'): ', target.classList.contains('panel'));
+      console.log('profile.component: togglePanelWidth: target.classList.contains(\'expand\'): ', target.classList.contains('expand'));
+    }
+    if(target && target.classList.contains('panel')) {
+      target.classList.toggle('expand',!target.classList.contains('expand'));
+    }
   }
 
   ngOnDestroy() {

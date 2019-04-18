@@ -191,6 +191,47 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text) !important;
     }
 
+    .ag-cell-inline-editing input {
+        background: mat-color($dark-warn, lighter) !important;
+        color: mat-color($dark-background-palette, background, 0.75);
+    }
+
+    .customEditHeaderSortDownLabel, .customEditHeaderSortUpLabel, .customEditHeaderSortRemoveLabel {
+        color: mat-color($dark-foreground-palette, text, 0.5) !important;
+    }
+
+    .customEditHeaderSortDownLabel:hover, .customEditHeaderSortUpLabel:hover, .customEditHeaderSortRemoveLabel:hover {
+        color: mat-color($dark-accent, lighter) !important;
+    }
+
+    .customEditHeaderSortDownLabel.active, .customEditHeaderSortUpLabel.active, .customEditHeaderSortRemoveLabel.active {
+        color: mat-color($dark-accent, default) !important;
+    }
+
+    .e-mail-template {
+        background: mat-color($dark-foreground-palette, text, 0.075) !important;
+    }
+
+    .e-mail-template-salutation {
+        color: mat-color($dark-foreground-palette, text, 0.75) !important;
+    }
+
+    .e-mail-template-blockquote {
+        background: mat-color($dark-foreground-palette, text, 0.75) !important;
+    }
+
+    .e-mail-template-date-title {
+        color: mat-color($dark-foreground-palette, text, 0.75) !important;
+    }
+
+    .e-mail-template-date {
+        color: mat-color($dark-foreground-palette, text, 0.5) !important;
+    }
+
+    .customEditHeaderIcon {
+        color: mat-color($dark-warn, lighter) !important;
+    }
+
     .category-edit-tree {
         background: mat-color($dark-foreground-palette, text, 0.035);
     }
@@ -202,10 +243,6 @@ $dark-background-palette: map-get($dark-theme, background);
     div.comment-parent {
         background: mat-color($dark-foreground-palette, text, 0.035);
     }
-
-    /* .gallery-detail-comments-container .mat-card-content.comments {
-        border-top: solid 20px mat-color($dark-foreground-palette, text, 0.035);
-    } */
 
     div.comment-child {
         background: mat-color($dark-foreground-palette, text, 0.16);
@@ -591,7 +628,6 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     .ag-paging-panel {
-        /* background: mat-color($light-foreground-palette, text, 0.078) !important; */
         background: mat-color($light-foreground-palette, text, 0.0) !important;
     }
 
@@ -611,6 +647,47 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text) !important;
     }
 
+    .ag-cell-inline-editing input {
+        background: mat-color($light-warn, lighter) !important;
+        color: mat-color($light-background-palette, background, 0.75);
+    }
+
+    .customEditHeaderIcon {
+        color: mat-color($light-warn, lighter) !important;
+    }
+
+    .customEditHeaderSortDownLabel, .customEditHeaderSortUpLabel, .customEditHeaderSortRemoveLabel {
+        color: mat-color($light-foreground-palette, text, 0.5) !important;
+    }
+
+    .customEditHeaderSortDownLabel:hover, .customEditHeaderSortUpLabel:hover, .customEditHeaderSortRemoveLabel:hover {
+        color: mat-color($light-accent, lighter) !important;
+    }
+
+    .customEditHeaderSortDownLabel.active, .customEditHeaderSortUpLabel.active, .customEditHeaderSortRemoveLabel.active {
+        color: mat-color($light-accent, default) !important;
+    }
+
+    .e-mail-template {
+        background: mat-color($light-foreground-palette, text, 0.075) !important;
+    }
+
+    .e-mail-template-salutation {
+        color: mat-color($light-foreground-palette, text, 0.75) !important;
+    }
+
+    .e-mail-template-blockquote {
+        background: mat-color($light-foreground-palette, text, 0.75) !important;
+    }
+
+    .e-mail-template-date-title {
+        color: mat-color($light-foreground-palette, text, 0.75) !important;
+    }
+
+    .e-mail-template-date {
+        color: mat-color($light-foreground-palette, text, 0.5) !important;
+    }
+
     .category-edit-tree {
         background: mat-color($light-foreground-palette, text, 0.035);
     }
@@ -624,7 +701,6 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     div.comment-child {
-        /* background: mat-color($light-primary, default, 0.1); */
         background: mat-color($light-background-palette, card, 0.75);
     }
 
@@ -681,7 +757,6 @@ $light-background-palette: map-get($light-theme, background);
     }
 
     .mat-app-background.basic-container.gallery-detail {
-        //background: mat-color($light-background-palette, app-bar);
         background: mat-color($light-background-palette, card, 0.5);
     }
 

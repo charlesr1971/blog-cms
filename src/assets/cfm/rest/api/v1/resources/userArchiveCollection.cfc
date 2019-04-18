@@ -26,13 +26,13 @@
 	<cfif StructKeyExists(local.data['jwtObj'],"jwtAuthenticated") AND NOT local.data['jwtObj']['jwtAuthenticated']>
       <cfreturn representationOf(local.data).withStatus(403,"Not Authorized") />
     </cfif>
-    <cfset local.columnOrder = "Surname,Forename,E_mail,User_ID">
-    <cfset local.columnWidth = "100,100,100,100">
+    <cfset local.columnOrder = "Surname,Forename,E_mail,User_ID,Submission_date">
+    <cfset local.columnWidth = "200,200,300,120,185">
     <cfset local.columnOrderTemp = "">
     <cfset local.temp = ArrayNew(1)>
     <cfset local.counter = 1>
     <CFQUERY NAME="local.qGetUserArchive" DATASOURCE="#request.domain_dsn#">
-      SELECT Surname, Forename ,E_mail, User_ID  
+      SELECT Surname, Forename ,E_mail, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date   
       FROM tblUserArchive 
       ORDER BY Surname ASC
     </CFQUERY>
@@ -57,6 +57,7 @@
                 <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
+              <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>
@@ -141,13 +142,13 @@
         </cfif>
       </cfif>
     </cfloop>
-    <cfset local.columnOrder = "Surname,Forename,E_mail,User_ID">
-    <cfset local.columnWidth = "100,100,100,100">
+    <cfset local.columnOrder = "Surname,Forename,E_mail,User_ID,Submission_date">
+    <cfset local.columnWidth = "200,200,300,120,185">
     <cfset local.columnOrderTemp = "">
     <cfset local.temp = ArrayNew(1)>
     <cfset local.counter = 1>
     <CFQUERY NAME="local.qGetUserArchive" DATASOURCE="#request.domain_dsn#">
-      SELECT Surname, Forename ,E_mail, User_ID  
+      SELECT Surname, Forename ,E_mail, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date   
       FROM tblUserArchive 
       ORDER BY Surname ASC
     </CFQUERY>
@@ -172,6 +173,7 @@
                 <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
+              <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>

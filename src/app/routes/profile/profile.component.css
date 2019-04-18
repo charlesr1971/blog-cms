@@ -56,6 +56,10 @@
     margin: 30px 0px 40px;
 }
 
+.form-field-container .form-field-text div.panel.expand {
+    width: 100%;
+}
+
 .form-field-container .form-field-text div.panel.unapproved-images {
     position: relative;
     margin: 30px 0px 40px;
@@ -68,7 +72,7 @@
 .form-field-container .form-field-text div.panel.unapproved-images .mat-icon.add, .form-field-container .form-field-text div.panel.approved-images .mat-icon.add {
     position: absolute;
     top: 19px;
-    right: 30px;
+    right: 50px;
     font-size: 16px;
     cursor: pointer;
     z-index: 10;
@@ -93,10 +97,14 @@
     cursor: pointer;
 }
 
+.form-field-container .form-field-text div.panel h2.panel-legend .mat-icon.fullscreen {
+    right: 50px;
+}
+
 .form-field-container .form-field-text div.panel h2.panel-legend span.help {
     position: absolute;
     top: 16px;
-    right: 40px;
+    right: 50px;
     font-size: 16px;
     cursor: pointer;
 }
@@ -252,6 +260,28 @@ button[data-role='submit'] {
     cursor: pointer;
 }
 
+.e-mail-template {
+    margin: 0px;
+    padding: 20px;
+}
+
+.e-mail-template-table {
+    margin: 20px 0px 0px;
+}
+
+.e-mail-template-salutation {
+    margin: 0px 0px 20px;
+    line-height: 22px;
+}
+
+.e-mail-template {
+    font-size: 16px;
+}
+
+.e-mail-template-message {
+    margin-top: 20px;
+}
+
 /* media queries */
 
 /* smart phones */
@@ -268,6 +298,18 @@ button[data-role='submit'] {
 
     .form-field-container .form-field-text div.panel {
         width: 100%;
+    }
+
+    .form-field-container .form-field-text div.panel.unapproved-images .mat-icon.add, .form-field-container .form-field-text div.panel.approved-images .mat-icon.add {
+        right: 40px;
+    }
+    
+    .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon.fullscreen {
+        right: 40px;
+    }
+    
+    .form-field-container .form-field-text div.panel h2.panel-legend span.help {
+        right: 40px;
     }
 
     #apiDocumentation {

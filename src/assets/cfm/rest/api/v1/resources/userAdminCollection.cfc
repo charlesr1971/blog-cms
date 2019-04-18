@@ -32,13 +32,13 @@
     </cfif>
     <cfswitch expression="#local.data['task']#">
       <cfcase value="suspend">
-		<cfset local.columnOrder = "Surname,Forename,E_mail,Suspend,User_ID">
-        <cfset local.columnWidth = "100,100,100,100,100">
+		<cfset local.columnOrder = "Surname,Forename,E_mail,Suspend,User_ID,Submission_date">
+        <cfset local.columnWidth = "200,200,300,160,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
-          SELECT Surname, Forename ,E_mail, Suspend, User_ID  
+          SELECT Surname, Forename ,E_mail, Suspend, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
           FROM tblUser 
           ORDER BY Surname ASC
         </CFQUERY>
@@ -66,8 +66,9 @@
                   <cfif CompareNoCase(local.column,"Suspend") EQ 0>
                     <cfset local.obj['editable'] = true>
                     <cfset local.obj['cellEditor'] = "numericCellEditor">
-                    <cfset local.obj['headerComponentParams'] = {menuIcon: "fa-pencil"}>
+                    <cfset local.obj['suppressMenu'] = false>
                   </cfif>
+                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -82,13 +83,13 @@
         </cfif>
       </cfcase>
       <cfcase value="password">
-		<cfset local.columnOrder = "Surname,Forename,E_mail,Password,User_ID">
-        <cfset local.columnWidth = "100,100,100,100,100">
+		<cfset local.columnOrder = "Surname,Forename,E_mail,Password,User_ID,Submission_date">
+        <cfset local.columnWidth = "200,200,300,180,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
-          SELECT Surname, Forename ,E_mail, '' As Password, User_ID  
+          SELECT Surname, Forename ,E_mail, '' As Password, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
           FROM tblUser 
           ORDER BY Surname ASC
         </CFQUERY>
@@ -115,8 +116,9 @@
                   <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
                   <cfif CompareNoCase(local.column,"Password") EQ 0>
                     <cfset local.obj['editable'] = true>
-                    <cfset local.obj['headerComponentParams'] = {menuIcon: "fa-pencil"}>
+                    <cfset local.obj['suppressMenu'] = false>
                   </cfif>
+                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -270,13 +272,13 @@
     </cfloop>
     <cfswitch expression="#local.data['task']#">
       <cfcase value="suspend">
-		<cfset local.columnOrder = "Surname,Forename,E_mail,Suspend,User_ID">
-        <cfset local.columnWidth = "100,100,100,100,100">
+		<cfset local.columnOrder = "Surname,Forename,E_mail,Suspend,User_ID,Submission_date">
+        <cfset local.columnWidth = "200,200,300,160,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
-          SELECT Surname, Forename ,E_mail, Suspend, User_ID  
+          SELECT Surname, Forename ,E_mail, Suspend, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
           FROM tblUser 
           ORDER BY Surname ASC
         </CFQUERY>
@@ -304,7 +306,9 @@
                   <cfif CompareNoCase(local.column,"Suspend") EQ 0>
                     <cfset local.obj['editable'] = true>
                     <cfset local.obj['cellEditor'] = "numericCellEditor">
+                    <cfset local.obj['suppressMenu'] = false>
                   </cfif>
+                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -319,13 +323,13 @@
         </cfif>
       </cfcase>
       <cfcase value="password">
-		<cfset local.columnOrder = "Surname,Forename,E_mail,Password,User_ID">
-        <cfset local.columnWidth = "100,100,100,100,100">
+		<cfset local.columnOrder = "Surname,Forename,E_mail,Password,User_ID,Submission_date">
+        <cfset local.columnWidth = "200,200,300,180,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
-          SELECT Surname, Forename ,E_mail, '' As Password, User_ID  
+          SELECT Surname, Forename ,E_mail, '' As Password, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
           FROM tblUser 
           ORDER BY Surname ASC
         </CFQUERY>
@@ -352,7 +356,9 @@
                   <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
                   <cfif CompareNoCase(local.column,"Password") EQ 0>
                     <cfset local.obj['editable'] = true>
+                    <cfset local.obj['suppressMenu'] = false>
                   </cfif>
+                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>

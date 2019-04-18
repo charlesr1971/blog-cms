@@ -139,7 +139,7 @@ tag-input > div div tag delete-icon:hover {
 }
 
 body.gallery .mat-card .mat-select-placeholder, body.gallery .mat-card .mat-select-trigger {
-    font-family: Roboto,"Helvetica Neue",sans-serif !important;
+    font-family: Roboto,Helvetica,sans-serif !important;
     font-size: 14px !important;
     font-weight: 500 !important;
 }
@@ -449,24 +449,46 @@ body.profile .mat-tree .mat-form-field {
     background-color: transparent !important;
 }
 
+.ag-header-cell-sortable {
+    cursor: default !important;
+}
+
 .ag-cell {
-    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    font-family: Roboto,Helvetica,sans-serif !important; 
     line-height: 35px !important;
 }
 
 .ag-header-cell-text {
-    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    font-family: Roboto,Helvetica,sans-serif !important; 
     line-height: 35px !important;
 }
 
+.ag-cell-inline-editing {
+    height: 35px !important;
+}
+
+.ag-cell-inline-editing input {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    -webkit-border-radius: 0 !important;
+    -webkit-box-shadow: none !important;
+    margin: 0px 0px !important;
+    padding: 8px 10px !important;
+    height: 35px !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+}
+
 .ag-paging-panel {
-    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    font-family: Roboto,Helvetica,sans-serif !important; 
     border-top: none !important;
     padding: 30px 0px 30px 0px !important;
 }
 
 .ag-paging-panel button {
-    font-family: Roboto,"Helvetica Neue",sans-serif !important; 
+    font-family: Roboto,Helvetica,sans-serif !important; 
     background: none !important;
     border: none !important;
     cursor: pointer;
@@ -481,6 +503,7 @@ body.profile .mat-tree .mat-form-field {
 .ag-grid-format-email-renderer {
     text-decoration: none;
     margin-right: 10px;
+    cursor: pointer !important;
 }
 
 .ag-grid-format-email-renderer:hover {

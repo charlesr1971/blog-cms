@@ -11,10 +11,13 @@ export class FormatEmailRenderer implements ICellRendererAngularComp {
 
   agInit(params: any): void {
     this.params = params;
+    //console.log(this.params.node);
   }
 
   public openEmailDialog() {
-    this.params.context.componentParent.openEmailDialog(`${this.params.value}`)
+    console.log(this.params.node);
+    //this.params.context.componentParent.openEmailDialog(`${this.params.node}`)
+    this.params.context.componentParent.openEmailDialog(this.params.node);
   }
 
   refresh(params: any): boolean {

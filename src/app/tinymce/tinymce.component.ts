@@ -152,7 +152,7 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
               plugins: ['lists'],
               skin: 'lightgray',
               content_css: 'assets/tinymce/css/custom-mobile.css',
-              toolbar: 'undo redo | styleselect | bold italic | bullist numlist | fontsizeselect | forecolor | removeformat | image',
+              toolbar: 'undo redo | styleselect | bold italic | bullist numlist | link | unlink | forecolor | removeformat | image',
               style_formats: style_formats,
               preview_styles: false,
               setup: editor => {

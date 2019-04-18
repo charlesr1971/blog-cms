@@ -108,11 +108,19 @@ aside.gallery-detail-aside {
 .gallery-detail-description {
     width: 700px;
     margin: 30px auto 0px;
-    /* font-size: 16px; */
     font-weight: bold;
     font-size: 21px;
-    line-height: 1.58;
+    line-height: 33.18px;
     letter-spacing: -.003em;
+    font-family: Roboto,Helvetica,sans-serif;
+}
+
+.gallery-detail-description p, .gallery-detail-description p[style] {
+    font-weight: bold !important;
+    font-size: 21px !important;
+    line-height: 33.18px !important;
+    letter-spacing: -.003em !important; 
+    font-family: Roboto,Helvetica,sans-serif !important;
 }
 
 .gallery-detail-divider {
@@ -132,10 +140,17 @@ aside.gallery-detail-aside {
 .gallery-detail-article {
     width: 700px;
     margin: 0 auto;
-    /* font-size: 16px; */
     font-size: 21px;
-    line-height: 1.58;
+    line-height: 33.18px;
     letter-spacing: -.003em;
+    font-family: Roboto,Helvetica,sans-serif;
+}
+
+.gallery-detail-article p, .gallery-detail-article p[style] {
+    font-size: 21px !important;
+    line-height: 33.18px !important;
+    letter-spacing: -.003em !important;
+    font-family: Roboto,Helvetica,sans-serif !important;
 }
 
 .gallery-detail-comments-container {
@@ -179,9 +194,19 @@ aside.gallery-detail-aside {
     .gallery-detail-description {
         width: 100%;
         padding: 0px 30px;
+        font-weight: bold;
         font-size: 18px;
-        letter-spacing: -0.0666667px;
         line-height: 28.4333px;
+        letter-spacing: -0.0666667px;
+        font-family: Roboto,Helvetica,sans-serif;
+    }
+
+    .gallery-detail-description p, .gallery-detail-description p[style] {
+        font-weight: bold !important;
+        font-size: 18px !important;
+        line-height: 28.4333px !important;
+        letter-spacing: -0.0666667px !important; 
+        font-family: Roboto,Helvetica,sans-serif !important;
     }
 
     .gallery-detail-divider {
@@ -192,8 +217,16 @@ aside.gallery-detail-aside {
         width: 100%;
         padding: 0px 30px;
         font-size: 18px;
-        letter-spacing: -0.0666667px;
         line-height: 28.4333px;
+        letter-spacing: -0.0666667px;
+        font-family: Roboto,Helvetica,sans-serif;
+    }
+
+    .gallery-detail-article p, .gallery-detail-article p[style] {
+        font-size: 18px !important;
+        line-height: 28.4333px !important;
+        letter-spacing: -0.0666667px !important;
+        font-family: Roboto,Helvetica,sans-serif !important;
     }
 
     .gallery-detail-comments-container {

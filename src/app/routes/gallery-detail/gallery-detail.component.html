@@ -24,7 +24,7 @@
           <td>
             <div class="gallery-detail-author-data">
               <div class="gallery-detail-author-name">
-                <span *ngIf="(user | async) as user">{{ user.forename }} {{ user.surname }}</span>
+                <span *ngIf="(user | async) as user">{{ image.author }}</span>
               </div>
               <div class="gallery-detail-author-date">
                 {{ image.createdAt | date:'mediumDate' }}

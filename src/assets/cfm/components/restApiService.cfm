@@ -1623,7 +1623,7 @@
 			font-weight: normal;
 			color: white;
 			font-weight: 500;
-			font-family: Roboto,"Helvetica Neue",sans-serif;
+			font-family: Roboto,Helvetica,sans-serif;
 		}
 		
 		header div.header-container span {
@@ -1635,7 +1635,7 @@
 			font-weight: normal;
 			color: rgba(255,255,255,0.5);
 			font-weight: normal;
-			font-family: Roboto,"Helvetica Neue",sans-serif;
+			font-family: Roboto,Helvetica,sans-serif;
 		}
 		
 		header##header i{
@@ -1687,7 +1687,7 @@
 			height: 64px;
 			background: none;
 			padding: 16px 16px 16px 26px;
-			font-family: Roboto,"Helvetica Neue",sans-serif;
+			font-family: Roboto,Helvetica,sans-serif;
 			font-size: 20px;
 			font-weight: 500;
 			line-height: 32px;
@@ -2394,7 +2394,7 @@
 			  height: 64px;
 			  background: var(--header-background);
 			  padding: 16px;
-			  font-family: Roboto,"Helvetica Neue",sans-serif;
+			  font-family: Roboto,Helvetica,sans-serif;
 			  font-size: 20px;
 			  font-weight: 500;
 			  line-height: 32px;
