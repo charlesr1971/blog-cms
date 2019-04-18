@@ -1400,78 +1400,48 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('profile.component: onUserPasswordGridReady');
     }
-    
     setTimeout( () => {
       this.userPasswordAutoSizeAll();
       const temp = [];
       this.agGridUserPassword.api.forEachNode((node) => {
-        return temp.push(node.data);
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
       });
-      //const obj = Object.assign(temp,[]);
       this.cachedNodeDataUserPassword = Array.from(Object.create(temp));
-      //this.cachedNodeDataUserPassword = obj;
-      //if(this.debug) {
+      if(this.debug) {
         console.log('profile.component: onUserPasswordGridReady: this.cachedNodeDataUserPassword: ', this.cachedNodeDataUserPassword);
-      //}
+      }
     });
   }
 
   getUserPasswordSelectedRows(): void {
     const selectedNodes = this.agGridUserPassword.api.getSelectedNodes();
     const selectedData = selectedNodes.map( node => node.data );
-    const data = [];
-    selectedData.map( (node) => {
-      const obj = {};
-      obj['id'] = node.user_id;
-      obj['password'] = node.password;
-      data.push(obj);
-    });
-    /* if(this.debug) {
-      console.log('profile.component: getUserPasswordSelectedRows: data: ', data);
-    }
-    const obj = {
-      users: data,
-      task: 'password'
-    };
-    this.usersPasswordPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersPasswordPostData).subscribe(); */
-
-    const temp = [];
-
-    /* this.cachedNodeDataUserPassword.map((node) => {
-      this.agGridUserPassword.api.getRenderedNodes().map( (obj) => {
-        if(obj.data.user_id === node.user_id && obj.data.password !== '') {
-          temp.push(node);
-        }
+    const changesArray = this.getChangesArray(this.cachedNodeDataUserPassword,this.agGridUserPassword.api.getRenderedNodes());
+    const changeMismatch = selectedNodes.length !== changesArray.length;
+    if(!changeMismatch) {
+      const data = [];
+      selectedData.map( (node) => {
+        const obj = {};
+        obj['id'] = node.user_id;
+        obj['password'] = node.password;
+        data.push(obj);
       });
-      //let obj = this.agGridUserPassword.api.getRenderedNodes().find(obj => obj.data.user_id === node.user_id && obj.data.password !== '');
-    }); */
-
-    this.agGridUserPassword.api.getRenderedNodes().map( (obj) => {
-      if(obj.data.password !== '') {
-        temp.push(obj);
+      if(this.debug) {
+        console.log('profile.component: getUserPasswordSelectedRows: data: ', data);
       }
-    });
-
-    console.log('profile.component: onUserPasswordGridReady: selectedNodes.length: ', selectedNodes.length,' temp.length: ', temp.length);
-
-    if(selectedNodes.length !== temp.length) {
-      //if(this.debug) {
-        console.log('profile.component: onUserPasswordGridReady: changed node array length does NOT match cached node array length: ', this.cachedNodeDataUserPassword);
-      //}
+      const obj = {
+        users: data,
+        task: 'password'
+      };
+      this.usersPasswordPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersPasswordPostData).subscribe();
     }
     else{
-      //if(this.debug) {
-        console.log('profile.component: onUserPasswordGridReady: changed node array length matches cached node array length: ', this.cachedNodeDataUserPassword);
-      //}
+      this.openSnackBar('Not all changes have been selected', 'Error');
     }
-
-    /* const arr = selectedNodes.map((node) => {
-      temp.filter( (obj) => {
-        return obj.data.user_id === node.data.user_id
-      });
-    }); */
-
-
   }
 
   onUserPasswordRowValueChanged(event): void {
@@ -1527,6 +1497,33 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  getChangesArray(cachedArray: any[], renderedArray: any[]): any[] {
+    const changesArray = [];
+    cachedArray.map((node) => {
+      renderedArray.map( (obj) => {
+        const data = obj.data;
+        if(data.user_id === node.user_id) {
+          let changed = false;
+          for(const key in data) {
+            if(data[key] !== node[key]) {
+              if(this.debug) {
+                console.log('profile.component: getChangesArray: data[key]: ', data[key],' node[key]: ',node[key]);
+              }
+              changed = true;
+              break;
+            }
+          }
+          if(changed) {
+            changesArray.push(node);
+          }
+        }
+      });
+    });
+    return changesArray;
+  }
+
+  // e-mail methods
 
   openEmailDialog(params) {
     if(this.debug) {
