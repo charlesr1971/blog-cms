@@ -1283,27 +1283,46 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
     setTimeout( () => {
       this.userSuspendAutoSizeAll();
+      const temp = [];
+      this.agGridUserSuspend.api.forEachNode((node) => {
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
+      });
+      this.cachedNodeDataUserSuspend = Array.from(Object.create(temp));
+      if(this.debug) {
+        console.log('profile.component: onUserSuspendGridReady: this.cachedNodeDataUserSuspend: ', this.cachedNodeDataUserSuspend);
+      }
     });
   }
 
   getUserSuspendSelectedRows(): void {
     const selectedNodes = this.agGridUserSuspend.api.getSelectedNodes();
     const selectedData = selectedNodes.map( node => node.data );
-    const data = [];
-    selectedData.map( (node) => {
-      const obj = {};
-      obj['id'] = node.user_id;
-      obj['suspend'] = node.suspend;
-      data.push(obj);
-    });
-    if(this.debug) {
-      console.log('profile.component: getUserSuspendSelectedRows: data: ', data);
+    const changesArray = this.getChangesArray(this.cachedNodeDataUserSuspend,this.agGridUserSuspend.api.getRenderedNodes());
+    const changeMismatch = selectedNodes.length !== changesArray.length;
+    if(!changeMismatch) {
+      const data = [];
+      selectedData.map( (node) => {
+        const obj = {};
+        obj['id'] = node.user_id;
+        obj['suspend'] = node.suspend;
+        data.push(obj);
+      });
+      if(this.debug) {
+        console.log('profile.component: getUserSuspendSelectedRows: data: ', data);
+      }
+      const obj = {
+        users: data,
+        task: 'suspend'
+      };
+      this.usersSuspendPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersSuspendPostData).subscribe();
     }
-    const obj = {
-      users: data,
-      task: 'suspend'
-    };
-    this.usersSuspendPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersSuspendPostData).subscribe();
+    else{
+      this.openSnackBar('Not all changes have been selected', 'Error');
+    }
   }
 
   onUserSuspendRowValueChanged(event): void {
