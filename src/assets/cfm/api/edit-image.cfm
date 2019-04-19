@@ -27,6 +27,10 @@
 <cfset emailtemplateheaderbackground = getMaterialThemePrimaryColour(theme=request.theme)>
 <cfset emailtemplatemessage = "">
 
+<cfset punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+<cfset styleAttributePattern = '[\s]*style=".*?"'>
+<cfset spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
+
 <cfset data = StructNew()>
 <cfset data['fileid'] = 0>
 <cfset data['clientfileName'] = "">
@@ -233,15 +237,16 @@
 	  <cfset publishArticleDate = Now()>
     </cfcatch>
   </cftry>
-  <cfset title = REReplaceNoCase(data['title'],"[[:punct:]]","","ALL")>
-  <cfset title = REReplaceNoCase(title,"[0-9]+","","ALL")>
+  <cfset title = REReplaceNoCase(data['title'],"#punctuationSubsetPattern#","","ALL")>
   <cfset title = REReplaceNoCase(title,"[\s]+"," ","ALL")>
   <cfset title = Trim(title)>
-  <cfset title = FormatTitle(title)>
+  <cfset title = CapFirstAll(title)>
+  <cfset article = REReplaceNoCase(data['article'],"#styleAttributePattern#","","ALL")>
+  <cfset article = REReplaceNoCase(article,"#spaceInsideParagraphPattern#","","ALL")>
   <cfset approved = ListFindNoCase("6,7",roleid) ? 1 : 0> 
   <CFQUERY NAME="qUpdateFile" DATASOURCE="#request.domain_dsn#">
     UPDATE tblFile
-    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">
+    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">
     WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
   </CFQUERY>
   <cfif IsjSON(data['tinymceArticleDeletedImages'])>
@@ -357,7 +362,7 @@
             <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
             <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
             <td style="font-size:16px;">
-              <strong>The following post, entitled '#FormatTitle(data['title'])#', has been updated</strong><br /><br />
+              <strong>The following post, entitled '#data['title']#', has been updated</strong><br /><br />
               #CapFirstSentence(data['description'],true)#
             </td>
           </tr>

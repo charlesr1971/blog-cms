@@ -57,7 +57,7 @@
                 <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
-              <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
+              <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>
@@ -173,7 +173,7 @@
                 <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
-              <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
+              <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>

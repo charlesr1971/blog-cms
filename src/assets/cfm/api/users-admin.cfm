@@ -82,7 +82,7 @@
                 <cfset obj['cellEditor'] = "numericCellEditor">
                 <cfset obj['suppressMenu'] = false>
               </cfif>
-              <cfset obj['width'] = ListGetAt(columnWidth,counter)>
+              <!---<cfset obj['width'] = ListGetAt(columnWidth,counter)>--->
               <cfset ArrayAppend(temp,obj)>
               <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
               <cfset counter = counter + 1>
@@ -132,7 +132,7 @@
                 <cfset obj['editable'] = true>
                 <cfset obj['suppressMenu'] = false>
               </cfif>
-              <cfset obj['width'] = ListGetAt(columnWidth,counter)>
+              <!---<cfset obj['width'] = ListGetAt(columnWidth,counter)>--->
               <cfset ArrayAppend(temp,obj)>
               <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
               <cfset counter = counter + 1>

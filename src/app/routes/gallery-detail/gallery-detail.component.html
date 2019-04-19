@@ -43,7 +43,7 @@
     </div>
     <div class="gallery-detail-divider"><span>...</span></div>
     <div class="gallery-detail-article" [innerHTML]="image.article | keepHtml"></div>
-    <div *ngIf="isMobile">
+    <div *ngIf="isMobile || isTablet">
       <div *ngIf="(currentUser | async) as currentUser">
         <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">
           <app-toolbar [image]="image" [commentsState]="commentsState" [currentUser]="currentUser" (_openComments)="openComments($event)" [commentsTotal]="commentsTotal" [disableCommentTooltip]="disableCommentTooltip"></app-toolbar>
@@ -59,7 +59,7 @@
 
 </div>
 
-<aside *ngIf="!isMobile" class="gallery-detail-aside">
+<aside *ngIf="!isMobile && !isTablet" class="gallery-detail-aside">
   <div *ngIf="(image | async) as image">
     <div *ngIf="(currentUser | async) as currentUser">
       <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">

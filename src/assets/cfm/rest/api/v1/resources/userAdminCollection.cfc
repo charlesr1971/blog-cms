@@ -68,7 +68,7 @@
                     <cfset local.obj['cellEditor'] = "numericCellEditor">
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
+                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -118,7 +118,7 @@
                     <cfset local.obj['editable'] = true>
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
+                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -224,13 +224,15 @@
               <cfelse>
                 <cfset local.obj['password'] = "">
               </cfif>
-              <cftransaction>
-                <CFQUERY DATASOURCE="#request.domain_dsn#">
-                  UPDATE tblUser
-                  SET Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.obj['password']#"> 
-                  WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
-                </CFQUERY>
-              </cftransaction>
+              <cfif Len(Trim(local.obj['password']))>
+                <cftransaction>
+                  <CFQUERY DATASOURCE="#request.domain_dsn#">
+                    UPDATE tblUser
+                    SET Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.obj['password']#"> 
+                    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
+                  </CFQUERY>
+                </cftransaction>
+              </cfif>
             </cfcase>
             <cfcase value="email">
 			  <cfset local.data['createdat'] = Now()>
@@ -308,7 +310,7 @@
                     <cfset local.obj['cellEditor'] = "numericCellEditor">
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
+                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -358,7 +360,7 @@
                     <cfset local.obj['editable'] = true>
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>
+                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>

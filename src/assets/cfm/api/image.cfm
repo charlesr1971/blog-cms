@@ -47,8 +47,8 @@
   <cfset data['category'] = qGetFile.Category>
   <cfset data['src'] = qGetFile.ImagePath>
   <cfset data['fileUuid'] = qGetFile.File_uuid>
-  <cfset data['author'] = FormatTitle(qGetFile.Author)>
-  <cfset data['title'] = FormatTitle(qGetFile.Title)>
+  <cfset data['author'] = qGetFile.Author>
+  <cfset data['title'] = qGetFile.Title>
   <cfset data['description'] = qGetFile.Description>
   <cfset data['article'] = qGetFile.Article>
   <cfset data['size'] = qGetFile.Size>

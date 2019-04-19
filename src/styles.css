@@ -519,6 +519,10 @@ body.profile .mat-tree .mat-form-field {
     box-shadow: none !important;
 }
 
+.dialog-user-admin-notification-container .mat-radio-label {
+    white-space: normal !important;
+}
+
 /* media queries */
 
 /* smart phones */

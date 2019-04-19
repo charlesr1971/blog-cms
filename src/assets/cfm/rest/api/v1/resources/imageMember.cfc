@@ -38,8 +38,8 @@
       <cfset local.data['category'] = local.qGetFile.Category>
       <cfset local.data['src'] = local.qGetFile.ImagePath>
       <cfset local.data['fileUuid'] = local.qGetFile.File_uuid>
-      <cfset local.data['author'] = request.utils.FormatTitle(local.qGetFile.Author)>
-      <cfset local.data['title'] = request.utils.FormatTitle(local.qGetFile.Title)>
+      <cfset local.data['author'] = local.qGetFile.Author>
+      <cfset local.data['title'] = local.qGetFile.Title>
       <cfset local.data['description'] = local.qGetFile.Description>
       <cfset local.data['article'] = local.qGetFile.Article>
       <cfset local.data['size'] = local.qGetFile.Size>
@@ -84,6 +84,9 @@
     <cfset local.submissiondate = Now()>
     <cfset local.emailsubject = "Image post creation notification e-mail from " & request.title>
     <cfset local.jwtString = "">
+    <cfset local.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+    <cfset local.styleAttributePattern = '[\s]*style=".*?"'>
+    <cfset local.spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
     <cfset local.data = StructNew()>
     <cfset local.data['fileid'] = 0>
     <cfset local.data['clientfileName'] = "">
@@ -194,11 +197,10 @@
         <cfset local.author = REReplaceNoCase(local.author,"[\s]+"," ","ALL")>
         <cfset local.author = Trim(local.author)>
         <cfset local.author = request.utils.FormatTitle(local.author)>
-        <cfset local.title = REReplaceNoCase(local.data['title'],"[[:punct:]]","","ALL")>
-        <cfset local.title = REReplaceNoCase(local.title,"[0-9]+","","ALL")>
+        <cfset local.title = REReplaceNoCase(local.data['title'],"#local.punctuationSubsetPattern#","","ALL")>
         <cfset local.title = REReplaceNoCase(local.title,"[\s]+"," ","ALL")>
         <cfset local.title = Trim(local.title)>
-        <cfset local.title = request.utils.FormatTitle(local.title)>
+        <cfset local.title = request.utils.CapFirstAll(local.title)>
         <cfif DirectoryExists(local.imageSystemPath)>
           <cfset local.newfilename = local.fileid & "." & local.data['fileExtension']>
 		  <cfset local.secureRandomSystemSecurePath = request.securefilepath & "\" & LCase(CreateUUID())>
@@ -248,10 +250,12 @@
               <cfset local.publishArticleDate = Now()>
             </cfcatch>
           </cftry>
+          <cfset local.article = REReplaceNoCase(local.data['article'],"#local.styleAttributePattern#","","ALL")>
+		  <cfset local.article = REReplaceNoCase(local.article,"#local.spaceInsideParagraphPattern#","","ALL")>
           <cfset local.approved = ListFindNoCase("6,7",local.roleid) ? 1 : 0> 
           <CFQUERY DATASOURCE="#request.domain_dsn#" result="local.queryInsertResult">
             INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-            VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(local.fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(local.data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.submissiondate#">)
+            VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(local.fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(local.data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.submissiondate#">)
           </CFQUERY>
           <cfset local.data['fileid'] = local.queryInsertResult.generatedkey>
           <cfif IsArray(local.data['tinymceArticleDeletedImages'])>
@@ -356,7 +360,7 @@
                 <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
                 <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
                 <td style="font-size:16px;">
-                  <strong>The following post, entitled '#request.utils.FormatTitle(local.data['title'])#', has been created</strong><br /><br />
+                  <strong>The following post, entitled '#local.data['title']#', has been created</strong><br /><br />
                   #request.utils.CapFirstSentence(local.data['description'],true)#
                 </td>
               </tr>
@@ -430,6 +434,9 @@
     <cfset local.emailsubject = "Image post update notification e-mail from " & request.title>
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
+    <cfset local.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+    <cfset local.styleAttributePattern = '[\s]*style=".*?"'>
+    <cfset local.spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
     <cfset local.data = StructNew()>
     <cfset local.data['fileid'] = 0>
     <cfset local.data['clientfileName'] = "">
@@ -580,15 +587,16 @@
           <cfset local.publishArticleDate = Now()>
         </cfcatch>
       </cftry>
-	  <cfset local.title = REReplaceNoCase(local.data['title'],"[[:punct:]]","","ALL")>
-      <cfset local.title = REReplaceNoCase(local.title,"[0-9]+","","ALL")>
+	  <cfset local.title = REReplaceNoCase(local.data['title'],"#local.punctuationSubsetPattern#","","ALL")>
       <cfset local.title = REReplaceNoCase(local.title,"[\s]+"," ","ALL")>
       <cfset local.title = Trim(local.title)>
-      <cfset local.title = request.utils.FormatTitle(local.title)>
+      <cfset local.title = request.utils.CapFirstAll(local.title)>
+      <cfset local.article = REReplaceNoCase(local.data['article'],"#local.styleAttributePattern#","","ALL")>
+      <cfset local.article = REReplaceNoCase(local.article,"#local.spaceInsideParagraphPattern#","","ALL")>
       <cfset local.approved = ListFindNoCase("6,7",local.roleid) ? 1 : 0> 
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblFile
-        SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.imagePath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.data['article']#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">
+        SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.imagePath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">
         WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['fileUuid']#"> 
       </CFQUERY>
       <cfif IsjSON(local.data['tinymceArticleDeletedImages'])>
@@ -702,7 +710,7 @@
                 <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
                 <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
                 <td style="font-size:16px;">
-                  <strong>The following post, entitled '#request.utils.FormatTitle(local.data['title'])#', has been updated</strong><br /><br />
+                  <strong>The following post, entitled '#local.data['title']#', has been updated</strong><br /><br />
                   #request.utils.CapFirstSentence(local.data['description'],true)#
                 </td>
               </tr>

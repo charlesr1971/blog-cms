@@ -107,13 +107,15 @@
           <cfelse>
             <cfset obj['password'] = "">
           </cfif>
-          <cftransaction>
-            <CFQUERY DATASOURCE="#request.domain_dsn#">
-              UPDATE tblUser
-              SET Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#obj['password']#"> 
-              WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
-            </CFQUERY>
-          </cftransaction>
+          <cfif Len(Trim(obj['password']))>
+            <cftransaction>
+              <CFQUERY DATASOURCE="#request.domain_dsn#">
+                UPDATE tblUser
+                SET Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#obj['password']#"> 
+                WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#">
+              </CFQUERY>
+            </cftransaction>
+          </cfif>
         </cfcase>
         <cfcase value="email">
 		  <cfset data['createdat'] = Now()>
@@ -179,7 +181,7 @@
                 <cfset obj['cellEditor'] = "numericCellEditor">
                 <cfset obj['suppressMenu'] = false>
               </cfif>
-              <cfset obj['width'] = ListGetAt(columnWidth,counter)>
+              <!---<cfset obj['width'] = ListGetAt(columnWidth,counter)>--->
               <cfset ArrayAppend(temp,obj)>
               <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
               <cfset counter = counter + 1>
@@ -229,7 +231,7 @@
                 <cfset obj['editable'] = true>
                 <cfset obj['suppressMenu'] = false>
               </cfif>
-              <cfset obj['width'] = ListGetAt(columnWidth,counter)>
+              <!---<cfset obj['width'] = ListGetAt(columnWidth,counter)>--->
               <cfset ArrayAppend(temp,obj)>
               <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
               <cfset counter = counter + 1>

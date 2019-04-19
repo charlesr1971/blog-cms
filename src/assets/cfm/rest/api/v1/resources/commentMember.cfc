@@ -166,7 +166,7 @@
                       <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
                       <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
                       <td style="font-size:16px;">
-                        <strong>The following comment has been made about the photo entitled '#request.utils.FormatTitle(local.qGetFileAuthor.Title)#'</strong><br /><br />
+                        <strong>The following comment has been made about the photo entitled '#local.qGetFileAuthor.Title#'</strong><br /><br />
                         #request.utils.CapFirstSentence(local.data['comment'],true)#
                       </td>
                     </tr>

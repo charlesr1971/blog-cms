@@ -48,8 +48,8 @@
         <cfset local.obj['category'] = local.qGetFile.Category>
         <cfset local.obj['src'] = local.qGetFile.ImagePath>
         <cfset local.obj['fileUuid'] = local.qGetFile.File_uuid>
-        <cfset local.obj['author'] = request.utils.FormatTitle(local.qGetFile.Author)>
-        <cfset local.obj['title'] = request.utils.FormatTitle(local.qGetFile.Title)>
+        <cfset local.obj['author'] = local.qGetFile.Author>
+        <cfset local.obj['title'] = local.qGetFile.Title>
         <cfset local.obj['description'] = local.qGetFile.Description>
         <cfset local.obj['article'] = local.qGetFile.Article>
         <cfset local.obj['size'] = local.qGetFile.Size>

@@ -27,6 +27,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
   image:  BehaviorSubject<Image> = new BehaviorSubject<Image>(null);
   user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
+  isTablet: boolean = false;
   isMobile: boolean = false;
 
   commentsTotal: number = 0;
@@ -66,6 +67,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
       }
 
       this.isMobile = this.deviceDetectorService.isMobile();
+      this.isTablet = this.deviceDetectorService.isTablet();
       this.categoryImagesUrl = this.httpService.categoryImagesUrl;
 
       this.fileid = this.route.snapshot.paramMap.get('id');

@@ -19,6 +19,10 @@
 <cfset emailtemplateheaderbackground = getMaterialThemePrimaryColour(theme=request.theme)>
 <cfset emailtemplatemessage = "">
 
+<cfset punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+<cfset styleAttributePattern = '[\s]*style=".*?"'>
+<cfset spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
+
 <cfset data = StructNew()>
 <cfset data['clientfileName'] = "">
 <cfset data['imagePath'] = "">
@@ -124,11 +128,10 @@
 	<cfset author = REReplaceNoCase(author,"[\s]+"," ","ALL")>
     <cfset author = Trim(author)>
     <cfset author = FormatTitle(author)>
-    <cfset title = REReplaceNoCase(data['title'],"[[:punct:]]","","ALL")>
-    <cfset title = REReplaceNoCase(title,"[0-9]+","","ALL")>
+    <cfset title = REReplaceNoCase(data['title'],"#punctuationSubsetPattern#","","ALL")>
 	<cfset title = REReplaceNoCase(title,"[\s]+"," ","ALL")>
     <cfset title = Trim(title)>
-    <cfset title = FormatTitle(title)>
+    <cfset title = CapFirstAll(title)>
     <cfif DirectoryExists(imageSystemPath)>
       <cfset newfilename = fileid & "." & data['fileExtension']>
 	  <cfset secureRandomSystemSecurePath = request.securefilepath & "\" & LCase(CreateUUID())>
@@ -178,10 +181,12 @@
           <cfset publishArticleDate = Now()>
         </cfcatch>
       </cftry>
+      <cfset article = REReplaceNoCase(data['article'],"#styleAttributePattern#","","ALL")>
+	  <cfset article = REReplaceNoCase(article,"#spaceInsideParagraphPattern#","","ALL")>
       <cfset approved = ListFindNoCase("6,7",roleid) ? 1 : 0> 
       <CFQUERY DATASOURCE="#request.domain_dsn#" result="queryInsertResult">
         INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#data['article']#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
+        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
       </CFQUERY>
       <cfset data['fileid'] = queryInsertResult.generatedkey>
       <cfif IsArray(data['tinymceArticleDeletedImages'])>
@@ -287,7 +292,7 @@
             <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
             <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
             <td style="font-size:16px;">
-              <strong>The following post has been created, entitled '#FormatTitle(data['title'])#'</strong><br /><br />
+              <strong>The following post has been created, entitled '#data['title']#'</strong><br /><br />
               #CapFirstSentence(data['description'],true)#
             </td>
           </tr>

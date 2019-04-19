@@ -34,6 +34,12 @@ import { max } from 'moment';
 
 declare var TweenMax: any, Elastic: any, Linear: any;
 
+export enum userAdminUnselectedChangesOptionsStatus {
+  'Let the system select the rows automatically and continue with the submission?' = 1 ,
+  'Let the system select the rows where the changes were made and allow you to make the submission manually?' = 2,
+  'Continue with the submission?' = 3
+}
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -110,6 +116,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('approvedImagesSelect') approvedImagesSelect;
   @ViewChild('dialogEditCategoriesHelpNotification') private dialogEditCategoriesHelpNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogEmail') private dialogEmailTpl: TemplateRef<any>;
+  @ViewChild('dialogUserAdminNotification') private dialogUserAdminNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
@@ -192,6 +199,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   emailTemplateSalutation: string = '';
   emailTemplateDate: string = '';
   emailTemplateCredit: string = '';
+  userAdminUnselectedChanges: string = '';
+  userAdminUnselectedChangesOptions: string[] = ['Let the system select the rows automatically and continue with the submission?', 'Let the system select the rows where the changes were made and allow you to make the submission manually?', 'Continue with the submission?'];
 
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
@@ -207,6 +216,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   defaultColDefUserArchive;
   overlayLoadingTemplateUserArchive;
   overlayNoRowsTemplateUserArchive;
+  userArchiveSubmitDisabled: boolean = true;
 
   userSuspendHasNoData: boolean = false;
   contextUserSuspend;
@@ -222,6 +232,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   overlayLoadingTemplateUserSuspend;
   overlayNoRowsTemplateUserSuspend;
   cachedNodeDataUserSuspend = [];
+  userSuspendSubmitDisabled: boolean = true;
 
   userPasswordHasNoData: boolean = false;
   contextUserPassword;
@@ -237,6 +248,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   overlayLoadingTemplateUserPassword;
   overlayNoRowsTemplateUserPassword;
   cachedNodeDataUserPassword = [];
+  userPasswordSubmitDisabled: boolean = true;
 
   components;
   
@@ -533,6 +545,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.userArchiveColumnDefs = data['columnDefs'];
         this.userArchiveRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserArchive,'ag-grid-user-archive-updated-icon');
+        this.userArchiveSubmitDisabled = true;
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -574,6 +587,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.userSuspendColumnDefs = data['columnDefs'];
         this.userSuspendRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserSuspend,'ag-grid-user-suspend-updated-icon');
+        this.userSuspendSubmitDisabled = true;
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -615,6 +629,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.userPasswordColumnDefs = data['columnDefs'];
         this.userPasswordRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserPassword,'ag-grid-user-password-updated-icon');
+        this.userPasswordSubmitDisabled = true;
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -1264,6 +1279,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.gridApiUserArchive.refreshCells(params);
   }
 
+  onUserArchiveSelectionChanged(event: any): void {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.userArchiveSubmitDisabled = rowCount ? false : true;
+  }
+
   // specific user suspend ag-grid functions
 
   userSuspendAutoSizeAll(): void {
@@ -1302,26 +1322,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const selectedNodes = this.agGridUserSuspend.api.getSelectedNodes();
     const selectedData = selectedNodes.map( node => node.data );
     const changesArray = this.getChangesArray(this.cachedNodeDataUserSuspend,this.agGridUserSuspend.api.getRenderedNodes());
-    const changeMismatch = selectedNodes.length !== changesArray.length;
-    if(!changeMismatch) {
-      const data = [];
-      selectedData.map( (node) => {
-        const obj = {};
-        obj['id'] = node.user_id;
-        obj['suspend'] = node.suspend;
-        data.push(obj);
-      });
-      if(this.debug) {
-        console.log('profile.component: getUserSuspendSelectedRows: data: ', data);
-      }
-      const obj = {
-        users: data,
-        task: 'suspend'
-      };
-      this.usersSuspendPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersSuspendPostData).subscribe();
+    const changesSelectedArray = changesArray['selected'];
+    const changesUnselectedArray = changesArray['unselected'];
+    if(this.debug) {
+      console.log('profile.component: getUserSuspendSelectedRows: changesSelectedArray: ', changesSelectedArray);
+      console.log('profile.component: getUserSuspendSelectedRows: changesUnselectedArray: ', changesUnselectedArray);
+    }
+    if(changesUnselectedArray.length) {
+      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserSuspend.api.getRenderedNodes(),this.agGridUserSuspend.api,'suspend');
+    }
+    else if(selectedData.length === changesSelectedArray.length){
+      this.postUserAdmin(this.agGridUserSuspend.api,'suspend');
     }
     else{
-      this.openSnackBar('Not all changes have been selected', 'Error');
+      this.postUserAdmin(this.agGridUserSuspend.api,'suspend');
     }
   }
 
@@ -1402,6 +1416,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return NumericCellEditor;
   }
 
+  onUserSuspendSelectionChanged(event: any): void {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.userSuspendSubmitDisabled = rowCount ? false : true;
+  }
+
   // specific user password ag-grid functions
 
   userPasswordAutoSizeAll(): void {
@@ -1440,26 +1459,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const selectedNodes = this.agGridUserPassword.api.getSelectedNodes();
     const selectedData = selectedNodes.map( node => node.data );
     const changesArray = this.getChangesArray(this.cachedNodeDataUserPassword,this.agGridUserPassword.api.getRenderedNodes());
-    const changeMismatch = selectedNodes.length !== changesArray.length;
-    if(!changeMismatch) {
-      const data = [];
-      selectedData.map( (node) => {
-        const obj = {};
-        obj['id'] = node.user_id;
-        obj['password'] = node.password;
-        data.push(obj);
-      });
-      if(this.debug) {
-        console.log('profile.component: getUserPasswordSelectedRows: data: ', data);
-      }
-      const obj = {
-        users: data,
-        task: 'password'
-      };
-      this.usersPasswordPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersPasswordPostData).subscribe();
+    const changesSelectedArray = changesArray['selected'];
+    const changesUnselectedArray = changesArray['unselected'];
+    if(this.debug) {
+      console.log('profile.component: getUserPasswordSelectedRows: changesSelectedArray: ', changesSelectedArray);
+      console.log('profile.component: getUserPasswordSelectedRows: changesUnselectedArray: ', changesUnselectedArray);
+    }
+    if(changesUnselectedArray.length) {
+      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserPassword.api.getRenderedNodes(),this.agGridUserPassword.api,'password');
+    }
+    else if(selectedData.length === changesSelectedArray.length){
+      this.postUserAdmin(this.agGridUserPassword.api,'password');
     }
     else{
-      this.openSnackBar('Not all changes have been selected', 'Error');
+      this.postUserAdmin(this.agGridUserPassword.api,'password');
     }
   }
 
@@ -1482,6 +1495,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.agGridUserPassword.api.flashCells({
       columns: columns
     });
+  }
+
+  onUserPasswordSelectionChanged(event: any): void {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.userPasswordSubmitDisabled = rowCount ? false : true;
   }
 
   // general ag-grid functions
@@ -1517,34 +1535,168 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  getChangesArray(cachedArray: any[], renderedArray: any[]): any[] {
-    const changesArray = [];
+  getChangesArray(cachedArray: any[], renderedArray: any[]): any {
+    const selectedChanges = [];
+    const unselectedChanges = [];
     cachedArray.map((node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
-        if(data.user_id === node.user_id) {
-          let changed = false;
+        if(data.user_id === node.user_id && obj.isSelected()) {
+          let changedSelected = false;
           for(const key in data) {
             if(data[key] !== node[key]) {
               if(this.debug) {
-                console.log('profile.component: getChangesArray: data[key]: ', data[key],' node[key]: ',node[key]);
+                console.log('profile.component: getChangesArray: selected: data[key]: ', data[key],' node[key]: ',node[key]);
               }
-              changed = true;
+              changedSelected = true;
               break;
             }
           }
-          if(changed) {
-            changesArray.push(node);
+          if(changedSelected) {
+            selectedChanges.push(node);
+          }
+        }
+        if(data.user_id === node.user_id && !obj.isSelected()) {
+          let changedUnselected = false;
+          for(const key in data) {
+            if(data[key] !== node[key]) {
+              if(this.debug) {
+                console.log('profile.component: getChangesArray: unselected: data[key]: ', data[key],' node[key]: ',node[key]);
+              }
+              changedUnselected = true;
+              break;
+            }
+          }
+          if(changedUnselected) {
+            unselectedChanges.push(node);
           }
         }
       });
     });
-    return changesArray;
+    const changesObj = {
+      selected: selectedChanges,
+      unselected: unselectedChanges,
+    };
+    return changesObj;
+  }
+
+  // user admin dialog methods
+
+  openUserAdminNotificationDialog(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[], grid: any, type: string): void {
+    const dialogRef = this.dialog.open(this.dialogUserAdminNotificationTpl, {
+      width: this.isMobile ? '100%' :'50%',
+      height: this.isMobile ? '100%' :'50%',
+      id: 'dialog-user-admin-notification'
+    });
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
+    dialogRef.afterClosed().subscribe(result => {
+      if(this.debug) {
+        console.log('profile.component: openUserAdminNotificationDialog(): The dialog was closed');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('profile.component: openUserAdminNotificationDialog(): The action was approved: userAdminUnselectedChanges: ', 
+          this.userAdminUnselectedChanges);
+        }
+        const value = userAdminUnselectedChangesOptionsStatus[this.userAdminUnselectedChanges];
+        switch(value) {
+          case 1:
+            this.userAdminSelectRows(changesSelectedArray,changesUnselectedArray,renderedArray);
+            this.postUserAdmin(grid,type);
+            break;
+          case 2:
+            this.userAdminSelectAndHighlightRows(changesSelectedArray,changesUnselectedArray,renderedArray);
+            break;
+          default:
+          this.postUserAdmin(grid,type);
+        }
+      }
+    });
+  }
+
+  // user admin mnethods
+
+  userAdminSelectRows(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[]): void {
+    changesSelectedArray.map((node) => {
+      renderedArray.map( (obj) => {
+        const data = obj.data;
+        if(data.user_id === node.user_id) {
+          obj.setSelected(true);
+        }
+      });
+    });
+    changesUnselectedArray.map((node) => {
+      renderedArray.map( (obj) => {
+        const data = obj.data;
+        if(data.user_id === node.user_id) {
+          obj.setSelected(true);
+        }
+      });
+    });
+  }
+
+  userAdminSelectAndHighlightRows(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[]): void {
+    changesSelectedArray.map((node) => {
+      renderedArray.map( (obj) => {
+        const data = obj.data;
+        if(data.user_id === node.user_id) {
+          obj.setSelected(true);
+        }
+      });
+    });
+    changesUnselectedArray.map((node) => {
+      renderedArray.map( (obj) => {
+        const data = obj.data;
+        if(data.user_id === node.user_id) {
+          obj.setSelected(true);
+        }
+      });
+    });
+  }
+
+  postUserAdmin(grid: any, type: string): void {
+    const selectedNodes = grid.getSelectedNodes();
+    const selectedData = selectedNodes.map( node => node.data );
+    const data = [];
+    switch(type) {
+      case 'suspend':
+        selectedData.map( (node) => {
+          const obj = {};
+          obj['id'] = node.user_id;
+          obj['suspend'] = node.suspend;
+          data.push(obj);
+        });
+        if(this.debug) {
+          console.log('profile.component: postUserAdmin: suspend: data: ', data);
+        }
+        const objSuspend = {
+          users: data,
+          task: 'suspend'
+        };
+        this.usersSuspendPostSubscription = this.httpService.editUserAdmin(objSuspend).do(this.processUsersSuspendPostData).subscribe();
+        break;
+      case 'password':
+        selectedData.map( (node) => {
+          const obj = {};
+          obj['id'] = node.user_id;
+          obj['password'] = node.password;
+          data.push(obj);
+        });
+        if(this.debug) {
+          console.log('profile.component: postUserAdmin: password: data: ', data);
+        }
+        const objPassword = {
+          users: data,
+          task: 'password'
+        };
+        this.usersPasswordPostSubscription = this.httpService.editUserAdmin(objPassword).do(this.processUsersPasswordPostData).subscribe();
+        break;
+    }
   }
 
   // e-mail methods
 
-  openEmailDialog(params) {
+  openEmailDialog(params): void {
     if(this.debug) {
       console.log('profile.component: openEmailDialog: params: ', params);
     }
@@ -1574,8 +1726,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       const parent = this.documentBody.querySelector('#dialog-email');
       const child = this.documentBody.querySelector('#message');
       let height = parent.clientHeight ? parent.clientHeight : 0;
-      //const offsetHeight = this.isMobile ? 485 : 372;
-      const offsetHeight = this.isMobile ? 661 : 548;
+      const offsetHeight = 548;
       if(!isNaN(height) && (height - offsetHeight) > 0) {
         height = height - offsetHeight;
       }
@@ -1585,12 +1736,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if(child) {
         this.renderer.setStyle(child,'height',height + 'px');
       }
+      const emailForm = this.documentBody.querySelector('#emailForm');
+      if(emailForm) {
+        TweenMax.fromTo(emailForm, 1, {ease:Elastic.easeOut, opacity: 0}, {ease:Elastic.easeOut, opacity: 1});
+      }
       this.emailFormDisabled = true;
       if(this.debug) {
         console.log('profile.component: dialog: this.dialogEmailHeight: ', this.dialogEmailHeight);
       }
       this.emailTemplateSalutation = 'Hi ' + params.data.forename;
-      this.emailTemplateDate = ' ' + new Date().toString().replace(/[\s]+GMT.*/ig,'');
+      this.emailTemplateDate = ' ' + new Date().toString().replace(/[\s]+[0-9]{2,2}\:.*/ig,'');
       this.emailTemplateCredit = environment.title;
     });
   }

@@ -129,7 +129,7 @@
 			  <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
 			  <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
 			  <td style="font-size:16px;">
-				<strong>The following comment has been made about the photo entitled '#FormatTitle(qGetFileAuthor.Title)#'</strong><br /><br />
+				<strong>The following comment has been made about the photo entitled '#qGetFileAuthor.Title#'</strong><br /><br />
 				#CapFirstSentence(data['comment'],true)#
 			  </td>
 			</tr>

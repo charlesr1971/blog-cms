@@ -115,7 +115,7 @@
             <cfset obj['cellRenderer'] = "formatEmailRenderer">
 		  </cfif>
 		  <cfset obj['field'] = data['columnDefs'][index]['field']>
-          <cfset obj['width'] = ListGetAt(columnWidth,counter)>
+          <!---<cfset obj['width'] = ListGetAt(columnWidth,counter)>--->
 		  <cfset ArrayAppend(temp,obj)>
 		  <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
 		  <cfset counter = counter + 1>

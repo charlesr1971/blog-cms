@@ -1,5 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, HostBinding, Input } from '@angular/core';
 
+declare var TweenMax: any, Elastic: any, Linear: any;
+
 @Directive({
   selector: 'img[appLazyLoad]'
 })
@@ -34,6 +36,7 @@ export class LazyLoadDirective implements AfterViewInit {
 
   private loadImage(): void {
     this.srcAttr = this.src;
+    TweenMax.fromTo(this.el.nativeElement, 1.5, {ease:Linear.easeNone, opacity: 0}, {ease:Linear.easeNone, opacity: 1});
     if(this.debug) {
       console.log('loadImage: this.srcAttr', this.srcAttr);
     }
