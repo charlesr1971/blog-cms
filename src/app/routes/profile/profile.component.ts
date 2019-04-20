@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer2, Input, Inject, TemplateRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Renderer2, Input, Inject, TemplateRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -20,6 +20,7 @@ import { AgGridNg2 } from 'ag-grid-angular';
 import { SafePipe } from '../../pipes/safe/safe.pipe';
 import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
 import { CustomEditHeader } from '../../ag-grid/header/custom-edit-header/custom-edit-header.component';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 import { UploadService } from '../../upload/upload.service';
 import { HttpService } from '../../services/http/http.service';
@@ -32,6 +33,7 @@ import { JwtService } from '../../services/jwt/jwt.service';
 import { environment } from '../../../environments/environment';
 import { max } from 'moment';
 
+declare var Waypoint: any;
 declare var TweenMax: any, Elastic: any, Linear: any;
 
 export enum userAdminUnselectedChangesOptionsStatus {
@@ -108,7 +110,7 @@ export enum userAdminUnselectedChangesOptionsStatus {
   ],
   providers: [SafePipe]
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('avatarContainer') avatarContainer;
   @ViewChild('modal') modal;
@@ -121,6 +123,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
   @ViewChild('agGridUserPassword') agGridUserPassword: AgGridNg2;
+
+  @ViewChild('ngbTooltipUserArchiveRemoveHighlight') ngbTooltipUserArchiveRemoveHighlight: NgbTooltip;
+  @ViewChild('ngbTooltipUserSuspendRemoveHighlight') ngbTooltipUserSuspendRemoveHighlight: NgbTooltip;
+  @ViewChild('ngbTooltipUserPasswordRemoveHighlight') ngbTooltipUserPasswordRemoveHighlight: NgbTooltip;
 
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
@@ -201,6 +207,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   emailTemplateCredit: string = '';
   userAdminUnselectedChanges: string = '';
   userAdminUnselectedChangesOptions: string[] = ['Let the system select the rows automatically and continue with the submission?', 'Let the system select the rows where the changes were made and allow you to make the submission manually?', 'Continue with the submission?'];
+  ngbTooltipContentRemoveHighlightText: string = 'Remove cell hover highlight';
 
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
@@ -458,14 +465,62 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
-  onMatSidenavContentScroll(): void {
-    if(this.pagesUnapproved.length > 0) {
-      this.unapprovedImagesSelect.close();
+  ngAfterViewInit() {
+
+    if(this.isMobile) {
+      this.createWaypoints();
     }
-    if(this.pagesApproved.length > 0) {
-      this.approvedImagesSelect.close();
-    }
+
   }
+
+  // waypoint methods
+
+  createWaypoints(): void {
+
+    var that = this;
+
+    const usersArchiveWaypoint1 = new Waypoint({
+      element: document.getElementById('ag-grid-user-archive-remove-highlight-icon'),
+      handler: function (direction) {
+        if(this.debug) {
+          console.log('profile.component: usersArchiveWaypoint1: waypoint detected: that.ngbTooltipUserArchiveRemoveHighlight', that.ngbTooltipUserArchiveRemoveHighlight);
+        }
+        that.ngbTooltipUserArchiveRemoveHighlight.open();
+        this.destroy();
+      },
+      context: this.documentBody.getElementById('mat-sidenav-content'),
+      offset: '75%'
+    });
+
+    const usersSuspendWaypoint1 = new Waypoint({
+      element: document.getElementById('ag-grid-user-suspend-remove-highlight-icon'),
+      handler: function (direction) {
+        if(this.debug) {
+          console.log('profile.component: usersSuspendWaypoint1: waypoint detected: that.ngbTooltipUserSuspendRemoveHighlight', that.ngbTooltipUserSuspendRemoveHighlight);
+        }
+        that.ngbTooltipUserSuspendRemoveHighlight.open();
+        this.destroy();
+      },
+      context: this.documentBody.getElementById('mat-sidenav-content'),
+      offset: '50%'
+    });
+
+    const usersPasswordWaypoint1 = new Waypoint({
+      element: document.getElementById('ag-grid-user-password-remove-highlight-icon'),
+      handler: function (direction) {
+        if(this.debug) {
+          console.log('profile.component: usersPasswordWaypoint1: waypoint detected: that.ngbTooltipUserPasswordRemoveHighlight', that.ngbTooltipUserPasswordRemoveHighlight);
+        }
+        that.ngbTooltipUserPasswordRemoveHighlight.open();
+        this.destroy();
+      },
+      context: this.documentBody.getElementById('mat-sidenav-content'),
+      offset: '50%'
+    });
+
+  }
+
+  // api methods
 
   fetchPagesUnapproved(): void {
     this.httpService.fetchPagesUnapproved().subscribe( (data) => {
@@ -544,7 +599,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
         this.userArchiveColumnDefs = data['columnDefs'];
         this.userArchiveRowData = data['rowData'];
-        this.refreshAgGrid(this.gridApiUserArchive,'ag-grid-user-archive-updated-icon');
+        this.refreshAgGrid(this.gridApiUserArchive,'ag-grid-user-archive-updated-icon','ag-grid-user-archive-remove-highlight-icon');
         this.userArchiveSubmitDisabled = true;
       }
       else{
@@ -586,7 +641,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
         this.userSuspendColumnDefs = data['columnDefs'];
         this.userSuspendRowData = data['rowData'];
-        this.refreshAgGrid(this.gridApiUserSuspend,'ag-grid-user-suspend-updated-icon');
+        this.refreshAgGrid(this.gridApiUserSuspend,'ag-grid-user-suspend-updated-icon','ag-grid-user-suspend-remove-highlight-icon');
         this.userSuspendSubmitDisabled = true;
       }
       else{
@@ -628,7 +683,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
         this.userPasswordColumnDefs = data['columnDefs'];
         this.userPasswordRowData = data['rowData'];
-        this.refreshAgGrid(this.gridApiUserPassword,'ag-grid-user-password-updated-icon');
+        this.refreshAgGrid(this.gridApiUserPassword,'ag-grid-user-password-updated-icon','ag-grid-user-password-remove-highlight-icon');
         this.userPasswordSubmitDisabled = true;
       }
       else{
@@ -707,10 +762,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       }
     }
-  }
-
-  deleteProfileFormSubmit(): void {
-    this.openDialog();
   }
 
   deleteProfile(): void {
@@ -836,43 +887,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  animateImages(type: string): void {
-    const className1 = '.image-thumbnail-list-item-image-' + type + '-img';
-    const className2 = '.image-thumbnail-list-item-image-' + type;
-    const className3 = '.image-thumbnail-list-item-' + type;
-    const imagethumbnaillistitemimageimg = Array.prototype.slice.call(this.documentBody.querySelectorAll(className1));
-    if(!this.isMobile && imagethumbnaillistitemimageimg.length > 1) {
-      const imagethumbnaillistitemimage = Array.prototype.slice.call(this.documentBody.querySelectorAll(className2));
-      const imgHeights = [];
-      imagethumbnaillistitemimageimg.map( (element) => {
-        const height = element.clientHeight ? element.clientHeight : 0;
-        if(height > 0) {
-          imgHeights.push(height);
-        }
-      });
-      const maxHeight = Math.max.apply(null,imgHeights);
-      if(this.debug) {
-        console.log('images.component: animateImages: imgHeights: ', imgHeights);
-        console.log('images.component: animateImages: maxHeight: ', maxHeight);
-      }
-      if(!isNaN(maxHeight) && maxHeight > 0) {
-        imagethumbnaillistitemimage.map( (element) => {
-          this.renderer.setStyle(element,'height',maxHeight + 'px');
-        });
-      }
-    }
-    TweenMax.staggerFromTo(className3, 1, {scale:0, ease:Elastic.easeOut, opacity: 0}, {scale:1, ease:Elastic.easeOut, opacity: 1}, 0.1);
-    if(this.debug) {
-      const imagethumbnaillistitem = this.documentBody.querySelector(className3);
-      console.log('images.component: animateImages: imagethumbnaillistitem: ', imagethumbnaillistitem);
-      if(type === 'unapproved') {
-        console.log('images.component: animateImages: this.imagesUnapproved: ', this.imagesUnapproved);
-      }
-      else{
-        console.log('images.component: animateImages: this.imagesApproved: ', this.imagesApproved);
-      }
-    }
-  }
+  // form methods
 
   createProfileForm(): void {
     this.editProfileForm = new FormGroup({
@@ -973,6 +988,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  isEditProfileFormValid(): boolean {
+    return this.forename.value !== '' && this.surname.value !== '' ? true : false;
+  }
+
   createEmailForm(): void {
     this.emailForm = new FormGroup({
       email: this.email,
@@ -1010,6 +1029,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  // cache methods
+
   pageCacheUnapprovedEntryRead(page: number): any {
     const result = this.sortArrayObj(this.pageCacheUnapproved[page]);
     return result;
@@ -1042,6 +1063,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
       console.log('profile.component: pageCacheApprovedEntryExists: ', bool);
     }
     return bool;
+  }
+
+  // event methods
+
+  onMatSidenavContentScroll(): void {
+    if(this.pagesUnapproved.length > 0) {
+      this.unapprovedImagesSelect.close();
+    }
+    if(this.pagesApproved.length > 0) {
+      this.approvedImagesSelect.close();
+    }
   }
 
   onChangeUnapproved(event): void {
@@ -1102,28 +1134,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  isEditProfileFormValid(): boolean {
-    return this.forename.value !== '' && this.surname.value !== '' ? true : false;
-  }
+  // toggle methods
 
   toggleError(error: string): void {
     this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(error);
     this.hasError = error !== '' ? true : false;
-  }
-
-  openProfileApiDashboard(event: any): void {
-    this.profileApiDashboardState = this.profileApiDashboardState === 'in' ? 'out' : 'in';
-    event.stopPropagation();
-  }
-
-  openProfileCategoryEdit(event: any): void {
-    this.profileCategoryEditState = this.profileCategoryEditState === 'in' ? 'out' : 'in';
-    event.stopPropagation();
-  }
-
-  openProfileUserArchiveEdit(event: any): void {
-    this.profileUserArchiveEditState = this.profileUserArchiveEditState === 'in' ? 'out' : 'in';
-    event.stopPropagation();
   }
 
   toggleUnapprovedImages(event: any): void {
@@ -1156,10 +1171,81 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  // animation methods 
+
+  animateImages(type: string): void {
+    const className1 = '.image-thumbnail-list-item-image-' + type + '-img';
+    const className2 = '.image-thumbnail-list-item-image-' + type;
+    const className3 = '.image-thumbnail-list-item-' + type;
+    const imagethumbnaillistitemimageimg = Array.prototype.slice.call(this.documentBody.querySelectorAll(className1));
+    if(!this.isMobile && imagethumbnaillistitemimageimg.length > 1) {
+      const imagethumbnaillistitemimage = Array.prototype.slice.call(this.documentBody.querySelectorAll(className2));
+      const imgHeights = [];
+      imagethumbnaillistitemimageimg.map( (element) => {
+        const height = element.clientHeight ? element.clientHeight : 0;
+        if(height > 0) {
+          imgHeights.push(height);
+        }
+      });
+      const maxHeight = Math.max.apply(null,imgHeights);
+      if(this.debug) {
+        console.log('images.component: animateImages: imgHeights: ', imgHeights);
+        console.log('images.component: animateImages: maxHeight: ', maxHeight);
+      }
+      if(!isNaN(maxHeight) && maxHeight > 0) {
+        imagethumbnaillistitemimage.map( (element) => {
+          this.renderer.setStyle(element,'height',maxHeight + 'px');
+        });
+      }
+    }
+    TweenMax.staggerFromTo(className3, 1, {scale:0, ease:Elastic.easeOut, opacity: 0}, {scale:1, ease:Elastic.easeOut, opacity: 1}, 0.1);
+    if(this.debug) {
+      const imagethumbnaillistitem = this.documentBody.querySelector(className3);
+      console.log('images.component: animateImages: imagethumbnaillistitem: ', imagethumbnaillistitem);
+      if(type === 'unapproved') {
+        console.log('images.component: animateImages: this.imagesUnapproved: ', this.imagesUnapproved);
+      }
+      else{
+        console.log('images.component: animateImages: this.imagesApproved: ', this.imagesApproved);
+      }
+    }
+  }
+
+  // animation state methods
+
+  openProfileApiDashboard(event: any): void {
+    this.profileApiDashboardState = this.profileApiDashboardState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openProfileCategoryEdit(event: any): void {
+    this.profileCategoryEditState = this.profileCategoryEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openProfileUserArchiveEdit(event: any): void {
+    this.profileUserArchiveEditState = this.profileUserArchiveEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openProfileUserSuspendEdit(event: any): void {
+    this.profileUserSuspendEditState = this.profileUserSuspendEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openProfileUserPasswordEdit(event: any): void {
+    this.profileUserPasswordEditState = this.profileUserPasswordEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  // location methods
+
   goToApiDocumentation(event: any): void {
     window.open(environment.apiDocumentationUrl,'_blank');
     event.stopPropagation();
   }
+
+  // array methods
 
   sortImages(): void {
     this.imagesUnapproved.sort(function(a, b) {
@@ -1175,6 +1261,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
     return result;
   }
+
+  // dialog methods
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAccountDeleteComponent, {
@@ -1237,6 +1325,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  deleteProfileFormSubmit(): void {
+    this.openDialog();
+  }
+
+  // snackbar methods
 
   openSnackBar(message: string, action: string): void {
     const config = new MatSnackBarConfig();
@@ -1330,9 +1424,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
     if(changesUnselectedArray.length) {
       this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserSuspend.api.getRenderedNodes(),this.agGridUserSuspend.api,'suspend');
-    }
-    else if(selectedData.length === changesSelectedArray.length){
-      this.postUserAdmin(this.agGridUserSuspend.api,'suspend');
     }
     else{
       this.postUserAdmin(this.agGridUserSuspend.api,'suspend');
@@ -1468,9 +1559,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if(changesUnselectedArray.length) {
       this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserPassword.api.getRenderedNodes(),this.agGridUserPassword.api,'password');
     }
-    else if(selectedData.length === changesSelectedArray.length){
-      this.postUserAdmin(this.agGridUserPassword.api,'password');
-    }
     else{
       this.postUserAdmin(this.agGridUserPassword.api,'password');
     }
@@ -1504,13 +1592,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   // general ag-grid functions
   
-  refreshAgGrid(grid: any, id: string): void {
+  refreshAgGrid(grid: any, id1: string, id2: string): void {
     const overshoot=5;
     const period=0.25;
-    var params = {force:true};
+    const params = {force:true};
     grid.refreshCells(params);
-    const aggridusertaskupdatedicon = this.documentBody.getElementById(id);
-    if(aggridusertaskupdatedicon) {
+    const aggridusertaskupdatedicon = this.documentBody.getElementById(id1);
+    const aggridusertaskremovehighlighticon = this.documentBody.getElementById(id2);
+    const that = this;
+    if(aggridusertaskupdatedicon && aggridusertaskremovehighlighticon) {
+      this.renderer.setStyle(aggridusertaskremovehighlighticon,'opacity',0);
       TweenMax.to(aggridusertaskupdatedicon,0.5,{
         scale:0.25,
         opacity:0.25,
@@ -1529,7 +1620,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
       var tweenFunc = function() {
         TweenMax.to(aggridusertaskupdatedicon,1,{
           opacity:0,
-          ease:Linear.easeNone
+          ease:Linear.easeNone,
+          onComplete:function(){
+            that.renderer.setStyle(aggridusertaskremovehighlighticon,'opacity',1);
+          }
         })
       }
     }
@@ -1538,15 +1632,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
   getChangesArray(cachedArray: any[], renderedArray: any[]): any {
     const selectedChanges = [];
     const unselectedChanges = [];
+    if(this.debug) {
+      console.log('profile.component: getChangesArray: renderedArray: ', renderedArray);
+    }
     cachedArray.map((node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
         if(data.user_id === node.user_id && obj.isSelected()) {
           let changedSelected = false;
           for(const key in data) {
-            if(data[key] !== node[key]) {
+            let data1 = data[key];
+            data1 = key === 'suspend' ? parseInt(data1) : data1;
+            let data2 = node[key];
+            data2 = key === 'suspend' ? parseInt(data2) : data2;
+            if(data1 !== data2) {
               if(this.debug) {
                 console.log('profile.component: getChangesArray: selected: data[key]: ', data[key],' node[key]: ',node[key]);
+                console.log('profile.component: getChangesArray: selected: data1: ', data1,' data2: ',data2);
               }
               changedSelected = true;
               break;
@@ -1559,9 +1661,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
         if(data.user_id === node.user_id && !obj.isSelected()) {
           let changedUnselected = false;
           for(const key in data) {
-            if(data[key] !== node[key]) {
+            let data1 = data[key];
+            data1 = key === 'suspend' ? parseInt(data1) : data1;
+            let data2 = node[key];
+            data2 = key === 'suspend' ? parseInt(data2) : data2;
+            if(data1 !== data2) {
               if(this.debug) {
                 console.log('profile.component: getChangesArray: unselected: data[key]: ', data[key],' node[key]: ',node[key]);
+                console.log('profile.component: getChangesArray: unselected: data1: ', data1,' data2: ',data2);
               }
               changedUnselected = true;
               break;
@@ -1577,6 +1684,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       selected: selectedChanges,
       unselected: unselectedChanges,
     };
+    if(this.debug) {
+      console.log('profile.component: getChangesArray: changesObj: ', changesObj);
+    }
     return changesObj;
   }
 
@@ -1586,6 +1696,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(this.dialogUserAdminNotificationTpl, {
       width: this.isMobile ? '100%' :'50%',
       height: this.isMobile ? '100%' :'50%',
+      maxWidth: this.isMobile ? '100%' :'50%',
       id: 'dialog-user-admin-notification'
     });
     updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
@@ -1612,6 +1723,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  removeHighlightedCells(event: any, selector: string): void {
+    const agGridDOM = Array.prototype.slice.call(this.documentBody.querySelectorAll(selector));
+    if(agGridDOM.length > 0) {
+      if(this.debug) {
+        console.log('profile.component: removeHighlightedCells: agGridDOM: ',agGridDOM);
+      }
+      agGridDOM.map( (element) => {
+        if(element.classList.contains('ag-row-hover')) {
+          if(this.debug) {
+            console.log('profile.component: removeHighlightedCells: selector',selector);
+            console.log('profile.component: removeHighlightedCells: element.classList.contains(\'ag-row-hover\')',element.classList.contains('ag-row-hover'));
+          }
+          element.classList.remove('ag-row-hover')
+        }
+      });
+    }
   }
 
   // user admin mnethods
@@ -1726,7 +1855,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       const parent = this.documentBody.querySelector('#dialog-email');
       const child = this.documentBody.querySelector('#message');
       let height = parent.clientHeight ? parent.clientHeight : 0;
-      const offsetHeight = 548;
+      //const offsetHeight = 548;
+      const offsetHeight = 504;
       if(!isNaN(height) && (height - offsetHeight) > 0) {
         height = height - offsetHeight;
       }

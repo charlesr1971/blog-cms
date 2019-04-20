@@ -167,8 +167,12 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text, 0.5); 
     }
 
-    .custom-ag-grid-data-container .mat-icon {
+    .custom-ag-grid-data-container .mat-icon.check_circle {
         color: mat-color($dark-accent, default);
+    }
+
+    .custom-ag-grid-data-container .mat-icon.list_alt {
+        color: mat-color($dark-primary, lighter);
     }
 
     .ag-paging-panel {
@@ -623,8 +627,12 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text, 0.5); 
     }
 
-    .custom-ag-grid-data-container .mat-icon {
+    .custom-ag-grid-data-container .mat-icon.check_circle {
         color: mat-color($light-accent, default);
+    }
+
+    .custom-ag-grid-data-container .mat-icon.list_alt {
+        color: mat-color($light-primary, lighter);
     }
 
     .ag-paging-panel {

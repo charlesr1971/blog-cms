@@ -266,7 +266,8 @@ button[data-role='submit'] {
 }
 
 .e-mail-template-table {
-    margin: 20px 0px 0px;
+    /* margin: 20px 0px 0px; */
+    margin: 0px;
 }
 
 .e-mail-template-salutation {
@@ -280,7 +281,8 @@ button[data-role='submit'] {
 }
 
 .e-mail-template-message {
-    margin-top: 20px;
+    /* margin-top: 20px; */
+    margin-top: 0px;
 }
 
 

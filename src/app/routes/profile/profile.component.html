@@ -10,13 +10,13 @@
           <div class="e-mail-template">
             <h1 class="e-mail-template-salutation" [innerHtml]="emailTemplateSalutation"></h1>
             <table class="e-mail-template-table" cellpadding="0" cellspacing="0" border="0" width="100%">
-              <tr valign="middle">
+              <!-- <tr valign="middle">
                 <td width="10" class="e-mail-template-blockquote"><img src="assets/images/pixel_100.gif" border="0" width="10" height="1" /></td>
                 <td width="20"><img src="assets/images/pixel_100.gif" border="0" width="20" height="1" /></td>
                 <td>
                   <strong class="e-mail-template-date-title">Message Date:</strong> <span class="e-mail-template-date" id="e-mail-template-date" [innerHtml]="emailTemplateDate"></span>
                 </td>
-              </tr>
+              </tr> -->
               <tr>
                 <td colspan="3">
                   <p class="e-mail-template-message">
@@ -27,8 +27,8 @@
                 </td>
               </tr>
               <tr>
-                <td width="10" class="e-mail-template-blockquote"><img src="assets/images/pixel_100.gif" border="0" width="10" height="1" /></td>
-                <td width="20"><img src="assets/images/pixel_100.gif" border="0" width="20" height="1" /></td>
+                <!-- <td width="10" class="e-mail-template-blockquote"><img src="assets/images/pixel_100.gif" border="0" width="10" height="1" /></td>
+                <td width="20"><img src="assets/images/pixel_100.gif" border="0" width="20" height="1" /></td> -->
                 <td>
                   Yours sincerely<br /><br />
                   <strong [innerHtml]="emailTemplateCredit"></strong>
@@ -136,9 +136,9 @@
             <span>Edit Archived Users</span><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserArchiveEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileUserArchiveEditFadeInOutAnimation]="{value: profileUserArchiveEditState}" style="padding-bottom:0px;">
-            <div class="custom-ag-grid-data-container" *ngIf="!userArchiveHasNoData">
+            <div id="custom-ag-grid-user-archive-data-container" class="custom-ag-grid-data-container" *ngIf="!userArchiveHasNoData">
               <ag-grid-angular #agGridUserArchive style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userArchiveThemeIsLight,'ag-theme-dark': !userArchiveThemeIsLight}" [rowData]="userArchiveRowData" [columnDefs]="userArchiveColumnDefs" (gridReady)="onUserArchiveGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserArchive" [frameworkComponents]="frameworkComponentsUserArchive" [defaultColDef]="defaultColDefUserArchive" [overlayLoadingTemplate]="overlayLoadingTemplateUserArchive" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserArchive" (selectionChanged)="onUserArchiveSelectionChanged($event)"></ag-grid-angular>
-              <button mat-raised-button (click)="getUserArchiveSelectedRows()" [disabled]="userArchiveSubmitDisabled">Unarchive Selected Rows</button><mat-icon id="ag-grid-user-archive-updated-icon">check_circle</mat-icon>
+              <button mat-raised-button (click)="getUserArchiveSelectedRows()" [disabled]="userArchiveSubmitDisabled">Unarchive Selected Rows</button><mat-icon id="ag-grid-user-archive-updated-icon" class="check_circle">check_circle</mat-icon><ng-template #ngbTooltipContentUserArchiveRemoveHighlight>{{ ngbTooltipContentRemoveHighlightText }}</ng-template><mat-icon id="ag-grid-user-archive-remove-highlight-icon" class="list_alt" (click)="removeHighlightedCells($event,'#custom-ag-grid-user-archive-data-container .ag-row')" [ngStyle]="{'display': isMobile ? 'block' : 'none'}" [ngbTooltip]="ngbTooltipContentUserArchiveRemoveHighlight" triggers="manual" #ngbTooltipUserArchiveRemoveHighlight="ngbTooltip" [autoClose]="true" placement="left">list_alt</mat-icon>
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userArchiveHasNoData">
               No records found
@@ -151,9 +151,9 @@
             <span>Edit Suspended Users</span><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserSuspendEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileUserSuspendEditFadeInOutAnimation]="{value: profileUserSuspendEditState}" style="padding-bottom:0px;">
-            <div class="custom-ag-grid-data-container" *ngIf="!userSuspendHasNoData">
+            <div id="custom-ag-grid-user-suspend-data-container" class="custom-ag-grid-data-container" *ngIf="!userSuspendHasNoData">
               <ag-grid-angular #agGridUserSuspend style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userSuspendThemeIsLight,'ag-theme-dark': !userSuspendThemeIsLight}" [rowData]="userSuspendRowData" [columnDefs]="userSuspendColumnDefs" (gridReady)="onUserSuspendGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserSuspend" [frameworkComponents]="frameworkComponentsUserSuspend" [components]="components" (rowDataChanged)="onUserSuspendRowValueChanged($event)" [defaultColDef]="defaultColDefUserSuspend" [stopEditingWhenGridLosesFocus]="true" [enableCellChangeFlash]="true" [overlayLoadingTemplate]="overlayLoadingTemplateUserSuspend" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserSuspend" [suppressMenuHide]="true" singleClickEdit="true" (selectionChanged)="onUserSuspendSelectionChanged($event)"></ag-grid-angular>
-              <button mat-raised-button (click)="getUserSuspendSelectedRows()" [disabled]="userSuspendSubmitDisabled">Suspend Selected Rows</button><mat-icon id="ag-grid-user-suspend-updated-icon">check_circle</mat-icon>
+              <button mat-raised-button (click)="getUserSuspendSelectedRows()" [disabled]="userSuspendSubmitDisabled">Suspend Selected Rows</button><mat-icon id="ag-grid-user-suspend-updated-icon" class="check_circle">check_circle</mat-icon><ng-template #ngbTooltipContentUserSuspendRemoveHighlight>{{ ngbTooltipContentRemoveHighlightText }}</ng-template><mat-icon id="ag-grid-user-suspend-remove-highlight-icon" class="list_alt" (click)="removeHighlightedCells($event,'#custom-ag-grid-user-suspend-data-container .ag-row')" [ngStyle]="{'display': isMobile ? 'block' : 'none'}" [ngbTooltip]="ngbTooltipContentUserSuspendRemoveHighlight" triggers="manual" #ngbTooltipUserSuspendRemoveHighlight="ngbTooltip" [autoClose]="true" placement="left">list_alt</mat-icon>
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userSuspendHasNoData">
               No records found
@@ -166,9 +166,9 @@
             <span>Reset User Passwords</span><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserPasswordEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileUserPasswordEditFadeInOutAnimation]="{value: profileUserPasswordEditState}" style="padding-bottom:0px;">
-            <div class="custom-ag-grid-data-container" *ngIf="!userPasswordHasNoData">
+            <div id="custom-ag-grid-user-password-data-container" class="custom-ag-grid-data-container" *ngIf="!userPasswordHasNoData">
               <ag-grid-angular #agGridUserPassword style="width:100%;margin-bottom:20px;" [ngClass]="{'ag-theme-balham': userPasswordThemeIsLight,'ag-theme-dark': !userPasswordThemeIsLight}" [rowData]="userPasswordRowData" [columnDefs]="userPasswordColumnDefs" (gridReady)="onUserPasswordGridReady($event)" rowSelection="multiple" rowHeight="35" headerHeight="35" pagination="true" paginationPageSize="10" rowMultiSelectWithClick="true" suppressCellSelection="true" [context]="contextUserPassword" [frameworkComponents]="frameworkComponentsUserPassword" (rowDataChanged)="onUserPasswordRowValueChanged($event)" [defaultColDef]="defaultColDefUserPassword" [stopEditingWhenGridLosesFocus]="true" [enableCellChangeFlash]="true" [overlayLoadingTemplate]="overlayLoadingTemplateUserPassword" [overlayNoRowsTemplate]="overlayNoRowsTemplateUserPassword" [suppressMenuHide]="true" singleClickEdit="true" (selectionChanged)="onUserPasswordSelectionChanged($event)"></ag-grid-angular>
-              <button mat-raised-button (click)="getUserPasswordSelectedRows()" [disabled]="userPasswordSubmitDisabled">Update Selected Rows</button><mat-icon id="ag-grid-user-password-updated-icon">check_circle</mat-icon>
+              <button mat-raised-button (click)="getUserPasswordSelectedRows()" [disabled]="userPasswordSubmitDisabled">Update Selected Rows</button><mat-icon id="ag-grid-user-password-updated-icon" class="check_circle">check_circle</mat-icon><ng-template #ngbTooltipContentUserPasswordRemoveHighlight>{{ ngbTooltipContentRemoveHighlightText }}</ng-template><mat-icon id="ag-grid-user-password-remove-highlight-icon" class="list_alt" (click)="removeHighlightedCells($event,'#custom-ag-grid-user-password-data-container .ag-row')" [ngStyle]="{'display': isMobile ? 'block' : 'none'}" [ngbTooltip]="ngbTooltipContentUserPasswordRemoveHighlight" triggers="manual" #ngbTooltipUserPasswordRemoveHighlight="ngbTooltip" [autoClose]="true" placement="left">list_alt</mat-icon>
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userPasswordHasNoData">
               No records found
