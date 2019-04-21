@@ -266,11 +266,11 @@ button[data-role='submit'] {
 }
 
 .e-mail-template-table {
-    /* margin: 20px 0px 0px; */
     margin: 0px;
 }
 
 .e-mail-template-salutation {
+    display: inline-block;
     margin: 0px 0px 20px;
     line-height: 22px;
     font-size: 22px;
@@ -281,7 +281,6 @@ button[data-role='submit'] {
 }
 
 .e-mail-template-message {
-    /* margin-top: 20px; */
     margin-top: 0px;
 }
 

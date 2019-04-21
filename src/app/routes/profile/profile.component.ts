@@ -202,12 +202,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   dialogEmailHeight: number = 0;
   emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
   emailFormDisabled: boolean = false;
-  emailTemplateSalutation: string = '';
+  emailTemplateStartSalutation: string = '';
+  emailTemplateEndSalutation: string = '';
   emailTemplateDate: string = '';
   emailTemplateCredit: string = '';
   userAdminUnselectedChanges: string = '';
   userAdminUnselectedChangesOptions: string[] = ['Let the system select the rows automatically and continue with the submission?', 'Let the system select the rows where the changes were made and allow you to make the submission manually?', 'Continue with the submission?'];
   ngbTooltipContentRemoveHighlightText: string = 'Remove cell hover highlight';
+  contenteditable: boolean = true;
 
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
@@ -1397,18 +1399,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     setTimeout( () => {
       this.userSuspendAutoSizeAll();
-      const temp = [];
-      this.agGridUserSuspend.api.forEachNode((node) => {
-        const obj = {};
-        for(const key in node.data) {
-          obj[key] = node.data[key];
-        }
-        temp.push(obj);
-      });
-      this.cachedNodeDataUserSuspend = Array.from(Object.create(temp));
-      if(this.debug) {
-        console.log('profile.component: onUserSuspendGridReady: this.cachedNodeDataUserSuspend: ', this.cachedNodeDataUserSuspend);
-      }
     });
   }
 
@@ -1510,6 +1500,20 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onUserSuspendSelectionChanged(event: any): void {
     var rowCount = event.api.getSelectedNodes().length;
     this.userSuspendSubmitDisabled = rowCount ? false : true;
+    if(this.cachedNodeDataUserSuspend.length === 0) {
+      const temp = [];
+      this.agGridUserSuspend.api.forEachNode((node) => {
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
+      });
+      this.cachedNodeDataUserSuspend = Array.from(Object.create(temp));
+      if(this.debug) {
+        console.log('profile.component: onUserSuspendSelectionChanged: this.cachedNodeDataUserSuspend: ', this.cachedNodeDataUserSuspend);
+      }
+    }
   }
 
   // specific user password ag-grid functions
@@ -1531,18 +1535,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     setTimeout( () => {
       this.userPasswordAutoSizeAll();
-      const temp = [];
-      this.agGridUserPassword.api.forEachNode((node) => {
-        const obj = {};
-        for(const key in node.data) {
-          obj[key] = node.data[key];
-        }
-        temp.push(obj);
-      });
-      this.cachedNodeDataUserPassword = Array.from(Object.create(temp));
-      if(this.debug) {
-        console.log('profile.component: onUserPasswordGridReady: this.cachedNodeDataUserPassword: ', this.cachedNodeDataUserPassword);
-      }
     });
   }
 
@@ -1588,6 +1580,20 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onUserPasswordSelectionChanged(event: any): void {
     var rowCount = event.api.getSelectedNodes().length;
     this.userPasswordSubmitDisabled = rowCount ? false : true;
+    if(this.cachedNodeDataUserPassword.length === 0) {
+      const temp = [];
+      this.agGridUserPassword.api.forEachNode((node) => {
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
+      });
+      this.cachedNodeDataUserPassword = Array.from(Object.create(temp));
+      if(this.debug) {
+        console.log('profile.component: onUserPasswordSelectionChanged: this.cachedNodeDataUserPassword: ', this.cachedNodeDataUserPassword);
+      }
+    }
   }
 
   // general ag-grid functions
@@ -1633,6 +1639,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     const selectedChanges = [];
     const unselectedChanges = [];
     if(this.debug) {
+      console.log('profile.component: getChangesArray: cachedArray: ', cachedArray);
       console.log('profile.component: getChangesArray: renderedArray: ', renderedArray);
     }
     cachedArray.map((node) => {
@@ -1855,7 +1862,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       const parent = this.documentBody.querySelector('#dialog-email');
       const child = this.documentBody.querySelector('#message');
       let height = parent.clientHeight ? parent.clientHeight : 0;
-      //const offsetHeight = 548;
       const offsetHeight = 504;
       if(!isNaN(height) && (height - offsetHeight) > 0) {
         height = height - offsetHeight;
@@ -1874,7 +1880,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       if(this.debug) {
         console.log('profile.component: dialog: this.dialogEmailHeight: ', this.dialogEmailHeight);
       }
-      this.emailTemplateSalutation = 'Hi ' + params.data.forename;
+      this.emailTemplateStartSalutation = 'Hi ' + params.data.forename;
+      this.emailTemplateEndSalutation = 'Yours sincerely';
       this.emailTemplateDate = ' ' + new Date().toString().replace(/[\s]+[0-9]{2,2}\:.*/ig,'');
       this.emailTemplateCredit = environment.title;
     });
@@ -1889,6 +1896,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     const dataObj = {};
     dataObj['id'] = this.email.value;
     dataObj['email'] = this.email.value;
+    dataObj['startSalutation'] = this.emailTemplateStartSalutation;
+    dataObj['endSalutation'] = this.emailTemplateEndSalutation;
+    dataObj['credit'] = this.emailTemplateCredit;
     const message = this.message.value.replace(/(?:\r\n|\r|\n)/g, '<br />');
     dataObj['message'] = message;
     data.push(dataObj);
@@ -1901,13 +1911,16 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     this.email.patchValue('');
     this.message.patchValue('');
-    this.emailTemplateSalutation = '';
+    this.emailTemplateStartSalutation = '';
+    this.emailTemplateEndSalutation = '';
     this.emailTemplateDate = '';
     this.emailTemplateCredit = '';
     this.formEmailData = {};
     this.dialog.closeAll();
     this.usersEmailPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersEmailPostData).subscribe();
   }
+
+  // other methods
 
   togglePanelWidth(event: any): void {
     const target = event.target.parentElement.parentElement;

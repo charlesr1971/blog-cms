@@ -77,6 +77,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { SafePipe } from './pipes/safe/safe.pipe';
 import { FormatEmailRenderer } from './ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
 import { CustomEditHeader } from './ag-grid/header/custom-edit-header/custom-edit-header.component';
+import { ContentEditableModelDirective } from './directives/content-editable-model/content-editable-model.directive';
 
 
 const appRoutes: Routes = [
@@ -130,7 +131,8 @@ const appRoutes: Routes = [
     CustomRecaptchaDirective,
     SafePipe,
     FormatEmailRenderer,
-    CustomEditHeader
+    CustomEditHeader,
+    ContentEditableModelDirective
   ],
   imports: [
     BrowserModule,

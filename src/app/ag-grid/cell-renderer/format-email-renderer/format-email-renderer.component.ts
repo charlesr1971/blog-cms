@@ -11,12 +11,9 @@ export class FormatEmailRenderer implements ICellRendererAngularComp {
 
   agInit(params: any): void {
     this.params = params;
-    //console.log(this.params.node);
   }
 
   public openEmailDialog() {
-    console.log(this.params.node);
-    //this.params.context.componentParent.openEmailDialog(`${this.params.node}`)
     this.params.context.componentParent.openEmailDialog(this.params.node);
   }
 

@@ -239,7 +239,7 @@
 			  <cfset local.salutation = local.forename>
               <cfsavecontent variable="emailtemplatemessage">
                 <cfoutput>
-                  <h1>Hi<cfif Len(Trim(local.salutation))> #local.salutation#</cfif></h1>
+                  <h1><cfif Len(Trim(local.obj['startSalutation']))>#request.utils.CapFirst(str=Trim(local.obj['startSalutation']),first=true)#<cfelse>Hi<cfif Len(Trim(local.salutation))> #local.salutation#</cfif></cfif></h1>
                   <table cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr valign="middle">
                       <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
@@ -257,8 +257,8 @@
                       <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
                       <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
                       <td style="font-size:16px;">
-                        Yours sincerely<br /><br />
-                        <strong>#request.title# Support</strong>
+                        <cfif Len(Trim(local.obj['endSalutation']))>#request.utils.CapFirst(str=Trim(local.obj['endSalutation']),first=true)#<cfelse>Yours sincerely</cfif><br /><br />
+                        <strong><cfif Len(Trim(local.obj['credit']))>#request.utils.CapFirst(str=Trim(local.obj['credit']),first=true)#<cfelse>#request.title# Support</cfif></strong>
                       </td>
                     </tr>
                   </table>

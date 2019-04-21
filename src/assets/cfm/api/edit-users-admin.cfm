@@ -122,13 +122,26 @@
           <cfset salutation = forename>
           <cfsavecontent variable="emailtemplatemessage">
             <cfoutput>
-              <h1>Hi<cfif Len(Trim(salutation))> #salutation#</cfif></h1>
+              <h1><cfif Len(Trim(obj['startSalutation']))>#CapFirst(str=Trim(obj['startSalutation']),first=true)#<cfelse>Hi<cfif Len(Trim(salutation))> #salutation#</cfif></cfif></h1>
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr valign="middle">
                   <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
                   <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
                   <td style="font-size:16px;">
-                    #CapFirst((Trim(obj['message']))#
+                    <strong style="color:##777;">Message Date:</strong><span style="color:##afafaf;"> #DateFormat(data['createdat'],"full")# #TimeFormat(data['createdat'],"full")#</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3" style="font-size:16px;">
+                    <p>#CapFirst(Trim(obj['message']))#</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
+                  <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
+                  <td style="font-size:16px;">
+                    <cfif Len(Trim(obj['endSalutation']))>#CapFirst(str=Trim(obj['endSalutation']),first=true)#<cfelse>Yours sincerely</cfif><br /><br />
+                    <strong><cfif Len(Trim(obj['credit']))>#CapFirst(str=Trim(obj['credit']),first=true)#<cfelse>#request.title# Support</cfif></strong>
                   </td>
                 </tr>
               </table>
