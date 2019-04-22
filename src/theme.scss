@@ -187,11 +187,11 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text) !important; 
     }
 
-    .ag-grid-format-email-renderer {
+    .ag-grid-format-email-renderer, .ag-grid-format-file-title-renderer {
         color: mat-color($dark-foreground-palette, text, 0.5) !important; 
     }
 
-    .ag-grid-format-email-renderer:hover {
+    .ag-grid-format-email-renderer:hover, .ag-grid-format-file-title-renderer:hover {
         color: mat-color($dark-foreground-palette, text) !important;
     }
 
@@ -647,11 +647,11 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text) !important; 
     }
 
-    .ag-grid-format-email-renderer {
+    .ag-grid-format-email-renderer, .ag-grid-format-file-title-renderer {
         color: mat-color($light-foreground-palette, text, 0.5) !important; 
     }
 
-    .ag-grid-format-email-renderer:hover {
+    .ag-grid-format-email-renderer:hover, .ag-grid-format-file-title-renderer:hover {
         color: mat-color($light-foreground-palette, text) !important;
     }
 

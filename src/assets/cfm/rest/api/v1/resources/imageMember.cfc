@@ -434,6 +434,7 @@
     <cfset local.emailsubject = "Image post update notification e-mail from " & request.title>
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
+    <cfset local.isAdmin = false>
     <cfset local.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
     <cfset local.styleAttributePattern = '[\s]*style=".*?"'>
     <cfset local.spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
@@ -593,7 +594,7 @@
       <cfset local.title = request.utils.CapFirstAll(local.title)>
       <cfset local.article = REReplaceNoCase(local.data['article'],"#local.styleAttributePattern#","","ALL")>
       <cfset local.article = REReplaceNoCase(local.article,"#local.spaceInsideParagraphPattern#","","ALL")>
-      <cfset local.approved = ListFindNoCase("6,7",local.roleid) ? 1 : 0> 
+      <cfset local.approved = ListFindNoCase("6,7",local.roleid) OR local.isAdmin ? 1 : 0> 
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblFile
         SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.imagePath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">
@@ -794,6 +795,7 @@
     <cfset local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss')>
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
+    <cfset local.isAdmin = false>
     <cfset local.data = StructNew()>
 	<cfset local.data['fileUuid'] = arguments.fileUuid>
     <cfset local.data['userToken'] = "">

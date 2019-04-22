@@ -75,6 +75,7 @@
     <cfset local.maxcontentlength = request.maxcontentlength>
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
+    <cfset local.isAdmin = false>
     <cfset local.data = StructNew()>
     <cfset local.data['success'] = false>
 	<cfset local.data['content'] = "">
@@ -196,6 +197,7 @@
     <cfset local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss')>
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
+    <cfset local.isAdmin = false>
     <cfset local.data = StructNew()>
 	<cfset local.data['fileid'] = arguments.fileid>
 	<cfset local.data['filename'] = "">

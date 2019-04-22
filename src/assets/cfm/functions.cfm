@@ -2,21 +2,15 @@
 
 
   public query function ParseDirectory(required string path, string type = "dir") output="true" {
-	  
 	var local = {};
-	
 	var aQuery = "";
-	  		
 	cfdirectory(action="list",directory=arguments.path,name="local.query1",sort="Directory, Name ASC",type=arguments.type,recurse="yes");
-
 	local.queryService = new query();
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=local.query1);
 	local.objQueryResult = local.queryService.execute(sql="SELECT Directory, Name FROM sourceQuery");
 	local.queryResult1 = local.objQueryResult.getResult();
-	
 	local.query2 = QueryNew("Id,ParentId,Directory,Name,GroupId,Empty");
-	
 	if(local.queryResult1.RecordCount){
 	  for(local.row in local.queryResult1){
 		QueryAddRow(local.query2);
@@ -34,17 +28,13 @@
 		}
 	  }
 	}
-	
 	local.queryService = new query();
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=local.query2);
 	local.objQueryResult = local.queryService.execute(sql="SELECT * FROM sourceQuery");
 	local.queryResult2 = local.objQueryResult.getResult();
-	
 	local.maxid = local.query2.RecordCount + 1;
-		
 	local.parentDirectories = ListRemoveDuplicates(ValueList(local.queryResult2.Directory),",",true);
-		
 	for(local.item in ListToArray(local.parentDirectories)){
 	  local.queryService = new query();
 	  local.queryService.setDBType("query");
@@ -63,14 +53,12 @@
 		local.maxid = maxid + 1;
 	  }
 	}
-			
 	local.queryService = new query();
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=local.query2);
 	local.queryService.addParam(name="ParentId",value=0,cfsqltype="cf_sql_varchar"); 
 	local.objQueryResult = local.queryService.execute(sql="SELECT * FROM sourceQuery WHERE ParentId = :ParentId");
 	local.queryResult4 = local.objQueryResult.getResult();
-	
 	if(local.queryResult4.RecordCount){
 	  for(local.rowParent in local.queryResult4){
 		for(local.rowChild in local.query2){
@@ -88,14 +76,12 @@
 		}
 	  }
 	}
-	
 	local.queryService = new query();
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=local.query2);
 	local.queryService.addParam(name="ParentId",value=0,cfsqltype="cf_sql_varchar"); 
 	local.objQueryResult = local.queryService.execute(sql="SELECT * FROM sourceQuery WHERE ParentId = :ParentId");
 	local.queryResult5 = local.objQueryResult.getResult();
-	
 	if(local.queryResult5.RecordCount){
 	  for(local.rowParent in local.queryResult5){
 		local.queryService1 = new query();
@@ -126,7 +112,6 @@
 		}		
 	  }
 	}
-	
 	if(local.query2.RecordCount){
 	  for(local.rowChild in local.query2){
 		if(CompareNoCase(ListLast(local.rowChild.Directory,"\"),"categories") EQ 0){
@@ -134,29 +119,22 @@
 		}
 	  }
 	}
-		
 	return local.query2;
-	
   }
 
 
   public any function ConvertDirectoryQueryToArray(required query query, numeric parentId = 0, array directories = ArrayNew(1), array nestedDirectories = ArrayNew(1), string parents = "", boolean addEmptyFlag = false) output="true" { 
-  
 	var local = {};
-	
 	var aQuery = "";
-		
 	local.directories = arguments.directories;
 	local.nestedDirectories = arguments.nestedDirectories;
 	local.parents = arguments.parents;
-	
 	local.queryService = new query();
 	local.queryService.setName("aQuery");
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=arguments.query);
 	local.objQueryResult = local.queryService.execute(sql="SELECT * FROM sourceQuery WHERE ParentId=0");
 	local.queryResult = local.objQueryResult.getResult();
-	
 	if(NOT Len(Trim(local.parents))){
 	  local.queryService = new query();
 	  local.queryService.setName("aQuery");
@@ -172,14 +150,12 @@
 		}
 	  }
 	}
-	
 	local.queryService = new query();
 	local.queryService.setName("aQuery");
 	local.queryService.setDBType("query");
 	local.queryService.setAttributes(sourceQuery=arguments.query);
 	local.objQueryResult = local.queryService.execute(sql="SELECT * FROM sourceQuery WHERE ParentId=#arguments.parentId#");
 	local.queryResult = local.objQueryResult.getResult();
-	
 	if(local.queryResult.RecordCount){
 	  for(local.row in local.queryResult){
 		local.directory = Trim(ReplaceNoCase(local.row.Directory & "\" & local.row.Name,request.filepath,""));
@@ -200,36 +176,24 @@
 		local.directories = ConvertDirectoryQueryToArray(query=arguments.query,parentId=local.row.Id,directories=local.directories,nestedDirectories=local.nestedDirectories,parents=local.parents,addEmptyFlag=arguments.addEmptyFlag);
 	  }
 	}
-	
-	
-	
 	return local.directories;
-
   }
   
   
   public any function CleanArray(array directories = ArrayNew(1), boolean formatWithKeys = false, boolean flattenParentArray = false) output="true" {
-	  
 	  var local = {};
-	  
 	  local.directories = arguments.directories;
-	  
 	  local.temp = Duplicate(local.directories);
 	  local.index = 1;
-	
 	  for (local.index=1;local.index LTE ArrayLen(local.directories);local.index=local.index+1) {
 		if(IsArray(local.directories[local.index]) AND ArrayIsDefined(local.directories,local.index + 1) AND IsArray(local.directories[local.index + 1])){
 		  ArrayDelete(local.temp,local.directories[local.index]);
 		}
 	  }
-	  
 	  local.directories = local.temp;
-	  
 	  if(arguments.formatWithKeys){
-		
 		local.temp = ArrayNew(1);
 		for (local.index=1;local.index LTE ArrayLen(local.directories);local.index=local.index+1) {
-		  
 		  if(IsSimpleValue(local.directories[local.index]) AND ArrayIsDefined(local.directories,local.index + 1) AND IsArray(local.directories[local.index + 1])){
 			local.struct = {};
 			StructInsert(local.struct,local.directories[local.index],local.directories[local.index + 1]);
@@ -238,27 +202,19 @@
 		  
 		}
 		local.directories = local.temp;
-		
 	  }
 	  else{
-		
 		local.array = ArrayNew(1);
-		  
 		for (local.index=1;local.index LTE ArrayLen(local.directories);local.index=local.index+1) {
-		  
 		  if(IsSimpleValue(local.directories[local.index]) AND ArrayIsDefined(local.directories,local.index + 1) AND IsArray(local.directories[local.index + 1])){
 			local.temp = ArrayNew(1);
 			ArrayAppend(local.temp,local.directories[local.index]);
 			ArrayAppend(local.temp,local.directories[local.index + 1]);
 			ArrayAppend(local.array,local.temp);
 		  }
-		  
 		}
-		
 		local.directories = local.array;
-		
 	  }
-
 	  if(arguments.flattenParentArray){
 		local.categories = {};
 		for (local.index=1;local.index LTE ArrayLen(local.directories);local.index=local.index+1) {
@@ -269,7 +225,6 @@
 		}
 		local.directories = local.categories;
 	  }
-	  
 	  return local.directories;
   }
   
@@ -279,22 +234,14 @@
 	local.error = "";
 	local.new = StructNew();
 	local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
-
 	for(local.currentChild in arguments.currentObj) {
-    
 	  local.currentChildEmpty = ListLast(local.currentChild,"^"); 
 	  local.currentChildOriginalPath = REReplaceNoCase(ListFirst(local.currentChild,"^"),"[\\]+","/","ALL");
-	      
 	  if(StructKeyExists(arguments.newObj,"data") AND IsArray(arguments.newObj['data']) AND ArrayLen(arguments.newObj['data']) AND IsStruct(arguments.newObj['data'][1]) AND StructKeyExists(arguments.newObj['data'][1],"children") AND IsArray(arguments.newObj['data'][1]['children']) AND ArrayLen(arguments.newObj['data'][1]['children'])){
-      
         local.new['categories'] = arguments.newObj['data'][1]['children'];
-        
 		for (local.newChild=1;local.newChild LTE ArrayLen(arguments.newObj['data'][1]['children']);local.newChild=local.newChild+1) {
-			
 		  local.childObj = arguments.newObj['data'][1]['children'][local.newChild];		  
-		  
 		  if(StructKeyExists(local.childObj,"empty") AND StructKeyExists(local.childObj,"isDeleted") AND StructKeyExists(local.childObj,"item") AND StructKeyExists(local.childObj,"originalPath") AND StructKeyExists(local.childObj,"path")){
-		   
 			local.newGrandChildren = ArrayNew(1);
 			if(StructKeyExists(local.childObj,"children") AND IsArray(local.childObj['children'])){
 			  local.newGrandChildren = local.childObj['children'];
@@ -307,14 +254,11 @@
 			}
 			local.newChildOriginalPath = REReplaceNoCase(ListFirst(local.childObj['originalPath'],"^"),"[//]+","/","ALL");
 			local.newChildPath = REReplaceNoCase(ListFirst(local.childObj['path'],"^"),"[//]+","/","ALL");
-						
 			if(CompareNoCase(local.currentChildOriginalPath,local.newChildOriginalPath) EQ 0){
 			  if(CompareNoCase(local.currentChildOriginalPath,local.newChildPath) NEQ 0){
 				local.directoryName = request.filepath & REReplaceNoCase(local.currentChildOriginalPath,"[/]+","\","ALL");
 				local.newDirectoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
 				if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-				  /*WriteOutput('<strong>RENAME: child: directoryName:</strong> ' & local.directoryName & '<br />');
-				  WriteOutput('<strong>RENAME: child: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');*/
 				  try{
 					cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
 					  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
@@ -326,18 +270,15 @@
 				}
 			  }
 			}
-			
 			if(NOT Len(Trim(local.newChildOriginalPath)) AND Len(Trim(local.newChildPath))){
 			  local.directoryName1 = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
 			  if(NOT DirectoryExists(local.directoryName1)){
-				//WriteOutput('<strong>CREATE: child: local.directoryName1:</strong> ' & local.directoryName1 & '<br />');
 				try{
 				  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
 					cfdirectory(action="create",directory=local.directoryName1);
 				  }
 				  local.directoryName2 = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL") & "\miscellaneous";
 				  if(DirectoryExists(local.directoryName1) AND NOT DirectoryExists(local.directoryName2)){
-					//WriteOutput('<strong>CREATE DEFAULT GRANDCHILD: child: local.directoryName2:</strong> ' & local.directoryName2 & '<br /><br />');
 					cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
 					  cfdirectory(action="create",directory=local.directoryName2);
 					}
@@ -348,7 +289,6 @@
 				}
 			  }
 			}
-			
 			if(local.currentChildEmpty AND local.newChildIsDeleted AND local.newChildEmpty AND Len(Trim(local.newChildPath))){
 			  local.directoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
 			  if(DirectoryExists(local.directoryName)){
@@ -363,24 +303,16 @@
 				}*/
 			  }
 			}
-			
 			if(CompareNoCase(local.currentChildOriginalPath,local.newChildOriginalPath) EQ 0){
-				
 			  if(IsArray(arguments.currentObj[local.currentChild]) AND ArrayLen(arguments.currentObj[local.currentChild])){
-				  
 				for (local.currentGrandChildIdx=1;local.currentGrandChildIdx LTE ArrayLen(arguments.currentObj[local.currentChild]);local.currentGrandChildIdx=local.currentGrandChildIdx+1) {
 				  local.currentGrandChild = arguments.currentObj[local.currentChild][local.currentGrandChildIdx];
 				  local.currentGrandChildEmpty = ListLast(local.currentGrandChild,"^");
 				  local.currentGrandChildOriginalPath = REReplaceNoCase(ListFirst(local.currentGrandChild,"^"),"[\\]+","/","ALL");
-				
 				  if(IsArray(local.newGrandChildren)){
-					  
 					for (local.newGrandChild=1;local.newGrandChild LTE ArrayLen(local.newGrandChildren);local.newGrandChild=local.newGrandChild+1) {
-						
 					  local.grandChildObj = local.newGrandChildren[local.newGrandChild];
-					  
 					  if(IsStruct(local.grandChildObj) AND StructKeyExists(local.grandChildObj,"empty") AND StructKeyExists(local.grandChildObj,"isDeleted") AND StructKeyExists(local.grandChildObj,"item") AND StructKeyExists(local.grandChildObj,"originalPath") AND StructKeyExists(local.grandChildObj,"path")){
-						  
 						local.newGrandChildEmpty = local.grandChildObj['empty'];
 						local.newGrandChildIsDeleted = LCase(local.grandChildObj['isDeleted']) EQ 'yes' ? true : false;
 						local.newGrandChildCategory = local.grandChildObj['item'];
@@ -389,14 +321,11 @@
 						}
 						local.newGrandChildOriginalPath = REReplaceNoCase(ListFirst(local.grandChildObj['originalPath'],"^"),"[//]+","/","ALL");
 						local.newGrandChildPath = REReplaceNoCase(ListFirst(local.grandChildObj['path'],"^"),"[//]+","/","ALL");
-						
 						if(CompareNoCase(local.currentGrandChildOriginalPath,local.newGrandChildOriginalPath) EQ 0){
 						  if(CompareNoCase(local.currentGrandChildOriginalPath,local.newGrandChildPath) NEQ 0){
 							local.directoryName = request.filepath & REReplaceNoCase(local.currentGrandChildOriginalPath,"[/]+","\","ALL");
 							local.newDirectoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
-							//WriteOutput('<strong>RENAME: grandchild: newDirectoryName:</strong> ' & local.newDirectoryName & '<br /><br />');
 							if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-							  //WriteOutput('<strong>RENAME: grandchild: directoryName 1:</strong> ' & local.directoryName & '<br />');
 							  try{
 								cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
@@ -409,7 +338,6 @@
 							}
 							local.directoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL") & "\" & ListLast(local.currentGrandChildOriginalPath,"/");
 							if(DirectoryExists(local.directoryName) AND NOT DirectoryExists(local.newDirectoryName)){
-							  //WriteOutput('<strong>RENAME: grandchild: directoryName 2:</strong> ' & local.directoryName & '<br />');
 							  try{
 								cflock (name="rename_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								  cfdirectory(action="rename",directory=local.directoryName,newdirectory=local.newDirectoryName);
@@ -421,11 +349,9 @@
 							}
 						  }
 						}
-						
 						if(NOT Len(Trim(local.newGrandChildOriginalPath)) AND Len(Trim(local.newGrandChildPath))){
 						  local.directoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
 						  if(NOT DirectoryExists(local.directoryName)){
-							//WriteOutput('<strong>CREATE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
 							try{
 							  cflock (name="create_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								cfdirectory(action="create",directory=local.directoryName);
@@ -436,7 +362,6 @@
 							}
 						  }
 						}
-						
 						if(local.currentGrandChildEmpty AND local.newGrandChildIsDeleted AND local.newGrandChildEmpty AND Len(Trim(local.newGrandChildPath))){
 						  local.directoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
 						  if(DirectoryExists(local.directoryName)){
@@ -451,19 +376,16 @@
 							}*/
 						  }
 						}
-  
 					  }
 					}
 				  }
 				}
 			  }
 			}
-			
 		  }
 		}
 	  }
 	}
-	
 	if(NOT Len(Trim(local.error))){
 	  local.qGetDirPlusId = ParseDirectory(path=request.filepath & "/categories");
 	  local.directories = CleanArray(directories=ConvertDirectoryQueryToArray(query=local.qGetDirPlusId,addEmptyFlag=arguments.addEmptyFlag),formatWithKeys=arguments.formatWithKeys,flattenParentArray=arguments.flattenParentArray);
@@ -472,16 +394,13 @@
 	  local.directories = StructNew();
 	  local.directories['error'] = local.error;
 	}
-	
 	return local.directories;
-	
   }
   
   
   public string function CapFirst(string str = "", boolean first = false) output="true" {
 	var local = {};
 	if(Len(arguments.str) GT 1){
-	  /*WriteOutput(arguments.str & "<br />");*/
 	  if(arguments.first){
 		local.string = Trim(UCase(Left(arguments.str,1)) & Right(arguments.str,Len(arguments.str)-1));
 	  }
@@ -492,7 +411,7 @@
 	else{
 	  local.string = Trim(UCase(Left(arguments.str,1)));
 	}
-	return local.string;
+	return Trim(local.string);
   }
   
   public string function CapFirstSentence(string str = "", boolean all = false) output="true" {
@@ -516,7 +435,7 @@
 			}
 		}
 	}
-	return local.string;
+	return Trim(local.string);
   }
   
   
@@ -527,7 +446,7 @@
 	  local.item = ListGetAt(arguments.str,local.i," ");
 	  local.string = local.string & " " & CapFirst(local.item);
 	}
-	return local.string;
+	return Trim(local.string);
   }
   
   public string function AbbreviateString(string inputString = "", numeric outputStringLength = 20, boolean ellipsis = true) output="true" {
@@ -553,29 +472,23 @@
 	  else{
 		result = arguments.inputString;
 	  }
-	return result;
+	return Trim(result);
   }  
   
   public string function FormatTitle(string str = "") output="true" {
-	  
 	var local = {};
 	local.wordlist = "a,amid,an,and,anti,as,at,but,by,down,for,from,in,into,like,near,nor,of,off,on,onto,or,over,past,per,plus,so,than,the,to,up,upon,via,with,yet";
 	local.wordlist = "a,aboard,about,above,across,after,against,ahead,along,amid,amidst,among,and,around,as,aside,at,athwart,atop,barring,because,before,behind,below,beneath,beside,besides,between,beyond,but,by,circa,concerning,despite,down,during,except,excluding,far,following,for,from,in,including,inside,into,like,minus,near,nor,notwithstanding,of,off,on,onto,opposite,or,out,outside,over,past,per,plus,prior,regarding,regardless,save,since,so,than,the,through,till,to,toward,towards,under,underneath,unlike,until,up,upon,versus,via,with,within,without,yet";
-	
 	local.string = CapFirstAll((Trim(arguments.str)));
 	local.string = REReplaceNoCase(local.string,"[\s]+"," ","ALL");
-	
 	for(local.i = 1; local.i LTE ListLen(local.wordlist); local.i = local.i + 1){
 	  local.string = ReplaceNoCase(local.string," " & ListGetAt(local.wordlist,local.i) & " "," " & ListGetAt(local.wordlist,local.i) & " ","ALL");
 	}
-		
 	if(ListLen(local.string," ")){
 	  local.string = ListSetAt(local.string,ListLen(local.string," "),CapFirst(ListGetAt(local.string,ListLen(local.string," ")," "))," ");
 	  local.string = ListSetAt(local.string,1,CapFirst(ListGetAt(local.string,1," "))," ");
 	}
-	
-	return local.string;
-	
+	return Trim(local.string);
   }
   
   
@@ -808,7 +721,6 @@
 	if(ArrayLen(arguments.array)){
 	  for (local.index=1;local.index LTE ArrayLen(arguments.array);local.index=local.index+1) {
 		local.source = request.filepath & "\article-images\" & Trim(arguments.array[local.index]);
-		//writeDump(var=local.source); 
 		if(FileExists(local.source)){
 		  local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
 		  lock name="delete_file_#local.timestamp#" type="exclusive" timeout="30" { 
@@ -880,7 +792,6 @@
 	}
 	local.claimset = {iss=request.absoluteBaseUrl,sub=local.sub,aud=request.absoluteBaseUrl,exp=DateAdd("s",(1000 * 60 * request.jwtexpiryminutes),Now()),nbf=Now(),iat=Now(),jti=arguments.jwtid,claim={json=SerializeJson({userToken=arguments.usertoken})}};
 	local.JwtSignEncrypt = request.encrypter.init(claimSet=local.claimset,javaLoaderClassPath="",jarSystemPath="",useJavaLoader=true,javaLoaderInstance=request.jwtjavaloader);
-	//writeDump(var=local.JwtSignEncrypt);
 	local.secretKeyEncoded = local.JwtSignEncrypt.GetSecretKeyEncoded();
 	local.jwtString = local.JwtSignEncrypt.Encrypt(secretKeyEncoded=local.secretKeyEncoded);
     if(Len(Trim(local.jwtString)) AND IsBinary(local.secretKeyEncoded)){
@@ -958,7 +869,6 @@
 	  local.document = FileRead(ExpandPath("../../") & "\index.html");
 	}
 	local.result['documentBefore'] = local.document;
-	//WriteDump(var=local.document,abort=true);
 	local.content = "";
 	local.regex1 = ".*<meta\s+property\s*=\s*(#Chr(34)#|#Chr(39)#)og:image(#Chr(34)#|#Chr(39)#)\s+content=(#Chr(34)#|#Chr(39)#)([^#Chr(39)##Chr(34)#]+)[^>]*?.*";
 	local.regex2 = "(.*<meta\s+property\s*=\s*(#Chr(34)#|#Chr(39)#)og:image(#Chr(34)#|#Chr(39)#)\s+content=(#Chr(34)#|#Chr(39)#))([^#Chr(39)##Chr(34)#]+)([^>]*?.*)";
@@ -991,7 +901,6 @@
 		  QuerySetCell(local.query,"Directory",local.row.Directory);
 		}
 	  }
-	  //WriteDump(var=local.query,abort=true);
 	  if(local.query.RecordCount){
 		local.rangeEnd = local.query.RecordCount;
 		local.filename = "";
@@ -1015,7 +924,6 @@
 		local.filecontent = request.remoteuploadfolder & local.filecontenturi;
 	  }
 	}
-	//WriteDump(var=local.filecontent,abort=true);
 	if(Len(Trim(local.filecontent))){
 	  local.document = REReplaceNoCase(local.document,local.regex2,"\1#local.filecontent#\6");
 	  if(Len(Trim(local.document))){

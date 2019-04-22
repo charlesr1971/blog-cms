@@ -721,53 +721,63 @@ export class TreeDynamic implements OnInit, OnDestroy {
       console.log('tree-dynamic: processImageData: data: ', data);
     }
     if(data) {
-      this.name.patchValue(data['author']);
-      this.title.patchValue(data['title']);
-      this.description.patchValue(data['description']);
-      this.tinyMceArticleContent = data['article'];
-      this.formData['article'] = data['article'];
-      this.publishArticleDate.patchValue(moment(new Date(data['publishArticleDate']),'MMMM DD, YYYY'));
-      this.fileImageId = data['fileid'];
-      if(this.debug) {
-        console.log('tree-dynamic: processImageData: this.fileImageId: ', this.fileImageId);
+      if('error' in data && data['error'] === '') {
+        const hasPermission = (this.currentUser && this.currentUser['userid'] === data['userid']) || (this.currentUser && this.currentUser['roleid'] >= 6)  ? true : false;
+        if(!hasPermission) {
+          this.openSnackBar('Permission denied', 'Error');
+          this.router.navigate([this.catalogRouterAliasLower]);
+        }
+        this.name.patchValue(data['author']);
+        this.title.patchValue(data['title']);
+        this.description.patchValue(data['description']);
+        this.tinyMceArticleContent = data['article'];
+        this.formData['article'] = data['article'];
+        this.publishArticleDate.patchValue(moment(new Date(data['publishArticleDate']),'MMMM DD, YYYY'));
+        this.fileImageId = data['fileid'];
+        if(this.debug) {
+          console.log('tree-dynamic: processImageData: this.fileImageId: ', this.fileImageId);
+        }
+        if((typeof data['tags'] === 'string' || data['tags'] instanceof String) && data['tags'] !== '') {
+          const tags = JSON.parse(data['tags']);
+          tags.sort(sortTags);
+          this.tags.patchValue(tags);
+        }
+        const node = this.extractTreeNode(data['imagePath']);
+        if(this.debug) {
+          console.log('tree-dynamic: processImageData: node: ', node);
+        }
+        this.imagePath = node;
+        this.isEditImageValid = true;
+        addImage(TweenMax, this.renderer, this.uploadedImageContainer, this.categoryImagesUrl + '/' + data['imagePath'], 'uploadedImage');
+        if(data['imagePath'] === '') {
+          this.isEditImageValid = false;
+        }
+        this.tinymceArticleImageCount = data['tinymceArticleImageCount'];
+        const regex = /<img\s+[^>]*?src=("|')([^'"]+)/ig;
+        this.tinymceArticleImages = getUriMatches(data['article'], regex, 2);
+        if(this.debug) {
+          console.log('tree-dynamic: processImageData: this.tinymceArticleImageCount',this.tinymceArticleImageCount);
+          console.log('tree-dynamic: processImageData: this.tinymceArticleImages',this.tinymceArticleImages);
+        }
+        if(this.submitArticleNotification) {
+          this.submitArticleNotification.patchValue(!!+data['submitArticleNotification']);
+        }
+        this.formData['imagePath'] = this.imagePath;
+        this.formData['userToken'] = this.userToken;
+        this.formData['uploadType'] = 'gallery';
+        this.formData['mode'] = this.mode;
+        this.formData['fileUuid'] = this.editImageId;
+        this.httpService.subjectImagePath.next(this.formData);
+        if(this.debug) {
+          this.dataSource.data.map( (node) => {
+            console.log(node);
+          });
+        }
       }
-      if((typeof data['tags'] === 'string' || data['tags'] instanceof String) && data['tags'] !== '') {
-        const tags = JSON.parse(data['tags']);
-        tags.sort(sortTags);
-        this.tags.patchValue(tags);
+      else{
+        this.openSnackBar(data['error'], 'Error');
+        this.router.navigate([this.catalogRouterAliasLower]);
       }
-      const node = this.extractTreeNode(data['imagePath']);
-      if(this.debug) {
-        console.log('tree-dynamic: processImageData: node: ', node);
-      }
-      this.imagePath = node;
-      this.isEditImageValid = true;
-      addImage(TweenMax, this.renderer, this.uploadedImageContainer, this.categoryImagesUrl + '/' + data['imagePath'], 'uploadedImage');
-      if(data['imagePath'] === '') {
-        this.isEditImageValid = false;
-      }
-      this.tinymceArticleImageCount = data['tinymceArticleImageCount'];
-      const regex = /<img\s+[^>]*?src=("|')([^'"]+)/ig;
-      this.tinymceArticleImages = getUriMatches(data['article'], regex, 2);
-      if(this.debug) {
-        console.log('tree-dynamic: processImageData: this.tinymceArticleImageCount',this.tinymceArticleImageCount);
-        console.log('tree-dynamic: processImageData: this.tinymceArticleImages',this.tinymceArticleImages);
-      }
-      if(this.submitArticleNotification) {
-        this.submitArticleNotification.patchValue(!!+data['submitArticleNotification']);
-      }
-      this.formData['imagePath'] = this.imagePath;
-      this.formData['userToken'] = this.userToken;
-      this.formData['uploadType'] = 'gallery';
-      this.formData['mode'] = this.mode;
-      this.formData['fileUuid'] = this.editImageId;
-      this.httpService.subjectImagePath.next(this.formData);
-
-      this.dataSource.data.map( (node) => {
-        console.log(node);
-      });
-
-      
     }
   }
 

@@ -33,7 +33,6 @@
     <cfswitch expression="#local.data['task']#">
       <cfcase value="suspend">
 		<cfset local.columnOrder = "Surname,Forename,E_mail,Suspend,User_ID,Submission_date">
-        <cfset local.columnWidth = "200,200,300,160,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
@@ -68,7 +67,6 @@
                     <cfset local.obj['cellEditor'] = "numericCellEditor">
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -79,12 +77,11 @@
           </cfif>
           <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUser)>
         <cfelse>
-          <cfset local.data['error'] = "No archived users found">
+          <cfset local.data['error'] = "No users found">
         </cfif>
       </cfcase>
       <cfcase value="password">
 		<cfset local.columnOrder = "Surname,Forename,E_mail,Password,User_ID,Submission_date">
-        <cfset local.columnWidth = "200,200,300,180,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
@@ -118,7 +115,6 @@
                     <cfset local.obj['editable'] = true>
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -129,7 +125,59 @@
           </cfif>
           <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUser)>
         <cfelse>
-          <cfset local.data['error'] = "No archived users found">
+          <cfset local.data['error'] = "No users found">
+        </cfif>
+      </cfcase>
+      <cfcase value="approved">
+		<cfset local.columnOrder = "Surname,Forename,E_mail,Title,Approved,User_ID,File_ID,File_uuid,Submission_date">
+        <cfset local.columnOrderTemp = "">
+        <cfset local.temp = ArrayNew(1)>
+        <cfset local.counter = 1>
+        <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
+          SELECT Surname, Forename ,E_mail, Title, Approved, tblUser.User_ID, File_ID, File_uuid, DATE_FORMAT(tblFile.Submission_date,"%Y-%m-%d") AS Submission_date 
+          FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
+          ORDER BY Surname ASC, Title ASC
+        </CFQUERY>
+        <cfif local.qGetUser.RecordCount>
+          <cfset local.columns = local.qGetUser.columnList>
+          <cfloop list="#local.columns#" index="local.column">
+            <cfset local.obj = StructNew()>
+            <cfset local.columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
+            <cfset local.obj['headerName'] = request.utils.CapFirstAll(str=local.columnName)>
+            <cfset local.obj['field'] = Trim(LCase(local.column))>
+            <cfset ArrayAppend(local.data['columnDefs'],local.obj)>
+          </cfloop>
+          <cfif ArrayLen(local.data['columnDefs'])>
+            <cfloop list="#local.columnOrder#" index="local.column">
+              <cfloop from="1" to="#ArrayLen(local.data['columnDefs'])#" index="local.index">
+                <cfset local.field = local.data['columnDefs'][local.index]['field']>
+                <cfif CompareNoCase(local.field,local.column) EQ 0 AND NOT ListFindNoCase(local.columnOrderTemp,local.column)>
+                  <cfset local.obj = StructNew()>
+                  <cfset local.obj['headerName'] = local.data['columnDefs'][local.index]['headerName']>
+                  <cfif CompareNoCase(local.column,"E_mail") EQ 0>
+                    <cfset local.obj['headerName'] = "E-mail">
+                    <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
+                  </cfif>
+                  <cfif CompareNoCase(local.column,"Title") EQ 0>
+                    <cfset local.obj['cellRenderer'] = "formatFileTitleRenderer">
+                  </cfif>
+                  <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
+                  <cfif CompareNoCase(local.column,"Approved") EQ 0>
+                    <cfset local.obj['editable'] = true>
+                    <cfset local.obj['cellEditor'] = "numericCellEditor">
+                    <cfset local.obj['suppressMenu'] = false>
+                  </cfif>
+                  <cfset ArrayAppend(local.temp,local.obj)>
+                  <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
+                  <cfset local.counter = local.counter + 1>
+                </cfif>
+              </cfloop>
+            </cfloop>
+            <cfset local.data['columnDefs'] = local.temp>
+          </cfif>
+          <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUser)>
+        <cfelse>
+          <cfset local.data['error'] = "No users found">
         </cfif>
       </cfcase>
     </cfswitch>
@@ -196,11 +244,42 @@
                   WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
                 </CFQUERY>
                 <cfset local.approved = local.obj['suspend'] EQ 1 ? 0 : 1>
-                <CFQUERY DATASOURCE="#request.domain_dsn#">
-                  UPDATE tblFile
-                  SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#"> 
-                  WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
-                </CFQUERY>
+                <cfif NOT local.approved>
+                  <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
+                    SELECT * 
+                    FROM tblFile 
+                   	WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
+                  </CFQUERY>
+                  <cfif local.qGetFile.RecordCount>
+                    <cfloop query="local.qGetFile">
+                      <CFQUERY DATASOURCE="#request.domain_dsn#">
+                        UPDATE tblFile
+                        SET Approved_previous = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetFile.Approved#"> 
+                        WHERE File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.File_ID#">
+                      </CFQUERY>
+                    </cfloop>
+                  </cfif>
+                  <CFQUERY DATASOURCE="#request.domain_dsn#">
+                    UPDATE tblFile
+                    SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#"> 
+                    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
+                  </CFQUERY>
+                <cfelse>
+                  <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
+                    SELECT * 
+                    FROM tblFile 
+                    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">
+                  </CFQUERY>
+                  <cfif local.qGetFile.RecordCount>
+                    <cfloop query="local.qGetFile">
+                      <CFQUERY DATASOURCE="#request.domain_dsn#">
+                        UPDATE tblFile
+                        SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetFile.Approved_previous#"> 
+                        WHERE File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.File_ID#">
+                      </CFQUERY>
+                    </cfloop>
+                  </cfif>
+                </cfif>
                 <CFQUERY DATASOURCE="#request.domain_dsn#">
                   UPDATE tblComment
                   SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#"> 
@@ -233,6 +312,15 @@
                   </CFQUERY>
                 </cftransaction>
               </cfif>
+            </cfcase>
+            <cfcase value="approved">
+              <cftransaction>
+                <CFQUERY DATASOURCE="#request.domain_dsn#">
+                  UPDATE tblFile
+                  SET Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.obj['approved']#"> 
+                  WHERE File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.obj['fileid']#">
+                </CFQUERY>
+              </cftransaction>
             </cfcase>
             <cfcase value="email">
 			  <cfset local.data['createdat'] = Now()>
@@ -275,7 +363,6 @@
     <cfswitch expression="#local.data['task']#">
       <cfcase value="suspend">
 		<cfset local.columnOrder = "Surname,Forename,E_mail,Suspend,User_ID,Submission_date">
-        <cfset local.columnWidth = "200,200,300,160,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
@@ -310,7 +397,6 @@
                     <cfset local.obj['cellEditor'] = "numericCellEditor">
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -321,12 +407,11 @@
           </cfif>
           <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUser)>
         <cfelse>
-          <cfset local.data['error'] = "No archived users found">
+          <cfset local.data['error'] = "No users found">
         </cfif>
       </cfcase>
       <cfcase value="password">
 		<cfset local.columnOrder = "Surname,Forename,E_mail,Password,User_ID,Submission_date">
-        <cfset local.columnWidth = "200,200,300,180,120,185">
         <cfset local.columnOrderTemp = "">
         <cfset local.temp = ArrayNew(1)>
         <cfset local.counter = 1>
@@ -360,7 +445,6 @@
                     <cfset local.obj['editable'] = true>
                     <cfset local.obj['suppressMenu'] = false>
                   </cfif>
-                  <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
                   <cfset ArrayAppend(local.temp,local.obj)>
                   <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
                   <cfset local.counter = local.counter + 1>
@@ -371,7 +455,59 @@
           </cfif>
           <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUser)>
         <cfelse>
-          <cfset local.data['error'] = "No archived users found">
+          <cfset local.data['error'] = "No users found">
+        </cfif>
+      </cfcase>
+      <cfcase value="approved">
+		<cfset local.columnOrder = "Surname,Forename,E_mail,Title,Approved,User_ID,File_ID,File_uuid,Submission_date">
+        <cfset local.columnOrderTemp = "">
+        <cfset local.temp = ArrayNew(1)>
+        <cfset local.counter = 1>
+        <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
+          SELECT Surname, Forename ,E_mail, Title, Approved, tblUser.User_ID, File_ID, File_uuid, DATE_FORMAT(tblFile.Submission_date,"%Y-%m-%d") AS Submission_date 
+          FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
+          ORDER BY Surname ASC, Title ASC
+        </CFQUERY>
+        <cfif local.qGetUser.RecordCount>
+          <cfset local.columns = local.qGetUser.columnList>
+          <cfloop list="#local.columns#" index="local.column">
+            <cfset local.obj = StructNew()>
+            <cfset local.columnName = ReplaceNoCase(Trim(LCase(column)),"_"," ","ALL")>
+            <cfset local.obj['headerName'] = request.utils.CapFirstAll(str=local.columnName)>
+            <cfset local.obj['field'] = Trim(LCase(local.column))>
+            <cfset ArrayAppend(local.data['columnDefs'],local.obj)>
+          </cfloop>
+          <cfif ArrayLen(local.data['columnDefs'])>
+            <cfloop list="#local.columnOrder#" index="local.column">
+              <cfloop from="1" to="#ArrayLen(local.data['columnDefs'])#" index="local.index">
+                <cfset local.field = local.data['columnDefs'][local.index]['field']>
+                <cfif CompareNoCase(local.field,local.column) EQ 0 AND NOT ListFindNoCase(local.columnOrderTemp,local.column)>
+                  <cfset local.obj = StructNew()>
+                  <cfset local.obj['headerName'] = local.data['columnDefs'][local.index]['headerName']>
+                  <cfif CompareNoCase(local.column,"E_mail") EQ 0>
+                    <cfset local.obj['headerName'] = "E-mail">
+                    <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
+                  </cfif>
+                  <cfif CompareNoCase(local.column,"Title") EQ 0>
+                    <cfset local.obj['cellRenderer'] = "formatFileTitleRenderer">
+                  </cfif>
+                  <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
+                  <cfif CompareNoCase(local.column,"Approved") EQ 0>
+                    <cfset local.obj['editable'] = true>
+                    <cfset local.obj['cellEditor'] = "numericCellEditor">
+                    <cfset local.obj['suppressMenu'] = false>
+                  </cfif>
+                  <cfset ArrayAppend(local.temp,local.obj)>
+                  <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
+                  <cfset local.counter = local.counter + 1>
+                </cfif>
+              </cfloop>
+            </cfloop>
+            <cfset local.data['columnDefs'] = local.temp>
+          </cfif>
+          <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUser)>
+        <cfelse>
+          <cfset local.data['error'] = "No users found">
         </cfif>
       </cfcase>
     </cfswitch>

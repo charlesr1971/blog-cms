@@ -466,6 +466,10 @@ body.profile .mat-tree .mat-form-field {
     background-color: transparent !important;
 }
 
+.ag-body-viewport {
+    height: auto !important;
+}
+
 .ag-header-cell-sortable {
     cursor: default !important;
 }
@@ -517,13 +521,13 @@ body.profile .mat-tree .mat-form-field {
     padding: 1px 6px !important;
 }
 
-.ag-grid-format-email-renderer {
+.ag-grid-format-email-renderer, .ag-grid-format-file-title-renderer {
     text-decoration: none;
     margin-right: 10px;
     cursor: pointer !important;
 }
 
-.ag-grid-format-email-renderer:hover {
+.ag-grid-format-email-renderer:hover, .ag-grid-format-file-title-renderer:hover {
     text-decoration: none;
 }
 

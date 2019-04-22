@@ -20,6 +20,7 @@
 <cfparam name="filetoken" default="#LCase(CreateUUID())#" />
 <cfparam name="roleid" default="0" />
 <cfparam name="source" default="" />
+<cfparam name="isAdmin" default="false" />
 <cfparam name="data" default="" />
 
 <cfinclude template="../functions.cfm">
@@ -191,6 +192,15 @@
 
 <cfset emailpassword = Decrypt(request.emailPassword,request.emailSalt,request.crptographyalgorithm,request.crptographyencoding)>
 
+<CFQUERY NAME="qGetUserTokenRoleId" DATASOURCE="#request.domain_dsn#">
+  SELECT * 
+  FROM tblUser INNER JOIN tblUsertoken ON tblUser.User_ID = tblUsertoken.User_ID
+  WHERE tblUsertoken.User_token = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['userToken']#">
+</CFQUERY>
+<cfif qGetUserTokenRoleId.RecordCount AND qGetUserTokenRoleId.Role_ID GTE 6>
+  <cfset isAdmin = true>
+</cfif>
+
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
   FROM tblFile  
@@ -243,7 +253,7 @@
   <cfset title = CapFirstAll(title)>
   <cfset article = REReplaceNoCase(data['article'],"#styleAttributePattern#","","ALL")>
   <cfset article = REReplaceNoCase(article,"#spaceInsideParagraphPattern#","","ALL")>
-  <cfset approved = ListFindNoCase("6,7",roleid) ? 1 : 0> 
+  <cfset approved = ListFindNoCase("6,7",roleid) OR isAdmin ? 1 : 0> 
   <CFQUERY NAME="qUpdateFile" DATASOURCE="#request.domain_dsn#">
     UPDATE tblFile
     SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['name']#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">

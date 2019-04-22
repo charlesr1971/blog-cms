@@ -27,7 +27,6 @@
       <cfreturn representationOf(local.data).withStatus(403,"Not Authorized") />
     </cfif>
     <cfset local.columnOrder = "Surname,Forename,E_mail,User_ID,Submission_date">
-    <cfset local.columnWidth = "200,200,300,120,185">
     <cfset local.columnOrderTemp = "">
     <cfset local.temp = ArrayNew(1)>
     <cfset local.counter = 1>
@@ -57,7 +56,6 @@
                 <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
-              <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>
@@ -68,7 +66,7 @@
       </cfif>
       <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUserArchive)>
     <cfelse>
-	  <cfset local.data['error'] = "No archived users found">
+	  <cfset local.data['error'] = "No users found">
     </cfif>
     <!---<cfthread action="sleep" duration="100000" />--->
     <cfreturn representationOf(local.data) />
@@ -143,7 +141,6 @@
       </cfif>
     </cfloop>
     <cfset local.columnOrder = "Surname,Forename,E_mail,User_ID,Submission_date">
-    <cfset local.columnWidth = "200,200,300,120,185">
     <cfset local.columnOrderTemp = "">
     <cfset local.temp = ArrayNew(1)>
     <cfset local.counter = 1>
@@ -173,7 +170,6 @@
                 <cfset local.obj['cellRenderer'] = "formatEmailRenderer">
               </cfif>
               <cfset local.obj['field'] = local.data['columnDefs'][local.index]['field']>
-              <!---<cfset local.obj['width'] = ListGetAt(local.columnWidth,local.counter)>--->
 			  <cfset ArrayAppend(local.temp,local.obj)>
               <cfset local.columnOrderTemp = ListAppend(local.columnOrderTemp,local.column)>
               <cfset local.counter = local.counter + 1>
@@ -184,7 +180,7 @@
       </cfif>
       <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUserArchive)>
     <cfelse>
-	  <cfset local.data['error'] = "No archived users found">
+	  <cfset local.data['error'] = "No users found">
     </cfif>
     <cfreturn representationOf(local.data) />
   </cffunction>

@@ -369,7 +369,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   #DeserializeJson(task)#--->
   
   
-<cfset data = []>
+<!---<cfset data = []>
 
 <cfloop from="1" to="10" index="i">
   <cfset obj = {}>
@@ -383,6 +383,22 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
 <cfset body = {users: obj['users'], task: obj['task']}>
 <cfset body = SerializeJson(body)>
 
-<cfdump var="#DeserializeJson(body)#" />
+<cfdump var="#DeserializeJson(body)#" />--->
+
+
+<!---<CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+  SELECT tblUser.User_ID, Surname, Forename ,E_mail, Title, Approved, File_ID, DATE_FORMAT(tblFile.Submission_date,"%Y-%m-%d") AS Submission_date 
+  FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
+  ORDER BY Surname ASC
+</CFQUERY>
+
+<cfdump var="#qGetUser#" />--->
+
+
+
+<cfset title = "Hello World">
+<cfset title = request.utils.CapFirstAll(title)>
+
+#title#
 
 </cfoutput>

@@ -78,6 +78,7 @@ import { SafePipe } from './pipes/safe/safe.pipe';
 import { FormatEmailRenderer } from './ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
 import { CustomEditHeader } from './ag-grid/header/custom-edit-header/custom-edit-header.component';
 import { ContentEditableModelDirective } from './directives/content-editable-model/content-editable-model.directive';
+import { FormatFileTitleRenderer } from './ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
 
 
 const appRoutes: Routes = [
@@ -132,7 +133,8 @@ const appRoutes: Routes = [
     SafePipe,
     FormatEmailRenderer,
     CustomEditHeader,
-    ContentEditableModelDirective
+    ContentEditableModelDirective,
+    FormatFileTitleRenderer
   ],
   imports: [
     BrowserModule,
@@ -183,7 +185,7 @@ const appRoutes: Routes = [
     EditorModule,
     OverlayModule,
     NgbModule,
-    AgGridModule.withComponents([FormatEmailRenderer,CustomEditHeader])
+    AgGridModule.withComponents([FormatEmailRenderer,FormatFileTitleRenderer,CustomEditHeader])
   ],
   entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent], // Add the DialogComponent as entry component
   providers: [

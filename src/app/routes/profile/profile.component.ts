@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import { AgGridNg2 } from 'ag-grid-angular';
 import { SafePipe } from '../../pipes/safe/safe.pipe';
 import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-renderer/format-email-renderer.component';
+import { FormatFileTitleRenderer } from '../../ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
 import { CustomEditHeader } from '../../ag-grid/header/custom-edit-header/custom-edit-header.component';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -107,6 +108,18 @@ export enum userAdminUnselectedChangesOptionsStatus {
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
+    trigger('profileUserApprovedEditFadeInOutAnimation', [
+      state('in', style({
+        opacity: 1,
+        display: 'block'
+      })),
+      state('out', style({
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('out => in', animate('250ms ease-in')),
+      transition('in => out', animate('250ms ease-out'))
+    ]),
   ],
   providers: [SafePipe]
 })
@@ -123,16 +136,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
   @ViewChild('agGridUserPassword') agGridUserPassword: AgGridNg2;
+  @ViewChild('agGridUserApproved') agGridUserApproved: AgGridNg2;
 
   @ViewChild('ngbTooltipUserArchiveRemoveHighlight') ngbTooltipUserArchiveRemoveHighlight: NgbTooltip;
   @ViewChild('ngbTooltipUserSuspendRemoveHighlight') ngbTooltipUserSuspendRemoveHighlight: NgbTooltip;
   @ViewChild('ngbTooltipUserPasswordRemoveHighlight') ngbTooltipUserPasswordRemoveHighlight: NgbTooltip;
+  @ViewChild('ngbTooltipUserApprovedRemoveHighlight') ngbTooltipUserApprovedRemoveHighlight: NgbTooltip;
 
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
   @Input() profileUserArchiveEditState: string = 'in';
   @Input() profileUserSuspendEditState: string = 'in';
   @Input() profileUserPasswordEditState: string = 'in';
+  @Input() profileUserApprovedEditState: string = 'in';
 
 
   themeObj = {};
@@ -185,9 +201,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   usersArchiveGetSubscription: Subscription;
   usersSuspendGetSubscription: Subscription;
   usersPasswordGetSubscription: Subscription;
+  usersApprovedGetSubscription: Subscription;
   usersArchivePostSubscription: Subscription;
   usersSuspendPostSubscription: Subscription;
   usersPasswordPostSubscription: Subscription;
+  usersApprovedPostSubscription: Subscription;
   usersEmailPostSubscription: Subscription;
   currentUser: User;
   closeResult: string;
@@ -259,6 +277,22 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   cachedNodeDataUserPassword = [];
   userPasswordSubmitDisabled: boolean = true;
 
+  userApprovedHasNoData: boolean = false;
+  contextUserApproved;
+  frameworkComponentsUserApproved;
+  gridApiUserApproved;
+  gridColumnApiUserApproved;
+  userApprovedColumnDefs = [];
+  userApprovedRowData = [];
+  userApprovedDefaultColDef =  {};
+  userApprovedThemeIsLight: boolean = true;
+  userApprovedDomLayout: string = '';
+  defaultColDefUserApproved;
+  overlayLoadingTemplateUserApproved;
+  overlayNoRowsTemplateUserApproved;
+  cachedNodeDataUserApproved = [];
+  userApprovedSubmitDisabled: boolean = true;
+
   components;
   
   debug: boolean = false;
@@ -283,8 +317,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('profile.component loaded');
       }
 
-      //this.gridApiUserArchive.sizeColumnsToFit();
-
       this.userAccountDeleteSchema = this.httpService.userAccountDeleteSchema;
 
       this.themeObj = this.httpService.themeObj;
@@ -296,6 +328,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.userSuspendThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
 
       this.userPasswordThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+
+      this.userApprovedThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
 
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
@@ -404,7 +438,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // ag-grid user suspend
 
-      this.components = { numericCellEditor: this.getNumericCellEditor() };
+      this.components = { numericCellEditor: this.getTinyintCellEditor() };
 
       this.contextUserSuspend = {
         componentParent: this
@@ -431,7 +465,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // ag-grid user password
 
-
       this.contextUserPassword = {
         componentParent: this
       };
@@ -454,6 +487,34 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
 
       this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password').do(this.processUsersPasswordGetData).subscribe();
+
+      // ag-grid user approved
+
+      this.components = { numericCellEditor: this.getTinyintCellEditor() };
+
+      this.contextUserApproved = {
+        componentParent: this
+      };
+      this.frameworkComponentsUserApproved = {
+        formatEmailRenderer: FormatEmailRenderer,
+        formatFileTitleRenderer: FormatFileTitleRenderer,
+        agColumnHeader: CustomEditHeader
+      };
+
+      this.defaultColDefUserApproved = {
+        enableCellChangeFlash: true,
+        resizable: true,
+        suppressMenu: true,
+        sortable: true,
+        filter: true
+      };
+
+      this.overlayLoadingTemplateUserApproved =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+      this.overlayNoRowsTemplateUserApproved =
+      '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
+
+      this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved').do(this.processUsersApprovedGetData).subscribe();
 
   }
 
@@ -514,6 +575,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: usersPasswordWaypoint1: waypoint detected: that.ngbTooltipUserPasswordRemoveHighlight', that.ngbTooltipUserPasswordRemoveHighlight);
         }
         that.ngbTooltipUserPasswordRemoveHighlight.open();
+        this.destroy();
+      },
+      context: this.documentBody.getElementById('mat-sidenav-content'),
+      offset: '50%'
+    });
+
+    const usersApprovedWaypoint1 = new Waypoint({
+      element: document.getElementById('ag-grid-user-approved-remove-highlight-icon'),
+      handler: function (direction) {
+        if(this.debug) {
+          console.log('profile.component: usersApprovedWaypoint1: waypoint detected: that.ngbTooltipUserApprovedRemoveHighlight', that.ngbTooltipUserApprovedRemoveHighlight);
+        }
+        that.ngbTooltipUserApprovedRemoveHighlight.open();
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
@@ -699,6 +773,48 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private processUsersApprovedGetData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersApprovedGetData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userApprovedColumnDefs = data['columnDefs'];
+        this.userApprovedRowData = data['rowData'];
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.userApprovedHasNoData = true;
+        }
+      }
+    }
+  }
+
+  private processUsersApprovedPostData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processUsersApprovedPostData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.userApprovedColumnDefs = data['columnDefs'];
+        this.userApprovedRowData = data['rowData'];
+        this.refreshAgGrid(this.gridApiUserApproved,'ag-grid-user-approved-updated-icon','ag-grid-user-approved-remove-highlight-icon');
+        this.userApprovedSubmitDisabled = true;
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.userApprovedHasNoData = true;
+        }
+      }
+    }
+  }
+
   private processUsersEmailPostData = (data) => {
     if(this.debug) {
       console.log('profile.component: processUsersEmailPostData: data',data);
@@ -753,6 +869,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
         this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.userSuspendThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+        this.userPasswordThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
+        this.userApprovedThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.openSnackBar('Changes have been submitted', 'Success');
       }
       else{
@@ -1240,6 +1358,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     event.stopPropagation();
   }
 
+  openProfileUserApprovedEdit(event: any): void {
+    this.profileUserApprovedEditState = this.profileUserApprovedEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
   // location methods
 
   goToApiDocumentation(event: any): void {
@@ -1405,7 +1528,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   getUserSuspendSelectedRows(): void {
     const selectedNodes = this.agGridUserSuspend.api.getSelectedNodes();
     const selectedData = selectedNodes.map( node => node.data );
-    const changesArray = this.getChangesArray(this.cachedNodeDataUserSuspend,this.agGridUserSuspend.api.getRenderedNodes());
+    const changesArray = this.getChangesArray(this.cachedNodeDataUserSuspend,this.agGridUserSuspend.api.getRenderedNodes(),'user_id');
     const changesSelectedArray = changesArray['selected'];
     const changesUnselectedArray = changesArray['unselected'];
     if(this.debug) {
@@ -1413,7 +1536,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('profile.component: getUserSuspendSelectedRows: changesUnselectedArray: ', changesUnselectedArray);
     }
     if(changesUnselectedArray.length) {
-      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserSuspend.api.getRenderedNodes(),this.agGridUserSuspend.api,'suspend');
+      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserSuspend.api.getRenderedNodes(),this.agGridUserSuspend.api,'suspend','user_id');
     }
     else{
       this.postUserAdmin(this.agGridUserSuspend.api,'suspend');
@@ -1441,7 +1564,188 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  getNumericCellEditor(): any {
+  onUserSuspendSelectionChanged(event: any): void {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.userSuspendSubmitDisabled = rowCount ? false : true;
+    if(this.cachedNodeDataUserSuspend.length === 0) {
+      const temp = [];
+      this.agGridUserSuspend.api.forEachNode((node) => {
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
+      });
+      this.cachedNodeDataUserSuspend = Array.from(Object.create(temp));
+      if(this.debug) {
+        console.log('profile.component: onUserSuspendSelectionChanged: this.cachedNodeDataUserSuspend: ', this.cachedNodeDataUserSuspend);
+      }
+    }
+  }
+
+  // specific user password ag-grid functions
+
+  userPasswordAutoSizeAll(): void {
+    var allColumnIds = [];
+    this.gridColumnApiUserPassword.getAllColumns().forEach(function(column) {
+      allColumnIds.push(column.colId);
+    });
+    this.gridColumnApiUserPassword.autoSizeColumns(allColumnIds);
+  }
+
+  onUserPasswordGridReady(params): void {
+    this.gridApiUserPassword = params.api;
+    this.gridColumnApiUserPassword = params.columnApi;
+    this.gridApiUserPassword.setDomLayout("autoHeight");
+    if(this.debug) {
+      console.log('profile.component: onUserPasswordGridReady');
+    }
+    setTimeout( () => {
+      this.userPasswordAutoSizeAll();
+    });
+  }
+
+  getUserPasswordSelectedRows(): void {
+    const selectedNodes = this.agGridUserPassword.api.getSelectedNodes();
+    const selectedData = selectedNodes.map( node => node.data );
+    const changesArray = this.getChangesArray(this.cachedNodeDataUserPassword,this.agGridUserPassword.api.getRenderedNodes(),'user_id');
+    const changesSelectedArray = changesArray['selected'];
+    const changesUnselectedArray = changesArray['unselected'];
+    if(this.debug) {
+      console.log('profile.component: getUserPasswordSelectedRows: changesSelectedArray: ', changesSelectedArray);
+      console.log('profile.component: getUserPasswordSelectedRows: changesUnselectedArray: ', changesUnselectedArray);
+    }
+    if(changesUnselectedArray.length) {
+      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserPassword.api.getRenderedNodes(),this.agGridUserPassword.api,'password','user_id');
+    }
+    else{
+      this.postUserAdmin(this.agGridUserPassword.api,'password');
+    }
+  }
+
+  onUserPasswordRowValueChanged(event): void {
+    const data = this.getAllUserPasswordData();
+    if(this.debug) {
+      console.log('profile.component: onUserPasswordRowValueChanged: data: ', data);
+    }
+  }
+
+  getAllUserPasswordData(): any {
+    let rowData = [];
+    this.agGridUserPassword.api.forEachNode((node) => {
+      return rowData.push(node.data);
+    });
+    return rowData;  
+  }
+
+  onFlashUserPasswordColumns(columns: string[]): void {
+    this.agGridUserPassword.api.flashCells({
+      columns: columns
+    });
+  }
+
+  onUserPasswordSelectionChanged(event: any): void {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.userPasswordSubmitDisabled = rowCount ? false : true;
+    if(this.cachedNodeDataUserPassword.length === 0) {
+      const temp = [];
+      this.agGridUserPassword.api.forEachNode((node) => {
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
+      });
+      this.cachedNodeDataUserPassword = Array.from(Object.create(temp));
+      if(this.debug) {
+        console.log('profile.component: onUserPasswordSelectionChanged: this.cachedNodeDataUserPassword: ', this.cachedNodeDataUserPassword);
+      }
+    }
+  }
+
+  // specific user approved ag-grid functions
+
+  userApprovedAutoSizeAll(): void {
+    var allColumnIds = [];
+    this.gridColumnApiUserApproved.getAllColumns().forEach(function(column) {
+      allColumnIds.push(column.colId);
+    });
+    this.gridColumnApiUserApproved.autoSizeColumns(allColumnIds);
+  }
+
+  onUserApprovedGridReady(params): void {
+    this.gridApiUserApproved = params.api;
+    this.gridColumnApiUserApproved = params.columnApi;
+    this.gridApiUserApproved.setDomLayout("autoHeight");
+    if(this.debug) {
+      console.log('profile.component: onUserApprovedGridReady');
+    }
+    setTimeout( () => {
+      this.userApprovedAutoSizeAll();
+    });
+  }
+
+  getUserApprovedSelectedRows(): void {
+    const selectedNodes = this.agGridUserApproved.api.getSelectedNodes();
+    const selectedData = selectedNodes.map( node => node.data );
+    const changesArray = this.getChangesArray(this.cachedNodeDataUserApproved,this.agGridUserApproved.api.getRenderedNodes(),'file_id');
+    const changesSelectedArray = changesArray['selected'];
+    const changesUnselectedArray = changesArray['unselected'];
+    if(this.debug) {
+      console.log('profile.component: getUserApprovedSelectedRows: changesSelectedArray: ', changesSelectedArray);
+      console.log('profile.component: getUserApprovedSelectedRows: changesUnselectedArray: ', changesUnselectedArray);
+    }
+    if(changesUnselectedArray.length) {
+      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserApproved.api.getRenderedNodes(),this.agGridUserApproved.api,'approved','file_id');
+    }
+    else{
+      this.postUserAdmin(this.agGridUserApproved.api,'approved');
+    }
+  }
+
+  onUserApprovedRowValueChanged(event): void {
+    const data = this.getAllUserApprovedData();
+    if(this.debug) {
+      console.log('profile.component: onUserApprovedRowValueChanged: data: ', data);
+    }
+  }
+
+  getAllUserApprovedData(): any {
+    let rowData = [];
+    this.agGridUserApproved.api.forEachNode((node) => {
+      return rowData.push(node.data);
+    });
+    return rowData;  
+  }
+
+  onFlashUserApprovedColumns(columns: string[]): void {
+    this.agGridUserApproved.api.flashCells({
+      columns: columns
+    });
+  }
+
+  onUserApprovedSelectionChanged(event: any): void {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.userApprovedSubmitDisabled = rowCount ? false : true;
+    if(this.cachedNodeDataUserApproved.length === 0) {
+      const temp = [];
+      this.agGridUserApproved.api.forEachNode((node) => {
+        const obj = {};
+        for(const key in node.data) {
+          obj[key] = node.data[key];
+        }
+        temp.push(obj);
+      });
+      this.cachedNodeDataUserApproved = Array.from(Object.create(temp));
+      if(this.debug) {
+        console.log('profile.component: onUserApprovedSelectionChanged: this.cachedNodeDataUserApproved: ', this.cachedNodeDataUserApproved);
+      }
+    }
+  }
+
+  // general ag-grid functions
+
+  getTinyintCellEditor(): any {
     function isCharNumeric(charStr) {
       return !!/[01]{1,1}/.test(charStr);
     }
@@ -1496,107 +1800,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     return NumericCellEditor;
   }
-
-  onUserSuspendSelectionChanged(event: any): void {
-    var rowCount = event.api.getSelectedNodes().length;
-    this.userSuspendSubmitDisabled = rowCount ? false : true;
-    if(this.cachedNodeDataUserSuspend.length === 0) {
-      const temp = [];
-      this.agGridUserSuspend.api.forEachNode((node) => {
-        const obj = {};
-        for(const key in node.data) {
-          obj[key] = node.data[key];
-        }
-        temp.push(obj);
-      });
-      this.cachedNodeDataUserSuspend = Array.from(Object.create(temp));
-      if(this.debug) {
-        console.log('profile.component: onUserSuspendSelectionChanged: this.cachedNodeDataUserSuspend: ', this.cachedNodeDataUserSuspend);
-      }
-    }
-  }
-
-  // specific user password ag-grid functions
-
-  userPasswordAutoSizeAll(): void {
-    var allColumnIds = [];
-    this.gridColumnApiUserPassword.getAllColumns().forEach(function(column) {
-      allColumnIds.push(column.colId);
-    });
-    this.gridColumnApiUserPassword.autoSizeColumns(allColumnIds);
-  }
-
-  onUserPasswordGridReady(params): void {
-    this.gridApiUserPassword = params.api;
-    this.gridColumnApiUserPassword = params.columnApi;
-    this.gridApiUserPassword.setDomLayout("autoHeight");
-    if(this.debug) {
-      console.log('profile.component: onUserPasswordGridReady');
-    }
-    setTimeout( () => {
-      this.userPasswordAutoSizeAll();
-    });
-  }
-
-  getUserPasswordSelectedRows(): void {
-    const selectedNodes = this.agGridUserPassword.api.getSelectedNodes();
-    const selectedData = selectedNodes.map( node => node.data );
-    const changesArray = this.getChangesArray(this.cachedNodeDataUserPassword,this.agGridUserPassword.api.getRenderedNodes());
-    const changesSelectedArray = changesArray['selected'];
-    const changesUnselectedArray = changesArray['unselected'];
-    if(this.debug) {
-      console.log('profile.component: getUserPasswordSelectedRows: changesSelectedArray: ', changesSelectedArray);
-      console.log('profile.component: getUserPasswordSelectedRows: changesUnselectedArray: ', changesUnselectedArray);
-    }
-    if(changesUnselectedArray.length) {
-      this.openUserAdminNotificationDialog(changesSelectedArray,changesUnselectedArray,this.agGridUserPassword.api.getRenderedNodes(),this.agGridUserPassword.api,'password');
-    }
-    else{
-      this.postUserAdmin(this.agGridUserPassword.api,'password');
-    }
-  }
-
-  onUserPasswordRowValueChanged(event): void {
-    const data = this.getAllUserPasswordData();
-    if(this.debug) {
-      console.log('profile.component: onUserPasswordRowValueChanged: data: ', data);
-    }
-  }
-
-  getAllUserPasswordData(): any {
-    let rowData = [];
-    this.agGridUserPassword.api.forEachNode((node) => {
-      return rowData.push(node.data);
-    });
-    return rowData;  
-  }
-
-  onFlashUserPasswordColumns(columns: string[]): void {
-    this.agGridUserPassword.api.flashCells({
-      columns: columns
-    });
-  }
-
-  onUserPasswordSelectionChanged(event: any): void {
-    var rowCount = event.api.getSelectedNodes().length;
-    this.userPasswordSubmitDisabled = rowCount ? false : true;
-    if(this.cachedNodeDataUserPassword.length === 0) {
-      const temp = [];
-      this.agGridUserPassword.api.forEachNode((node) => {
-        const obj = {};
-        for(const key in node.data) {
-          obj[key] = node.data[key];
-        }
-        temp.push(obj);
-      });
-      this.cachedNodeDataUserPassword = Array.from(Object.create(temp));
-      if(this.debug) {
-        console.log('profile.component: onUserPasswordSelectionChanged: this.cachedNodeDataUserPassword: ', this.cachedNodeDataUserPassword);
-      }
-    }
-  }
-
-  // general ag-grid functions
   
   refreshAgGrid(grid: any, id1: string, id2: string): void {
     const overshoot=5;
@@ -1635,23 +1838,36 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  getChangesArray(cachedArray: any[], renderedArray: any[]): any {
+  getChangesArray(cachedArray: any[], renderedArray: any[], identifier: string): any {
     const selectedChanges = [];
     const unselectedChanges = [];
     if(this.debug) {
       console.log('profile.component: getChangesArray: cachedArray: ', cachedArray);
       console.log('profile.component: getChangesArray: renderedArray: ', renderedArray);
+      console.log('profile.component: getChangesArray: identifier: ', identifier);
     }
-    cachedArray.map((node) => {
+    const cachedArrayPage = [];
+    cachedArray.map( (node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
-        if(data.user_id === node.user_id && obj.isSelected()) {
+        if(data[identifier] === node[identifier]) {
+          cachedArrayPage.push(node);
+        }
+      });
+    });
+    if(this.debug) {
+      console.log('profile.component: getChangesArray: cachedArrayPage: ', cachedArrayPage);
+    }
+    cachedArrayPage.map( (node) => {
+      renderedArray.map( (obj) => {
+        const data = obj.data;
+        if(data[identifier] === node[identifier] && obj.isSelected()) {
           let changedSelected = false;
           for(const key in data) {
             let data1 = data[key];
-            data1 = key === 'suspend' ? parseInt(data1) : data1;
+            data1 = key === ('suspend' || 'approved') ? parseInt(data1) : data1;
             let data2 = node[key];
-            data2 = key === 'suspend' ? parseInt(data2) : data2;
+            data2 = key === ('suspend' || 'approved') ? parseInt(data2) : data2;
             if(data1 !== data2) {
               if(this.debug) {
                 console.log('profile.component: getChangesArray: selected: data[key]: ', data[key],' node[key]: ',node[key]);
@@ -1665,13 +1881,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             selectedChanges.push(node);
           }
         }
-        if(data.user_id === node.user_id && !obj.isSelected()) {
+        if(data[identifier] === node[identifier] && !obj.isSelected()) {
           let changedUnselected = false;
           for(const key in data) {
             let data1 = data[key];
-            data1 = key === 'suspend' ? parseInt(data1) : data1;
+            data1 = key === ('suspend' || 'approved') ? parseInt(data1) : data1;
             let data2 = node[key];
-            data2 = key === 'suspend' ? parseInt(data2) : data2;
+            data2 = key === ('suspend' || 'approved') ? parseInt(data2) : data2;
             if(data1 !== data2) {
               if(this.debug) {
                 console.log('profile.component: getChangesArray: unselected: data[key]: ', data[key],' node[key]: ',node[key]);
@@ -1699,7 +1915,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // user admin dialog methods
 
-  openUserAdminNotificationDialog(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[], grid: any, type: string): void {
+  openUserAdminNotificationDialog(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[], grid: any, type: string, identifier: string): void {
     const dialogRef = this.dialog.open(this.dialogUserAdminNotificationTpl, {
       width: this.isMobile ? '100%' :'50%',
       height: this.isMobile ? '100%' :'50%',
@@ -1719,11 +1935,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         const value = userAdminUnselectedChangesOptionsStatus[this.userAdminUnselectedChanges];
         switch(value) {
           case 1:
-            this.userAdminSelectRows(changesSelectedArray,changesUnselectedArray,renderedArray);
+            this.userAdminSelectRows(changesSelectedArray,changesUnselectedArray,renderedArray,identifier);
             this.postUserAdmin(grid,type);
             break;
           case 2:
-            this.userAdminSelectAndHighlightRows(changesSelectedArray,changesUnselectedArray,renderedArray);
+            this.userAdminSelectAndHighlightRows(changesSelectedArray,changesUnselectedArray,renderedArray,identifier);
             break;
           default:
           this.postUserAdmin(grid,type);
@@ -1750,13 +1966,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // user admin mnethods
+  // user admin methods
 
-  userAdminSelectRows(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[]): void {
+  userAdminSelectRows(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[], identifier: string): void {
     changesSelectedArray.map((node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
-        if(data.user_id === node.user_id) {
+        if(data[identifier] === node[identifier]) {
           obj.setSelected(true);
         }
       });
@@ -1764,18 +1980,18 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     changesUnselectedArray.map((node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
-        if(data.user_id === node.user_id) {
+        if(data[identifier] === node[identifier]) {
           obj.setSelected(true);
         }
       });
     });
   }
 
-  userAdminSelectAndHighlightRows(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[]): void {
+  userAdminSelectAndHighlightRows(changesSelectedArray: any[], changesUnselectedArray: any[], renderedArray: any[], identifier: string): void {
     changesSelectedArray.map((node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
-        if(data.user_id === node.user_id) {
+        if(data[identifier] === node[identifier]) {
           obj.setSelected(true);
         }
       });
@@ -1783,7 +1999,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     changesUnselectedArray.map((node) => {
       renderedArray.map( (obj) => {
         const data = obj.data;
-        if(data.user_id === node.user_id) {
+        if(data[identifier] === node[identifier]) {
           obj.setSelected(true);
         }
       });
@@ -1827,7 +2043,33 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         };
         this.usersPasswordPostSubscription = this.httpService.editUserAdmin(objPassword).do(this.processUsersPasswordPostData).subscribe();
         break;
+      case 'approved':
+        selectedData.map( (node) => {
+          const obj = {};
+          obj['id'] = node.user_id;
+          obj['fileid'] = node.file_id;
+          obj['approved'] = node.approved;
+          data.push(obj);
+        });
+        if(this.debug) {
+          console.log('profile.component: postUserAdmin: approved: data: ', data);
+        }
+        const objApproved = {
+          users: data,
+          task: 'approved'
+        };
+        this.usersApprovedPostSubscription = this.httpService.editUserAdmin(objApproved).do(this.processUsersApprovedPostData).subscribe();
+        break;
     }
+  }
+
+  // router methods
+
+  previewArticle(params): void {
+    if(this.debug) {
+      console.log('profile.component: previewArticle: params: ', params);
+    }
+    this.router.navigate([this.uploadRouterAliasLower, {fileid: params.data.file_uuid}]);
   }
 
   // e-mail methods

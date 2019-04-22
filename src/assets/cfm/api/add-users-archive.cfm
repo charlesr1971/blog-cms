@@ -85,7 +85,6 @@
 </cfloop>
     
 <cfset columnOrder = "Surname,Forename,E_mail,User_ID,Submission_date">
-<cfset columnWidth = "200,200,300,120,185">
 <cfset columnOrderTemp = "">
 <cfset temp = ArrayNew(1)>
 <cfset counter = 1>
@@ -115,7 +114,6 @@
             <cfset obj['cellRenderer'] = "formatEmailRenderer">
 		  </cfif>
 		  <cfset obj['field'] = data['columnDefs'][index]['field']>
-          <!---<cfset obj['width'] = ListGetAt(columnWidth,counter)>--->
 		  <cfset ArrayAppend(temp,obj)>
 		  <cfset columnOrderTemp = ListAppend(columnOrderTemp,column)>
 		  <cfset counter = counter + 1>
@@ -126,7 +124,7 @@
   </cfif>
   <cfset data['rowData'] = QueryToArray(query=qGetUserArchive)>
 <cfelse>
-  <cfset data['error'] = "No archived users found">
+  <cfset data['error'] = "No users found">
 </cfif>
 
 <cfoutput>
