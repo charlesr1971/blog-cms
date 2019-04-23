@@ -38,6 +38,8 @@ declare var TweenMax: any, Elastic: any;
 
 const moment = _moment;
 
+var $treeDynamicImagePath: string = '';
+
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
 export const MY_FORMATS = {
@@ -135,6 +137,9 @@ export class DynamicDatabase  {
 export class DynamicDataSource {
 
   dataChange = new BehaviorSubject<DynamicFlatNode[]>([]);
+  //httpService;
+
+  debug: boolean = false;
 
   get data(): DynamicFlatNode[] { return this.dataChange.value; }
   set data(value: DynamicFlatNode[]) {
@@ -143,7 +148,52 @@ export class DynamicDataSource {
   }
 
   constructor(private treeControl: FlatTreeControl<DynamicFlatNode>,
-              private database: DynamicDatabase) {}
+    private database: DynamicDatabase) {
+
+      //this.httpService = httpService;
+    /* this.dataChange.subscribe(data => {
+
+      if($treeDynamicImagePath !== '') {
+        const imagePath = this.convertImagePathToNodeItem($treeDynamicImagePath);
+        //if(this.debug) {
+          console.log('dynamicDataSource: imagePath: ',imagePath);
+        //}
+        const descendants = this.treeControl.dataNodes;
+        //if(this.debug) {
+          console.log('dynamicDataSource: descendants: ',descendants);
+        //}
+        const nodes = descendants.filter( (node) => {
+          return node.item.toLowerCase() === imagePath.toLowerCase();
+        });
+        if(nodes.length) {
+          const node = nodes[0];
+          //if(this.debug) {
+            console.log('dynamicDataSource: database.dataChange: node: ',node);
+          //}
+        }
+      } 
+
+    }); */
+
+    this.database.httpService.categoryImagePath.first().subscribe( imagePath => {
+      if(imagePath !== '') {
+        //if(this.debug) {
+          console.log('dynamicDataSource: imagePath: ',imagePath);
+        //}
+        const nodeItem = this.convertImagePathToNodeItem(imagePath);
+        //if(this.debug) {
+          console.log('dynamicDataSource: nodeItem: ',nodeItem);
+        //}
+        const parentNodeItem = this.getParentNodeItem(nodeItem);
+        //if(this.debug) {
+          console.log('dynamicDataSource: parentNodeItem: ',parentNodeItem);
+        //}
+        const node = new DynamicFlatNode(this.getNodeItemAlias(parentNodeItem), 0, true, false, parentNodeItem);
+        this.toggleNode(node,true);
+      }
+    });
+
+  }
 
   connect(collectionViewer: CollectionViewer): Observable<DynamicFlatNode[]> {
     this.treeControl.expansionModel.onChange!.subscribe(change => {
@@ -184,6 +234,9 @@ export class DynamicDataSource {
         const nodes = children.map(name =>
           new DynamicFlatNode(name, node.level + 1, this.database.isExpandable(name), false, this.database.pathFormat(name)));
         this.data.splice(index + 1, 0, ...nodes);
+        //if(this.debug) {
+          console.log('dynamicDataSource: toggleNode: nodes: ',nodes);
+        //}
       } else {
         let count = 0;
         for (let i = index + 1; i < this.data.length
@@ -191,11 +244,37 @@ export class DynamicDataSource {
         this.data.splice(index + 1, count);
       }
 
+      
+
       // notify the change
       this.dataChange.next(this.data);
       node.isLoading = false;
     }, 1000);
   }
+
+  convertImagePathToNodeItem(imagePath: string = ''): string {
+    return '//' + imagePath.replace(/[/]+/ig,'//');
+  }
+
+  getParentNodeItem(nodeItem: string = ''): string {
+    let nodeItemArr = nodeItem.split('//');
+    let result = nodeItem;
+    if(Array.isArray(nodeItemArr) && nodeItemArr.length > 0) {
+      nodeItemArr.pop();
+      result = nodeItemArr.join('//');
+    }
+    return result;
+  }
+
+  getNodeItemAlias(nodeItem: string = ''): string {
+    let nodeItemArr = nodeItem.split('//');
+    let result = nodeItem;
+    if(Array.isArray(nodeItemArr) && nodeItemArr.length > 0) {
+      result = nodeItemArr[nodeItemArr.length - 1];
+    }
+    return result;
+  }
+
 }
 
 /**
@@ -334,7 +413,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   hasChild = (_: number, _nodeData: DynamicFlatNode) => _nodeData.expandable;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document, 
-    database: DynamicDatabase, 
+    private database: DynamicDatabase, 
     private http: HttpClient,
     private httpService: HttpService,
     private uploadService: UploadService,
@@ -365,8 +444,41 @@ export class TreeDynamic implements OnInit, OnDestroy {
     this.treeControl = new FlatTreeControl<DynamicFlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new DynamicDataSource(this.treeControl, database);
 
+
+    /* this.DynamicDataSource.dataChange.subscribe(data => {
+
+      //if(this.debug) {
+        console.log('tree-dynamic: this.imagePath: ',this.imagePath);
+      //}
+
+    }); */
+
+
+
     database.dataChange.subscribe(data => {
+
       this.dataSource.data = data;
+
+      /* if(this.imagePath !== '') {
+        const imagePath = this.convertImagePathToNodeItem(this.imagePath);
+        //if(this.debug) {
+          console.log('tree-dynamic: imagePath: ',imagePath);
+        //}
+        const descendants = this.treeControl.dataNodes;
+        //if(this.debug) {
+          console.log('tree-dynamic: descendants: ',descendants);
+        //}
+        const nodes = descendants.filter( (node) => {
+          return node.item.toLowerCase() === imagePath.toLowerCase();
+        });
+        if(nodes.length) {
+          const node = nodes[0];
+          //if(this.debug) {
+            console.log('tree-dynamic: database.dataChange: node: ',node);
+          //}
+        }
+      } */
+
     });
 
     this.isMobile = this.deviceDetectorService.isMobile();
@@ -747,6 +859,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic: processImageData: node: ', node);
         }
         this.imagePath = node;
+        if(this.mode === 'edit') {
+          this.httpService.categoryImagePath.next(node);
+        }
         this.isEditImageValid = true;
         addImage(TweenMax, this.renderer, this.uploadedImageContainer, this.categoryImagesUrl + '/' + data['imagePath'], 'uploadedImage');
         if(data['imagePath'] === '') {
@@ -1520,6 +1635,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   addPath(event: any, item: string): void {
     this.imagePath = item;
+    if(this.mode === 'edit') {
+      this.httpService.categoryImagePath.next(item);
+    }
     this.formData['imagePath'] = this.imagePath;
     this.formData['userToken'] = this.userToken;
     this.formData['uploadType'] = 'gallery';
@@ -1797,6 +1915,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
     this.signUpFormDisabled = true;
     this.loginFormDisabled = true;
     this.customRecaptchaDirective.resetCustomCaptcha();
+  }
+
+  convertImagePathToNodeItem(imagePath: string = ''): string {
+    return '//' + imagePath.replace(/[/]+/ig,'//');
   }
 
   ngOnDestroy() {

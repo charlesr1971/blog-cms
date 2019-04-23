@@ -2,9 +2,24 @@
 <cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />
 <cfheader name="Access-Control-Allow-Headers" value="content-type,Authorization,userToken" />
 
+<cfparam name="page" default="1" />
+<cfparam name="startrow" default="1" />
+<cfparam name="endrow" default="#request.agGridTableBatch#" />
+
 <cfparam name="data" default="" />
 
 <cfinclude template="../functions.cfm">
+
+<cfset startrow = 1>
+<cfset endrow = request.agGridTableBatch>
+<cfif Val(page) AND Val(request.agGridTableBatch)>
+  <cfif page GT 1>
+	<cfset startrow = Int((page - 1) * request.agGridTableBatch) + 1>
+	<cfset endrow = (startrow + request.agGridTableBatch) - 1>
+  <cfelse>
+	<cfset endrow = (startrow + request.agGridTableBatch) - 1>
+  </cfif>
+</cfif>
 
 <cfset data = StructNew()>
 <cfset data['columnDefs'] = ArrayNew(1)>
@@ -60,7 +75,7 @@
 	</cfloop>
 	<cfset data['columnDefs'] = temp>
   </cfif>
-  <cfset data['rowData'] = QueryToArray(query=qGetUserArchive)>
+  <cfset data['rowData'] = QueryToArray(query=qGetUserArchive,startrow=startrow,endrow=endrow)>
 <cfelse>
   <cfset data['error'] = "No users found">
 </cfif>

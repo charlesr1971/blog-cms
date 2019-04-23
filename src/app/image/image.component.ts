@@ -95,6 +95,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   };
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
+  // favouriteTooltipText: string = 'Please login to like';
 
   debug: boolean = false;
 

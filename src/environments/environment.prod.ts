@@ -28,5 +28,7 @@ export const environment = {
   googleRecaptchaSiteKey: '6LeoNp0UAAAAAKvqhb08rV2BLdBp6h3hgHTGDopU',
   recaptchaType: 'custom',
   customRecaptchaRotationMax: 0,
-  customRecaptchaStrLength: 4
+  customRecaptchaStrLength: 4,
+  agGridPaginationPageSize: 10,
+  agGridRowHeight: 35
 };

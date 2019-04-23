@@ -1,8 +1,19 @@
 
-<cfcomponent extends="taffy.core.resource" taffy_uri="/users/archive" taffy_docs_hide>
+<cfcomponent extends="taffy.core.resource" taffy_uri="/users/archive/{page}" taffy_docs_hide>
 
   <cffunction name="get">
+    <cfargument name="page" type="numeric" required="yes" />
 	<cfset var local = StructNew()>
+    <cfset local.startrow = 1>
+    <cfset local.endrow = request.agGridTableBatch>
+    <cfif Val(arguments.page) AND Val(request.agGridTableBatch)>
+	  <cfif arguments.page GT 1>
+        <cfset local.startrow = Int((arguments.page - 1) * request.agGridTableBatch) + 1>
+        <cfset local.endrow = (local.startrow + request.agGridTableBatch) - 1>
+      <cfelse>
+        <cfset local.endrow = (local.startrow + request.agGridTableBatch) - 1>
+      </cfif>
+    </cfif>
     <cfset local.jwtString = "">
     <cfset local.data = StructNew()>
     <cfset local.data['columnDefs'] = ArrayNew(1)>
@@ -64,7 +75,7 @@
         </cfloop>
         <cfset local.data['columnDefs'] = local.temp>
       </cfif>
-      <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUserArchive)>
+      <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUserArchive,startrow=local.startrow,endrow=local.endrow)>
     <cfelse>
 	  <cfset local.data['error'] = "No users found">
     </cfif>
@@ -73,7 +84,18 @@
   </cffunction>
 
   <cffunction name="post">
+    <cfargument name="page" type="numeric" required="yes" />
 	<cfset var local = StructNew()>
+    <cfset local.startrow = 1>
+    <cfset local.endrow = request.agGridTableBatch>
+    <cfif Val(arguments.page) AND Val(request.agGridTableBatch)>
+	  <cfif arguments.page GT 1>
+        <cfset local.startrow = Int((arguments.page - 1) * request.agGridTableBatch) + 1>
+        <cfset local.endrow = (local.startrow + request.agGridTableBatch) - 1>
+      <cfelse>
+        <cfset local.endrow = (local.startrow + request.agGridTableBatch) - 1>
+      </cfif>
+    </cfif>
     <cfset local.jwtString = "">
     <cfset local.data = StructNew()>
     <cfset local.data['columnDefs'] = ArrayNew(1)>
@@ -178,7 +200,7 @@
         </cfloop>
         <cfset local.data['columnDefs'] = local.temp>
       </cfif>
-      <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUserArchive)>
+      <cfset local.data['rowData'] = request.utils.QueryToArray(query=local.qGetUserArchive,startrow=local.startrow,endrow=local.endrow)>
     <cfelse>
 	  <cfset local.data['error'] = "No users found">
     </cfif>

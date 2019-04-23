@@ -1246,10 +1246,11 @@
   }
   
   
-  public array function QueryToArray(query query = QueryNew(""), boolean isColumnNameUpperCase = false) output="false" {
+  public array function QueryToArray(query query = QueryNew(""), boolean isColumnNameUpperCase = false, numeric startrow = 0, numeric endrow = 0) output="false" {
 	var local = {};
 	var rows = [];
-	for(local.obj in arguments.query) {
+	if(arguments.startrow EQ 0 AND arguments.endrow EQ 0) {
+	  for(local.obj in arguments.query) {
 		local.temp = {};
 		for(local.key in local.obj) {
 		  if(NOT arguments.isColumnNameUpperCase) {	
@@ -1260,6 +1261,25 @@
 		  }
 		}
 		ArrayAppend(rows,local.temp);
+	  }
+	}
+	else{
+	  local.counter = 1;
+	  for(local.obj in arguments.query) {
+		local.temp = {};
+		for(local.key in local.obj) {
+		  if(NOT arguments.isColumnNameUpperCase) {	
+			local.temp[LCase(local.key)] = local.obj[local.key];
+		  }
+		  else{
+			local.temp[UCase(local.key)] = local.obj[local.key];
+		  }
+		}
+		if(local.counter GTE arguments.startrow AND local.counter LTE arguments.endrow) {
+		  ArrayAppend(rows,local.temp);
+		}
+		local.counter = local.counter + 1;
+	  }
 	}
 	return rows;
   }

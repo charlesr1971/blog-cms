@@ -32,7 +32,9 @@ export const environment = {
   googleRecaptchaSiteKey: '6LeVNp0UAAAAAFYz5WClmneRth1BuOiWXHfTxHZa',
   recaptchaType: '',
   customRecaptchaRotationMax: 0,
-  customRecaptchaStrLength: 4
+  customRecaptchaStrLength: 4,
+  agGridPaginationPageSize: 10,
+  agGridRowHeight: 35
 };
 
 /*

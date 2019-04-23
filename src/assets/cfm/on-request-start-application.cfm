@@ -218,6 +218,8 @@
 	request.commentbatch = 3;
   }
   
+  request.agGridTableBatch = 100;
+  
   request.lckbcryptlibinit = true;
   
   if(NOT StructKeyExists(application,"bcryptlib") OR request.appreloadValidated OR ISDEFINED('url.cfcreload')) {

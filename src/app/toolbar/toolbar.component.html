@@ -10,7 +10,7 @@
   <button mat-button (click)="addLike()" placement="top" ngbTooltip="{{ image.likes }}" [disableTooltip]="disableFavouriteTooltip" *ngIf="currentUser.authenticated != 0">
     <mat-icon class="favorite" id="favourite-{{ image.id }}" [style.color]="likeColorDefault">favorite</mat-icon><span class="favorite">{{ image.likes }}</span>
   </button>
-  <button mat-button  placement="top" ngbTooltip="{{ image.likes }}" [disableTooltip]="disableFavouriteTooltip" *ngIf="currentUser.authenticated == 0" style="cursor:default;">
+  <button mat-button  placement="top" ngbTooltip="{{ image.likes }}" [disableTooltip]="disableFavouriteTooltip" *ngIf="currentUser.authenticated == 0" style="cursor:default;" disabled="true">
     <mat-icon class="favorite" id="favourite-{{ image.id }}" [style.color]="likeColorDefault">favorite</mat-icon><span class="favorite">{{ image.likes }}</span>
   </button>
   <button mat-button (click)="share($event,image.id)">
@@ -22,8 +22,8 @@
       #{{ tag.display }}
     </mat-option>
   </mat-select>
-  <button mat-button (click)="openComments($event)" placement="top" ngbTooltip="{{ commentsTotal }}" [disableTooltip]="disableCommentTooltip">
-    <mat-icon class="comment">comment</mat-icon><span class="comment">{{ commentsTotal }}</span>
+  <button mat-button (click)="openComments($event)" placement="top" ngbTooltip="{{ commentsTotal }}" [disableTooltip]="disableCommentTooltip" [ngStyle]="{'cursor': commentsTotal == 0 && currentUser.authenticated == 0 ? 'default' : 'pointer'}" [disabled]="commentsTotal == 0 && currentUser.authenticated == 0">
+      <mat-icon class="comment">comment</mat-icon><span class="comment">{{ commentsTotal }}</span>
   </button>
 </mat-card-actions>
 

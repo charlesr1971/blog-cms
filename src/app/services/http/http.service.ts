@@ -76,9 +76,10 @@ export class HttpService {
   login: Subject<any> = new Subject<any>();
   themeType: Subject<any> = new Subject<any>();
   galleryImageAdded: Subject<any> = new Subject<any>();
+  categoryImagePath: Subject<any> = new Subject<any>();
+  navigateToProfile: Subject<any> = new Subject<any>();
   browserCacheCleared: boolean = false;
   isLoggedIn: boolean = false;
-  navigateToProfile: Subject<any> = new Subject<any>();
   debugForgottenPasswordLoginWithToken: boolean = false;
 
   debug: boolean = false;
@@ -397,7 +398,7 @@ export class HttpService {
     );
   }
 
-  addUsersFromArchive(data: any): Observable<any> {
+  addUsersFromArchive(data: any, page: number = 1): Observable<any> {
     let req = null;
     let headers = null;
     if(this.useRestApi) {
@@ -407,7 +408,7 @@ export class HttpService {
           'userids': data || ''
         })
       };
-      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/archive','',headers);
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/archive/' + page,'',headers);
       if(this.debug) {
         console.log('http.service: addUsersFromArchive: headers ',headers);
       }
@@ -420,7 +421,7 @@ export class HttpService {
       headers = {
         headers: requestHeaders
       };
-      req = new HttpRequest('POST', this.apiUrl + '/add-users-archive.cfm', body, headers);
+      req = new HttpRequest('POST', this.apiUrl + '/add-users-archive.cfm?page=' + page, body, headers);
       if(this.debug) {
         console.log('http.service: addUsersFromArchive: body ',body);
         console.log('http.service: addUsersFromArchive: headers ',headers);
@@ -575,7 +576,7 @@ export class HttpService {
     );
   }
 
-  editUserAdmin(data: any): Observable<any> {
+  editUserAdmin(data: any, page: number = 1): Observable<any> {
     if(this.debug) {
       console.log('http.service: editUserAdmin: data ',data);
     }
@@ -590,7 +591,7 @@ export class HttpService {
           'X-HTTP-METHOD-OVERRIDE': 'PUT'
         })
       };
-      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/admin', '', headers);
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/users/admin/' + page, '', headers);
       if(this.debug) {
         console.log('http.service: editUserAdmin: headers ',headers);
       }
@@ -604,7 +605,7 @@ export class HttpService {
       headers = {
         headers: requestHeaders
       };
-      req = new HttpRequest('POST', this.apiUrl + '/edit-users-admin.cfm', body, headers);
+      req = new HttpRequest('POST', this.apiUrl + '/edit-users-admin.cfm?page=' + page, body, headers);
       if(this.debug) {
         console.log('http.service: editUserAdmin: body ',body);
         console.log('http.service: editUserAdmin: headers ',headers);
@@ -1301,6 +1302,17 @@ export class HttpService {
     );
   }
 
+  fetchPagesUsers(type: string = 'user'): Observable<any> {
+    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/pages/user/' + type) : new HttpRequest('GET', this.apiUrl + '/pages-users.cfm?type=' + type);
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   fetchPagesUnapproved(): Observable<any> {
     const userToken = this.cookieService.get('userToken') !== '' ? this.cookieService.get('userToken') : 'empty';
     const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/pages/unapproved/userid/' + userToken) : new HttpRequest('GET', this.apiUrl + '/pages-unapproved.cfm');
@@ -1423,13 +1435,13 @@ export class HttpService {
     );
   }
 
-  fetchUsersArchive(): Observable<any> {
+  fetchUsersArchive(page: number = 1): Observable<any> {
     let req = null;
     if(this.useRestApi) {
-      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/archive');
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/archive/' + page);
     }
     else{
-      req = new HttpRequest('GET', this.apiUrl + '/users-archive.cfm');
+      req = new HttpRequest('GET', this.apiUrl + '/users-archive.cfm?page=' + page);
     }
     return this.http.request(req)
     .map( (data) => {
@@ -1440,7 +1452,7 @@ export class HttpService {
     );
   }
 
-  fetchUsersAdmin(task: any): Observable<any> {
+  fetchUsersAdmin(task: any, page: number = 1): Observable<any> {
     let req = null;
     let headers = null;
     if(this.useRestApi) {
@@ -1450,7 +1462,7 @@ export class HttpService {
           'task': task || '',
         })
       };
-      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/admin', '', headers);
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/users/admin/' + page, '', headers);
       if(this.debug) {
         console.log('http.service: fetchUsersAdmin: headers ',headers);
       }
@@ -1463,7 +1475,7 @@ export class HttpService {
       headers = {
         headers: requestHeaders
       };
-      req = new HttpRequest('GET', this.apiUrl + '/edit-users-admin.cfm', body, headers);
+      req = new HttpRequest('GET', this.apiUrl + '/edit-users-admin.cfm?page' + page, body, headers);
       if(this.debug) {
         console.log('http.service: fetchUsersAdmin: body ',body);
         console.log('http.service: fetchUsersAdmin: headers ',headers);

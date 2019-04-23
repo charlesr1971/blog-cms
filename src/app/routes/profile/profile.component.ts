@@ -133,6 +133,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dialogEmail') private dialogEmailTpl: TemplateRef<any>;
   @ViewChild('dialogUserAdminNotification') private dialogUserAdminNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
+  @ViewChild('userArchivePagesSelect') userArchivePagesSelect;
+  @ViewChild('userSuspendPagesSelect') userSuspendPagesSelect;
+  @ViewChild('userApprovedPagesSelect') userApprovedPagesSelect;
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
   @ViewChild('agGridUserPassword') agGridUserPassword: AgGridNg2;
@@ -189,6 +192,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   formEmailData = {};
   apiUrl: string = '';
 
+  userArchivePages = [];
+  userSuspendPages = [];
+  userPasswordPages = [];
+  userApprovedPages = [];
+
   isMobile: boolean = false;
   hasError: boolean = false;
   safeHtml: SafeHtml;
@@ -228,6 +236,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   userAdminUnselectedChangesOptions: string[] = ['Let the system select the rows automatically and continue with the submission?', 'Let the system select the rows where the changes were made and allow you to make the submission manually?', 'Continue with the submission?'];
   ngbTooltipContentRemoveHighlightText: string = 'Remove cell hover highlight';
   contenteditable: boolean = true;
+  currentUserArchivePage: number = 1;
+  currentUserSuspendPage: number = 1;
+  currentUserPasswordPage: number = 1;
+  currentUserApprovedPage: number = 1;
+
+  agGridPaginationPageSize: number = environment.agGridPaginationPageSize;
+  agGridRowHeight: number = environment.agGridRowHeight;
 
   userAccountDeleteSchema: number = 2;
   userArchiveHasNoData: boolean = false;
@@ -337,6 +352,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.isMobile = this.deviceDetectorService.isMobile();
 
+      this.fetchPagesUserArchive();
+      this.fetchPagesUserSuspend();
+      this.fetchPagesUserPassword();
+      this.fetchPagesUserApproved();
+
       if(this.isMobile) {
         this.disableCommentGeneralTooltip = true;
       }
@@ -434,7 +454,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.overlayNoRowsTemplateUserArchive =
       '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
       
-      this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive().do(this.processUsersArchiveGetData).subscribe();
+      this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive(this.currentUserArchivePage).do(this.processUsersArchiveGetData).subscribe();
 
       // ag-grid user suspend
 
@@ -461,7 +481,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.overlayNoRowsTemplateUserSuspend =
       '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
 
-      this.usersSuspendGetSubscription = this.httpService.fetchUsersAdmin('suspend').do(this.processUsersSuspendGetData).subscribe();
+      this.usersSuspendGetSubscription = this.httpService.fetchUsersAdmin('suspend',this.currentUserSuspendPage).do(this.processUsersSuspendGetData).subscribe();
 
       // ag-grid user password
 
@@ -486,7 +506,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.overlayNoRowsTemplateUserPassword =
       '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
 
-      this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password').do(this.processUsersPasswordGetData).subscribe();
+      this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password',this.currentUserPasswordPage).do(this.processUsersPasswordGetData).subscribe();
 
       // ag-grid user approved
 
@@ -514,7 +534,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.overlayNoRowsTemplateUserApproved =
       '<span class="ag-overlay-loading-center"><svg class="custom-mat-progress-spinner" width="50" height="50" viewbox="-7.5 -7.5 25 25"><circle class="path" cx="5" cy="5" r="5" fill="none" stroke-width="1.5" stroke-miterlimit="0" /></svg></span>';
 
-      this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved').do(this.processUsersApprovedGetData).subscribe();
+      this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved',this.currentUserApprovedPage).do(this.processUsersApprovedGetData).subscribe();
 
   }
 
@@ -597,6 +617,74 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // api methods
+
+  fetchPagesUserArchive(): void {
+    this.httpService.fetchPagesUsers('userarchive').subscribe( (data) => {
+      if(this.debug) {
+        console.log('profile.component: fetchPagesUserArchive: data: ',data);
+      }
+      if(data) {
+        if(!this.utilsService.isEmpty(data) && 'pagessurnames' in data && Array.isArray(data['pagessurnames']) && data['pagessurnames'].length) {
+          for(var i = 0; i < data['pagessurnames'].length; i++) {
+            const obj = {};
+            obj['surname'] = data['pagessurnames'][i];
+            this.userArchivePages.push(obj);
+          }
+        }
+      }
+    });
+  }
+
+  fetchPagesUserSuspend(): void {
+    this.httpService.fetchPagesUsers('user').subscribe( (data) => {
+      if(this.debug) {
+        console.log('profile.component: fetchPagesUserSuspend: data: ',data);
+      }
+      if(data) {
+        if(!this.utilsService.isEmpty(data) && 'pagessurnames' in data && Array.isArray(data['pagessurnames']) && data['pagessurnames'].length) {
+          for(var i = 0; i < data['pagessurnames'].length; i++) {
+            const obj = {};
+            obj['surname'] = data['pagessurnames'][i];
+            this.userSuspendPages.push(obj);
+          }
+        }
+      }
+    });
+  }
+
+  fetchPagesUserPassword(): void {
+    this.httpService.fetchPagesUsers('user').subscribe( (data) => {
+      if(this.debug) {
+        console.log('profile.component: fetchPagesUserPassword: data: ',data);
+      }
+      if(data) {
+        if(!this.utilsService.isEmpty(data) && 'pagessurnames' in data && Array.isArray(data['pagessurnames']) && data['pagessurnames'].length) {
+          for(var i = 0; i < data['pagessurnames'].length; i++) {
+            const obj = {};
+            obj['surname'] = data['pagessurnames'][i];
+            this.userPasswordPages.push(obj);
+          }
+        }
+      }
+    });
+  }
+
+  fetchPagesUserApproved(): void {
+    this.httpService.fetchPagesUsers('user_join_file').subscribe( (data) => {
+      if(this.debug) {
+        console.log('profile.component: fetchPagesUserApproved: data: ',data);
+      }
+      if(data) {
+        if(!this.utilsService.isEmpty(data) && 'pagessurnames' in data && Array.isArray(data['pagessurnames']) && data['pagessurnames'].length) {
+          for(var i = 0; i < data['pagessurnames'].length; i++) {
+            const obj = {};
+            obj['surname'] = data['pagessurnames'][i];
+            this.userApprovedPages.push(obj);
+          }
+        }
+      }
+    });
+  }
 
   fetchPagesUnapproved(): void {
     this.httpService.fetchPagesUnapproved().subscribe( (data) => {
@@ -695,6 +783,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.cachedNodeDataUserSuspend = [];
         this.userSuspendColumnDefs = data['columnDefs'];
         this.userSuspendRowData = data['rowData'];
       }
@@ -715,6 +804,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.cachedNodeDataUserSuspend = [];
         this.userSuspendColumnDefs = data['columnDefs'];
         this.userSuspendRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserSuspend,'ag-grid-user-suspend-updated-icon','ag-grid-user-suspend-remove-highlight-icon');
@@ -737,6 +827,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.cachedNodeDataUserPassword = [];
         this.userPasswordColumnDefs = data['columnDefs'];
         this.userPasswordRowData = data['rowData'];
       }
@@ -757,6 +848,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.cachedNodeDataUserPassword = [];
         this.userPasswordColumnDefs = data['columnDefs'];
         this.userPasswordRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserPassword,'ag-grid-user-password-updated-icon','ag-grid-user-password-remove-highlight-icon');
@@ -779,6 +871,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.cachedNodeDataUserApproved = [];
         this.userApprovedColumnDefs = data['columnDefs'];
         this.userApprovedRowData = data['rowData'];
       }
@@ -799,6 +892,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '' && 'columnDefs' in data && Array.isArray(data['columnDefs']) && data['columnDefs'].length > 0 && 'rowData' in data && Array.isArray(data['rowData']) && data['rowData'].length > 0) {
+        this.cachedNodeDataUserApproved = [];
         this.userApprovedColumnDefs = data['columnDefs'];
         this.userApprovedRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserApproved,'ag-grid-user-approved-updated-icon','ag-grid-user-approved-remove-highlight-icon');
@@ -1187,6 +1281,54 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // event methods
 
+  onUserArchivePagesChange(event): void {
+    let page = event.value;
+    //if(this.debug) {
+      console.log('onUserArchivePagesChange: page: ', page);
+    //}
+    this.currentUserArchivePage = page;
+    //if(this.debug) {
+      console.log('onUserArchivePagesChange: this.currentUserArchivePage: ', this.currentUserArchivePage);
+    //}
+    this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive(this.currentUserArchivePage).do(this.processUsersArchiveGetData).subscribe();
+  }
+
+  onUserSuspendPagesChange(event): void {
+    let page = event.value;
+    //if(this.debug) {
+      console.log('onUserSuspendPagesChange: page: ', page);
+    //}
+    this.currentUserSuspendPage = page;
+    //if(this.debug) {
+      console.log('onUserSuspendPagesChange: this.currentUserSuspendPage: ', this.currentUserSuspendPage);
+    //}
+    this.usersSuspendGetSubscription = this.httpService.fetchUsersAdmin('suspend',this.currentUserSuspendPage).do(this.processUsersSuspendGetData).subscribe();
+  }
+
+  onUserPasswordPagesChange(event): void {
+    let page = event.value;
+    //if(this.debug) {
+      console.log('onUserPasswordPagesChange: page: ', page);
+    //}
+    this.currentUserPasswordPage = page;
+    //if(this.debug) {
+      console.log('onUserPasswordPagesChange: this.currentUserPasswordPage: ', this.currentUserPasswordPage);
+    //}
+    this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password',this.currentUserPasswordPage).do(this.processUsersPasswordGetData).subscribe();
+  }
+
+  onUserApprovedPagesChange(event): void {
+    let page = event.value;
+    //if(this.debug) {
+      console.log('onUserApprovedPagesChange: page: ', page);
+    //}
+    this.currentUserApprovedPage = page;
+    //if(this.debug) {
+      console.log('onUserApprovedPagesChange: this.currentUserApprovedPage: ', this.currentUserApprovedPage);
+    //}
+    this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved',this.currentUserApprovedPage).do(this.processUsersApprovedGetData).subscribe();
+  }
+
   onMatSidenavContentScroll(): void {
     if(this.pagesUnapproved.length > 0) {
       this.unapprovedImagesSelect.close();
@@ -1490,7 +1632,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if(this.debug) {
       console.log('profile.component: getUserArchiveSelectedRows: selectedDataStringPresentation: ', selectedDataStringPresentation);
     }
-    this.usersArchivePostSubscription = this.httpService.addUsersFromArchive(selectedDataStringPresentation).do(this.processUsersArchivePostData).subscribe();
+    this.usersArchivePostSubscription = this.httpService.addUsersFromArchive(selectedDataStringPresentation,this.currentUserArchivePage).do(this.processUsersArchivePostData).subscribe();
   }
 
   refreshUserArchive(): void {
@@ -2025,7 +2167,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           users: data,
           task: 'suspend'
         };
-        this.usersSuspendPostSubscription = this.httpService.editUserAdmin(objSuspend).do(this.processUsersSuspendPostData).subscribe();
+        this.usersSuspendPostSubscription = this.httpService.editUserAdmin(objSuspend,this.currentUserSuspendPage).do(this.processUsersSuspendPostData).subscribe();
         break;
       case 'password':
         selectedData.map( (node) => {
@@ -2041,7 +2183,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           users: data,
           task: 'password'
         };
-        this.usersPasswordPostSubscription = this.httpService.editUserAdmin(objPassword).do(this.processUsersPasswordPostData).subscribe();
+        this.usersPasswordPostSubscription = this.httpService.editUserAdmin(objPassword,this.currentUserPasswordPage).do(this.processUsersPasswordPostData).subscribe();
         break;
       case 'approved':
         selectedData.map( (node) => {
@@ -2058,7 +2200,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           users: data,
           task: 'approved'
         };
-        this.usersApprovedPostSubscription = this.httpService.editUserAdmin(objApproved).do(this.processUsersApprovedPostData).subscribe();
+        this.usersApprovedPostSubscription = this.httpService.editUserAdmin(objApproved,this.currentUserApprovedPage).do(this.processUsersApprovedPostData).subscribe();
         break;
     }
   }

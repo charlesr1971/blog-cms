@@ -4,6 +4,10 @@
 @import '~@ngx-share/button/styles/share-buttons.css';
 @import '~@ngx-share/button/styles/themes/default/default-theme.css';
 
+:root {
+    --ag-grid-row-height: 35px;
+}
+
 html, body { 
     height: 100%; 
 }
@@ -476,16 +480,16 @@ body.profile .mat-tree .mat-form-field {
 
 .ag-cell {
     font-family: Roboto,Helvetica,sans-serif !important; 
-    line-height: 35px !important;
+    line-height: var(--ag-grid-row-height) !important;
 }
 
 .ag-header-cell-text {
     font-family: Roboto,Helvetica,sans-serif !important; 
-    line-height: 35px !important;
+    line-height: var(--ag-grid-row-height) !important;
 }
 
 .ag-cell-inline-editing {
-    height: 35px !important;
+    height: var(--ag-grid-row-height) !important;
 }
 
 .ag-cell-inline-editing input {
@@ -496,7 +500,7 @@ body.profile .mat-tree .mat-form-field {
     -webkit-box-shadow: none !important;
     margin: 0px 0px !important;
     padding: 8px 10px !important;
-    height: 35px !important;
+    height: var(--ag-grid-row-height) !important;
     display: block !important;
     box-sizing: border-box !important;
     font-size: 16px !important;
