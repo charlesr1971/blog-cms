@@ -69,7 +69,8 @@ div.mat-tree-container {
   width: 48%;
   -webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .uploaded-image-container-outer {

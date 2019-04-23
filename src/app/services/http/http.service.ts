@@ -77,6 +77,7 @@ export class HttpService {
   themeType: Subject<any> = new Subject<any>();
   galleryImageAdded: Subject<any> = new Subject<any>();
   categoryImagePath: Subject<any> = new Subject<any>();
+  nodeExpanded: Subject<any> = new Subject<any>();
   navigateToProfile: Subject<any> = new Subject<any>();
   browserCacheCleared: boolean = false;
   isLoggedIn: boolean = false;

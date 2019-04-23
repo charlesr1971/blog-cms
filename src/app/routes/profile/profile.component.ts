@@ -1283,49 +1283,49 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onUserArchivePagesChange(event): void {
     let page = event.value;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserArchivePagesChange: page: ', page);
-    //}
+    }
     this.currentUserArchivePage = page;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserArchivePagesChange: this.currentUserArchivePage: ', this.currentUserArchivePage);
-    //}
+    }
     this.usersArchiveGetSubscription = this.httpService.fetchUsersArchive(this.currentUserArchivePage).do(this.processUsersArchiveGetData).subscribe();
   }
 
   onUserSuspendPagesChange(event): void {
     let page = event.value;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserSuspendPagesChange: page: ', page);
-    //}
+    }
     this.currentUserSuspendPage = page;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserSuspendPagesChange: this.currentUserSuspendPage: ', this.currentUserSuspendPage);
-    //}
+    }
     this.usersSuspendGetSubscription = this.httpService.fetchUsersAdmin('suspend',this.currentUserSuspendPage).do(this.processUsersSuspendGetData).subscribe();
   }
 
   onUserPasswordPagesChange(event): void {
     let page = event.value;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserPasswordPagesChange: page: ', page);
-    //}
+    }
     this.currentUserPasswordPage = page;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserPasswordPagesChange: this.currentUserPasswordPage: ', this.currentUserPasswordPage);
-    //}
+    }
     this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password',this.currentUserPasswordPage).do(this.processUsersPasswordGetData).subscribe();
   }
 
   onUserApprovedPagesChange(event): void {
     let page = event.value;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserApprovedPagesChange: page: ', page);
-    //}
+    }
     this.currentUserApprovedPage = page;
-    //if(this.debug) {
+    if(this.debug) {
       console.log('onUserApprovedPagesChange: this.currentUserApprovedPage: ', this.currentUserApprovedPage);
-    //}
+    }
     this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved',this.currentUserApprovedPage).do(this.processUsersApprovedGetData).subscribe();
   }
 

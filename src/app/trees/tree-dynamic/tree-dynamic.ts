@@ -58,7 +58,7 @@ export const MY_FORMATS = {
 
 export class DynamicFlatNode {
   constructor(public item: string, public level = 1, public expandable = false,
-              public isLoading = false, public alias: string) {}
+              public isLoading = false, public alias: string, public id: string) {}
 }
 
 /**
@@ -99,14 +99,14 @@ export class DynamicDatabase  {
         if(this.debug) {
           console.log('DynamicDatabase: fetchData(): this.rootLevelNodes: ', this.rootLevelNodes);
         }
-        this.dataChange.next(this.rootLevelNodes.map(name => new DynamicFlatNode(name, 0, true, false, this.pathFormat(name))));
+        this.dataChange.next(this.rootLevelNodes.map(name => new DynamicFlatNode(name, 0, true, false, this.pathFormat(name),this.createId(name))));
       }
     });
   }
 
   /** Initial data from database */
   initialData(): DynamicFlatNode[] {
-    return this.rootLevelNodes.map(name => new DynamicFlatNode(name, 0, true, false, this.pathFormat(name)));
+    return this.rootLevelNodes.map(name => new DynamicFlatNode(name, 0, true, false, this.pathFormat(name),this.createId(name)));
   }
 
   getChildren(node: string): string[] | undefined {
@@ -121,6 +121,10 @@ export class DynamicDatabase  {
     let last:any = alias.split('//');
     last = Array.isArray(last) ? last[last.length-1] : alias;
     return last;
+  }
+
+  createId(id: string): any {
+    return id.replace(/[/]+/ig,'').toLowerCase().trim();
   }
 
 }
@@ -144,52 +148,46 @@ export class DynamicDataSource {
   get data(): DynamicFlatNode[] { return this.dataChange.value; }
   set data(value: DynamicFlatNode[]) {
     this.treeControl.dataNodes = value;
+    if(this.debug) {
+      console.log('dynamicDataSource: value: ',value);
+    }
     this.dataChange.next(value);
   }
 
   constructor(private treeControl: FlatTreeControl<DynamicFlatNode>,
     private database: DynamicDatabase) {
 
-      //this.httpService = httpService;
-    /* this.dataChange.subscribe(data => {
-
-      if($treeDynamicImagePath !== '') {
-        const imagePath = this.convertImagePathToNodeItem($treeDynamicImagePath);
-        //if(this.debug) {
-          console.log('dynamicDataSource: imagePath: ',imagePath);
-        //}
-        const descendants = this.treeControl.dataNodes;
-        //if(this.debug) {
-          console.log('dynamicDataSource: descendants: ',descendants);
-        //}
-        const nodes = descendants.filter( (node) => {
-          return node.item.toLowerCase() === imagePath.toLowerCase();
-        });
-        if(nodes.length) {
-          const node = nodes[0];
-          //if(this.debug) {
-            console.log('dynamicDataSource: database.dataChange: node: ',node);
-          //}
-        }
-      } 
-
-    }); */
-
     this.database.httpService.categoryImagePath.first().subscribe( imagePath => {
       if(imagePath !== '') {
-        //if(this.debug) {
+        if(this.debug) {
           console.log('dynamicDataSource: imagePath: ',imagePath);
-        //}
+        }
         const nodeItem = this.convertImagePathToNodeItem(imagePath);
-        //if(this.debug) {
+        if(this.debug) {
           console.log('dynamicDataSource: nodeItem: ',nodeItem);
-        //}
+        }
         const parentNodeItem = this.getParentNodeItem(nodeItem);
-        //if(this.debug) {
+        if(this.debug) {
           console.log('dynamicDataSource: parentNodeItem: ',parentNodeItem);
-        //}
-        const node = new DynamicFlatNode(this.getNodeItemAlias(parentNodeItem), 0, true, false, parentNodeItem);
-        this.toggleNode(node,true);
+        }
+        const node = new DynamicFlatNode(parentNodeItem.trim(),0,true,false,this.getNodeItemAlias(parentNodeItem),this.createId(parentNodeItem));
+        if(this.debug) {
+          console.log('dynamicDataSource: node: ',node);
+        }
+        if(this.debug) {
+          console.log('dynamicDataSource: this.data 1: ',this.data);
+        }
+        setTimeout(() => {
+          if(node) {
+            if(this.debug) {
+              console.log('dynamicDataSource: this.data 2: ',this.data);
+            }
+            const el = document.getElementById(node.id);
+            if(el) {
+              el.click();
+            }
+          }
+        },1000);
       }
     });
 
@@ -220,32 +218,44 @@ export class DynamicDataSource {
    * Toggle the node, remove from display list
    */
 
-  toggleNode(node: DynamicFlatNode, expand: boolean): void {
+  toggleNode(node: DynamicFlatNode, expand: boolean, bypass: boolean = false): void {
+    if(this.debug) {
+      console.log('dynamicDataSource: toggleNode: node: ',node);
+    }
     const children = this.database.getChildren(node.item);
-    const index = this.data.indexOf(node);
+    if(this.debug) {
+      console.log('dynamicDataSource: toggleNode: children: ',children);
+    }
+    if(this.debug) {
+      console.log('dynamicDataSource: toggleNode: this.data: ',this.data);
+    }
+    const index = this.data.map(n => n.item).indexOf(node.item);
+    if(this.debug) {
+      console.log('dynamicDataSource: toggleNode: index: ',index);
+    }
     if (!children || index < 0) { // If no children, or cannot find the node, no op
       return;
     }
-
     node.isLoading = true;
-
     setTimeout(() => {
-      if (expand) {
-        const nodes = children.map(name =>
-          new DynamicFlatNode(name, node.level + 1, this.database.isExpandable(name), false, this.database.pathFormat(name)));
-        this.data.splice(index + 1, 0, ...nodes);
-        //if(this.debug) {
-          console.log('dynamicDataSource: toggleNode: nodes: ',nodes);
-        //}
-      } else {
-        let count = 0;
-        for (let i = index + 1; i < this.data.length
-          && this.data[i].level > node.level; i++, count++) {}
-        this.data.splice(index + 1, count);
+      if(this.debug) {
+        console.log('dynamicDataSource: toggleNode: expand: ',expand);
       }
-
-      
-
+      if (expand) {
+        const nodes = children.map( (name) => {
+          return new DynamicFlatNode(name, node.level + 1, this.database.isExpandable(name), false, this.database.pathFormat(name),this.createId(name));
+        });
+        this.data.splice(index + 1, 0, ...nodes);
+        if(this.debug) {
+          console.log('dynamicDataSource: toggleNode: nodes: ',nodes);
+        }
+      } 
+      else {
+        let count = 0;
+        for (let i = index + 1; i < this.data.length && this.data[i].level > node.level; i++, count++) {}
+        this.data.splice(index + 1, count);
+        
+      }
       // notify the change
       this.dataChange.next(this.data);
       node.isLoading = false;
@@ -273,6 +283,10 @@ export class DynamicDataSource {
       result = nodeItemArr[nodeItemArr.length - 1];
     }
     return result;
+  }
+
+  createId(id: string): any {
+    return id.replace(/[/]+/ig,'').toLowerCase().trim();
   }
 
 }
@@ -405,6 +419,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   isForgottenPasswordForm: boolean = false;
   emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
   captchaIsValid: boolean = false;
+  
 
   debug: boolean = false;
 
@@ -445,39 +460,13 @@ export class TreeDynamic implements OnInit, OnDestroy {
     this.dataSource = new DynamicDataSource(this.treeControl, database);
 
 
-    /* this.DynamicDataSource.dataChange.subscribe(data => {
-
-      //if(this.debug) {
-        console.log('tree-dynamic: this.imagePath: ',this.imagePath);
-      //}
-
-    }); */
-
-
-
-    database.dataChange.subscribe(data => {
+    database.dataChange.subscribe( data => {
 
       this.dataSource.data = data;
 
-      /* if(this.imagePath !== '') {
-        const imagePath = this.convertImagePathToNodeItem(this.imagePath);
-        //if(this.debug) {
-          console.log('tree-dynamic: imagePath: ',imagePath);
-        //}
-        const descendants = this.treeControl.dataNodes;
-        //if(this.debug) {
-          console.log('tree-dynamic: descendants: ',descendants);
-        //}
-        const nodes = descendants.filter( (node) => {
-          return node.item.toLowerCase() === imagePath.toLowerCase();
-        });
-        if(nodes.length) {
-          const node = nodes[0];
-          //if(this.debug) {
-            console.log('tree-dynamic: database.dataChange: node: ',node);
-          //}
-        }
-      } */
+      if(this.debug) {
+        console.log('tree-dynamic: this.dataSource.data: ',this.dataSource.data);
+      }
 
     });
 
