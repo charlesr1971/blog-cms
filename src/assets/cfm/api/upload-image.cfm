@@ -157,6 +157,10 @@
           <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
             <cffile action="move" source="#imageSystemSecureFilePath#" destination="#imageSystemPath#">
           </cflock>
+          <cfset mediumImageSystemFilePath = imageSystemPath & "\" & ListLast(imageSystemSecureFilePath,"\")>
+		  <cfif FileExists(mediumImageSystemFilePath)>
+            <cfset mediumImagePathName = createImageCopy(path=mediumImageSystemFilePath,suffix=request.imageMediumSuffix,width=request.imageMediumWidth)>
+          </cfif>
           <cfset data['success'] = true>
         </cfif>
       <cfelse>

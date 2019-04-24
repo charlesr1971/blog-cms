@@ -30,6 +30,7 @@ export class HttpService {
   signUpValidated: number = 0;
   forgottenPasswordToken: string = '';
   forgottenPasswordValidated: number = 0;
+  imageMediumSuffix: string = '';
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -195,6 +196,10 @@ export class HttpService {
       this.forgottenPasswordValidated = forgottenPasswordValidated;
     }
     this.isForgottenPasswordValidated = getUrlParameter('forgottenPasswordValidated') !== '' ? parseInt(getUrlParameter('forgottenPasswordValidated').toString()) : 0;
+    const imageMediumSuffix = getUrlParameter('imageMediumSuffix');
+    if(imageMediumSuffix !== '0' || imageMediumSuffix !== '') {
+      this.imageMediumSuffix = imageMediumSuffix;
+    }
     if(this.debug || this.debugForgottenPasswordLoginWithToken) {
       console.log('http.service: this.port ',this.port);
       console.log('http.service: this.apiUrl ',this.apiUrl);
@@ -206,6 +211,7 @@ export class HttpService {
       console.log('http.service: this.forgottenPasswordToken ',this.forgottenPasswordToken);
       console.log('http.service: this.forgottenPasswordValidated ',this.forgottenPasswordValidated);
       console.log('http.service: this.isForgottenPasswordValidated ',this.isForgottenPasswordValidated);
+      console.log('http.service: this.imageMediumSuffix ',this.imageMediumSuffix);
     }
     this.userService.currentUser.subscribe( (user: User) => {
       if(user){

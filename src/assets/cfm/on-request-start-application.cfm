@@ -178,6 +178,10 @@
   request.refreshExpiredToken = true;
   request.allowMultipleLikesPerUser = 0;
   
+  request.imageMediumSuffix = "preview";
+  request.imageMediumWidth = 350;
+  request.maxImages = 100;
+  
   local.queryObj = new Query();	 
   local.queryObj.setDatasource(request.domain_dsn);
   local.queryObj.setName("qGetFile");

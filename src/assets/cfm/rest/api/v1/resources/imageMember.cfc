@@ -226,6 +226,10 @@
               <cflock name="move_file_#local.timestamp#" type="exclusive" timeout="30">
                 <cffile action="move" source="#local.imageSystemSecureFilePath#" destination="#local.imageSystemPath#">
               </cflock>
+              <cfset local.mediumImageSystemFilePath = local.imageSystemPath & "\" & ListLast(local.imageSystemSecureFilePath,"\")>
+              <cfif FileExists(local.mediumImageSystemFilePath)>
+				<cfset local.mediumImagePathName = request.utils.createImageCopy(path=local.mediumImageSystemFilePath,suffix=request.imageMediumSuffix,width=request.imageMediumWidth)>
+              </cfif>
               <cfset local.data['success'] = true>
             </cfif>
           <cfelse>
@@ -575,6 +579,13 @@
           <cflock name="move_file_#local.timestamp#" type="exclusive" timeout="30">
             <cffile action="move" source="#local.source#" destination="#local.imageSystemPath#" />
           </cflock>
+          <cfset local.mediumImagePathNameSource = request.utils.getImageCopyName(path=local.source,suffix=request.imageMediumSuffix)>
+          <cfset local.mediumImagePathNameDestination = request.utils.getImageCopyName(path=local.imageSystemPath,suffix=request.imageMediumSuffix)>
+          <cfif FileExists(local.mediumImagePathNameSource)>
+            <cflock name="move_file_#local.timestamp#" type="exclusive" timeout="30">
+              <cffile action="move" source="#local.mediumImagePathNameSource#" destination="#local.mediumImagePathNameDestination#" />
+            </cflock>
+          </cfif>
         </cfif>
       </cfif>
       <cfset local.tags = request.utils.FormatTags(local.data['tags'])>
@@ -654,6 +665,10 @@
               <cflock name="move_file_#local.timestamp#" type="exclusive" timeout="30">
                 <cffile action="move" source="#local.imageSystemSecureFilePath#" destination="#local.imageSystemDirectoryPath#">
               </cflock>
+              <cfset local.mediumImageSystemFilePath = local.imageSystemDirectoryPath & "\" & ListLast(local.imageSystemSecureFilePath,"\")>
+              <cfif FileExists(local.mediumImageSystemFilePath)>
+				<cfset local.mediumImagePathName = request.utils.createImageCopy(path=local.mediumImageSystemFilePath,suffix=request.imageMediumSuffix,width=request.imageMediumWidth)>
+              </cfif>
               <cfset local.data['success'] = true>
             </cfif>
           <cfelse>
@@ -674,6 +689,12 @@
             <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
               <cffile action="delete" file="#local.source#" />
             </cflock>
+            <cfset local.mediumImagePathName = request.utils.getImageCopyName(path=local.source,suffix=request.imageMediumSuffix)>
+			<cfif FileExists(local.mediumImagePathName)>
+              <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+                <cffile action="delete"  file="#local.mediumImagePathName#" />
+              </cflock>
+            </cfif>
           </cfif>
           <CFQUERY DATASOURCE="#request.domain_dsn#">
             UPDATE tblFile
@@ -838,6 +859,12 @@
         <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
           <cffile action="delete"  file="#local.source#" />
         </cflock>
+        <cfset local.mediumImagePathName = request.utils.getImageCopyName(path=local.source,suffix=request.imageMediumSuffix)>
+        <cfif FileExists(local.mediumImagePathName)>
+          <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+            <cffile action="delete"  file="#local.mediumImagePathName#" />
+          </cflock>
+        </cfif>
       </cfif>
       <cfset local.directory = request.filepath & "\article-images\" & local.qGetFile.File_ID>
       <cfdirectory action="list" directory="#local.directory#" name="local.qGetArticleImages" type="file" recurse="no" />

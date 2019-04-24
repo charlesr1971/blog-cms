@@ -378,6 +378,12 @@
               <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
                 <cffile action="delete"  file="#local.source#" />
               </cflock>
+              <cfset local.mediumImagePathName = request.utils.getImageCopyName(path=local.source,suffix=request.imageMediumSuffix)>
+			  <cfif FileExists(local.mediumImagePathName)>
+                <cflock name="delete_file_#local.timestamp#" type="exclusive" timeout="30">
+                  <cffile action="delete"  file="#local.mediumImagePathName#" />
+                </cflock>
+              </cfif>
             </cfif>
             <cfset local.source = request.filepath & "\user-avatars\" & local.qGetUser.Filename>
             <cfif FileExists(local.source)>

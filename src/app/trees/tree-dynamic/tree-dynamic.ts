@@ -182,9 +182,15 @@ export class DynamicDataSource {
             if(this.debug) {
               console.log('dynamicDataSource: this.data 2: ',this.data);
             }
-            const el = document.getElementById(node.id);
-            if(el) {
-              el.click();
+            const button = document.getElementById('button-' + node.id);
+            if(button) {
+              if(this.debug) {
+                console.log('dynamicDataSource: button parent: ',button);
+              }
+              button.click();
+              setTimeout(() => {
+                this.database.httpService.nodeExpanded.next(imagePath);
+              },3000);
             }
           }
         },1000);
@@ -343,7 +349,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   tagsArray = [];
   imagePath: string;
   selectedFile: File;
-  directorySelected: string;
+  iconSelected: string;
 
   treeForm: FormGroup;
   signUpForm: FormGroup;
@@ -468,6 +474,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
         console.log('tree-dynamic: this.dataSource.data: ',this.dataSource.data);
       }
 
+    });
+
+    this.httpService.nodeExpanded.subscribe( imagePath => {
+      this.imagePath = imagePath;
+      this.addPath(null,imagePath);
     });
 
     this.isMobile = this.deviceDetectorService.isMobile();
@@ -1633,8 +1644,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
     this.formData['mode'] = this.mode;
     this.formData['fileUuid'] = this.mode === 'edit' ? this.editImageId : '';
     this.httpService.subjectImagePath.next(this.formData);
-    this.directorySelected = this.imagePath;
-    const gradeEl = this.documentBody.getElementById('directory-' + this.pathFormat(this.imagePath));
+    this.iconSelected = this.createId(this.imagePath);
+    const gradeEl = this.documentBody.getElementById('icon-' + this.createId(this.imagePath));
     if(this.debug) {
       console.log('addPath: gradeEl: ',gradeEl);
     }
@@ -1645,6 +1656,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
     let last = value.split('//');
     last = Array.isArray(last) ? last[last.length-1] : value;
     return last;
+  }
+
+  createId(id: string): any {
+    return id.replace(/[/]+/ig,'').toLowerCase().trim();
   }
 
   stringFromUTF8Array(data: any): string {

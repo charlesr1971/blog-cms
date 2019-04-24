@@ -234,6 +234,13 @@
       <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
         <cffile action="move" source="#source#" destination="#imageSystemPath#" />
       </cflock>
+      <cfset mediumImagePathNameSource = getImageCopyName(path=source,suffix=request.imageMediumSuffix)>
+	  <cfset mediumImagePathNameDestination = getImageCopyName(path=imageSystemPath,suffix=request.imageMediumSuffix)>
+      <cfif FileExists(mediumImagePathNameSource)>
+        <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
+          <cffile action="move" source="#mediumImagePathNameSource#" destination="#mediumImagePathNameDestination#" />
+        </cflock>
+      </cfif>
     </cfif>
   </cfif>
   <cfset tags = FormatTags(data['tags'])>
@@ -314,6 +321,10 @@
           <cflock name="move_file_#timestamp#" type="exclusive" timeout="30">
             <cffile action="move" source="#imageSystemSecureFilePath#" destination="#imageSystemDirectoryPath#">
           </cflock>
+          <cfset mediumImageSystemFilePath = imageSystemDirectoryPath & "\" & ListLast(imageSystemSecureFilePath,"\")>
+		  <cfif FileExists(mediumImageSystemFilePath)>
+            <cfset mediumImagePathName = createImageCopy(path=mediumImageSystemFilePath,suffix=request.imageMediumSuffix,width=request.imageMediumWidth)>
+          </cfif>
           <cfset data['success'] = true>
         </cfif>
       <cfelse>
@@ -334,6 +345,12 @@
         <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
           <cffile action="delete" file="#source#" />
         </cflock>
+        <cfset mediumImagePathName = getImageCopyName(path=source,suffix=request.imageMediumSuffix)>
+		<cfif FileExists(mediumImagePathName)>
+          <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+            <cffile action="delete"  file="#mediumImagePathName#" />
+          </cflock>
+        </cfif>
       </cfif>
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblFile

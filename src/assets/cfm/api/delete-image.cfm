@@ -45,6 +45,12 @@
     <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
       <cffile action="delete"  file="#source#" />
     </cflock>
+    <cfset mediumImagePathName = getImageCopyName(path=source,suffix=imageMediumSuffix)>
+	<cfif FileExists(mediumImagePathName)>
+      <cflock name="delete_file_#timestamp#" type="exclusive" timeout="30">
+        <cffile action="delete"  file="#mediumImagePathName#" />
+      </cflock>
+    </cfif>
   </cfif>
   <cfset directory = request.filepath & "\article-images\" & qGetFile.File_ID>
   <cfdirectory action="list" directory="#directory#" name="qGetArticleImages" type="file" recurse="no" />

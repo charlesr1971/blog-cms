@@ -30,5 +30,6 @@ export const environment = {
   customRecaptchaRotationMax: 0,
   customRecaptchaStrLength: 4,
   agGridPaginationPageSize: 10,
-  agGridRowHeight: 35
+  agGridRowHeight: 35,
+  imageMediumSuffix: 'preview'
 };

@@ -289,18 +289,21 @@
 				}
 			  }
 			}
+			//WriteDump(var=local.childObj,output="C:\Users\Charles Robertson\Desktop\community-debug.htm",format="html",label="child");
 			if(local.currentChildEmpty AND local.newChildIsDeleted AND local.newChildEmpty AND Len(Trim(local.newChildPath))){
 			  local.directoryName = request.filepath & REReplaceNoCase(local.newChildPath,"[/]+","\","ALL");
+			  //WriteDump(var=local.directoryName,output="C:\Users\Charles Robertson\Desktop\community-debug.htm",format="html",label="child");
 			  if(DirectoryExists(local.directoryName)){
 				//WriteOutput('<strong>DELETE: child: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
-				/*try{
+				//WriteDump(var=local.directoryName,output="C:\Users\Charles Robertson\Desktop\community-debug.htm",format="html");
+				try{
 				  cflock (name="delete_directory_" & local.timestamp, type="exclusive", timeout="30") {
-					cfdirectory(action="delete",directory=local.directoryName);
+					cfdirectory(action="delete",directory=local.directoryName,recurse="yes");
 				  }
 				}
 				catch( any e ){
 				  local.error = e.message;
-				}*/
+				}
 			  }
 			}
 			if(CompareNoCase(local.currentChildOriginalPath,local.newChildOriginalPath) EQ 0){
@@ -362,18 +365,21 @@
 							}
 						  }
 						}
+						//WriteDump(var=local.grandChildObj,output="C:\Users\Charles Robertson\Desktop\community-debug.htm",format="html",label="grandchild");
 						if(local.currentGrandChildEmpty AND local.newGrandChildIsDeleted AND local.newGrandChildEmpty AND Len(Trim(local.newGrandChildPath))){
 						  local.directoryName = request.filepath & REReplaceNoCase(local.newGrandChildPath,"[/]+","\","ALL");
+						  //WriteDump(var=local.directoryName,output="C:\Users\Charles Robertson\Desktop\community-debug.htm",format="html",label="grandchild");
 						  if(DirectoryExists(local.directoryName)){
 							//WriteOutput('<strong>DELETE: grandchild: local.directoryName:</strong> ' & local.directoryName & '<br /><br />');
-							/*try{
+							//WriteDump(var=local.directoryName,output="C:\Users\Charles Robertson\Desktop\community-debug.htm",format="html");
+							try{
 							  cflock (name="delete_directory_" & local.timestamp, type="exclusive", timeout="30") {
 								cfdirectory(action="delete",directory=local.directoryName);
 							  }
 							}
 							catch( any e ){
 							  local.error = e.message;
-							}*/
+							}
 						  }
 						}
 					  }
@@ -1298,6 +1304,43 @@
     result.email = Left(LCase(result.forename),1) & "." & LCase(result.surname) & "@" & request.remoteHost;
     result.password = LCase(result.forename) & LCase(result.surname);
 	return result;
+  }
+  
+  public string function createImageCopy(string path = "", string suffix = 'preview', numeric width = 0, numeric height = 0) output="false" {
+	var local = {};
+	local.result = arguments.path;
+    local.imagePath = arguments.path;
+	local.image = ImageRead(local.imagePath);
+	if(arguments.width AND NOT arguments.height){
+	  ImageResize(local.image,arguments.width,"");
+	}
+	if(NOT arguments.width AND arguments.height){
+	  ImageResize(local.image,"",arguments.height);
+	}
+	if(arguments.width AND arguments.height){
+	  ImageResize(local.image,arguments.width,arguments.height);
+	}
+	local.newImageName = ListLast(local.imagePath,"\");
+	local.newImageExt = ListLast(local.newImageName,".");
+	local.newImageNameNoExt = ListFirst(local.newImageName,".");
+	local.newImagePath = ListDeleteAt(local.imagePath,ListLen(local.imagePath,"\"),"\");
+	local.newImagePathName = local.newImagePath & "\" & local.newImageNameNoExt & "-" & arguments.suffix & "." & local.newImageExt;
+	ImageWrite(local.image,local.newImagePathName);
+	local.result = local.newImagePathName;
+    return local.result;
+  }
+  
+  public string function getImageCopyName(string path = "", string suffix = 'preview') output="false" {
+	var local = {};
+	local.result = arguments.path;
+    local.imagePath = arguments.path;
+	local.newImageName = ListLast(local.imagePath,"\");
+	local.newImageExt = ListLast(local.newImageName,".");
+	local.newImageNameNoExt = ListFirst(local.newImageName,".");
+	local.newImagePath = ListDeleteAt(local.imagePath,ListLen(local.imagePath,"\"),"\");
+	local.newImagePathName = local.newImagePath & "\" & local.newImageNameNoExt & "-" & arguments.suffix & "." & local.newImageExt;
+	local.result = local.newImagePathName;
+    return local.result;
   }
   
   

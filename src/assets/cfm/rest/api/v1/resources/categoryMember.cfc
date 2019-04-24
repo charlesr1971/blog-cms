@@ -49,7 +49,7 @@
     </cftry>
     <!---<cfdump var="#local.current['categories']#" />
     <cfdump var="#local.data['categories']#" />
-    <cfdump var="#SerializeJSON(local.data['categories'])#" abort />--->
+    <cfdump var="#SerializeJSON(local.data['categories'])#" />--->
     <cfinclude template="../../../../jwt-decrypt.cfm">
 	<cfif StructKeyExists(local.data['jwtObj'],"jwtAuthenticated") AND NOT local.data['jwtObj']['jwtAuthenticated']>
       <cfreturn representationOf(local.data).withStatus(403,"Not Authorized") />

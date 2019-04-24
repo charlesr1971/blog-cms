@@ -391,6 +391,36 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
 
   }
 
+  getScrollPosition(el: any): any {
+    var xPos = 0;
+    var yPos = 0;
+    while (el) {
+      if (el.tagName == "BODY") {
+        // deal with browser quirks with body/window/document and page scroll
+        var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+        var yScroll = el.scrollTop || document.documentElement.scrollTop;
+        xPos += (el.offsetLeft - xScroll + el.clientLeft);
+        yPos += (el.offsetTop - yScroll + el.clientTop);
+      } else {
+        // for all other non-BODY elements
+        xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+        yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+      }
+      el = el.offsetParent;
+    }
+    return {
+      x: xPos,
+      y: yPos
+    };
+  }
+
+  getPosition(el: any, offsetX: number = 0, offsetY: number = 0): any {
+    var rect = el.getBoundingClientRect(),
+    scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    return { y: (rect.top + scrollTop) - offsetY, x: (rect.left + scrollLeft) - offsetX }
+  }
+
 
   receiveMessage(obj: any, key: string): void {
     if(this.debug) {
@@ -421,6 +451,7 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
           temp.map( (item: any, idx: number) => {
             const div1 = this.renderer.createElement('div');
             this.renderer.setAttribute(div1,'class','css-tooltip');
+            this.renderer.setAttribute(div1,'id','css-tooltip-' + key + '-' + idx);
             const span = this.renderer.createElement('span');
             this.renderer.setAttribute(span,'class','tooltiptext');
             const spanText = this.renderer.createText(item['impressions'] + ' impressions');
@@ -441,6 +472,30 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               div1.appendChild(div2);
               target[idx].innerHTML = '';
               target[idx].appendChild(div1);
+            }
+            const csstooltip = this.documentBody.getElementById('css-tooltip-' + key + '-' + idx);
+            if(csstooltip) {
+              const that = this;
+              const child1 = csstooltip.getElementsByTagName('span')[0];
+              const child2 = csstooltip.getElementsByTagName('div')[0];
+              if(child2) {
+                csstooltip.addEventListener('mouseover',function(){
+                  const position = that.getPosition(child2,20,50);
+                  that.documentBody.body.appendChild(child1);
+                  child1.style.top = position.y + 'px';
+                  child1.style.left = position.x + 'px';
+                  child1.style.visibility = 'visible';
+                  if(that.debug) {
+                    console.log('adZoneDirective.directive: receiveMessage: mouse over: position: ', position);
+                  }
+                },false);
+                csstooltip.addEventListener('mouseout',function(){
+                  csstooltip.appendChild(child1);
+                  child1.style.top = '';
+                  child1.style.left = '';
+                  child1.style.visibility = 'hidden';
+                },false);
+              }
             }
           });
           if(target.length > temp.length) {

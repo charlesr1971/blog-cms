@@ -345,6 +345,30 @@ body.profile .mat-tree .mat-form-field {
     visibility: visible;
 }
 
+body .tooltiptext {
+    visibility: visible;
+    max-width: 300px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    white-space: nowrap;
+}
+
+body .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
 .app-advert .mat-card .app-advert-table td div.app-advert-table-cell-block .custom-mat-progress-spinner, .custom-ag-grid-data-container .custom-mat-progress-spinner {
     position: absolute;
     top: 0;

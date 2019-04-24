@@ -79,6 +79,7 @@ import { FormatEmailRenderer } from './ag-grid/cell-renderer/format-email-render
 import { CustomEditHeader } from './ag-grid/header/custom-edit-header/custom-edit-header.component';
 import { ContentEditableModelDirective } from './directives/content-editable-model/content-editable-model.directive';
 import { FormatFileTitleRenderer } from './ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
+import { ConvertImageNameSuffixPipe } from './pipes/convert-image-name-suffix/convert-image-name-suffix.pipe';
 
 
 const appRoutes: Routes = [
@@ -134,7 +135,8 @@ const appRoutes: Routes = [
     FormatEmailRenderer,
     CustomEditHeader,
     ContentEditableModelDirective,
-    FormatFileTitleRenderer
+    FormatFileTitleRenderer,
+    ConvertImageNameSuffixPipe
   ],
   imports: [
     BrowserModule,

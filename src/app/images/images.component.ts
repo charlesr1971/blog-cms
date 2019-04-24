@@ -605,7 +605,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
   }
 
   private processData = (data) => {
-    if(data) {
+    if(data && Array.isArray(data) && data.length > 0) {
       this.currentPage++;
       if(this.debug) {
         console.log('this.currentPage',this.currentPage);

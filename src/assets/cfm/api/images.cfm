@@ -72,6 +72,10 @@
   </cfloop>
 </cfif>
 
+<cfif endrow GT request.maxImages>
+  <cfset temp = ArrayNew(1)>
+</cfif>
+
 <cfset data = SerializeJSON(temp)>
 
 <cfoutput>

@@ -60,6 +60,10 @@
         <cfset ArrayAppend(local.data,local.obj)>
       </cfloop>
     </cfif>
+    <!---<cfdump var="#local.endrow#" output="C:\Users\Charles Robertson\Desktop\community-debug.htm" format="html" />--->
+    <cfif local.endrow GT request.maxImages>
+	  <cfset local.data = ArrayNew(1)>
+    </cfif>
     <!---<cfthread action="sleep" duration="200000" />---> 
     <cfreturn representationOf(local.data) />
   </cffunction>

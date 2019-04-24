@@ -396,9 +396,112 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
 
 
 
-<cfset title = "Hello World">
+<!---<cfset title = "Hello World">
 <cfset title = request.utils.CapFirstAll(title)>
 
-#title#
+#title#--->
+
+
+
+
+
+
+
+
+
+
+
+
+<!---<cfset directory = request.filepath & "\categories">
+<cfdirectory action="list" directory="#directory#" name="qGetImages" type="file" recurse="yes" />
+
+<cfif qGetImages.RecordCount>
+  <cfloop query="qGetImages">
+	<cfif NOT FindNocase(request.imageMediumSuffix,qGetImages.Name)>
+      <cfset categoryImagePath = qGetImages.Directory & "\" & qGetImages.Name>
+      <cfset categoryImage = ImageRead(categoryImagePath)>
+      <cfset ImageResize(categoryImage,request.imageMediumWidth,"")>
+      <cfset newCategoryImageName = ListLast(categoryImagePath,"\")>
+      <cfset newCategoryImageExt = ListLast(newCategoryImageName,".")>
+      <cfset newCategoryImageNameNoExt = ListFirst(newCategoryImageName,".")>
+      <cfset newCategoryImagePath = ListDeleteAt(categoryImagePath,ListLen(categoryImagePath,"\"),"\")>
+      <cfset newCategoryImagePathName = newCategoryImagePath & "\" & newCategoryImageNameNoExt & "-" & request.imageMediumSuffix & "." & newCategoryImageExt>
+      #newCategoryImagePathName#<br />
+      <cfimage source="#categoryImage#" action="write" destination="#newCategoryImagePathName#" overwrite="yes" />
+    </cfif>
+  </cfloop>
+</cfif>--->
+
+
+
+
+
+
+
+
+
+
+
+<!---<cfset directory = request.filepath & "\categories">
+<cfdirectory action="list" directory="#directory#" name="qGetImages" type="file" recurse="yes" />
+
+<cfif qGetImages.RecordCount>
+  <cfloop query="qGetImages">
+    <cfif FindNocase(request.imageMediumSuffix,qGetImages.Name)>
+	  <cfset source = qGetImages.Directory & "\" & qGetImages.Name>
+      <cflock name="delete_file" type="exclusive" timeout="30">
+        <cffile action="delete"  file="#source#" />
+      </cflock>
+      #source#<br />
+	</cfif>
+  </cfloop>
+</cfif>--->
+
+
+
+
+
+
+
+
+
+<!---<cfset imageSystemPath = "C:\Users\Charles Robertson\Desktop\work\avatars">
+<cfset imageSystemSecureFilePath = "C:\Users\Charles Robertson\Desktop\work\avatars\kodam-avatar.jpg">
+
+<cfset mediumImageSystemFilePath = imageSystemPath & "\" & ListLast(imageSystemSecureFilePath,"\")>
+<cfif FileExists(mediumImageSystemFilePath)>
+  <cfset mediumImagePathName = request.utils.createImageCopy(path=mediumImageSystemFilePath,suffix=request.imageMediumSuffix,width=request.imageMediumWidth)>
+  #mediumImagePathName#<br />
+</cfif>--->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!---<cfset source = "C:\Users\Charles Robertson\Desktop\work\avatars\kodam-avatar.jpg">
+<cfset imageSystemPath = "C:\Users\Charles Robertson\Desktop\images\kodam-avatar.jpg">
+
+<cfset mediumImagePathNameSource = request.utils.getImageCopyName(path=source,suffix=request.imageMediumSuffix)>
+<cfset mediumImagePathNameDestination = request.utils.getImageCopyName(path=imageSystemPath,suffix=request.imageMediumSuffix)>
+<cfif FileExists(mediumImagePathNameSource)>
+  <cflock name="move_file" type="exclusive" timeout="30">
+	<cffile action="move" source="#mediumImagePathNameSource#" destination="#mediumImagePathNameDestination#" />
+  </cflock>
+  #mediumImagePathNameDestination#<br />
+</cfif>--->
+
+
+
+
+
+
 
 </cfoutput>
