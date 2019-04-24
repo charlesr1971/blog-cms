@@ -236,10 +236,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   userAdminUnselectedChangesOptions: string[] = ['Let the system select the rows automatically and continue with the submission?', 'Let the system select the rows where the changes were made and allow you to make the submission manually?', 'Continue with the submission?'];
   ngbTooltipContentRemoveHighlightText: string = 'Remove cell hover highlight';
   contenteditable: boolean = true;
+
   currentUserArchivePage: number = 1;
   currentUserSuspendPage: number = 1;
   currentUserPasswordPage: number = 1;
   currentUserApprovedPage: number = 1;
+
+  ngbTooltipRemoveHighlightTimeout: number = 5000;
 
   agGridPaginationPageSize: number = environment.agGridPaginationPageSize;
   agGridRowHeight: number = environment.agGridRowHeight;
@@ -569,6 +572,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: usersArchiveWaypoint1: waypoint detected: that.ngbTooltipUserArchiveRemoveHighlight', that.ngbTooltipUserArchiveRemoveHighlight);
         }
         that.ngbTooltipUserArchiveRemoveHighlight.open();
+        setTimeout( () => {
+          that.ngbTooltipUserArchiveRemoveHighlight.close();
+        },that.ngbTooltipRemoveHighlightTimeout);
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
@@ -582,6 +588,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: usersSuspendWaypoint1: waypoint detected: that.ngbTooltipUserSuspendRemoveHighlight', that.ngbTooltipUserSuspendRemoveHighlight);
         }
         that.ngbTooltipUserSuspendRemoveHighlight.open();
+        setTimeout( () => {
+          that.ngbTooltipUserSuspendRemoveHighlight.close();
+        },that.ngbTooltipRemoveHighlightTimeout);
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
@@ -595,6 +604,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: usersPasswordWaypoint1: waypoint detected: that.ngbTooltipUserPasswordRemoveHighlight', that.ngbTooltipUserPasswordRemoveHighlight);
         }
         that.ngbTooltipUserPasswordRemoveHighlight.open();
+        setTimeout( () => {
+          that.ngbTooltipUserPasswordRemoveHighlight.close();
+        },that.ngbTooltipRemoveHighlightTimeout);
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
@@ -608,6 +620,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: usersApprovedWaypoint1: waypoint detected: that.ngbTooltipUserApprovedRemoveHighlight', that.ngbTooltipUserApprovedRemoveHighlight);
         }
         that.ngbTooltipUserApprovedRemoveHighlight.open();
+        setTimeout( () => {
+          that.ngbTooltipUserApprovedRemoveHighlight.close();
+        },that.ngbTooltipRemoveHighlightTimeout);
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),

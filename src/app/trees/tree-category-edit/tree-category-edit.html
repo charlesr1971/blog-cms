@@ -10,7 +10,7 @@
                             (change)="todoLeafItemSelectionToggle(node)" [disabled]="node.empty == 0" ngbTooltip="Delete Category &amp; Sub Categories" [disableTooltip]="disableTreeCategoryEditTooltip || node.empty == 0 || checklistSelection.isSelected(node)" [container]="'body'" color="warn"><span *ngIf="node.item == 'categories'">{{ node.item }}</span></mat-checkbox>
                 <ng-container *ngIf="node.item != 'categories'">           
                     <mat-form-field class="example-full-width" [attr.data-role-level]="node.level">
-                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalItemCache | nameFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0">
+                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalItemCache | nameFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0" autocorrect="off" autocapitalize="none" autocomplete="off">
                     </mat-form-field>
                     <button mat-icon-button (click)="saveNode(node, itemValue.value)" ngbTooltip="Update Category Name" [disableTooltip]="disableTreeCategoryEditTooltip || checklistSelection.isSelected(node)" [container]="'body'" [disabled]="node.empty == 0"><mat-icon class="update">update</mat-icon></button>
                 </ng-container>
@@ -19,7 +19,7 @@
             <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" [matTreeNodePadding]="node.level" [matTreeNodePaddingIndent]="isMobile ? 20 : 40" [ngClass]="{'category-edit-tree-node-opaque': checklistSelection.isSelected(node),'category-edit-tree-node': !checklistSelection.isSelected(node)}">
                 <button mat-icon-button disabled></button>
                 <mat-form-field class="create-new-category-form-field" [attr.data-role-level]="node.level">
-                    <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="New category..." [id]="newNodeId">
+                    <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="New category..." [id]="newNodeId" autocorrect="off" autocapitalize="none" autocomplete="off">
                 </mat-form-field>
                 <button mat-icon-button (click)="saveNode(node, itemValue.value)" ngbTooltip="Save New Category" [disableTooltip]="disableTreeCategoryEditTooltip || checklistSelection.isSelected(node)" [container]="'body'"><mat-icon class="update">save</mat-icon></button>
             </mat-tree-node>
@@ -36,7 +36,7 @@
                             (change)="todoItemSelectionToggle(node)" [disabled]="node.empty == 0" ngbTooltip="Delete Category &amp; Sub Categories" [disableTooltip]="disableTreeCategoryEditTooltip || node.empty == 0 || checklistSelection.isSelected(node)" [container]="'body'" color="warn"><span *ngIf="node.item == 'categories'">{{ node.item }}</span></mat-checkbox>
                 <ng-container *ngIf="node.item != 'categories'">
                     <mat-form-field class="example-full-width" [attr.data-role-level]="node.level">
-                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalItemCache | nameFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0">
+                        <input type="text" [attr.maxlength]="maxcategoryeditnamelength" matInput #itemValue placeholder="{{ node.originalItemCache | nameFormat }}" [value]="node.item" [id]="node.id" [disabled]="node.empty == 0" autocorrect="off" autocapitalize="none" autocomplete="off">
                     </mat-form-field>
                     <button mat-icon-button (click)="saveNode(node, itemValue.value)" ngbTooltip="Update Category Name" [disableTooltip]="disableTreeCategoryEditTooltip || checklistSelection.isSelected(node)" [container]="'body'" [disabled]="node.empty == 0"><mat-icon class="update">update</mat-icon></button>
                 </ng-container>

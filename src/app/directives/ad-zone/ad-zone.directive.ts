@@ -426,6 +426,7 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
     if(this.debug) {
       console.log('adZoneDirective.directive: receiveMessage: obj: ', obj);
     }
+    const infinitescrollerimages = this.documentBody.getElementById('infinite-scroller-images');
     if(key in obj && Array.isArray(obj[key]) && obj[key].length > 0) {
       const target: HTMLElement = Array.prototype.slice.call(this.documentBody.querySelectorAll('#app-advert-table-cell-1-' + key + ' .app-advert-table-cell-block'));
       if(this.debug) {
@@ -478,7 +479,7 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               const that = this;
               const child1 = csstooltip.getElementsByTagName('span')[0];
               const child2 = csstooltip.getElementsByTagName('div')[0];
-              if(child2) {
+              if(child2 && infinitescrollerimages) {
                 csstooltip.addEventListener('mouseover',function(){
                   const position = that.getPosition(child2,20,50);
                   that.documentBody.body.appendChild(child1);
@@ -490,6 +491,12 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
                   }
                 },false);
                 csstooltip.addEventListener('mouseout',function(){
+                  csstooltip.appendChild(child1);
+                  child1.style.top = '';
+                  child1.style.left = '';
+                  child1.style.visibility = 'hidden';
+                },false);
+                infinitescrollerimages.addEventListener('scroll',function(){
                   csstooltip.appendChild(child1);
                   child1.style.top = '';
                   child1.style.left = '';
