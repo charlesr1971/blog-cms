@@ -243,6 +243,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUserApprovedPage: number = 1;
 
   ngbTooltipRemoveHighlightTimeout: number = 5000;
+  addRemoveHighlightWaypoints: boolean = environment.addRemoveHighlightWaypoints
 
   agGridPaginationPageSize: number = environment.agGridPaginationPageSize;
   agGridRowHeight: number = environment.agGridRowHeight;
@@ -553,7 +554,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
 
-    if(this.isMobile) {
+    if(this.isMobile && this.addRemoveHighlightWaypoints) {
       this.createWaypoints();
     }
 

@@ -53,6 +53,7 @@
         <a mat-list-item routerLink="" (click)="toProfile()" *ngIf="userid > 0">Profile</a>
         <a mat-list-item routerLink="" (click)="toUploadPhoto()">{{ uploadRouterAliasTitle }}</a>
         <a mat-list-item routerLink="" (click)="login()" *ngIf="userid == 0">Login</a>
+        <a mat-list-item routerLink="" (click)="help()">Help</a>
         <a mat-list-item routerLink="" (click)="logout()" *ngIf="userid > 0">Logout</a>
       </mat-nav-list>
     </div>

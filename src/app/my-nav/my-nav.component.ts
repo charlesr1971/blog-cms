@@ -4,10 +4,15 @@ import { DOCUMENT } from '@angular/common';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { MatDialog } from '@angular/material';
+import { CookieService } from 'ngx-cookie-service';
+import { updateCdkOverlayThemeClass } from '../util/updateCdkOverlayThemeClass';
 import { addImage } from '../util/addImage';
 import { capitalizeFirstLetter } from '../util/capitalizeFirstLetter';
 import { getMonthShortName } from '../util/getMonthShortName';
 import { titleFromAlias } from '../util/titleFromAlias';
+import { WebsiteHelpComponent } from '../help/dialogs/website-help/website-help.component';
 
 import { HttpService } from '../services/http/http.service';
 import { UtilsService } from '../services/utils/utils.service';
@@ -35,6 +40,11 @@ export class MyNavComponent implements OnInit, OnDestroy {
   @ViewChild('select4') select4;
   @ViewChild('select5') select5;
 
+  themeObj = {};
+  themeRemove: string = '';
+  themeAdd: string = '';
+
+  isMobile: boolean = false;
   title = environment.title;
   pages = [];
   authors = [];
@@ -53,6 +63,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
   catalogRouterAliasTitle: string = titleFromAlias(environment.catalogRouterAlias);
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   uploadRouterAliasTitle: string = titleFromAlias(environment.uploadRouterAlias);
+  dialogWebsiteHeight: number = 0;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
   .pipe(
@@ -90,11 +101,20 @@ export class MyNavComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private utilsService: UtilsService,
     private userService: UserService,
+    private deviceDetectorService: DeviceDetectorService,
+    public dialog: MatDialog,
+    private cookieService: CookieService,
     private router: Router) {
 
       if(environment.debugComponentLoadingOrder) {
         console.log('my-nav.component loaded');
       }
+
+      this.themeObj = this.httpService.themeObj;
+      this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+      this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+
+      this.isMobile = this.deviceDetectorService.isMobile();
 
       this.title = this.httpService.websiteTitle !== '' ? this.httpService.websiteTitle : this.title;
 
@@ -426,10 +446,58 @@ export class MyNavComponent implements OnInit, OnDestroy {
     });
   }
 
+  help(): void {
+    this.openWebsiteHelpNotificationDialog();
+  }
+
   logout(): void {
     this.galleryIsActive = false;
     this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then( () => {
       return this.router.navigate([this.uploadRouterAliasLower, {formType: 'logout'}]);
+    });
+  }
+
+  openWebsiteHelpNotificationDialog(): void {
+    const dialogRef = this.dialog.open(WebsiteHelpComponent, {
+      width: this.isMobile ? '100%' :'50%',
+      height: this.isMobile ? '100%' :'75%',
+      maxWidth: this.isMobile ? '100%' :'50%',
+      hasBackdrop: false,
+      disableClose: true,
+      id: 'dialog-website-help-notification'
+    });
+    if(this.debug) {
+      console.log('my-nav.component: dialog website help notification: before close: this.themeRemove: ', this.themeRemove);
+      console.log('my-nav.component: dialog website help notification: before close: this.themeAdd: ', this.themeAdd);
+    }
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
+    dialogRef.beforeClose().subscribe(result => {
+      if(this.debug) {
+        console.log('my-nav.component: dialog website help notification: before close');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('my-nav.component: dialog website help notification: before close: result: ', result);
+        }
+      }
+    });
+    dialogRef.afterOpen().subscribe( () => {
+      if(this.debug) {
+        console.log('my-nav.component: dialog website help notification: after open');
+      }
+      const parent = document.querySelector('#dialog-website-help-notification');
+      let height = parent.clientHeight ? parent.clientHeight : 0;
+      const offsetHeight = 150;
+      if(!isNaN(height) && (height - offsetHeight) > 0) {
+        height = height - offsetHeight;
+      }
+      if(height > 0 ) {
+        this.dialogWebsiteHeight = height;
+        this.httpService.websiteDialogOpened.next(this.dialogWebsiteHeight);
+      }
+      if(this.debug) {
+        console.log('my-nav.component: dialog website help notification: this.dialogWebsiteHeight: ', this.dialogWebsiteHeight);
+      }
     });
   }
 

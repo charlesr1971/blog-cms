@@ -35,7 +35,10 @@ export const environment = {
   customRecaptchaStrLength: 4,
   agGridPaginationPageSize: 10,
   agGridRowHeight: 35,
-  imageMediumSuffix: 'preview'
+  imageMediumSuffix: 'preview',
+  imageMediumEnabled: true,
+  lazyLoadImages: true,
+  addRemoveHighlightWaypoints: false
 };
 
 /*

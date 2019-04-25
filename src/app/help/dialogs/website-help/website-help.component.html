@@ -1,0 +1,14 @@
+<div appMatDialogDraggableTitle id="dialog-website-help-notification-container" class="mat-app-background basic-container" style="opacity:0;">
+  <div class="form-field-container">
+    <div class="form-field-legend">How to use this website?<mat-icon ngbTooltip="Draggable Panel" [disableTooltip]="disableWebsiteTooltip" [container]="'body'" *ngIf="!isMobile">drag_indicator</mat-icon></div>
+    <div class="form-field-text" id="dialogWebsiteHelpNotificationText" #dialogWebsiteHelpNotificationText>
+      <ol>
+        <li>To use the 'add like' and 'write comment' features, please sign up or login.</li>
+        <li>Story cards that are pending approval are shaded slightly darker than story cards that are approved. Approval usually takes between 24 and 48 hours, and is required for new story submissions and story updates.</li>
+        <li>Story cards that are pending approval are only viewable to the user who authored the changes.</li>
+        <li>Comments are auto moderated and so will appear instantly, unless the comment fails moderation. Please do not use profane or abusive language in either story text content or comments.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<mat-icon class="dialog-website-help-notification-close" (click)="closeWebsiteHelpNotificationDialog()" ngbTooltip="Close" [disableTooltip]="disableWebsiteTooltip" [container]="'body'">close</mat-icon>

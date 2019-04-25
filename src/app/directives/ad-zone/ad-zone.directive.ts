@@ -1,4 +1,4 @@
-import { Directive, Inject, ElementRef, Input, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
+import { Directive, Inject, ElementRef, Input, Renderer2, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -39,11 +39,14 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
   adzoneObserver: any;
   adzoneMutation = new Subject<any>();
   adzoneDataRoleObserver = {};
+  adZoneTooltip: any = null;
+  adZoneTooltipText: any = null;
   subscriptionAdzoneMutation: Subscription;
   isMobile: boolean = false;
   adZoneUrl: string = '';
   maxRate: number = 4;
   metaDataMaxWidth: number = 240;
+  useMobileScrollEventToRemoveTooltip: boolean = false;
 
   debug: boolean = false;
 
@@ -62,6 +65,8 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
 
       this.adZoneUrl = this.httpService.adZoneUrl;
 
+      this.useMobileScrollEventToRemoveTooltip = this.isMobile ? this.useMobileScrollEventToRemoveTooltip : false;
+
   }
 
   ngAfterViewInit() {
@@ -70,23 +75,25 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
       this.buildAdZones();
     }
 
+    if(this.useMobileScrollEventToRemoveTooltip) {
+      const that = this;
+      this.el.nativeElement.addEventListener('scroll',function(){
+        that.removeAdZoneTooltip();
+      },false);
+    }
+
   }
 
-
   buildAdZones(): void {
-
     if(this.appAdZoneSingleImageId === '' && !this.appAdZoneSearchDo && !this.appAdZoneTagsDo && !this.appAdZoneIsSection) {
-
       if(this.debug) {
         console.log('adZoneDirective.directive: this.appAdZoneSingleImageId: ',this.appAdZoneSingleImageId);
         console.log('adZoneDirective.directive: this.appAdZoneSearchDo: ',this.appAdZoneSearchDo);
         console.log('adZoneDirective.directive: this.appAdZoneTagsDo: ',this.appAdZoneTagsDo);
         console.log('adZoneDirective.directive: this.appAdZoneIsSection: ',this.appAdZoneIsSection);
       }
-
       const MutationObserver: new(callback) => MutationObserver = ((window as any).MutationObserver as any).__zone_symbol__OriginalDelegate;
       this.adzoneObserver = new MutationObserver( (mutations: MutationRecord[]) => {
-        
         mutations.forEach( (mutation: MutationRecord) =>  {
           const target = (mutation.target as HTMLInputElement);
           const children = Array.prototype.slice.call(target.children);
@@ -111,21 +118,16 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
             });
           }
         });
-
         if(this.debug) {
           console.log('adZoneDirective.directive: this.adzoneObserver: connected...');
         }
-
         if(this.images.length >= environment.adZoneMinImages) {
           this.adzoneMutation.next(this.images);
         }
-
       });
-
       this.adzoneObserver.observe(this.el.nativeElement, {
         childList: true
       });
-
       this.subscriptionAdzoneMutation = this.adzoneMutation.subscribe( data => {
         if(this.debug) {
           console.log('adZoneDirective.directive: subscriptionAdzoneMutation: data: ', data);
@@ -147,31 +149,23 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               const img = this.renderer.createElement('img');
               this.renderer.setAttribute(img,'class','advertiser-icon-default');
               this.renderer.setAttribute(img,'src','/assets/images/advertising-icon-trimmed.svg');
-
               const headerTop = this.renderer.createElement('div');
               this.renderer.setAttribute(headerTop,'class','app-advert-header-icon');
-
               const headerTopImgCircleContainer = this.renderer.createElement('div');
               this.renderer.setAttribute(headerTopImgCircleContainer,'class','app-advert-header-icon-circle-container');
-
               const headerTopImgCircle = this.renderer.createElement('div');
               this.renderer.setAttribute(headerTopImgCircle,'id','app-advert-header-image-circle-' + lastChild['id']);
               this.renderer.setAttribute(headerTopImgCircle,'class','app-advert-header-icon-circle app-advert-header-image-group-' + lastChild['id']);
-
               const headerTopImg = this.renderer.createElement('img');
               this.renderer.setAttribute(headerTopImg,'src','/assets/images/advertising-icon-trimmed.svg');
               this.renderer.setAttribute(headerTopImg,'id','app-advert-header-image-' + lastChild['id']);
               this.renderer.setAttribute(headerTopImg,'class','app-advert-header-image-group-' + lastChild['id']);
-
               headerTopImgCircleContainer.appendChild(headerTopImgCircle);
               headerTopImgCircleContainer.appendChild(headerTopImg);
               headerTop.appendChild(headerTopImgCircleContainer);
-
               matCard.appendChild(headerTop);
-
               const header = this.renderer.createElement('div');
               this.renderer.setAttribute(header,'class','image-category');
-              
               const headerIcon = this.renderer.createElement('i');
               this.renderer.setAttribute(headerIcon,'class','fa fa-star');
               this.renderer.setStyle(headerIcon,'margin-right','10px');
@@ -179,12 +173,9 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               const headerText = this.renderer.createText('Advertisements');
               header.appendChild(headerText);
               matCard.appendChild(header);
-
               matCard.appendChild(img);
-
               div.appendChild(matCard);
               this.el.nativeElement.insertBefore(div,lastChild['item']);
-              
               let adZones = '1,2,1,2,-1';
               let adZoneWidth: any = 180;
               let adZoneHeight: any = 100;
@@ -203,11 +194,9 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               let iframeWidth: any = 180;
               let iframeHeight: any = this.parseIframeHeight(0,adZoneHeight,adZones,adZoneRemoteDividerHeight,adZoneDivider);
               let rowHasSingleCell = false;
-
               if(this.debug) {
                 console.log('adZoneDirective.directive: subscriptionAdzoneMutation: adZones: ', adZones);
               }
-              
               if(Math.abs(this.adverts.length % 2) === 0) {
                 adZones = '5,5';
                 adZoneWidth = 240;
@@ -219,7 +208,6 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
                   console.log('adZoneDirective.directive: subscriptionAdzoneMutation: adZones: ', adZones);
                 }
               }
-
               if(Math.abs(this.adverts.length % 3) === 0) {
                 adZones = '7,7';
                 adZoneWidth = '100%';
@@ -233,7 +221,6 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
                   console.log('adZoneDirective.directive: subscriptionAdzoneMutation: adZones: ', adZones);
                 }
               }
-
               const iframe = this.renderer.createElement('iframe');
               const iframeSrc = this.adZoneUrl + '?adzones=' + adZones + '&adzonewidth=' + adZoneWidth + '&adzoneheight=' + adZoneHeight + '&adzonedisplay=' + adZoneDisplay + '&adzonecategoryid=' + adZoneCategoryId + '&adzonecontentboxstyle=' + adZoneContentBoxStyle + '&adzoneusecontentbox=' + adzoneUseContentBox + '&adzoneremoteaccess=' + adZoneRemoteAccess + '&adzonedivider=' + adZoneDivider + '&adzonemobileformat=' + adZoneMobileFormat + '&adzoneremotemobileviewportmargin=' + adZoneRemoteMobileViewportMargin + '&adzonemobileisscaled=' + adZoneMobileIsScaled + '&adzoneremotedividerheight=' + adZoneRemoteDividerHeight + '&adzoneremoteidentifier=' + adZoneRemoteIdentifier;
               this.renderer.setAttribute(iframe,'id','app-advert-iframe-' + lastChild['id']);
@@ -243,35 +230,26 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               this.renderer.setAttribute(iframe,'height',iframeHeight + '');
               this.renderer.setAttribute(iframe,'scrolling','no');
               this.renderer.setAttribute(iframe,'frameborder','0');
-
               const advertTable = this.renderer.createElement('table');
               this.renderer.setAttribute(advertTable,'class','app-advert-table');
               const advertTableRow = this.renderer.createElement('tr');
-
               let advertTableCell1: HTMLElement;
               let advertTableCell2: HTMLElement;
-
               if(!rowHasSingleCell) {
                 advertTableCell1 = this.renderer.createElement('td');
                 this.renderer.setAttribute(advertTableCell1,'id','app-advert-table-cell-1-' + lastChild['id']);
                 advertTableCell2 = this.renderer.createElement('td');
                 this.renderer.setStyle(advertTableCell2,'width','10px');
               }
-
               const advertTableCell3 = this.renderer.createElement('td');
               this.renderer.setStyle(advertTableCell3,'width',iframeWidth + 'px');
-
               if(!rowHasSingleCell) {
                 advertTableRow.appendChild(advertTableCell1);
                 advertTableRow.appendChild(advertTableCell2);
               }
-
               advertTableRow.appendChild(advertTableCell3);
-
               if(!rowHasSingleCell) {
-
                 let temp = adZones.split(',');
-
                 if(temp.length > 0) {
                   for (var i = 0; i < temp.length; i++) {
                     const advertTableCell1Block = this.renderer.createElement('div');
@@ -286,15 +264,10 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
                     advertTableCell1.appendChild(advertTableCell1BlockDivider);
                   }
                 }
-                
               }
-
               advertTable.appendChild(advertTableRow);
-
               advertTableCell3.appendChild(iframe);
-
               matCard.appendChild(advertTable);
-
               this.adZoneHeaderImageWaypoint[lastChild['id']] = new Waypoint({
                 element: this.documentBody.getElementById('app-advert-header-image-circle-' + lastChild['id']),
                 handler: function (direction) {
@@ -318,47 +291,36 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
                     }
                   });
                   this.destroy();
-
                 },
                 context: this.documentBody.getElementById(this.appAdZoneParentElementId),
                 offset: '50%'
               });
-
               if(this.debug) {
                 console.log('adZoneDirective.directive: subscriptionAdzoneMutation: this.adZoneHeaderImageWaypoint: ', this.adZoneHeaderImageWaypoint);
               }
-
               const obj: AppAdvert = {
                 id: lastChild['id'],
                 item: div
               }
               this.adverts.push(obj);
-
               if(this.debug) {
                 console.log('adZoneDirective.directive: subscriptionAdzoneMutation: this.adverts: ', this.adverts);
               }
-
               this.adzoneObserver.observe(this.el.nativeElement, {
                 childList: true
               });
-
               const target: HTMLElement = this.documentBody.querySelector('iframe#app-advert-iframe-' + lastChild['id']);
-
               this.adzoneDataRoleObserver[lastChild['id']] = new MutationObserver( (mutations: MutationRecord[]) => {
-          
                 mutations.forEach( (mutation: MutationRecord) =>  {
                   const obj = JSON.parse((mutation.target as HTMLInputElement).getAttribute(mutation.attributeName));
                   this.receiveMessage(obj,lastChild['id']);
                 });
-          
               });
-          
               const config = {attributes:true,childList:true,characterData:false,attributeFilter:['data-role-ad-zone']};
               this.adzoneDataRoleObserver[lastChild['id']].observe(target,config);
               if(this.debug) {
                 console.log('adZoneDirective.directive: subscriptionAdzoneMutation: this.adzoneDataRoleObserver[lastChild[\'id\']] connected: ', lastChild['id']);
               }
-
             }
             else{
               this.adzoneObserver.disconnect();
@@ -378,55 +340,18 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
           }
         }
       });
-      
-
     }
     else{
-
       if(this.debug) {
         console.log('adZoneDirective.directive: single image mode');
       }
-
     }
-
   }
-
-  getScrollPosition(el: any): any {
-    var xPos = 0;
-    var yPos = 0;
-    while (el) {
-      if (el.tagName == "BODY") {
-        // deal with browser quirks with body/window/document and page scroll
-        var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
-        var yScroll = el.scrollTop || document.documentElement.scrollTop;
-        xPos += (el.offsetLeft - xScroll + el.clientLeft);
-        yPos += (el.offsetTop - yScroll + el.clientTop);
-      } else {
-        // for all other non-BODY elements
-        xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
-        yPos += (el.offsetTop - el.scrollTop + el.clientTop);
-      }
-      el = el.offsetParent;
-    }
-    return {
-      x: xPos,
-      y: yPos
-    };
-  }
-
-  getPosition(el: any, offsetX: number = 0, offsetY: number = 0): any {
-    var rect = el.getBoundingClientRect(),
-    scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
-    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    return { y: (rect.top + scrollTop) - offsetY, x: (rect.left + scrollLeft) - offsetX }
-  }
-
 
   receiveMessage(obj: any, key: string): void {
     if(this.debug) {
       console.log('adZoneDirective.directive: receiveMessage: obj: ', obj);
     }
-    const infinitescrollerimages = this.documentBody.getElementById('infinite-scroller-images');
     if(key in obj && Array.isArray(obj[key]) && obj[key].length > 0) {
       const target: HTMLElement = Array.prototype.slice.call(this.documentBody.querySelectorAll('#app-advert-table-cell-1-' + key + ' .app-advert-table-cell-block'));
       if(this.debug) {
@@ -453,11 +378,16 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
             const div1 = this.renderer.createElement('div');
             this.renderer.setAttribute(div1,'class','css-tooltip');
             this.renderer.setAttribute(div1,'id','css-tooltip-' + key + '-' + idx);
-            const span = this.renderer.createElement('span');
-            this.renderer.setAttribute(span,'class','tooltiptext');
-            const spanText = this.renderer.createText(item['impressions'] + ' impressions');
-            span.appendChild(spanText);
-            div1.appendChild(span);
+            if(!this.adZoneTooltip){
+              this.adZoneTooltip = this.renderer.createElement('span');
+              this.renderer.setAttribute(this.adZoneTooltip,'class','adzone-tooltiptext');
+              this.renderer.setAttribute(this.adZoneTooltip,'id','adzone-tooltiptext');
+              this.adZoneTooltipText = this.renderer.createElement('span');
+              this.renderer.setAttribute(this.adZoneTooltipText,'class','adzone-tooltiptext-inner');
+              this.adZoneTooltip.appendChild(this.adZoneTooltipText);
+              this.documentBody.body.appendChild(this.adZoneTooltip);
+            }
+            const spanTextContent = item['impressions'] + ' impressions';
             const div2 = this.renderer.createElement('div');
             let rate = this.getRatingIndex(impressionsArray,item['impressions']);
             rate = rate > this.maxRate ? this.maxRate : rate;
@@ -479,28 +409,14 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               const that = this;
               const child1 = csstooltip.getElementsByTagName('span')[0];
               const child2 = csstooltip.getElementsByTagName('div')[0];
-              if(child2 && infinitescrollerimages) {
-                csstooltip.addEventListener('mouseover',function(){
-                  const position = that.getPosition(child2,20,50);
-                  that.documentBody.body.appendChild(child1);
-                  child1.style.top = position.y + 'px';
-                  child1.style.left = position.x + 'px';
-                  child1.style.visibility = 'visible';
-                  if(that.debug) {
-                    console.log('adZoneDirective.directive: receiveMessage: mouse over: position: ', position);
-                  }
+              if(child2) {
+                const eventStart = this.isMobile ? 'touchstart' : 'mouseover';
+                const eventEnd = this.isMobile ? 'touchend' : 'mouseout';
+                csstooltip.addEventListener(eventStart,function(){
+                  that.toggleAdZoneTooltip(spanTextContent,child2,'show');
                 },false);
-                csstooltip.addEventListener('mouseout',function(){
-                  csstooltip.appendChild(child1);
-                  child1.style.top = '';
-                  child1.style.left = '';
-                  child1.style.visibility = 'hidden';
-                },false);
-                infinitescrollerimages.addEventListener('scroll',function(){
-                  csstooltip.appendChild(child1);
-                  child1.style.top = '';
-                  child1.style.left = '';
-                  child1.style.visibility = 'hidden';
+                csstooltip.addEventListener(eventEnd,function(){
+                  that.toggleAdZoneTooltip(spanTextContent,child2,'hide');
                 },false);
               }
             }
@@ -518,6 +434,51 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
         }
       }
     }
+  }
+
+  toggleAdZoneTooltip(text: string = '', element2: any, type: string = 'show'): void {
+    if(type === 'show') {
+      this.adZoneTooltipText.innerHTML = text;
+      const position = this.getPosition(element2,this.adZoneTooltip,10);
+      this.adZoneTooltip.style.top = position.top + 'px';
+      this.adZoneTooltip.style.left = position.left + 'px';
+      this.adZoneTooltip.style.visibility = 'visible';
+      if(this.debug) {
+        console.log('adZoneDirective.directive: toggleAdZoneTooltip: show: text: ', text);
+        console.log('adZoneDirective.directive: toggleAdZoneTooltip: show: position: ', position);
+      }
+      if(this.debug) {
+        console.log('adZoneDirective.directive: toggleAdZoneTooltip: show');
+      }
+    }
+    else{
+      this.adZoneTooltipText.innerHTML = '';
+      this.adZoneTooltip.style.top = '0px';
+      this.adZoneTooltip.style.left = '0px';
+      this.adZoneTooltip.style.visibility = 'hidden';
+      if(this.debug) {
+        console.log('adZoneDirective.directive: toggleAdZoneTooltip: hide');
+      }
+    }
+  }
+
+  removeAdZoneTooltip(): void {
+    const adzonetooltiptext: HTMLElement = this.documentBody.getElementById('adzone-tooltiptext');
+    if(adzonetooltiptext) {
+      if(this.debug) {
+        console.log('adZoneDirective.directive: removeAdZoneTooltip: adzonetooltiptext: ', adzonetooltiptext);
+      }
+      this.toggleAdZoneTooltip('',null,'hide');
+    }
+  }
+
+  getPosition(element1: any, element2: any, offsetY: number = 0): any {
+    const rect1 = element1.getBoundingClientRect();
+    const rect2 = element2.getBoundingClientRect();
+    const offsetX = (rect2.width - rect1.width)/2;
+    const top = rect1.top - (rect2.height + offsetY);
+    const left = rect1.left - offsetX;
+    return {top: top ,left: left};
   }
 
   getAppImageId(id: string): string {

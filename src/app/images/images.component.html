@@ -38,7 +38,7 @@
             </div>
         </div>
     </form>
-    <app-image *ngFor="let image of images" [image]="image" [singleImageId]="singleImageId" id="app-image-{{ image.id }}"></app-image>
+    <app-image *ngFor="let image of images; let idx = index" [imageCount]="idx" [image]="image" [singleImageId]="singleImageId" id="app-image-{{ image.id }}" (openLightBox)="openLightbox($event)"></app-image>
 </div>
 
 <ng-container *ngIf="images.length === 0 && !searchDo && !tagsDo">

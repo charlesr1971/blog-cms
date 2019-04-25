@@ -9,21 +9,20 @@ import { environment } from '../../../../environments/environment';
 declare var TweenMax: any, Elastic: any;
 
 @Component({
-  selector: 'app-category-edit',
-  templateUrl: './category-edit.component.html',
-  styleUrls: ['./category-edit.component.css']
+  selector: 'app-website-help',
+  templateUrl: './website-help.component.html',
+  styleUrls: ['./website-help.component.css']
 })
-export class CategoryEditComponent implements OnInit {
+export class WebsiteHelpComponent implements OnInit {
 
-  @ViewChild('dialogEditCategoriesHelpNotificationText') dialogEditCategoriesHelpNotificationText: ElementRef;
+  @ViewChild('dialogWebsiteHelpNotificationText') dialogWebsiteHelpNotificationText: ElementRef;
 
   isMobile: boolean = false;
-  disableEditCategoriesTooltip: boolean = false;
-  maxcategoryeditnamelength: number = environment.maxcategoryeditnamelength;
+  disableWebsiteTooltip: boolean = false;
 
   debug: boolean = false;
 
-  constructor(private dialogRef: MatDialogRef<CategoryEditComponent>,
+  constructor(private dialogRef: MatDialogRef<WebsiteHelpComponent>,
     @Inject(MAT_DIALOG_DATA) data,
     private httpService: HttpService,
     private renderer: Renderer2,
@@ -36,7 +35,7 @@ export class CategoryEditComponent implements OnInit {
       this.isMobile = this.deviceDetectorService.isMobile();
 
       if(this.isMobile) {
-        this.disableEditCategoriesTooltip = true;
+        this.disableWebsiteTooltip = true;
       }
 
 
@@ -45,17 +44,17 @@ export class CategoryEditComponent implements OnInit {
   ngOnInit() {
 
     if(environment.debugComponentLoadingOrder) {
-      console.log('categoryEditComponent.component init');
+      console.log('websiteHelpComponent.component init');
     }
 
     setTimeout( () => {
 
-      this.httpService.editCategoriesDialogOpened.subscribe( (height: number) => {
+      this.httpService.websiteDialogOpened.subscribe( (height: number) => {
         if(this.debug) {
-          console.log('categoryEditComponent.component: ngOnInit: height: ', height);
+          console.log('websiteHelpComponent.component: ngOnInit: height: ', height);
         }
-        this.renderer.setStyle(this.dialogEditCategoriesHelpNotificationText.nativeElement,'height',height + 'px');
-        const parent = document.querySelector('#dialog-edit-categories-help-notification-container');
+        this.renderer.setStyle(this.dialogWebsiteHelpNotificationText.nativeElement,'height',height + 'px');
+        const parent = document.querySelector('#dialog-website-help-notification-container');
         if(parent) {
           TweenMax.fromTo(parent, 1, {ease:Elastic.easeOut, opacity: 0}, {ease:Elastic.easeOut, opacity: 1});
         }
@@ -67,21 +66,21 @@ export class CategoryEditComponent implements OnInit {
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
-    this.disableEditCategoriesTooltip = true;
+    this.disableWebsiteTooltip = true;
     if(this.debug) {
-      console.log('categoryEditComponent.component: mousedown: this.disableEditCategoriesTooltip: ',this.disableEditCategoriesTooltip);
+      console.log('websiteHelpComponent.component: mousedown: this.disableWebsiteTooltip: ',this.disableWebsiteTooltip);
     }
   }
 
   @HostListener('mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
-    this.disableEditCategoriesTooltip = false;
+    this.disableWebsiteTooltip = false;
     if(this.debug) {
-      console.log('categoryEditComponent.component: mouseup: this.disableEditCategoriesTooltip: ',this.disableEditCategoriesTooltip);
+      console.log('websiteHelpComponent.component: mouseup: this.disableWebsiteTooltip: ',this.disableWebsiteTooltip);
     }
   }
 
-  closeEditCategoriesHelpNotificationDialog() {
+  closeWebsiteHelpNotificationDialog() {
     this.dialogRef.close();
   }
 

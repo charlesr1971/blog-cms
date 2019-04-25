@@ -80,6 +80,7 @@ import { CustomEditHeader } from './ag-grid/header/custom-edit-header/custom-edi
 import { ContentEditableModelDirective } from './directives/content-editable-model/content-editable-model.directive';
 import { FormatFileTitleRenderer } from './ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
 import { ConvertImageNameSuffixPipe } from './pipes/convert-image-name-suffix/convert-image-name-suffix.pipe';
+import { WebsiteHelpComponent } from './help/dialogs/website-help/website-help.component';
 
 
 const appRoutes: Routes = [
@@ -136,7 +137,8 @@ const appRoutes: Routes = [
     CustomEditHeader,
     ContentEditableModelDirective,
     FormatFileTitleRenderer,
-    ConvertImageNameSuffixPipe
+    ConvertImageNameSuffixPipe,
+    WebsiteHelpComponent
   ],
   imports: [
     BrowserModule,
@@ -189,7 +191,7 @@ const appRoutes: Routes = [
     NgbModule,
     AgGridModule.withComponents([FormatEmailRenderer,FormatFileTitleRenderer,CustomEditHeader])
   ],
-  entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent], // Add the DialogComponent as entry component
+  entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent,WebsiteHelpComponent], // Add the DialogComponent as entry component
   providers: [
     Title,
     HttpService,

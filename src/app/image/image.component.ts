@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy, Input, Inject, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, Inject, Renderer2, ElementRef, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { Lightbox, LightboxEvent, LIGHTBOX_EVENT } from 'angular2-lightbox';
 import { DOCUMENT } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { CookieService } from 'ngx-cookie-service';
@@ -9,7 +8,6 @@ import { faFacebookSquare } from '@fortawesome/free-brands-svg-icons/faFacebookS
 import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons/faTwitterSquare';
 import { faTumblrSquare } from '@fortawesome/free-brands-svg-icons/faTumblrSquare';
 import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
-import { capitalizeFirstLetter } from '../util/capitalizeFirstLetter';
 import { Router } from '@angular/router';
 import { sortTags } from '../util/sortTags';
 import { MatDialog } from '@angular/material';
@@ -50,16 +48,16 @@ interface CommentElementsPrefix {
     ]),
   ]
 })
-export class ImageComponent implements OnInit, OnDestroy {
+export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('imageTagsSelect') imageTagsSelect;
 
-  private album: Array<any> = [];
-  private _subscription: Subscription;
   private allowMultipleLikesPerUser: number = environment.allowMultipleLikesPerUser;
 
+  @Output() openLightBox: EventEmitter<any> = new EventEmitter();
   @Input() image: Image;
   @Input() singleImageId: string = '';
+  @Input() imageCount: number = 0;
 
   isMobile: boolean = false;
 
@@ -96,13 +94,13 @@ export class ImageComponent implements OnInit, OnDestroy {
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   imageMediumSuffix: string = environment.imageMediumSuffix;
+  imageMediumEnabled: boolean = environment.imageMediumEnabled;
+  lazyLoadImages: boolean = environment.lazyLoadImages;
 
   debug: boolean = false;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document,
     private el: ElementRef,
-    private lightBox: Lightbox,
-    private lightboxEvent: LightboxEvent,
     private renderer: Renderer2,
     private httpService: HttpService,
     private cookieService: CookieService,
@@ -212,6 +210,20 @@ export class ImageComponent implements OnInit, OnDestroy {
 
     this.documentBody.querySelector('#infinite-scroller-images').addEventListener('scroll', this.onInfiniteScrollerImagesScroll.bind(this));
 
+  }
+
+  ngAfterViewInit() {
+    if(!this.lazyLoadImages) {
+      const image = this.documentBody.getElementById('image-img-' + this.image.id);
+      if(image) {
+        setTimeout( () => {
+          if(this.debug) {
+            console.log('image.component: ngAfterViewInit');
+          }
+          this.renderer.setStyle(image,'opacity',1);
+        });
+      }
+    }
   }
 
   onInfiniteScrollerImagesScroll(): void {
@@ -363,55 +375,11 @@ export class ImageComponent implements OnInit, OnDestroy {
     this.hideCommentInput = event;
   }
 
-  openFile(src: string): void{   
-    const album = {
-      src: src
-    };
-    this.album.push(album);
-    this.lightBox.open(this.album,0,{ disableScrolling: true, centerVertically: true, showImageNumberLabel: false });
-    this.open();
-    this.renderer.setStyle(
-      this.documentBody.body,
-      'overflow',
-      'hidden'
-    );
-  }
-
-  open(): void {
-    // register your subscription and callback whe open lightbox is fired
+  openLightbox(idx: number= 0): void {
     if(this.debug) {
-      console.log('LIGHTBOX: open');
+      console.log('image.component: openLightbox(): idx ', idx);
     }
-    this._subscription = this.lightboxEvent.lightboxEvent$
-      .subscribe(event => this._onReceivedEvent(event));
-  }
- 
-  private _onReceivedEvent(event: any): void {
-    // remember to unsubscribe the event when lightbox is closed
-    if (event.id === LIGHTBOX_EVENT.CLOSE) {
-      // event CLOSED is fired
-      if(this.debug) {
-        console.log('LIGHTBOX_EVENT.CLOSE');
-      }
-      this._subscription.unsubscribe();
-    }
- 
-    if (event.id === LIGHTBOX_EVENT.OPEN) {
-      if(this.debug) {
-        console.log('LIGHTBOX_EVENT.OPEN');
-      }
-      // event OPEN is fired
-    }
- 
-    if (event.id === LIGHTBOX_EVENT.CHANGE_PAGE) {
-      if(this.debug) {
-        console.log('LIGHTBOX_EVENT.CHANGE_PAGE');
-      }
-      // event change page is fired
-      if(this.debug) {
-        console.log(event.data);
-      }
-    }
+    this.openLightBox.emit(idx);
   }
 
   ngOnDestroy() {

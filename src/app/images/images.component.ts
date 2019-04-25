@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild, Renderer2, ElementRef, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Lightbox, LightboxEvent, LIGHTBOX_EVENT } from 'angular2-lightbox';
 import { HttpService } from '../services/http/http.service';
 import { UtilsService } from '../services/utils/utils.service';
 import { Image } from '../image/image.model';
@@ -45,6 +46,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
 
   currentUser: User;
 
+  lightboxAlbum: Array<any> = [];
+
   search = new FormControl();
   tags = new FormControl();
   options: Option[] = [];
@@ -58,6 +61,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
   fetchImageTitlesSubscription: Subscription;
   fetchTagsSubscription: Subscription;
   loginWithTokenSubscription: Subscription;
+  lightboxSubscription: Subscription;
 
   images: Array<any> = [];
   pages = [];
@@ -85,10 +89,13 @@ export class ImagesComponent implements OnInit, OnDestroy {
   singleImageId: string = '';
   isGalleryPage: boolean = true;
   isSection: boolean = false;
+  imageCounter: number = 0;
 
   debug: boolean = false;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document,
+    private lightBox: Lightbox,
+    private lightboxEvent: LightboxEvent,
     private httpService: HttpService,
     private utilsService: UtilsService,
     private userService: UserService,
@@ -549,6 +556,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
           this.images.push(image);
         });
         this.sortImages();
+        this.createLightboxAlbum();
         if(data['commentid'] > 0) {
           const obj = {
             fileUuid: data['fileUuid'],
@@ -591,6 +599,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      this.createLightboxAlbum();
       if(this.images.length > 1) {
         this.singleImageId = '';
       }
@@ -631,6 +640,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      this.createLightboxAlbum();
       if(this.images.length > 1) {
         this.singleImageId = '';
       }
@@ -666,6 +676,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      this.createLightboxAlbum();
       if(this.images.length > 1) {
         this.singleImageId = '';
       }
@@ -701,6 +712,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      this.createLightboxAlbum();
       if(this.images.length > 1) {
         this.singleImageId = '';
       }
@@ -736,6 +748,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
         this.images.push(image);
       });
       this.sortImages();
+      this.createLightboxAlbum();
       if(this.images.length > 1) {
         this.singleImageId = '';
       }
@@ -896,6 +909,68 @@ export class ImagesComponent implements OnInit, OnDestroy {
         advert.remove();
       });
     }
+  }
+
+  createLightboxAlbum(): void {
+    this.lightboxAlbum = [];
+    this.images.map( (obj) => {
+      const image = {
+        src: obj['src']
+      };
+      this.lightboxAlbum.push(image);
+    });
+    if(this.debug) {
+      console.log('images.component: createLightboxAlbum: this.lightboxAlbum: ', this.lightboxAlbum);
+    }
+  }
+
+  openLightbox(idx: number = 0): void{   
+    this.lightBox.open(this.lightboxAlbum,idx,{disableScrolling:true,centerVertically:true,showImageNumberLabel:false});
+    this.createLighboxListener();
+    this.renderer.setStyle(this.documentBody.body,'overflow','hidden');
+    if(this.debug) {
+      console.log('images.component: openLightbox: idx: ', idx);
+    }
+  }
+
+  createLighboxListener(): void {
+    // register your subscription and callback whe open lightbox is fired
+    if(this.debug) {
+      console.log('images.component: createLighboxListener');
+    }
+    this.lightboxSubscription = this.lightboxEvent.lightboxEvent$.subscribe( (event) => {
+      return this.onLighboxReceivedEvent(event);
+    });
+  }
+ 
+  private onLighboxReceivedEvent(event: any): void {
+
+    // remember to unsubscribe the event when lightbox is closed
+    if (event.id === LIGHTBOX_EVENT.CLOSE) {
+      // event CLOSED is fired
+      if(this.debug) {
+        console.log('images.component: onLighboxReceivedEvent: LIGHTBOX_EVENT.CLOSE');
+      }
+      this.lightboxSubscription.unsubscribe();
+    }
+ 
+    if (event.id === LIGHTBOX_EVENT.OPEN) {
+      if(this.debug) {
+        console.log('images.component: onLighboxReceivedEvent: LIGHTBOX_EVENT.OPEN');
+      }
+      // event OPEN is fired
+    }
+ 
+    if (event.id === LIGHTBOX_EVENT.CHANGE_PAGE) {
+      if(this.debug) {
+        console.log('images.component: onLighboxReceivedEvent: LIGHTBOX_EVENT.CHANGE_PAGE');
+      }
+      // event change page is fired
+      if(this.debug) {
+        console.log(event.data);
+      }
+    }
+
   }
 
   ngOnDestroy() {
