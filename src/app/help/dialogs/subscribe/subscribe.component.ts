@@ -132,7 +132,7 @@ export class SubscribeComponent implements OnInit, OnDestroy {
         /* const target = Array.prototype.slice.call(this.documentBody.querySelectorAll('.dialog-subscribe-notification-success'));
         if(Array.isArray(target) && target.length > 0 && !this.isMobile) { */
         const target = this.documentBody.getElementById('dialog-subscribe-notification-success');
-        if(target && !this.isMobile) {
+        if(target) {
           /* TweenMax.to(el,0.5,{
             scale:0.25,
             opacity:1,
@@ -145,7 +145,7 @@ export class SubscribeComponent implements OnInit, OnDestroy {
             }
           }); */
           /* TweenMax.staggerFromTo('.dialog-subscribe-notification-success', 0.5, {scale: 0, opacity:0, ease:Elastic.easeOut, delay: 0}, {scale: 1, opacity:1, ease:Elastic.easeOut, delay: 0}, 0.25); */
-          TweenLite.to(target, 1.25, {text:"Thank You<br>For<br>Joining!", padSpace:true, ease:Linear.easeNone});
+          TweenLite.to(target, 1.5, {text:"Thank You<br>For<br>Joining!", padSpace:true, ease:Linear.easeNone});
         }
       }
       else{

@@ -561,7 +561,7 @@ export class HttpService {
   addSubscription(data: any): Observable<any> {
     const httpClient = new HttpClient(this.httpBackend);
     let req = null;
-    req = new HttpRequest('POST', this.subscribeurl + '?subscribeFormId=' + this.subscribeFormId + '&subscribeTaskKey=' + this.subscribeTaskKey + '&email=' + encodeURIComponent(data['email']) + '&firstname=' + encodeURIComponent(data['firstname']), '', null);
+    req = new HttpRequest('POST', this.subscribeurl + '?FormID=' + this.subscribeFormId + '&taskkey=' + this.subscribeTaskKey + '&email=' + encodeURIComponent(data['email']) + '&firstname=' + encodeURIComponent(data['firstname']), '', null);
     return httpClient.request(req)
     .map( (data) => {
       return 'body' in data ? data['body'] : null;

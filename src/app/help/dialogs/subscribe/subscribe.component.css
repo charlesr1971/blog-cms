@@ -40,6 +40,7 @@ form {
 .form-status-container p {
     font-family: 'Shadows Into Light', cursive;
     font-size: 58px;
+    line-height: 75px;
 }
 
 .mat-icon.dialog-subscribe-notification-close {
@@ -50,7 +51,7 @@ form {
 }
   
 #dialogSubscribeNotificationText {
-    overflow: auto;
+    overflow: hidden;
 }
 
 /* smart phones */
@@ -60,10 +61,14 @@ form {
     form {
         float: none;
         width: 100%;
+        margin-bottom: 20px;
     }
 
     .form-status-container {
-        display: none;
+        display: block;
+        float: none;
+        width: 100%;
+        height: auto;
     }
 
     

@@ -45,7 +45,7 @@
 	request.subscribeTaskKey = "4F893EE24950069DD823E083338A456D";
   }
   else{
-	request.subscribeurl = "https://www.establishmindfulness.com/remote/dsp_subscribe.cfm";
+	request.subscribeurl = "https://www.establishmindfulness.com/default/remote/dsp_subscribe.cfm";
 	request.subscribeFormId = "296A7E58-84A6-C828-BCCF6F1EA827EED2";
 	request.subscribeTaskKey = "4F893EE24950069DD823E083338A456D";
   }
