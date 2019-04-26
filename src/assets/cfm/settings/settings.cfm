@@ -38,6 +38,17 @@
   
   request.catalogRouterAlias = "stories";
   request.userAccountDeleteSchema = 2; //0=no delete, 1=delete, 2=archive
+  
+  if(IsLocalHost(CGI.REMOTE_ADDR)){
+	request.subscribeurl = "http://localhost:8500/blog1.establishmindfulness/default/remote/dsp_subscribe.cfm";
+	request.subscribeFormId = "296A7E58-84A6-C828-BCCF6F1EA827EED2";
+	request.subscribeTaskKey = "4F893EE24950069DD823E083338A456D";
+  }
+  else{
+	request.subscribeurl = "https://www.establishmindfulness.com/remote/dsp_subscribe.cfm";
+	request.subscribeFormId = "296A7E58-84A6-C828-BCCF6F1EA827EED2";
+	request.subscribeTaskKey = "4F893EE24950069DD823E083338A456D";
+  }
 
 
 </cfscript>

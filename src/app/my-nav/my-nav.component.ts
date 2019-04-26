@@ -13,6 +13,7 @@ import { capitalizeFirstLetter } from '../util/capitalizeFirstLetter';
 import { getMonthShortName } from '../util/getMonthShortName';
 import { titleFromAlias } from '../util/titleFromAlias';
 import { WebsiteHelpComponent } from '../help/dialogs/website-help/website-help.component';
+import { SubscribeComponent } from '../help/dialogs/subscribe/subscribe.component';
 
 import { HttpService } from '../services/http/http.service';
 import { UtilsService } from '../services/utils/utils.service';
@@ -450,6 +451,10 @@ export class MyNavComponent implements OnInit, OnDestroy {
     this.openWebsiteHelpNotificationDialog();
   }
 
+  subscribe(): void {
+    this.openSubscribeNotificationDialog();
+  }
+
   logout(): void {
     this.galleryIsActive = false;
     this.router.navigateByUrl('/' + this.catalogRouterAliasLower, {skipLocationChange: true}).then( () => {
@@ -497,6 +502,49 @@ export class MyNavComponent implements OnInit, OnDestroy {
       }
       if(this.debug) {
         console.log('my-nav.component: dialog website help notification: this.dialogWebsiteHeight: ', this.dialogWebsiteHeight);
+      }
+    });
+  }
+
+  openSubscribeNotificationDialog(): void {
+    const dialogRef = this.dialog.open(SubscribeComponent, {
+      width: this.isMobile ? '100%' :'50%',
+      height: this.isMobile ? '100%' :'50%',
+      maxWidth: this.isMobile ? '100%' :'50%',
+      disableClose: true,
+      id: 'dialog-subscribe-notification'
+    });
+    if(this.debug) {
+      console.log('my-nav.component: dialog subscribe notification: before close: this.themeRemove: ', this.themeRemove);
+      console.log('my-nav.component: dialog subscribe notification: before close: this.themeAdd: ', this.themeAdd);
+    }
+    updateCdkOverlayThemeClass(this.themeRemove,this.themeAdd);
+    dialogRef.beforeClose().subscribe(result => {
+      if(this.debug) {
+        console.log('my-nav.component: dialog subscribe notification: before close');
+      }
+      if(result) {
+        if(this.debug) {
+          console.log('my-nav.component: dialog subscribe notification: before close: result: ', result);
+        }
+      }
+    });
+    dialogRef.afterOpen().subscribe( () => {
+      if(this.debug) {
+        console.log('my-nav.component: dialog subscribe notification: after open');
+      }
+      const parent = document.querySelector('#dialog-subscribe-notification');
+      let height = parent.clientHeight ? parent.clientHeight : 0;
+      const offsetHeight = 150;
+      if(!isNaN(height) && (height - offsetHeight) > 0) {
+        height = height - offsetHeight;
+      }
+      if(height > 0 ) {
+        this.dialogWebsiteHeight = height;
+        this.httpService.subscribeDialogOpened.next(this.dialogWebsiteHeight);
+      }
+      if(this.debug) {
+        console.log('my-nav.component: dialog subscribe notification: this.dialogWebsiteHeight: ', this.dialogWebsiteHeight);
       }
     });
   }

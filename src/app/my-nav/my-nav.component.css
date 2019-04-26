@@ -94,14 +94,14 @@
   transform: translateX(-50%);
 }
 
-.mat-icon.dialog-website-help-notification-close {
+.mat-icon.dialog-website-help-notification-close, .mat-icon.dialog-subscribe-notification-close {
   position: absolute;
   bottom: 20px;
   right: 20px;
   cursor: pointer;
 }
 
-#dialogWebsiteHelpNotificationText {
+#dialogSubscribeNotificationText {
   overflow: auto;
 }
 

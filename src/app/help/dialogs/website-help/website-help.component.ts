@@ -29,7 +29,7 @@ export class WebsiteHelpComponent implements OnInit {
     private deviceDetectorService: DeviceDetectorService) { 
 
       if(environment.debugComponentLoadingOrder) {
-        console.log('CookiePolicyComponent.component loaded');
+        console.log('WebsiteHelpComponent.component loaded');
       }
 
       this.isMobile = this.deviceDetectorService.isMobile();

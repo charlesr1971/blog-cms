@@ -164,7 +164,7 @@ export class GalleryComponent implements OnInit {
 
   openSnackBar(message: string, action: string) {
     const config = new MatSnackBarConfig();
-    config.panelClass = ['custom-class'];
+    config.panelClass = action.toLowerCase() === 'error' ? ['custom-class-error'] : ['custom-class'];
     config.duration = 5000;
     this.matSnackBar.open(message, action, config);
   }

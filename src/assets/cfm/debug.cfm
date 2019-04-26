@@ -500,8 +500,10 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
 
 
 
+<cfset taskname = "subscribe">
 
 
+#Hash(taskname)#
 
 
 </cfoutput>

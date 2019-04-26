@@ -269,19 +269,19 @@ app-images .mat-spinner {
     margin: -50px 0 0 -50px;
 }
 
-#dialog-article-help-notification .mat-app-background.basic-container, #dialog-edit-categories-help-notification .mat-app-background.basic-container, #dialog-website-help-notification .mat-app-background.basic-container {
+#dialog-article-help-notification .mat-app-background.basic-container, #dialog-edit-categories-help-notification .mat-app-background.basic-container, #dialog-website-help-notification .mat-app-background.basic-container, #dialog-subscribe-notification .mat-app-background.basic-container {
     padding: 0px;
 }
 
-#dialog-article-help-notification .form-field-text ol, #dialog-edit-categories-help-notification .form-field-text ol, #dialog-website-help-notification .mat-app-background.basic-container ol {
+#dialog-article-help-notification .form-field-text ol, #dialog-edit-categories-help-notification .form-field-text ol, #dialog-website-help-notification .mat-app-background.basic-container ol, #dialog-subscribe-notification .mat-app-background.basic-container ol {
     padding: 0px 20px !important;
 }
 
-#dialog-article-help-notification .form-field-text ol li, #dialog-edit-categories-help-notification .form-field-text ol li, #dialog-website-help-notification .mat-app-background.basic-container ol li {
+#dialog-article-help-notification .form-field-text ol li, #dialog-edit-categories-help-notification .form-field-text ol li, #dialog-website-help-notification .mat-app-background.basic-container ol li, #dialog-subscribe-notification .mat-app-background.basic-container ol li {
     margin-bottom: 10px !important;
 }
 
-#dialog-article-help-notification .form-field-text ol li:last-child, #dialog-edit-categories-help-notification .form-field-text ol li:last-child, #dialog-website-help-notification .mat-app-background.basic-container ol li:last-child {
+#dialog-article-help-notification .form-field-text ol li:last-child, #dialog-edit-categories-help-notification .form-field-text ol li:last-child, #dialog-website-help-notification .mat-app-background.basic-container ol li:last-child, #dialog-subscribe-notification .mat-app-background.basic-container ol li:last-child {
     margin-bottom: 0px !important;
 }
 

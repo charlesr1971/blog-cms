@@ -29,6 +29,8 @@
             ],
             "scripts": [
               "node_modules/gsap/src/uncompressed/TweenMax.js",
+              "node_modules/gsap/src/uncompressed/TweenLite.js",
+              "node_modules/gsap/src/uncompressed/plugins/TextPlugin.js",
               "node_modules/lightgallery.js/lib/js/lightgallery.js",
               "src/assets/js/tinymce/tinymce.min.js",
               "src/assets/js/tinymce/themes/modern/theme.js",

@@ -82,6 +82,10 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-accent);
     }
 
+    snack-bar-container.custom-class-error {
+        background: mat-color($dark-warn);
+    }
+
     .form-field-container .form-field-legend {
         background: mat-color($dark-foreground-palette, text, 0.05);
     }
@@ -413,6 +417,10 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-background-palette, background, 0.5);
     }
 
+    .form-status-container span, .form-status-container p {
+        color: mat-color($dark-primary, lighter); 
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -544,6 +552,10 @@ $light-background-palette: map-get($light-theme, background);
 
     snack-bar-container.custom-class {
         background: mat-color($light-accent);
+    }
+
+    snack-bar-container.custom-class-error {
+        background: mat-color($light-warn);
     }
 
     .form-field-container .form-field-legend {
@@ -871,6 +883,10 @@ $light-background-palette: map-get($light-theme, background);
     .google-recaptcha-loading:after {
         background: mat-color($light-primary, lighter);
         color: mat-color($light-background-palette, background, 0.5);
+    }
+
+    .form-status-container span, .form-status-container p {
+        color: mat-color($light-primary, lighter); 
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

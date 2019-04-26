@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable, throwError } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpErrorResponse, HttpBackend } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { getUrlParameter } from '../../util/getUrlParameter';
 
@@ -31,6 +31,9 @@ export class HttpService {
   forgottenPasswordToken: string = '';
   forgottenPasswordValidated: number = 0;
   imageMediumSuffix: string = '';
+  subscribeurl: string = '';
+  subscribeFormId: string = '';
+  subscribeTaskKey: string = '';
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -68,6 +71,7 @@ export class HttpService {
   cookiePolicyDialogOpened: Subject<any> = new Subject<any>();
   editCategoriesDialogOpened: Subject<any> = new Subject<any>();
   websiteDialogOpened: Subject<any> = new Subject<any>();
+  subscribeDialogOpened: Subject<any> = new Subject<any>();
   tinymceArticleDeletedImages: Subject<any> = new Subject<any>();
   tinymceArticleOnChange: Subject<any> = new Subject<any>();
   tinymceArticleHasUnsavedChanges: Subject<any> = new Subject<any>();
@@ -88,6 +92,7 @@ export class HttpService {
   debug: boolean = false;
 
   constructor(private http: HttpClient,
+    private httpBackend: HttpBackend ,
     private userService: UserService,
     private cookieService: CookieService) {
 
@@ -172,9 +177,11 @@ export class HttpService {
     if(port > 0) {
       this.port = port;
     }
+
     if(this.cookieService.check('port') && this.port === '0') {
       this.port = this.cookieService.get('port');
     }
+
     this.apiUrl = environment.host + this.port + '/' + environment.cf_dir + '/api';
     this.restApiUrl = environment.host + this.port + '/' + environment.cf_dir + '/rest/api/v1';
     this.categoryImagesUrl = environment.host + this.port + '/' + environment.cf_dir;
@@ -183,10 +190,12 @@ export class HttpService {
     this.maxcontentlength = getUrlParameter('maxcontentlength');
     this.tinymcearticlemaximages = getUrlParameter('tinymcearticlemaximages');
     this.commentToken = getUrlParameter('commenttoken');
+
     if(this.debug) {
       console.log('http.service: getUrlParameter("theme") ',getUrlParameter('theme'));
     }
     this.themeObj = this.createTheme(getUrlParameter('theme'));
+
     this.isSignUpValidated = getUrlParameter('signUpValidated') !== '' ? parseInt(getUrlParameter('signUpValidated').toString()) : 0;
     const forgottenPasswordToken = getUrlParameter('forgottenPasswordToken');
     if(forgottenPasswordToken !== '0' || forgottenPasswordToken !== '') {
@@ -197,10 +206,25 @@ export class HttpService {
       this.forgottenPasswordValidated = forgottenPasswordValidated;
     }
     this.isForgottenPasswordValidated = getUrlParameter('forgottenPasswordValidated') !== '' ? parseInt(getUrlParameter('forgottenPasswordValidated').toString()) : 0;
+
     const imageMediumSuffix = getUrlParameter('imageMediumSuffix');
     if(imageMediumSuffix !== '0' || imageMediumSuffix !== '') {
       this.imageMediumSuffix = imageMediumSuffix;
     }
+
+    const subscribeurl = getUrlParameter('subscribeurl');
+    if(subscribeurl !== '0' || subscribeurl !== '') {
+      this.subscribeurl = subscribeurl;
+    }
+    const subscribeFormId = getUrlParameter('subscribeFormId');
+    if(subscribeFormId !== '0' || subscribeFormId !== '') {
+      this.subscribeFormId = subscribeFormId;
+    }
+    const subscribeTaskKey = getUrlParameter('subscribeTaskKey');
+    if(subscribeTaskKey !== '0' || subscribeTaskKey !== '') {
+      this.subscribeTaskKey = subscribeTaskKey;
+    }
+
     if(this.debug || this.debugForgottenPasswordLoginWithToken) {
       console.log('http.service: this.port ',this.port);
       console.log('http.service: this.apiUrl ',this.apiUrl);
@@ -526,6 +550,19 @@ export class HttpService {
       }
     }
     return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  addSubscription(data: any): Observable<any> {
+    const httpClient = new HttpClient(this.httpBackend);
+    let req = null;
+    req = new HttpRequest('POST', this.subscribeurl + '?subscribeFormId=' + this.subscribeFormId + '&subscribeTaskKey=' + this.subscribeTaskKey + '&email=' + encodeURIComponent(data['email']) + '&firstname=' + encodeURIComponent(data['firstname']), '', null);
+    return httpClient.request(req)
     .map( (data) => {
       return 'body' in data ? data['body'] : null;
     })
