@@ -28,10 +28,7 @@ form {
 }
 
 .form-status-container span {
-    /* position: relative; */
     display: inline-block;
-    /* top: 50%;
-    transform: translateY(-50%); */
     font-family: 'Shadows Into Light', cursive;
     font-size: 58px;
     opacity: 0;
@@ -68,8 +65,6 @@ form {
         display: block;
         float: none;
         width: 100%;
-        height: auto;
     }
-
     
 }

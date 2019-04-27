@@ -88,6 +88,9 @@ export class HttpService {
   browserCacheCleared: boolean = false;
   isLoggedIn: boolean = false;
   debugForgottenPasswordLoginWithToken: boolean = false;
+  isSafari1 = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 && navigator.userAgent && navigator.userAgent.indexOf('CriOS') == -1 && navigator.userAgent.indexOf('FxiOS') == -1;
+  isSafari2 = /webkit/.test(navigator.userAgent.toLowerCase());
+
 
   debug: boolean = false;
 

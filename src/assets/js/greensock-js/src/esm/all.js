@@ -29,6 +29,7 @@ import PixiPlugin from "./PixiPlugin.js";
 import RoundPropsPlugin from "./RoundPropsPlugin.js";
 import ScrollToPlugin from "./ScrollToPlugin.js";
 import TextPlugin from "./TextPlugin.js";
+import CustomWiggle from "./CustomWiggle.js";
 
 
 // utils
@@ -100,6 +101,7 @@ export {
 	RoundPropsPlugin,
 	ScrollToPlugin,
 	TextPlugin,
+	CustomWiggle,
 
 	// utils
 	Draggable,

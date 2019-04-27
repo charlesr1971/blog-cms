@@ -2,20 +2,19 @@
   <div class="form-field-container">
     <div class="form-field-legend">Join our mailing list</div>
     <div class="form-field-text" id="dialogSubscribeNotificationText" #dialogSubscribeNotificationText>
-      <form novalidate [formGroup]="subscribeForm" (ngSubmit)="subscribeFormSubmit()">
+      <form novalidate [formGroup]="subscribeForm">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>
         </mat-form-field><br />
         <mat-form-field class="example-full-width">
           <input matInput placeholder="First Name" value="" formControlName="forename" id="forename" required>
         </mat-form-field><br /><br />
-        <button type="submit" mat-raised-button data-role="submit" [disabled]="subscribeFormDisabled" style="margin-left:0px;" color="accent">Submit</button>
-        <!-- <button mat-raised-button data-role="submit" [disabled]="subscribeFormDisabled" (click)="subscribeFormSubmit()" style="margin-left:0px;" color="accent">Submit</button> -->
+        <button mat-raised-button data-role="submit" [disabled]="subscribeFormDisabled" (click)="subscribeFormSubmit()" style="margin-left:0px;" color="accent">Submit</button>
       </form>
       <div class="form-status-container">
-        <!-- <span class="dialog-subscribe-notification-success">T</span><span class="dialog-subscribe-notification-success">h</span><span class="dialog-subscribe-notification-success">a</span><span class="dialog-subscribe-notification-success">n</span><span class="dialog-subscribe-notification-success">k</span> <span class="dialog-subscribe-notification-success" style="margin-left:20px;">Y</span><span class="dialog-subscribe-notification-success">o</span><span class="dialog-subscribe-notification-success">u</span><br />
-        <span class="dialog-subscribe-notification-success">F</span><span class="dialog-subscribe-notification-success">o</span><span class="dialog-subscribe-notification-success">r</span><br /><span class="dialog-subscribe-notification-success">J</span><span class="dialog-subscribe-notification-success">o</span><span class="dialog-subscribe-notification-success">i</span><span class="dialog-subscribe-notification-success">n</span><span class="dialog-subscribe-notification-success">i</span><span class="dialog-subscribe-notification-success">n</span><span class="dialog-subscribe-notification-success">g</span> -->
-        <p id="dialog-subscribe-notification-success" class="dialog-subscribe-notification-success"></p>
+        <div id="subscribe-animation-container">
+            <audio id="dialogSubscribeNotificationSound" src="assets/audio/mp3/dinner-gong-bell.mp3"></audio>
+        </div>
       </div>
       <div style="clear:both;"></div>
     </div>

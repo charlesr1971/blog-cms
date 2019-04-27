@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Inject, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -11,14 +11,14 @@ import { HttpService } from '../../../services/http/http.service';
 import { environment } from '../../../../environments/environment';
 import { Subscription } from 'rxjs';
 
-declare var TweenMax: any, TweenLite: any, Linear: any, Elastic: any;
+declare var TweenMax: any, TimelineMax: any, CustomWiggle: any, Elastic: any;
 
 @Component({
   selector: 'app-subscribe',
   templateUrl: './subscribe.component.html',
   styleUrls: ['./subscribe.component.css']
 })
-export class SubscribeComponent implements OnInit, OnDestroy {
+export class SubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('dialogSubscribeNotificationText') dialogSubscribeNotificationText: ElementRef;
 
@@ -33,9 +33,7 @@ export class SubscribeComponent implements OnInit, OnDestroy {
 
   isMobile: boolean = false;
   disableSubscribeTooltip: boolean = false;
-
-  
-
+ 
   debug: boolean = false;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document,
@@ -78,8 +76,6 @@ export class SubscribeComponent implements OnInit, OnDestroy {
         }
       });
 
-      
-
     });
 
     this.createFormControls();
@@ -87,6 +83,33 @@ export class SubscribeComponent implements OnInit, OnDestroy {
     this.monitorFormValueChanges();
 
   }
+
+  ngAfterViewInit() {
+    
+  }
+
+  loadSound(): void {
+    /* const audio = <HTMLAudioElement>this.documentBody.getElementById('dialogSubscribeNotificationSound');
+    if(audio) {
+      //if(this.debug) {
+        console.log('subscribeComponent.component: loadSound: audio: ',audio);
+      //}
+      audio.volume = 1;
+      audio.play();
+    } */
+  }
+
+  playSound(): void  {
+    const audio = <HTMLAudioElement>this.documentBody.getElementById('dialogSubscribeNotificationSound');
+    if(audio) {
+      //if(this.debug) {
+        console.log('subscribeComponent.component: playSound: audio: ',audio);
+      //}
+      audio.volume = 1;
+      audio.play();
+    }
+  }
+
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
@@ -112,12 +135,15 @@ export class SubscribeComponent implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('subscribeComponent.component: subscribeFormSubmit: body',body);
     }
+    if(this.isMobile) {
+      this.loadSound();
+    }
     this.subscribeSubscription = this.httpService.addSubscription(body).do(this.processSubscribeData).subscribe();
   }
 
   private processSubscribeData = (data) => {
     if(this.debug) {
-      console.log('subscribeComponent.component: processSubscribeData: data',data);
+      console.log('subscribeComponent.component: processSubscribeData: data ',data);
     }
     if(data) {
       if('error' in data && data['error'] === '') {
@@ -129,28 +155,93 @@ export class SubscribeComponent implements OnInit, OnDestroy {
         this.monitorFormValueChanges();
         this.subscribeForm.reset();
         this.openSnackBar('Subscription successful', 'Success');
-        /* const target = Array.prototype.slice.call(this.documentBody.querySelectorAll('.dialog-subscribe-notification-success'));
-        if(Array.isArray(target) && target.length > 0 && !this.isMobile) { */
-        const target = this.documentBody.getElementById('dialog-subscribe-notification-success');
-        if(target) {
-          /* TweenMax.to(el,0.5,{
-            scale:0.25,
-            opacity:1,
-            onComplete:function(){
-              TweenMax.to(el,1.4,{
-                scale:1,
-                ease:Elastic.easeOut,
-                easeParams:[overshoot,period]
-              })
+        const subscribeAnimationContainer = this.documentBody.getElementById('subscribe-animation-container');
+        const bubbleWrapArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.bubble-wrap'));
+        if(subscribeAnimationContainer && Array.isArray(bubbleWrapArray) && bubbleWrapArray.length === 0) {
+          let subscribeAnimationContainerHeight = 0;
+          if(this.isMobile){
+            const screenHeight = window.innerHeight;
+            const offset = 402;
+            if(!isNaN(screenHeight) && screenHeight > offset) {
+              subscribeAnimationContainerHeight = screenHeight - offset;
+              subscribeAnimationContainer.style.height = subscribeAnimationContainerHeight + 'px';
             }
-          }); */
-          /* TweenMax.staggerFromTo('.dialog-subscribe-notification-success', 0.5, {scale: 0, opacity:0, ease:Elastic.easeOut, delay: 0}, {scale: 1, opacity:1, ease:Elastic.easeOut, delay: 0}, 0.25); */
-          TweenLite.to(target, 1.5, {text:"Thank You<br>For<br>Joining!", padSpace:true, ease:Linear.easeNone});
+          }
+          const subscribeAnimationContainerRect = subscribeAnimationContainer.getBoundingClientRect();
+          const subscribeAnimationContainerWidth = subscribeAnimationContainerRect.width;
+          if(!this.isMobile){
+            subscribeAnimationContainerHeight = subscribeAnimationContainerRect.height;
+          }
+          if(this.debug) {
+            console.log('subscribeComponent.component: processSubscribeData: subscribeAnimationContainerWidth: ',subscribeAnimationContainerWidth);
+            console.log('subscribeComponent.component: processSubscribeData: subscribeAnimationContainerHeight: ',subscribeAnimationContainerHeight);
+          }
+          const executeAnimation = (this.isMobile && subscribeAnimationContainerHeight >= 215) || !this.isMobile ? true : false;
+          if(executeAnimation) {
+            const bubbleWrap = this.renderer.createElement('div');
+            this.renderer.setAttribute(bubbleWrap,'class','bubble-wrap');
+            this.renderer.setStyle(bubbleWrap,'width',subscribeAnimationContainerWidth + 'px');
+            this.renderer.setStyle(bubbleWrap,'height',subscribeAnimationContainerHeight + 'px');
+            for (let index = 0; index < 100; index++) {
+              const bubble = this.renderer.createElement('div');
+              this.renderer.setAttribute(bubble,'class','bubble');
+              bubbleWrap.appendChild(bubble);
+            }
+            subscribeAnimationContainer.appendChild(bubbleWrap);
+            const bubbleRing = this.renderer.createElement('div');
+            this.renderer.setAttribute(bubbleRing,'class','bubble-ring');
+            subscribeAnimationContainer.appendChild(bubbleRing);
+            const bubbleBell = this.renderer.createElement('i');
+            this.renderer.setAttribute(bubbleBell,'class','fa fa-bell bubble-bell');
+            subscribeAnimationContainer.appendChild(bubbleBell);
+            if(this.debug) {
+              console.log('subscribeComponent.component: processSubscribeData: this.httpService.isSafari1: ',this.httpService.isSafari1);
+              console.log('subscribeComponent.component: processSubscribeData: this.httpService.isSafari2: ',this.httpService.isSafari2);
+            }
+            var that = this;
+            setTimeout( () => {
+              const bubbleRingArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.bubble-ring'));
+              const bubbleBellArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.bubble-bell'));
+              this.removeBubbles();
+              if(Array.isArray(bubbleRingArray) && bubbleRingArray.length > 0) {
+                bubbleRingArray.map( (element) => {
+                  TweenMax.fromTo(element, 1, {scale:0, ease:Elastic.easeOut, opacity: 0, delay: 1}, {scale:1, ease:Elastic.easeOut, opacity: 1, delay: 1}, 0.25);
+                });
+              }
+              if(Array.isArray(bubbleBellArray) && bubbleBellArray.length > 0) {
+                //this.playSound();
+                bubbleBellArray.map( (element) => {
+                  setTimeout( () => {
+                    this.playSound();
+                  },1000);
+                  TweenMax.fromTo(element, 1, {scale:0, ease:Elastic.easeOut, opacity: 0, delay: 1.5}, {scale:1, ease:Elastic.easeOut, opacity: 1, delay: 1.5, onComplete: function(){
+                    /* const introAnim = new TimelineMax({repeat:-1, repeatDelay:1});
+                    CustomWiggle.create("introWiggle", {wiggles:10, type:"anticipate"});
+                    introAnim.to(element, 1, {transformOrigin: "center center",  cycle:{y:[20, -20], scale:[1.25, 0.75]}, rotation: 10, ease:"introWiggle"}, 0.25); */
+                    /* const max = 5;
+                    const min = -5;
+                    TweenMax.to(element,0.1,{repeat:5-1, x:Math.floor(Math.random() * (max - min + 1) + min), delay:.1});
+                    //TweenMax.to(element,0.1,{x:0, delay:(5+1) * .1}); */
+                  }}, 0.25);
+                });
+              }
+            })
+          }
         }
       }
       else{
         this.openSnackBar(data['error'], 'Error');
       }
+    }
+  }
+
+  removeBubbles(): void {
+    const bubbleArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.bubble'));
+    if(Array.isArray(bubbleArray) && bubbleArray.length > 0) {
+      setTimeout( () => {
+        bubbleArray[0].remove();
+        this.removeBubbles();
+      });
     }
   }
 
@@ -211,6 +302,12 @@ export class SubscribeComponent implements OnInit, OnDestroy {
   }
 
   closeSubscribeNotificationDialog() {
+    const bubbleWrapArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.bubble-wrap'));
+    if(Array.isArray(bubbleWrapArray) && bubbleWrapArray.length > 0) {
+      bubbleWrapArray.map( (element) => {
+        element.remove();
+      });
+    }
     this.dialogRef.close();
   }
 

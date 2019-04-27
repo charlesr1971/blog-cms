@@ -16,7 +16,7 @@ $custom-typography: mat-typography-config(
 // Dark theme 1
 
 $dark-primary: mat-palette($mat-blue-grey, 500, 100, 800);
-$dark-accent:  mat-palette($mat-blue, 500, A100);
+$dark-accent:  mat-palette($mat-blue, 300, 500, A100);
 $dark-warn:    mat-palette($mat-deep-orange);
 
 $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
@@ -421,6 +421,10 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-primary, lighter); 
     }
 
+    .bubble-bell {
+        color: mat-color($dark-accent, 300); 
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -472,7 +476,7 @@ $dark-background-palette: map-get($dark-theme, background);
 // Light theme 1
 
 $light-primary: mat-palette($mat-blue-grey, 500, 100, 800);
-$light-accent: mat-palette($mat-blue, 500, A100);
+$light-accent: mat-palette($mat-blue, 300, 500, A100);
 $light-warn: mat-palette($mat-deep-orange);
 
 $light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
@@ -887,6 +891,10 @@ $light-background-palette: map-get($light-theme, background);
 
     .form-status-container span, .form-status-container p {
         color: mat-color($light-primary, lighter); 
+    }
+
+    .bubble-bell {
+        color: mat-color($light-accent, 300); 
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
