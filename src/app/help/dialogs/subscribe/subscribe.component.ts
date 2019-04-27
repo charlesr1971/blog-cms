@@ -88,23 +88,12 @@ export class SubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
     
   }
 
-  loadSound(): void {
-    /* const audio = <HTMLAudioElement>this.documentBody.getElementById('dialogSubscribeNotificationSound');
-    if(audio) {
-      //if(this.debug) {
-        console.log('subscribeComponent.component: loadSound: audio: ',audio);
-      //}
-      audio.volume = 1;
-      audio.play();
-    } */
-  }
-
   playSound(): void  {
     const audio = <HTMLAudioElement>this.documentBody.getElementById('dialogSubscribeNotificationSound');
     if(audio) {
-      //if(this.debug) {
+      if(this.debug) {
         console.log('subscribeComponent.component: playSound: audio: ',audio);
-      //}
+      }
       audio.volume = 1;
       audio.play();
     }
@@ -134,9 +123,6 @@ export class SubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     if(this.debug) {
       console.log('subscribeComponent.component: subscribeFormSubmit: body',body);
-    }
-    if(this.isMobile) {
-      this.loadSound();
     }
     this.subscribeSubscription = this.httpService.addSubscription(body).do(this.processSubscribeData).subscribe();
   }
@@ -209,19 +195,12 @@ export class SubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
               }
               if(Array.isArray(bubbleBellArray) && bubbleBellArray.length > 0) {
-                //this.playSound();
                 bubbleBellArray.map( (element) => {
                   setTimeout( () => {
                     this.playSound();
                   },1000);
                   TweenMax.fromTo(element, 1, {scale:0, ease:Elastic.easeOut, opacity: 0, delay: 1.5}, {scale:1, ease:Elastic.easeOut, opacity: 1, delay: 1.5, onComplete: function(){
-                    /* const introAnim = new TimelineMax({repeat:-1, repeatDelay:1});
-                    CustomWiggle.create("introWiggle", {wiggles:10, type:"anticipate"});
-                    introAnim.to(element, 1, {transformOrigin: "center center",  cycle:{y:[20, -20], scale:[1.25, 0.75]}, rotation: 10, ease:"introWiggle"}, 0.25); */
-                    /* const max = 5;
-                    const min = -5;
-                    TweenMax.to(element,0.1,{repeat:5-1, x:Math.floor(Math.random() * (max - min + 1) + min), delay:.1});
-                    //TweenMax.to(element,0.1,{x:0, delay:(5+1) * .1}); */
+                    
                   }}, 0.25);
                 });
               }

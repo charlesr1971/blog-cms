@@ -421,6 +421,10 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-primary, lighter); 
     }
 
+    .bubble-ring {
+        border-color: mat-color($dark-primary, lighter);
+    }
+
     .bubble-bell {
         color: mat-color($dark-accent, 300); 
     }
@@ -891,6 +895,10 @@ $light-background-palette: map-get($light-theme, background);
 
     .form-status-container span, .form-status-container p {
         color: mat-color($light-primary, lighter); 
+    }
+
+    .bubble-ring {
+        border-color: mat-color($light-primary, lighter);
     }
 
     .bubble-bell {
