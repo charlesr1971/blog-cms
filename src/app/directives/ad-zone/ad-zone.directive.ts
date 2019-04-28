@@ -43,6 +43,8 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
   adZoneTooltipText: any = null;
   subscriptionAdzoneMutation: Subscription;
   isMobile: boolean = false;
+  isTablet: boolean = false;
+  isDevice: boolean = false;
   adZoneUrl: string = '';
   maxRate: number = 4;
   metaDataMaxWidth: number = 240;
@@ -62,10 +64,13 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
       }
 
       this.isMobile = this.deviceDetectorService.isMobile();
+      this.isTablet = this.deviceDetectorService.isTablet();
+
+      this.isDevice = (this.isTablet || this.isMobile) ? true : false;
 
       this.adZoneUrl = this.httpService.adZoneUrl;
 
-      this.useMobileScrollEventToRemoveTooltip = this.isMobile ? this.useMobileScrollEventToRemoveTooltip : false;
+      this.useMobileScrollEventToRemoveTooltip = this.isDevice ? this.useMobileScrollEventToRemoveTooltip : false;
 
   }
 
@@ -410,8 +415,8 @@ export class AdZoneDirective implements AfterViewInit, OnDestroy {
               const child1 = csstooltip.getElementsByTagName('span')[0];
               const child2 = csstooltip.getElementsByTagName('div')[0];
               if(child2) {
-                const eventStart = this.isMobile ? 'touchstart' : 'mouseover';
-                const eventEnd = this.isMobile ? 'touchend' : 'mouseout';
+                const eventStart = this.isDevice ? 'touchstart' : 'mouseover';
+                const eventEnd = this.isDevice ? 'touchend' : 'mouseout';
                 csstooltip.addEventListener(eventStart,function(){
                   that.toggleAdZoneTooltip(spanTextContent,child2,'show');
                 },false);

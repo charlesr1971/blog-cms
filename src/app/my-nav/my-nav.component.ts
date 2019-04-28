@@ -46,6 +46,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
   themeAdd: string = '';
 
   isMobile: boolean = false;
+  isTablet: boolean = false;
   title = environment.title;
   pages = [];
   authors = [];
@@ -116,6 +117,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
       this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
 
       this.isMobile = this.deviceDetectorService.isMobile();
+      this.isTablet = this.deviceDetectorService.isTablet(); 
 
       this.title = this.httpService.websiteTitle !== '' ? this.httpService.websiteTitle : this.title;
 
@@ -508,12 +510,15 @@ export class MyNavComponent implements OnInit, OnDestroy {
 
   openSubscribeNotificationDialog(): void {
     const dialogRef = this.dialog.open(SubscribeComponent, {
-      width: this.isMobile ? '100%' :'50%',
-      height: this.isMobile ? '100%' :'50%',
-      maxWidth: this.isMobile ? '100%' :'50%',
+      width: this.isTablet ? '75%' : (this.isMobile ? '100%' :'50%'),
+      height: this.isTablet ? '75%' : (this.isMobile ? '100%' :'50%'),
+      maxWidth: this.isTablet ? '75%' : (this.isMobile ? '100%' :'50%'),
       disableClose: true,
       id: 'dialog-subscribe-notification'
     });
+    if(this.debug) {
+      console.log('my-nav.component: dialog subscribe notification: this.isTablet: ', this.isTablet);
+    }
     if(this.debug) {
       console.log('my-nav.component: dialog subscribe notification: before close: this.themeRemove: ', this.themeRemove);
       console.log('my-nav.component: dialog subscribe notification: before close: this.themeAdd: ', this.themeAdd);

@@ -312,6 +312,8 @@ body.profile .mat-tree .mat-form-field {
 .css-tooltip {
     position: relative;
     display: inline-block;
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
 body .adzone-tooltiptext {
