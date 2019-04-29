@@ -4,6 +4,9 @@
   <div class="gallery-detail-container">
 
     <div class="gallery-detail-title-container">
+      <div *ngIf="(currentUser | async) as currentUser">
+        <mat-icon class="create" (click)="editFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0">create</mat-icon>
+      </div>
       <div class="gallery-detail-title">
         {{ image.title }}
       </div>

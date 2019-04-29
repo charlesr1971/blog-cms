@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, Renderer2, HostListener } from '@
 import { BehaviorSubject } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { User } from '../../user/user.model';
@@ -41,6 +41,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
   disableFavouriteTooltip: boolean = false;
   hasAside: boolean = false;
   hideCommentInput: boolean = false;
+  uploadRouterAliasLower: string = environment.uploadRouterAlias;
   CommentElementsPrefix: CommentElementsPrefix  = {
     parentClose: '#gallery-detail-comments-container-',
     refchildClose: '#gallery-detail-comments-ref-'
@@ -56,6 +57,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
     private utilsService: UtilsService,
     private deviceDetectorService: DeviceDetectorService,
     private route: ActivatedRoute,
+    private router: Router,
     private location: Location) {
 
       if(environment.debugComponentLoadingOrder) {
@@ -227,6 +229,10 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
 
   sendHideCommentInput(event: any): void {
     this.hideCommentInput = event;
+  }
+
+  editFile(id: string): void {
+    this.router.navigate([this.uploadRouterAliasLower, {fileid: id}]);
   }
 
   ngOnDestroy() {

@@ -20,7 +20,15 @@ aside.gallery-detail-aside {
 }
 
 .gallery-detail-title-container {
+    position: relative;
     text-align: center;
+}
+
+.gallery-detail-title-container mat-icon.create {
+    position: absolute;
+    top: 27px;
+    right: 0px;
+    cursor: pointer;
 }
 
 .gallery-detail-title {
@@ -243,6 +251,13 @@ aside.gallery-detail-aside {
         font-size: 18px;
         margin: 30px 30px 0px;
     }
+
+    .gallery-detail-title-container mat-icon.create {
+        top: 55px;
+        right: 20px;
+        font-size: 18px;
+    }
+
 
     .gallery-detail-author-data .gallery-detail-author-name {
         margin-bottom: 5px;
