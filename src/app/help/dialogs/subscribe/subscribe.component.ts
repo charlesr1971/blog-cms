@@ -200,7 +200,6 @@ export class SubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.playSound();
                   },1000);
                   TweenMax.fromTo(element, 1, {scale:0, ease:Elastic.easeOut, opacity: 0, delay: 1.5}, {scale:1, ease:Elastic.easeOut, opacity: 1, delay: 1.5, onComplete: function(){
-                    
                   }}, 0.25);
                 });
               }
@@ -214,14 +213,18 @@ export class SubscribeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  removeBubbles(): void {
+  removeBubbles(duration: number = 0): void {
     const bubbleArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.bubble'));
     if(Array.isArray(bubbleArray) && bubbleArray.length > 0) {
       setTimeout( () => {
         bubbleArray[0].remove();
-        this.removeBubbles();
-      });
+        this.removeBubbles(this.getRandomArbitrary(1,100));
+      },duration);
     }
+  }
+
+  getRandomArbitrary(min: number, max: number): number {
+    return Math.random() * (max - min) + min;
   }
 
   createForm(): void {

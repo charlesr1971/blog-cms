@@ -13,6 +13,13 @@ $custom-typography: mat-typography-config(
     @return '%23' + str-slice('#{$colour}', 2, -1)
 }
 
+@function random-color($list) {
+    $listlen: length($list);
+    $random: random($listlen);
+    $color: nth($list, $random);
+    @return $color;
+  }
+
 // Dark theme 1
 
 $dark-primary: mat-palette($mat-blue-grey, 500, 100, 800);
@@ -41,6 +48,8 @@ $dark-background-palette: map-get($dark-theme, background);
 }
 
 @mixin dark {  
+
+    $darkColors: mat-color($dark-primary, 100), mat-color($dark-primary, lighter), mat-color($dark-accent, 300), mat-color($dark-accent, 500), mat-color($dark-accent, A100), mat-color($dark-accent, lighter);
 
     .mat-card.mat-card-unapproved {
         background: mat-color($dark-primary, 800, 0.5);
@@ -429,6 +438,19 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-accent, 300); 
     }
 
+    @for $i from 1 through 100 {
+
+        .bubble:nth-child(#{$i}){
+            $size: random(10);
+            height: $size + 0px;
+            width: $size + 0px;
+            animation-delay: -$i * .2s;
+            transform: translate3d( ((random(200) - 100) * 1px), ((random(200) - 100) * 1px), random(1000) * 1px);
+            border-color: random-color($darkColors);
+        }
+    
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -505,6 +527,8 @@ $light-background-palette: map-get($light-theme, background);
 }
 
 @mixin light {
+
+    $lightColors: mat-color($light-primary, 100), mat-color($light-primary, lighter), mat-color($light-accent, 300), mat-color($light-accent, 500), mat-color($light-accent, A100), mat-color($light-accent, lighter);
 
     .mat-card.mat-card-unapproved {
         background: mat-color($light-primary, lighter, 0.25);
@@ -904,6 +928,21 @@ $light-background-palette: map-get($light-theme, background);
     .bubble-bell {
         color: mat-color($light-accent, 300); 
     }
+
+    @for $i from 1 through 100 {
+
+        .bubble:nth-child(#{$i}){
+            $size: random(10);
+            /* height: $size;
+            width: $size; */
+            transform: scale($size);
+            animation-delay: -$i * .2s;
+            transform: translate3d( ((random(200) - 100) * 1px), ((random(200) - 100) * 1px), random(1000) * 1px);
+            border-color: random-color($lightColors);
+        }
+    
+    }
+
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
@@ -1745,3 +1784,4 @@ $light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
     }
 
 }
+

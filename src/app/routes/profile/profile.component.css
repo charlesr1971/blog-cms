@@ -167,14 +167,23 @@ div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-lis
 }
 
 div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title {
+    position: relative;
     width: 100%;
-    padding: 10px;
+    padding: 10px 30px 10px 10px;
     text-align: center;
     font-size: 12px;
     text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 	word-wrap: break-word;
+}
+
+div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title mat-icon.create {
+    position: absolute;
+    top: 13px;
+    right: 0px;
+    font-size: 12px;
+    cursor: pointer;
 }
 
 .upload-container {
@@ -191,8 +200,6 @@ div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-lis
 #dialogEditCategoriesHelpNotificationText {
     overflow: auto;
 }
-
-
 
 .dialog-email-container, .dialog-user-admin-notification-container {
     position: relative;
@@ -288,8 +295,6 @@ button[data-role='submit'] {
     margin-top: 0px;
 }
 
-
-
 /* media queries */
 
 /* smart phones */
@@ -342,9 +347,13 @@ button[data-role='submit'] {
         margin: 0px 0px 20px 0px;
     }
 
-    /* .e-mail-template-salutation {
-        font-size: 26px;
-    } */
+    div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title {
+        padding: 10px;
+    }
+    
+    div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title mat-icon.create {
+        right: 10px;
+    }
 
     
 }

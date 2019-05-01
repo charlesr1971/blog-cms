@@ -11,7 +11,7 @@ export const environment = {
   port: '',
   maxcontentlength: 500000,
   tinymcearticlemaximages: 2,
-  tinymcearticlemaxwordcount: 500,
+  tinymcearticlemaxwordcount: 680,
   openToolbarCommentsPanel: true,
   useRestApi: true,
   restApiURLReWrite: true,

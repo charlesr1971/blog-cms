@@ -2334,6 +2334,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  editFile(id: string): void {
+    this.router.navigate([this.uploadRouterAliasLower, {fileid: id}]);
+  }
+
   ngOnDestroy() {
 
     if (this.editProfileSubscription) {

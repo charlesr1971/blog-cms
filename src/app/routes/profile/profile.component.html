@@ -233,7 +233,7 @@
                 <img class="image-thumbnail-list-item-image-img image-thumbnail-list-item-image-unapproved-img" src="{{ imageUnapproved.src }}" />
               </div>
               <div class="image-thumbnail-list-item-title" ngbTooltip="{{ imageUnapproved.title }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">
-                  {{ imageUnapproved.title }}
+                  {{ imageUnapproved.title }}<mat-icon class="create" (click)="editFile(imageUnapproved.id)">create</mat-icon>
               </div>
             </li>
           </ul>
@@ -256,7 +256,7 @@
                 <img class="image-thumbnail-list-item-image-img image-thumbnail-list-item-image-approved-img" src="{{ imageApproved.src }}" />
               </div>
               <div class="image-thumbnail-list-item-title" ngbTooltip="{{ imageApproved.title }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">
-                  {{ imageApproved.title }}
+                  {{ imageApproved.title }}<mat-icon class="create" (click)="editFile(imageApproved.id)">create</mat-icon>
               </div>
             </li>
           </ul>

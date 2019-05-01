@@ -519,6 +519,8 @@ export class MyNavComponent implements OnInit, OnDestroy {
     if(this.debug) {
       console.log('my-nav.component: dialog subscribe notification: this.isTablet: ', this.isTablet);
     }
+    this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+    this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
     if(this.debug) {
       console.log('my-nav.component: dialog subscribe notification: before close: this.themeRemove: ', this.themeRemove);
       console.log('my-nav.component: dialog subscribe notification: before close: this.themeAdd: ', this.themeAdd);

@@ -28,24 +28,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: black;
+    background: none;
     opacity: 0.7;
     border-radius: 50%;
+    border-width: 5px;
+    border-style: solid;
     animation: move 3s infinite reverse;
     z-index: 1;
-}
-
-@for $i from 1 through 100 {
-
-    .bubble:nth-child(#{$i}){
-        $size: random(10)+px;
-        height: $size;
-        width: $size;
-        animation-delay: -$i * .2s;
-        transform: translate3d( ((random(200) - 100) * 1px), ((random(200) - 100) * 1px), random(1000) * 1px);
-        background: hsl( random(360) , 70%, 50%);
-    }
-
 }
 
 .bubble-ring {
@@ -54,7 +43,7 @@
     left: 50%;
     width: 200px;
     height: 200px;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) translate3d(0, 0, 0px);
     background: none;
     opacity: 0;
     border-radius: 50%;
@@ -68,9 +57,9 @@
     top: 48%;
     left: 50%;
     font-size: 100px;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) translate3d(0, 0, 1001px);
     opacity: 0;
-    z-index: 2;
+    z-index: 3;
 }
 
 /* smart phones */
