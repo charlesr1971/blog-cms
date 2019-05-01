@@ -442,8 +442,7 @@ $dark-background-palette: map-get($dark-theme, background);
 
         .bubble:nth-child(#{$i}){
             $size: random(10);
-            height: $size + 0px;
-            width: $size + 0px;
+            transform: scale($size);
             animation-delay: -$i * .2s;
             transform: translate3d( ((random(200) - 100) * 1px), ((random(200) - 100) * 1px), random(1000) * 1px);
             border-color: random-color($darkColors);
@@ -933,8 +932,6 @@ $light-background-palette: map-get($light-theme, background);
 
         .bubble:nth-child(#{$i}){
             $size: random(10);
-            /* height: $size;
-            width: $size; */
             transform: scale($size);
             animation-delay: -$i * .2s;
             transform: translate3d( ((random(200) - 100) * 1px), ((random(200) - 100) * 1px), random(1000) * 1px);
