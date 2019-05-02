@@ -18,6 +18,16 @@ div.tinymce-footer div.tinymce-footer-container mat-icon.assignment{
     margin-right: 10px;
 }
 
+div.tinymce-footer div.tinymce-footer-container mat-icon.close{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    color: rgba(0,0,0,0.75);
+}
+
 div.tinymce-footer div.tinymce-footer-container span#tinymce-footer-word-count {
     display: inline-block;
     font-size: 16px;
