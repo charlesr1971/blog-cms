@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { uriParse } from '../util/uriParse';
 import { arrayInclude, arrayExclude } from '../util/arrayUtils';
 import { getUriMatches } from '../util/regexUtils';
+import { styler } from '../util/styler';
 
 import { HttpService } from '../services/http/http.service';
 import { CookieService } from 'ngx-cookie-service';
@@ -32,6 +33,8 @@ import { ParseSourceFile } from '@angular/compiler';
 
 declare var tinymce: any;
 
+declare var TweenMax: any, Elastic: any, Linear: any;
+
 @Component({
   selector: 'app-tinymce',
   templateUrl: './tinymce.component.html',
@@ -58,6 +61,7 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
   tinymceArticleAddedImages = [];
   disableImageUpload: boolean = false;
   hasUnsavedChanges: boolean = false;
+  tinymceWordCountIsVisible: boolean = false;
   tinymceArticle: string = '';
   
   debug: boolean = false;
@@ -353,6 +357,89 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
       if(this.debug) {
         console.log('tinymce.component: setup: keyup keydown change');
       }
+      if(this.isMobile && this.tinyMceArticleMaxWordCount > 0) {
+        const tinymceFooter = document.getElementById('tinymce-footer');
+        if(this.debug) {
+          console.log('tinymce.component: setup: keyup keydown change: tinymceFooter: ', tinymceFooter);
+        }
+        const overshoot = 1;
+        const period = 0.25;
+        if(!tinymceFooter) {
+          const div1 = this.renderer.createElement('div');
+          this.renderer.setAttribute(div1,'class','tinymce-footer');
+          this.renderer.setAttribute(div1,'id','tinymce-footer');
+          const div2 = this.renderer.createElement('div');
+          this.renderer.setAttribute(div2,'class','tinymce-footer-container');
+          div1.appendChild(div2);
+          const maticon = this.renderer.createElement('mat-icon');
+          this.renderer.setAttribute(maticon,'class','mat-icon material-icons assignment');
+          const maticonText = this.renderer.createText('keyboard');
+          maticon.appendChild(maticonText);
+          div2.appendChild(maticon);
+          const span = this.renderer.createElement('span');
+          this.renderer.setAttribute(span,'id','tinymce-footer-word-count');
+          const spanText = this.renderer.createText(this.tinyMceArticleMaxWordCount.toString());
+          span.appendChild(spanText);
+          div2.appendChild(span);
+          document.body.appendChild(div1);
+        }
+        else{
+          const tinymceFooterWordCount = document.getElementById('tinymce-footer-word-count');
+          if(tinymceFooterWordCount) {
+            this.tinymceWordCountIsVisible = true;
+            if('words' in metaData && !isNaN(metaData['words']) && this.tinyMceArticleMaxWordCount > 0){
+              if(this.debug) {
+                console.log('tinymce.component: setup: keyup keydown change: metaData[\'words\']: ', metaData['words']);
+              }
+              if(metaData['words'] > 1) {
+                const styles = styler('#tinymce-footer').get(['display','bottom']);
+                if(this.debug) {
+                  console.log('tinymce.component: setup: keyup keydown change: styles: ', styles);
+                }
+                if(styles['display'] === 'none'){
+                  tinymceFooter.style.display = 'block';
+                }
+                if(styles['bottom'] === '-45px'){
+                  TweenMax.to('#tinymce-footer',1.5,{bottom:'0px',ease:Elastic.easeOut,easeParams:[overshoot,period]});
+                }
+                if(metaData['words'] <= this.tinyMceArticleMaxWordCount){
+                  const words = (metaData['words'] - 1);
+                  let count = (this.tinyMceArticleMaxWordCount - words) < 0 ? 0: (this.tinyMceArticleMaxWordCount - words);
+                  count = count === 1 ? 0 : count;
+                  if(count <= 50) {
+                    tinymceFooterWordCount.style.color = '#ff5722';
+                  }
+                  else{
+                    tinymceFooterWordCount.style.color = '#717f8e';
+                  }
+                  if(this.debug) {
+                    console.log('tinymce.component: setup: keyup keydown change: this.tinyMceArticleMaxWordCount: ', this.tinyMceArticleMaxWordCount);
+                    console.log('tinymce.component: setup: keyup keydown change: words: ', words);
+                  }
+                  tinymceFooterWordCount.innerHTML = count.toString();
+                  if(count === 50) {
+                    const overshoot = 1;
+                    const period = 0.25;
+                    TweenMax.to(tinymceFooterWordCount,0.5,{
+                      scale:0,
+                      onComplete:function(){
+                        TweenMax.to(tinymceFooterWordCount,1.4,{
+                          scale:1,
+                          ease:Elastic.easeOut,
+                          easeParams:[overshoot,period]
+                        })
+                      }
+                    });
+                  }
+                }
+              }
+              else{
+                TweenMax.to('#tinymce-footer',0.1,{bottom:'-45px',ease:Linear.easeIn});
+              }
+            }
+          }
+        }
+      }
     });
     if(this.isMobile) {
       editor.on('focus', (event) => {
@@ -466,6 +553,10 @@ export class TinymceComponent implements AfterViewInit, OnDestroy {
         this.renderer.setStyle(obj,'opacity',0);
         obj.remove();
       }.bind(this));
+    }
+    const tinymceFooter = document.getElementById('tinymce-footer');
+    if(tinymceFooter) {
+      tinymceFooter.remove();
     }
   }
   
