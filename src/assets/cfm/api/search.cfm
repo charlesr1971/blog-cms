@@ -79,7 +79,7 @@
 <CFQUERY NAME="qGetFileTitles" DATASOURCE="#request.domain_dsn#">
   SELECT File_ID, File_uuid, Title, ImagePath 
   FROM tblFile
-  WHERE (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(local['userid'])> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local['userid']#">)</cfif>)<cfif Len(Trim(data['term']))> AND TRIM(Title) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#data['term']#%"></cfif>
+  WHERE (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(userid)> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#">)</cfif>)<cfif Len(Trim(data['term']))> AND TRIM(Title) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#data['term']#%"></cfif>
   ORDER BY TRIM(Title) ASC
 </CFQUERY>
 
