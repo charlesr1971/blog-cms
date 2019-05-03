@@ -393,6 +393,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   signupSubscription: Subscription;
   forgottenPasswordSubscription: Subscription;
   editImageSubscription: Subscription;
+  editAdminApprovedSubscription: Subscription;
   currentUser: User;
   mode: string = 'add';
   editImageId: string = '';
@@ -425,6 +426,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
   isForgottenPasswordForm: boolean = false;
   emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
   captchaIsValid: boolean = false;
+  adminUserId: number = 0;
+  adminApprovedText: string = 'Approve';
   
 
   debug: boolean = false;
@@ -530,26 +533,24 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
       this.route.params.subscribe( (params) => {
         if(this.debug) {
-          console.log('tree-dynamic.component: this.route.params.subscribe ',params);
+          console.log('tree-dynamic.component: ngOnInit: this.route.params.subscribe ',params);
         }
         if(this.debug) {
-          console.log('tree-dynamic.component: this.cookieService.get("userToken")',this.cookieService.get('userToken'));
+          console.log('tree-dynamic.component: ngOnInit: this.cookieService.get("userToken")',this.cookieService.get('userToken'));
           console.log('tree-dynamic.component: ngOnInit: this.currentUser ',this.currentUser);
         }
-
-        
 
         if (params['formType'] && params['formType'] === 'login') { 
           this.signUpValidated = 1;
           if(this.debug) {
-            console.log('tree-dynamic: login');
+            console.log('tree-dynamic: ngOnInit: login');
           }
         }
 
         if (params['formType'] && params['formType'] === 'forgottenPassword') { 
           this.isForgottenPasswordForm = true;
           if(this.debug) {
-            console.log('tree-dynamic: forgotten password');
+            console.log('tree-dynamic: ngOnInit: forgotten password');
           }
         }
 
@@ -563,7 +564,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.httpService.userId.next(0);
           this.httpService.login.next(false);
           if(this.debug) {
-            console.log('tree-dynamic: logout');
+            console.log('tree-dynamic: ngOnInit: logout');
           }
         }
         if (params['formType'] && params['formType'] === 'uploadPhoto') {
@@ -580,8 +581,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.editImageId = '';
           this.fileImageId = 0;
           if(this.debug) {
-            console.log('tree-dynamic: upload photo: this.userid ',this.userid);
-            console.log('tree-dynamic: upload photo');
+            console.log('tree-dynamic: ngOnInit: upload photo: this.userid ',this.userid);
+            console.log('tree-dynamic: ngOnInit: upload photo');
           }
         }
         if (params['fileid'] && params['fileid'] !== '') {
@@ -590,8 +591,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.mode = 'edit';
           this.editImageId = params['fileid'];
           if(this.debug) {
-            console.log('tree-dynamic: editFile: params["fileid"] ',params['fileid']);
-            console.log('tree-dynamic: editFile');
+            console.log('tree-dynamic: ngOnInit: editFile: params["fileid"] ',params['fileid']);
+            console.log('tree-dynamic: ngOnInit: editFile');
           }
           this.treeForm = null;
           this.signUpForm = null;
@@ -601,15 +602,21 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.createForm();
           this.monitorFormValueChanges();
           if(this.debug) {
-            console.log('tree-dynamic: before this this.fetchImage');
+            console.log('tree-dynamic: ngOnInit: before this this.fetchImage');
           }
           if(this.debug) {
             console.log('tree-dynamic: ngOnInit: this.fileImageId: ', this.fileImageId);
           }
+          if('userid' in params && params['userid'] > 0) {
+            this.adminUserId = params['userid'];
+          }
+          if(this.debug) {
+            console.log('tree-dynamic: ngOnInit: this.adminUserId: ',this.adminUserId);
+          }
           this.fetchImage(params['fileid']);
         }
         if(this.debug) {
-          console.log('tree-dynamic: this.signUpValidated: ',this.signUpValidated);
+          console.log('tree-dynamic: ngOnInit: this.signUpValidated: ',this.signUpValidated);
         }
         if (params['formType']) {
           this.treeForm = null;
@@ -621,7 +628,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.monitorFormValueChanges();
         }
         if(this.debug) {
-          console.log('tree-dynamic: params: ',params);
+          console.log('tree-dynamic: ngOnInit: params: ',params);
         }
       });
 
@@ -629,14 +636,14 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
     this.uploadService.subscriptionImageError.subscribe( (data: any) => {
       if(this.debug) {
-        console.log('tree-dynamic: subscriptionImageError: data', data);
+        console.log('tree-dynamic: ngOnInit: subscriptionImageError: data', data);
       }
       this.toggleError(data);
     });
 
     this.uploadService.subscriptionImageUrl.subscribe( (data: any) => {
       if(this.debug) {
-        console.log('tree.dynamic: data: ',data);
+        console.log('tree.dynamic: ngOnInit: data: ',data);
       }
       if(data['uploadType'] === 'gallery') {
         addImage(TweenMax, this.renderer, this.uploadedImageContainer, data['imageUrl'], 'uploadedImage');
@@ -648,7 +655,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
       this.formData['tinymceArticleDeletedImages'] = data;
       this.httpService.subjectImagePath.next(this.formData);
       if(this.debug) {
-        console.log('tree.dynamic: this.formData: ',this.formData);
+        console.log('tree.dynamic: ngOnInit: this.formData: ',this.formData);
       }
     });
 
@@ -657,26 +664,26 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
 
     if(this.debug) {
-      console.log('this.userToken',this.userToken);
+      console.log('tree-dynamic: ngOnInit: this.userToken',this.userToken);
     }
 
     this.httpService.tinymceArticleOnChange.subscribe( (data: any) => {
       this.formData['article'] = data;
       this.httpService.subjectImagePath.next(this.formData);
       if(this.debug) {
-        console.log('tree-dynamic: this.httpService.tinymceArticleOnChange: this.formData: ', this.formData);
+        console.log('tree-dynamic: ngOnInit: this.httpService.tinymceArticleOnChange: this.formData: ', this.formData);
       }
     });
 
     this.httpService.tinymceArticleMetaData.subscribe( (data: any) => {
       if(this.debug) {
-        console.log('tree-dynamic: this.httpService.tinymceArticleMetaData: data: ', data);
+        console.log('tree-dynamic: ngOnInit: this.httpService.tinymceArticleMetaData: data: ', data);
       }
       if('words' in data && !isNaN(data['words']) && this.tinyMceArticleMaxWordCount > 0){
         if(data['words'] > this.tinyMceArticleMaxWordCount){
           const dialogarticlemaxwordcountnotification = this.documentBody.querySelector('#dialog-article-max-word-count-notification');
           if(this.debug) {
-            console.log('tree-dynamic: this.httpService.tinymceArticleMetaData: dialogarticlemaxwordcountnotification: ', dialogarticlemaxwordcountnotification);
+            console.log('tree-dynamic: ngOnInit: this.httpService.tinymceArticleMetaData: dialogarticlemaxwordcountnotification: ', dialogarticlemaxwordcountnotification);
           }
           if(!dialogarticlemaxwordcountnotification) {
             try {
@@ -684,7 +691,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
             }
             catch(e) {
               if(this.debug) {
-                console.log('tree-dynamic: this.httpService.tinymceArticleMetaData: error: ', e);
+                console.log('tree-dynamic: ngOnInit: this.httpService.tinymceArticleMetaData: error: ', e);
               }
             }
           }
@@ -715,11 +722,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
     )
     .subscribe(submitArticleNotification => {
       if(this.debug) {
-        console.log('tree-dynamic: submitArticleNotification.valueChanges: submitArticleNotification: ',submitArticleNotification);
+        console.log('tree-dynamic: ngOnInit: submitArticleNotification.valueChanges: submitArticleNotification: ',submitArticleNotification);
       }
       this.formData['submitArticleNotification'] = submitArticleNotification ? 1 : 0;
       if(this.debug) {
-        console.log('tree-dynamic: submitArticleNotification.valueChanges: this.formData["submitArticleNotification"]: ',this.formData['submitArticleNotification']);
+        console.log('tree-dynamic: ngOnInit: submitArticleNotification.valueChanges: this.formData["submitArticleNotification"]: ',this.formData['submitArticleNotification']);
       }
     });
 
@@ -777,6 +784,17 @@ export class TreeDynamic implements OnInit, OnDestroy {
       this.editImage(this.editImageId);
       this.dialog.closeAll();
     }
+  }
+
+  approve(id: string): void {
+    const body = {
+      fileUuid: id,
+      approved: this.adminApprovedText === 'Approve' ? 1 : 0
+    };
+    if(this.debug) {
+      console.log('tree-dynamic: approve: body',body);
+    }
+    this.editAdminApprovedSubscription = this.httpService.editImageAdminApproved(body).do(this.processEditImageAdminApprovedData).subscribe();
   }
 
   public fetchAutocompleteItems = (term: string): Observable<Response> => {
@@ -846,6 +864,12 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.formData['article'] = data['article'];
         this.publishArticleDate.patchValue(moment(new Date(data['publishArticleDate']),'MMMM DD, YYYY'));
         this.fileImageId = data['fileid'];
+        this.userid = this.adminUserId > 0 ? data['userid'] : this.userid;
+        this.adminApprovedText = data['approved'] === 1 ? 'Unapprove' : 'Approve';
+        if(this.debug) {
+          console.log('tree-dynamic: processImageData: this.userid: ',this.userid);
+          console.log('tree-dynamic: processImageData: this.adminApprovedText: ',this.adminApprovedText);
+        }
         if(this.debug) {
           console.log('tree-dynamic: processImageData: this.fileImageId: ', this.fileImageId);
         }
@@ -912,6 +936,29 @@ export class TreeDynamic implements OnInit, OnDestroy {
           console.log('tree-dynamic: processEditImageData: this.tinymceArticleImages',this.tinymceArticleImages);
         }
         this.hasUnsavedChanges = false;
+        this.openSnackBar('Changes have been submitted', 'Success');
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.openSnackBar(data['error'], 'Error');
+        }
+      }
+    }
+  }
+
+  private processEditImageAdminApprovedData = (data) => {
+    if(this.debug) {
+      console.log('processEditImageAdminApprovedData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '') {
+        this.adminApprovedText = data['approved'] === 1 ? 'Unapprove' : 'Approve';
+        if(this.debug) {
+          console.log('tree-dynamic: processEditImageAdminApprovedData: this.adminApprovedText: ',this.adminApprovedText);
+        }
         this.openSnackBar('Changes have been submitted', 'Success');
       }
       else{
@@ -1312,14 +1359,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
           }
           this.formData['forename'] = forename;
           if(this.signUpForm) {
-            //if(this.recaptchaType !== 'google') {
-              this.signUpFormDisabledState();
-            //}
+            this.signUpFormDisabledState();
           }
           else{
-            //if(this.recaptchaType !== 'google') {
-              this.loginFormDisabledState();
-            //}
+            this.loginFormDisabledState();
           }
         });
         this.surname.valueChanges
@@ -1333,14 +1376,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
           }
           this.formData['surname'] = surname;
           if(this.signUpForm) {
-            //if(this.recaptchaType !== 'google') {
-              this.signUpFormDisabledState();
-            //}
+            this.signUpFormDisabledState();
           }
           else{
-            //if(this.recaptchaType !== 'google') {
-              this.loginFormDisabledState();
-            //}
+            this.loginFormDisabledState();
           }
         });
       }
@@ -1365,14 +1404,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
           }
           this.formData['email'] = email;
           if(this.signUpForm) {
-            //if(this.recaptchaType !== 'google') {
-              this.signUpFormDisabledState();
-            //}
+            this.signUpFormDisabledState();
           }
           else{
-            //if(this.recaptchaType !== 'google') {
-              this.loginFormDisabledState();
-            //}
+            this.loginFormDisabledState();
           }
         });
         this.password.valueChanges
@@ -1386,14 +1421,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
           }
           this.formData['password'] = password;
           if(this.signUpForm) {
-            //if(this.recaptchaType !== 'google') {
-              this.signUpFormDisabledState();
-            //}
+            this.signUpFormDisabledState();
           }
           else{
-            //if(this.recaptchaType !== 'google') {
-              this.loginFormDisabledState();
-            //}
+            this.loginFormDisabledState();
           }
         });
       }
@@ -1454,9 +1485,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
             console.log('tree-dynamic: monitorFormValueChanges: email: ',email);
           }
           this.formData['email'] = email;
-          //if(this.recaptchaType !== 'google') {
-            this.forgottenPasswordFormDisabledState();
-          //}
+          this.forgottenPasswordFormDisabledState();
         });
         if(this.recaptchaType === 'custom') {
           this.captcha.valueChanges
@@ -1937,6 +1966,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
     if (this.editImageSubscription) {
       this.editImageSubscription.unsubscribe();
+    }
+
+    if (this.editAdminApprovedSubscription) {
+      this.editAdminApprovedSubscription.unsubscribe();
     }
 
   }

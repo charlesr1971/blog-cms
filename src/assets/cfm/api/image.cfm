@@ -10,6 +10,7 @@
 <cfparam name="timestamp" default="#DateFormat(Now(),'yyyymmdd')##TimeFormat(Now(),'HHmmss')#" />
 <cfparam name="userToken" default="" />
 <cfparam name="userid" default="0" />
+<cfparam name="isAdmin" default="false" />
 <cfparam name="data" default="" />
 
 <cfinclude template="../functions.cfm">
@@ -33,6 +34,24 @@
 </CFQUERY>
 <cfif qGetUserID.RecordCount>
   <cfset userid = qGetUserID.User_ID>
+  <CFQUERY NAME="qGetUserID" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblUser 
+    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUserID.User_ID#">
+  </CFQUERY>
+  <cfif qGetUserID.RecordCount AND qGetUserID.Role_ID GTE 6>
+    <cfset isAdmin = true>
+    <cfif isAdmin>
+      <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
+        SELECT * 
+        FROM tblFile 
+        WHERE <cfif NOT Val(fileid)>File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#fileUuid#"><cfelse>File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#fileid#"></cfif>  
+      </CFQUERY>
+      <cfif qGetFile.RecordCount>
+        <cfset userid = qGetFile.User_ID>
+      </cfif>
+    </cfif>
+  </cfif>
 </cfif>
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">

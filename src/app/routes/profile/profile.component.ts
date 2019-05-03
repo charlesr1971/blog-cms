@@ -2227,7 +2227,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if(this.debug) {
       console.log('profile.component: previewArticle: params: ', params);
     }
-    this.router.navigate([this.uploadRouterAliasLower, {fileid: params.data.file_uuid}]);
+    if(this.debug) {
+      console.log('profile.component: previewArticle: this.currentUser[\'userid\']: ', this.currentUser['userid']);
+    }
+    this.router.navigate([this.uploadRouterAliasLower, {fileid: params.data.file_uuid, userid: this.currentUser['userid']}]);
   }
 
   // e-mail methods
@@ -2335,7 +2338,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   editFile(id: string): void {
-    this.router.navigate([this.uploadRouterAliasLower, {fileid: id}]);
+    if(this.debug) {
+      console.log('profile.component: editFile: this.currentUser[\'userid\']: ', this.currentUser['userid']);
+    }
+    this.router.navigate([this.uploadRouterAliasLower, {fileid: id, userid: this.currentUser['userid']}]);
   }
 
   ngOnDestroy() {

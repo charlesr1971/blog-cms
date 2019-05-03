@@ -914,6 +914,43 @@ export class HttpService {
     );
   }
 
+  editImageAdminApproved(data: any): Observable<any> {
+    let req = null;
+    let headers = null;
+    let body = null;
+    if(this.useRestApi) {
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'X-HTTP-METHOD-OVERRIDE': 'PUT'
+        })
+      };
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/image/admin/approved/' + data['fileUuid'] + '/' + data['approved'], body, headers);
+      if(this.debug) {
+        console.log('http.service: editImageAdminApproved: body ',body);
+        console.log('http.service: editImageAdminApproved: headers ',headers);
+      }
+    }
+    else{
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('POST', this.apiUrl + '/edit-image-admin-approved.cfm?fileUuid=' + data['fileUuid'] + '&approved=' + data['approved'], body, headers);
+      if(this.debug) {
+        console.log('http.service: editImageAdminApproved: body: ',body);
+        console.log('http.service: editImageAdminApproved: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   editImage(data: any): Observable<any> {
     let req = null;
     let headers = null;

@@ -92,9 +92,6 @@
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Author" value="" formControlName="name" id="name" required>
       </mat-form-field><br />
-      <!-- <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
-        Author is required and must be less than {{maxNameLength}} characters
-      </div><br /> -->
 
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Image Title" value="" formControlName="title" id="title" required>
@@ -177,6 +174,10 @@
       <app-upload *ngIf="userid > 0 && mode == 'edit'"></app-upload>
 
       <div class="form-button-container">
+        <ng-template [ngIf]="adminUserId > 0">
+          <button class="approve" mat-raised-button (click)="approve(editImageId)" *ngIf="adminApprovedText == 'Unapprove'" color="warn">{{ adminApprovedText }}</button>
+          <button class="approve" mat-raised-button (click)="approve(editImageId)" *ngIf="adminApprovedText == 'Approve'" style="background-color:#8bc34a;">{{ adminApprovedText }}</button>
+        </ng-template>
         <button mat-raised-button data-role="submit" (click)="editImage(editImageId)" *ngIf="mode == 'edit'" color="accent">Submit</button>
         <button mat-raised-button (click)="back(editImageId)" *ngIf="mode == 'edit'" [ngStyle]="{'margin-top': mode == 'edit' ? '40px' : '0px'}">Back</button>
       </div>

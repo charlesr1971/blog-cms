@@ -6,6 +6,7 @@
     <cfargument name="fileid" type="numeric" required="no" default="0" />
     <cfargument name="commentid" type="numeric" required="no" default="0" />
     <cfset var local = StructNew()>
+    <cfset local.isAdmin = false>
     <cfset local['userToken'] = "">
     <cfset local['userid'] = 0>
     <cfset local.data = StructNew()>
@@ -26,6 +27,24 @@
     </CFQUERY>
     <cfif local.qGetUserID.RecordCount>
 	  <cfset local['userid'] = local.qGetUserID.User_ID>
+      <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
+        SELECT * 
+        FROM tblUser 
+        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUserID.User_ID#">
+      </CFQUERY>
+      <cfif local.qGetUserID.RecordCount AND local.qGetUserID.Role_ID GTE 6>
+		<cfset local.isAdmin = true>
+        <cfif local.isAdmin>
+          <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
+            SELECT * 
+            FROM tblFile 
+            WHERE <cfif NOT Val(arguments.fileid)>File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileUuid#"><cfelse>File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.fileid#"></cfif>  
+          </CFQUERY>
+          <cfif local.qGetFile.RecordCount>
+			<cfset local['userid'] = local.qGetFile.User_ID>
+          </cfif>
+        </cfif>
+      </cfif>
     </cfif>
     <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
       SELECT * 

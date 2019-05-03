@@ -114,6 +114,7 @@ div.mat-tree-container {
 }
 
 .form-field-container .form-field-text .form-button-container {
+  position: relative;
   width: 48%;
   margin-top: 20px;
 }
@@ -121,6 +122,12 @@ div.mat-tree-container {
 .form-field-container .form-field-text .form-button-container button {
   width: 125px;
   margin-left: 0px;
+}
+
+.form-field-container .form-field-text .form-button-container button.approve {
+  position: absolute;
+  top: -56px;
+  right: 0px;
 }
 
 .form-field-container .form-field-text .form-button-container button:nth-of-type(2) {
