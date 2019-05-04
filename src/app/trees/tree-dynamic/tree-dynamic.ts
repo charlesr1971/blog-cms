@@ -955,7 +955,11 @@ export class TreeDynamic implements OnInit, OnDestroy {
     }
     if(data) {
       if('error' in data && data['error'] === '') {
-        this.adminApprovedText = data['approved'] === 1 ? 'Unapprove' : 'Approve';
+        const approved = parseInt(data['approved']);
+        if(this.debug) {
+          console.log('tree-dynamic: processEditImageAdminApprovedData: approved: ',approved);
+        }
+        this.adminApprovedText = approved === 1 ? 'Unapprove' : 'Approve';
         if(this.debug) {
           console.log('tree-dynamic: processEditImageAdminApprovedData: this.adminApprovedText: ',this.adminApprovedText);
         }
