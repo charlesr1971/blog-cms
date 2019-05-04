@@ -77,6 +77,14 @@
       </CFQUERY>
       <cfif local.qGetUser.RecordCount>
         <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
+        <cfif Len(Trim(local.qGetUser.Filename))>
+		  <cfset local.data['avatarSrc'] = request.avatarbasesrc & local.qGetUser.Filename>
+        <cfelse>
+          <cfset local.data['avatarSrc'] = "">
+        </cfif>
+      <cfelse>
+		<cfset local.data['submitArticleNotification'] = 1>
+        <cfset local.data['avatarSrc'] = "">
       </cfif>
       <cfset local.data['createdAt'] = local.qGetFile.Submission_date>
     <cfelse>

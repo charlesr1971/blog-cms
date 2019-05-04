@@ -68,6 +68,20 @@
     <cfset data['publishArticleDate'] = qGetFile.Publish_article_date>
     <cfset data['approved'] = qGetFile.Approved>
     <cfset data['createdAt'] = qGetFile.Submission_date>
+    <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+      SELECT * 
+      FROM tblUser 
+      WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetFile.User_ID#">
+    </CFQUERY>
+    <cfif qGetUser.RecordCount>
+      <cfif Len(Trim(qGetUser.Filename))>
+        <cfset data['avatarSrc'] = request.avatarbasesrc & qGetUser.Filename>
+      <cfelse>
+        <cfset data['avatarSrc'] = "">
+      </cfif>
+    <cfelse>
+      <cfset data['avatarSrc'] = "">
+    </cfif>
     <cfset ArrayAppend(temp,data)>
   </cfloop>
 </cfif>

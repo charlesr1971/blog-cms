@@ -1,9 +1,10 @@
 <ng-container *ngIf="(currentUser | async) as currentUser">
 
   <mat-card id="image-{{ image.id }}" class="multiple-image-display" [ngClass]="{'mat-card-unapproved':image.approved == 0 && image.userid == currentUser.userid}" *ngIf="image.approved == 1 || (image.approved == 0 && image.userid == currentUser.userid)">
-    <mat-card-header>
-      <div>
-        <mat-card-title>{{ image.title }}</mat-card-title>
+    <mat-card-header [ngStyle]="{'margin': image.avatarSrc && image.avatarSrc != '' ? '0 48px' : '0'}">
+      <img id="image-avatar-src-{{ image.id }}" class="image-avatar-src" src="{{ image.avatarSrc }}" *ngIf="image.avatarSrc && image.avatarSrc != ''" />
+      <div class="image-title-container">
+        <mat-card-title id="image-title-{{ image.id }}">{{ image.title }}</mat-card-title>
         <mat-card-subtitle>{{ image.author }}</mat-card-subtitle>
       </div>
     </mat-card-header>

@@ -86,6 +86,14 @@
   </CFQUERY>
   <cfif qGetUser.RecordCount>
 	<cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
+    <cfif Len(Trim(qGetUser.Filename))>
+	  <cfset data['avatarSrc'] = request.avatarbasesrc & qGetUser.Filename>
+    <cfelse>
+	  <cfset data['avatarSrc'] = "">
+    </cfif>
+  <cfelse>
+	<cfset data['submitArticleNotification'] = 1>
+    <cfset data['avatarSrc'] = "">
   </cfif>
   <cfset data['createdAt'] = qGetFile.Submission_date>
 <cfelse>

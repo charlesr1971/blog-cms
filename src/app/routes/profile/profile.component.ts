@@ -1065,7 +1065,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.imagesUnapproved.push(image);
       });
@@ -1102,7 +1103,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.imagesApproved.push(image);
       });

@@ -8,7 +8,7 @@
     <cfset local['userToken'] = "">
     <cfset local['userid'] = 0>
     <cfset local.data = ArrayNew(1)>
-    <cfset local.query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date")>
+    <cfset local.query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date,Avartar_src")>
     <cfset local.startrow = 1>
     <cfset local.endrow = request.filebatch>
     <cfif Val(arguments.page) AND Val(request.filebatch)>
@@ -61,6 +61,20 @@
           <cfset QuerySetCell(local.query,"Publish_article_date",local.qGetFile.Publish_article_date)>
           <cfset QuerySetCell(local.query,"Approved",local.qGetFile.Approved)>
           <cfset QuerySetCell(local.query,"Submission_date",local.qGetFile.Submission_date)>
+          <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
+            SELECT * 
+            FROM tblUser 
+            WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.User_ID#">
+          </CFQUERY>
+          <cfif local.qGetUser.RecordCount>
+            <cfif Len(Trim(local.qGetUser.Filename))>
+              <cfset QuerySetCell(local.query,"Avartar_src",request.avatarbasesrc & local.qGetUser.Filename)>
+            <cfelse>
+			  <cfset QuerySetCell(local.query,"Avartar_src","")>
+            </cfif>
+          <cfelse>
+            <cfset QuerySetCell(local.query,"Avartar_src","")>
+          </cfif>
         </cfif>
       </cfloop>
     </cfif>
@@ -83,6 +97,7 @@
         <cfset local.obj['publishArticleDate'] = local.qGetFile.Publish_article_date>
         <cfset local.obj['approved'] = local.qGetFile.Approved>
         <cfset local.obj['createdAt'] = local.qGetFile.Submission_date>
+		<cfset local.obj['avatarSrc'] = local.qGetFile.Avartar_src>
         <cfset ArrayAppend(local.data,local.obj)>
       </cfloop>
     </cfif>

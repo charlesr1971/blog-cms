@@ -515,7 +515,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
 
   private processImageTitlesData = (data) => {
     if(this.debug) {
-      console.log('processImageTitlesData: data',data);
+      console.log('images.component: processImageTitlesData: data',data);
     }
     if(data) {
       if('error' in data && data['error'] === '') {
@@ -551,7 +551,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
             tags: item['tags'],
             publishArticleDate: item['publishArticleDate'], 
             approved: item['approved'],
-            createdAt: item['createdAt']
+            createdAt: item['createdAt'],
+            avatarSrc: item['avatarSrc']
           });
           this.images.push(image);
         });
@@ -574,7 +575,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
 
   private processTagsData = (data) => {
     if(this.debug) {
-      console.log('processTagsData: data',data);
+      console.log('images.component: processTagsData: data',data);
     }
     if(data) {
       this.images = [];
@@ -594,7 +595,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.images.push(image);
       });
@@ -617,7 +619,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
     if(data && Array.isArray(data) && data.length > 0) {
       this.currentPage++;
       if(this.debug) {
-        console.log('this.currentPage',this.currentPage);
+        console.log('images.component: processData: data',data);
+        console.log('images.component: processData: this.currentPage',this.currentPage);
       }
       data.map( (item: any) => {
         const image = new Image({
@@ -635,7 +638,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.images.push(image);
       });
@@ -671,7 +675,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.images.push(image);
       });
@@ -707,7 +712,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.images.push(image);
       });
@@ -743,7 +749,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           tags: item['tags'],
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
-          createdAt: item['createdAt']
+          createdAt: item['createdAt'],
+          avatarSrc: item['avatarSrc']
         });
         this.images.push(image);
       });

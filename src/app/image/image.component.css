@@ -13,9 +13,28 @@
     display: inline-block !important;
 }
 
-.mat-card-header > div {
+.mat-card-header {
+    position: relative;
+}
+
+.mat-card-header > img.image-avatar-src {
+    position: absolute;
+    top: 0px;
+    left: -48px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.mat-card-header > div.image-title-container {
     text-align: center !important;
     margin: 0 auto !important;
+    overflow: hidden;
+}
+
+.mat-card-header > div.image-title-container .mat-card-title {
+    white-space: nowrap;
 }
 
 .mat-card-avatar {

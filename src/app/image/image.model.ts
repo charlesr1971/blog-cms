@@ -22,6 +22,7 @@ export class Image {
     publishArticleDate: string;
     approved: number;
     createdAt: string;
+    avatarSrc: string;
 
     constructor(obj?: any) {
 
@@ -41,6 +42,7 @@ export class Image {
         this.publishArticleDate = obj && obj.publishArticleDate || null;
         this.approved = obj && obj.approved || 0;
         this.createdAt = obj && obj.createdAt || null;
+        this.avatarSrc = obj && obj.avatarSrc || '';
 
     }
 

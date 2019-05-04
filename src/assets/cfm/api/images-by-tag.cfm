@@ -44,7 +44,7 @@
 </cfif>
 
 <cfset temp = ArrayNew(1)>
-<cfset query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date")>
+<cfset query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date,Avartar_src")>
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
@@ -75,6 +75,20 @@
       <cfset QuerySetCell(query,"Publish_article_date",qGetFile.Publish_article_date)>
       <cfset QuerySetCell(query,"Approved",qGetFile.Approved)>
       <cfset QuerySetCell(query,"Submission_date",qGetFile.Submission_date)>
+      <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+        SELECT * 
+        FROM tblUser 
+        WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetFile.User_ID#">
+      </CFQUERY>
+      <cfif qGetUser.RecordCount>
+        <cfif Len(Trim(qGetUser.Filename))>
+          <cfset QuerySetCell(query,"Avartar_src",request.avatarbasesrc & qGetUser.Filename)>
+        <cfelse>
+          <cfset QuerySetCell(query,"Avartar_src","")>
+        </cfif>
+      <cfelse>
+        <cfset QuerySetCell(query,"Avartar_src","")>
+      </cfif>
     </cfif>
   </cfloop>
 </cfif>
@@ -99,6 +113,7 @@
     <cfset data['publishArticleDate'] = qGetFile.Publish_article_date>
     <cfset data['approved'] = qGetFile.Approved>
     <cfset data['createdAt'] = qGetFile.Submission_date>
+	<cfset data['avatarSrc'] = qGetFile.Avartar_src>
     <cfset ArrayAppend(temp,data)>
   </cfloop>
 </cfif>

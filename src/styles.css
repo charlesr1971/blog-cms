@@ -555,6 +555,10 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
     white-space: normal !important;
 }
 
+.mat-card-header-text {
+    margin: 0px !important;
+}
+
 /* media queries */
 
 /* smart phones */

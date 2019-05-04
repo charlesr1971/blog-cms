@@ -164,7 +164,8 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
             tags: data['tags'],
             publishArticleDate: data['publishArticleDate'],
             approved: data['approved'],
-            createdAt: data['createdAt']
+            createdAt: data['createdAt'],
+            avatarSrc: data['avatarSrc']
           });
           this.image.next(image);
           if(this.image.value['userid'] > 0) {
