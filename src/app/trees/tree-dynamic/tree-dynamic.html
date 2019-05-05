@@ -32,14 +32,15 @@
 </ng-template>
 
 <ng-template class="dialog-article-help-notification" #dialogArticleHelpNotification>
-  <div id="dialog-article-help-notification-container" class="mat-app-background basic-container" [ngStyle]="{'opacity': !isMobile ? 1 : 0}">
+  <div id="dialog-article-help-notification-container" class="mat-app-background basic-container dialog-help" style="opacity:0;">
     <div class="form-field-container">
       <div class="form-field-legend">How to use this page?</div>
       <div class="form-field-text" id="dialogArticleHelpNotificationText" #dialogArticleHelpNotificationText>
         <ol>
-          <li>Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. Then choose a 'Category' &amp; an 'Image'. Finally submit your image details.</li>
+          <li>Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. The 'Image Description' field has a maximum length of {{ articledescriptionmaxcharcount }} characters. Then choose a 'Category' &amp; an 'Image'. Images must be less than {{ maxcontentlengthInMb }}MB in memory size. Finally submit your image details.</li>
           <li>After submission of your image details, the 'Write Article' &amp; 'Article Publish Date' features will become available.</li>
-          <li>Add an article, making sure that you do not exceed the {{ tinyMceArticleMaxWordCount }} word limit. Then choose an optional 'Article Publish Date'. Finally submit your article.</li>
+          <li>Add an article by pressing on the 'Write Article' button. This will open up a modal dialog, containing a fully featured WYSIWYG text editor. Make sure that you do not exceed the {{ tinyMceArticleMaxWordCount }} word limit. A maximimum of {{ tinymcearticlemaximages }} images can be added to each article, using the text editor's upload feature. Article content can either be published from within the text editor dialog or by pressing the 'Submit' button at the bottom of this page.<br /><img src="assets/images/help/upload-image/tinymce-editor-help-image.png" /></li>
+          <li>Then choose an optional 'Article Publish Date'.</li>
           <li>New submissions and updates are subject to moderation. Please be patient whilst our moderation team assess your submission. We endeavour to approve submissions within 24 hours.</li>
           <li>Immediately after submission, you will be able to see it in the '{{ catalogRouterAliasTitle }}' section. Other users will be unable to see your submission, during the approval phase. You can also edit your submission whilst approval is pending.</li>
           <li>After approval has been granted, you may prevent other users from seeing your submission, by using the 'Article Publish Date' feature. Other users will be unable to see your submission until the 'Article Publish Date' has passed.</li>
@@ -79,8 +80,6 @@
   </div>
 </ng-template>
 
-
-
 <form novalidate [formGroup]="treeForm" *ngIf="!forgottenPasswordForm && userid > 0">
 
   <div class="form-field-container">
@@ -101,8 +100,12 @@
       </div><br />
 
       <mat-form-field class="example-full-width">
-        <textarea matInput placeholder="Image Description" formControlName="description" id="description"></textarea>
-      </mat-form-field><br /><br /><br />
+        <textarea matInput placeholder="Image Description" formControlName="description" id="description" [maxlength]="articledescriptionmaxcharcount"></textarea>
+      </mat-form-field>
+
+      <div class="image-description-charcount-container">
+        <div class="image-description-charcount-label">Character Count</div><div class="image-description-charcount-text" id="image-description-charcount-text">{{ articleDescriptionCharcount }}</div>
+      </div>
 
       <tag-input formControlName="tags" [animationDuration]="{enter: '0ms', leave: '0ms'}" [maxItems]="5" [separatorKeyCodes]="[13,32]" [errorMessages]="errorMessages" [validators]="validators" (onRemove)="onTagRemoved($event)" (onTextChange)="onTagInputTextChange($event)" (onAdd)="onTagAdded($event)">
         <tag-input-dropdown [autocompleteObservable]="fetchAutocompleteItems" [appendToBody]="false" [dynamicUpdate]="false">

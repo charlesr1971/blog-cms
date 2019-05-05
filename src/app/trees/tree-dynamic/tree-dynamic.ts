@@ -404,7 +404,10 @@ export class TreeDynamic implements OnInit, OnDestroy {
   tinyMceArticleContent: string = '';
   disableArticleTooltip: boolean = false;
   tinymceArticleImageCount: number = 0;
+  tinymcearticlemaximages: number = 0;
   tinyMceArticleMaxWordCount: number = environment.tinymcearticlemaxwordcount;
+  articledescriptionmaxcharcount: number = environment.articledescriptionmaxcharcount;
+  articleDescriptionCharcount: number = this.articledescriptionmaxcharcount;
   tinymceArticleImages = [];
   themeRemove: string = '';
   themeAdd: string = '';
@@ -483,6 +486,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
       this.imagePath = imagePath;
       this.addPath(null,imagePath);
     });
+
+    const tinymcearticlemaximages = parseInt(this.httpService.tinymcearticlemaximages.toString());
+    this.tinymcearticlemaximages = tinymcearticlemaximages + 1;
 
     this.isMobile = this.deviceDetectorService.isMobile();
 
@@ -1309,13 +1315,20 @@ export class TreeDynamic implements OnInit, OnDestroy {
           this.httpService.subjectImagePath.next(this.formData);
         });
         this.description.valueChanges
-        .pipe(
-          debounceTime(400),
-          distinctUntilChanged()
-        )
         .subscribe(description => {
           if(this.debug) {
             console.log('tree-dynamic: monitorFormValueChanges: description: ',description);
+          }
+          const imageDescriptionCharcountText = this.documentBody.getElementById('image-description-charcount-text');
+          const charCount = this.articledescriptionmaxcharcount - description.length;
+          this.articleDescriptionCharcount = charCount < 0 ? 0 : charCount;
+          if(imageDescriptionCharcountText) {
+            if(charCount < 100) {
+              imageDescriptionCharcountText.classList.add('warn');
+            }
+            else{
+              imageDescriptionCharcountText.classList.remove('warn');
+            }
           }
           this.formData['description'] = description;
           this.httpService.subjectImagePath.next(this.formData);
@@ -1863,24 +1876,21 @@ export class TreeDynamic implements OnInit, OnDestroy {
       if(this.debug) {
         console.log('tree-dynamic: dialog article help notification: after open');
       }
-      if(this.isMobile) {
-        const parent = document.querySelector('#dialog-article-help-notification');
-        let height = parent.clientHeight ? parent.clientHeight : 0;
-        const offsetHeight = 150;
-        if(!isNaN(height) && (height - offsetHeight) > 0) {
-          height = height - offsetHeight;
-        }
-        if(this.debug) {
-          console.log('tree-dynamic: dialog article help notification: height: ', height);
-        }
-        if(height > 0 ) {
-          this.renderer.setStyle(this.dialogArticleHelpNotificationText.nativeElement,'height',height + 'px');
-        }
-        const dialogarticlehelpnotificationcontainer = document.querySelector('#dialog-article-help-notification-container');
-
-        if(parent) {
-          TweenMax.fromTo(dialogarticlehelpnotificationcontainer, 1, {ease:Elastic.easeOut, opacity: 0}, {ease:Elastic.easeOut, opacity: 1});
-        }
+      const parent = document.querySelector('#dialog-article-help-notification');
+      let height = parent.clientHeight ? parent.clientHeight : 0;
+      const offsetHeight = 150;
+      if(!isNaN(height) && (height - offsetHeight) > 0) {
+        height = height - offsetHeight;
+      }
+      if(this.debug) {
+        console.log('tree-dynamic: dialog article help notification: height: ', height);
+      }
+      if(height > 0 ) {
+        this.renderer.setStyle(this.dialogArticleHelpNotificationText.nativeElement,'height',height + 'px');
+      }
+      const dialogarticlehelpnotificationcontainer = document.querySelector('#dialog-article-help-notification-container');
+      if(parent) {
+        TweenMax.fromTo(dialogarticlehelpnotificationcontainer, 1, {ease:Elastic.easeOut, opacity: 0}, {ease:Elastic.easeOut, opacity: 1});
       }
     });
   }

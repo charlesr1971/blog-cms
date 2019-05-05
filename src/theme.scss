@@ -450,6 +450,19 @@ $dark-background-palette: map-get($dark-theme, background);
     
     }
 
+    .image-description-charcount-label {
+        background: mat-color($dark-foreground-palette, text, 0.05);
+    }
+
+    .image-description-charcount-text {
+        background: mat-color($dark-foreground-palette, text, 0.025);
+        color: mat-color($dark-foreground-palette, text, 0.5);
+    }
+
+    .image-description-charcount-text.warn {
+        color: mat-color($dark-warn, default);
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -940,6 +953,18 @@ $light-background-palette: map-get($light-theme, background);
     
     }
 
+    .image-description-charcount-label {
+        background: mat-color($light-foreground-palette, text, 0.05);
+    }
+
+    .image-description-charcount-text {
+        background: mat-color($light-foreground-palette, text, 0.025);
+        color: mat-color($light-foreground-palette, text, 0.5);
+    }
+
+    .image-description-charcount-text.warn {
+        color: mat-color($light-warn, default);
+    }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 

@@ -12,6 +12,7 @@ export const environment = {
   maxcontentlength: 500000,
   tinymcearticlemaximages: 2,
   tinymcearticlemaxwordcount: 680,
+  articledescriptionmaxcharcount: 1000,
   openToolbarCommentsPanel: true,
   useRestApi: true,
   restApiURLReWrite: true,
