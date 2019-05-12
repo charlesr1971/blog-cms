@@ -27,6 +27,7 @@
 <cfset data['cookieAcceptance'] = 0>
 <cfset data['forgottenPasswordToken'] = "">
 <cfset data['forgottenPasswordValidated'] = 0>
+<cfset data['displayName'] = "">
 <cfset data['createdat'] = "">
 <cfset data['error'] = "">
 
@@ -87,6 +88,7 @@
     <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
     <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
     <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
+    <cfset data['displayName'] = qGetUser.DisplayName>
     <cfset data['createdat'] = qGetUser.Submission_date>
   </cfif>
   <cfset data['error'] = "">

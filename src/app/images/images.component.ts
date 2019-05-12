@@ -197,7 +197,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
           console.log('images.component: galleryAuthor.subscribe: this.currentUserid: ', this.currentUserid);
           console.log('images.component: galleryAuthor.subscribe: this.currentAuthorPage: ', this.currentAuthorPage);
         }
-        this.httpService.fetchImagesByUserid(this.currentUserid,this.currentAuthorPage).do(this.processDataByUserid).subscribe();
+        this.httpService.fetchImagesByUserid(this.currentUserid,this.currentAuthorPage,data['authorName']).do(this.processDataByUserid).subscribe();
         this.scrollCallbackImages = null;
       }
     });
@@ -481,7 +481,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           theme: data['theme'],
           roleid: data['roleid'],
           forgottenPasswordToken: data['forgottenPasswordToken'],
-          forgottenPasswordValidated: data['forgottenPasswordValidated']
+          forgottenPasswordValidated: data['forgottenPasswordValidated'],
+          displayName: data['displayName']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {

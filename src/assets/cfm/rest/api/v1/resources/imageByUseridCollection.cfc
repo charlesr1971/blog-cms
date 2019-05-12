@@ -1,10 +1,12 @@
 
-<cfcomponent extends="taffy.core.resource" taffy_uri="/images/userid/{userid}/{page}">
+<cfcomponent extends="taffy.core.resource" taffy_uri="/images/userid/{userid}/{page}/{type}">
 
   <cffunction name="get">
     <cfargument name="userid" type="numeric" required="yes" />
     <cfargument name="page" type="numeric" required="yes" />
+    <cfargument name="type" type="string" required="yes" />
 	<cfset var local = StructNew()>
+    <cfset local['authorName'] = "">
     <cfset local['userToken'] = "">
     <cfset local['userid'] = 0>
     <cfset local.data = ArrayNew(1)>
@@ -20,6 +22,9 @@
     </cfif>
     <cfset local.requestBody = getHttpRequestData().headers>
     <cftry>
+	  <cfif StructKeyExists(local.requestBody,"authorName")>
+      	<cfset local['authorName'] = Trim(local.requestBody['authorName'])>
+      </cfif>
 	  <cfif StructKeyExists(local.requestBody,"userToken")>
       	<cfset local['userToken'] = Trim(local.requestBody['userToken'])>
       </cfif>
@@ -37,7 +42,7 @@
     <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
       SELECT * 
       FROM tblFile 
-      WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.userid#"> AND (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(local['userid'])> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local['userid']#">)</cfif>)
+      WHERE<cfif CompareNoCase(arguments.type,"author") EQ 0> Author = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Trim(local['authorName'])#"> AND</cfif> User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.userid#"> AND (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(local['userid'])> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local['userid']#">)</cfif>)
       ORDER BY Submission_date DESC
     </CFQUERY>
     <cfif local.qGetFile.RecordCount>

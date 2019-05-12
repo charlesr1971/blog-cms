@@ -22,7 +22,7 @@
         <mat-select #select2 class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Author" floatLabel="never" (selectionChange)="onChangeAuthor($event)" *ngIf="gallerySectionsIsActive">
           <mat-select-trigger>{{ catalogRouterAliasUpper }} by Author</mat-select-trigger>
           <mat-optgroup *ngFor="let author of authors; let i = index" [label]="author.title">
-            <mat-option *ngFor="let page of author.pages; let ii = index" [value]="author.userid + '_' + (ii + 1)">
+            <mat-option *ngFor="let page of author.pages; let ii = index" [value]="author.userid + '_' + (ii + 1) + '_' + author.encodedTitle">
               {{ page.title }}
             </mat-option>
           </mat-optgroup>

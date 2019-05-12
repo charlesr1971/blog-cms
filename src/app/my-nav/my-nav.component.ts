@@ -233,7 +233,13 @@ export class MyNavComponent implements OnInit, OnDestroy {
               }
               const obj = {};
               obj['userid'] = data['authors'][i]['userid'];
-              obj['title'] = data['authors'][i]['surname'] + ', ' + data['authors'][i]['forename'];
+              if(this.httpService.sectionauthortype === 'user') {
+                obj['title'] = data['authors'][i]['surname'] + ', ' + data['authors'][i]['forename'];
+              }
+              else{
+                obj['title'] = data['authors'][i]['author'];
+              }
+              obj['encodedTitle'] = window.btoa(obj['title']);
               obj['createdAt'] = data['authors'][i]['createdAt'];
               obj['pages'] = pages;
               this.authors.push(obj);
@@ -340,14 +346,17 @@ export class MyNavComponent implements OnInit, OnDestroy {
     }
     let userid = 0;
     let page = 0;
+    let authorName = '';
     if(data !== '') {
       const array = data.split('_');
-      if(array.length > 1) {
+      if(array.length > 2) {
         userid = array[0];
         page = array[1];
+        authorName = window.atob(array[2]);
         const data = {
           userid: userid,
-          page: page
+          page: page,
+          authorName: authorName
         }
         this.httpService.galleryAuthor.next(data);
       }

@@ -25,6 +25,7 @@
     <cfset local.data['cookieAcceptance'] = 0>
     <cfset local.data['forgottenPasswordToken'] = "">
     <cfset local.data['forgottenPasswordValidated'] = 0>
+    <cfset local.data['displayName'] = "">
     <cfset local.data['createdat'] = "">
     <cfset local.data['error'] = "">
     <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
@@ -56,6 +57,7 @@
         <cfset local.data['cookieAcceptance'] = local.qGetUser.Cookie_acceptance>
         <cfset local.data['forgottenPasswordToken'] = local.qGetUser.ForgottenPasswordToken>
         <cfset local.data['forgottenPasswordValidated'] = local.qGetUser.ForgottenPasswordValidated>
+        <cfset local.data['displayName'] = local.qGetUser.DisplayName>
         <cfset local.data['createdat'] = local.qGetUser.Submission_date>
       </cfif>
       <cfset local.data['error'] = "">
@@ -86,6 +88,7 @@
     <cfset local.data['roleid'] = 2>
     <cfset local.data['createdat'] = "">
     <cfset local.data['testEmail'] = false>
+    <cfset local.data['displayName'] = "">
     <cfset local.data['cookieAcceptance'] = 0>
     <cfset local.data['error'] = "">
     <cfset local.requestBody = getHttpRequestData().headers>
@@ -113,6 +116,9 @@
       </cfif>
       <cfif StructKeyExists(local.requestBody,"cookieAcceptance")>
       	<cfset local.data['cookieAcceptance'] = Trim(local.requestBody['cookieAcceptance'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"displayName")>
+      	<cfset local.data['displayName'] = Trim(local.requestBody['displayName'])>
       </cfif>
       <cfcatch>
 		  <cfset local.data['error'] = cfcatch.message>
@@ -159,8 +165,8 @@
       <cfset local.forename = request.utils.CapFirst(local.data['forename'])>
       <cfset local.surname = request.utils.CapFirst(local.data['surname'])>
       <CFQUERY DATASOURCE="#request.domain_dsn#" result="local.queryInsertResult">
-        INSERT INTO tblUser (Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,Cookie_acceptance) 
-        VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['salt']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['password']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.forename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.surname#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['signuptoken']#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['cookieAcceptance']#">)
+        INSERT INTO tblUser (Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,Cookie_acceptance,DisplayName) 
+        VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['salt']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['password']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['email']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.forename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.surname#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['signuptoken']#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['cookieAcceptance']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['displayName']#">)
       </CFQUERY>
       <cfset local.data['userid'] = local.queryInsertResult.generatedkey>
       <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
@@ -232,6 +238,7 @@
     <cfset local.data['keeploggedin'] = 0>
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['cookieAcceptance'] = 0>
+    <cfset local.data['displayName'] = "">
     <cfset local.data['createdAt'] = "">
     <cfset local.data['jwtObj'] = StructNew()>
     <cfset local.data['error'] = "">
@@ -255,6 +262,9 @@
       </cfif>
       <cfif StructKeyExists(local.requestBody,"userid")>
       	<cfset local.data['userid'] = Trim(local.requestBody['userid'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"displayName")>
+      	<cfset local.data['displayName'] = Trim(local.requestBody['displayName'])>
       </cfif>
       <cfif StructKeyExists(local.requestBody,"Authorization")>
         <cfset local.jwtString = request.utils.GetJwtString(Trim(local.requestBody['Authorization']))>
@@ -300,7 +310,7 @@
       </cfif>
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblUser
-        SET <cfif Len(Trim(local.data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['emailNotification']#">,Theme = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.data['theme'],'-')#"> 
+        SET <cfif Len(Trim(local.data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['emailNotification']#">,Theme = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.data['theme'],'-')#">,DisplayName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['displayName']#"> 
         WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
       </CFQUERY>
       <cfset local.data['password'] = local.qGetUser.Password>
@@ -315,6 +325,7 @@
       <cfset local.data['keeploggedin'] = local.qGetUser.Keep_logged_in>
       <cfset local.data['submitArticleNotification'] = local.qGetUser.Submit_article_notification>
       <cfset local.data['cookieAcceptance'] = local.qGetUser.Cookie_acceptance>
+      <cfset local.data['displayName'] = local.qGetUser.DisplayName>
       <cfset local.data['createdAt'] = local.qGetUser.Submission_date>
       <cfset local.data['error'] = "">
     <cfelse>

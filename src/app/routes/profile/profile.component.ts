@@ -173,6 +173,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   forename: FormControl;
   surname: FormControl;
+  displayName: FormControl;
   password: FormControl;
   emailNotification: FormControl;
   theme: FormControl;
@@ -378,6 +379,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout( () => {
           this.forename.patchValue(this.currentUser['forename']);
           this.surname.patchValue(this.currentUser['surname']);
+          this.displayName.patchValue(this.currentUser['displayName']);
           this.emailNotification.patchValue(!!+this.currentUser['emailNotification']);
           this.theme.patchValue(this.currentUser['theme'] === this.themeObj['dark'] ? false : true);
           if(this.debug) {
@@ -740,6 +742,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     const body = {
       forename: this.forename.value,
       surname: this.surname.value,
+      displayName: this.displayName.value,
       password: this.password.value ? this.password.value : '',
       emailNotification: this.emailNotification.value,
       theme: this.theme.value ? this.themeObj['light'] : this.themeObj['dark'],
@@ -967,7 +970,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
           theme: data['theme'],
-          roleid: data['roleid']
+          roleid: data['roleid'],
+          displayName: data['displayName']
         });
         this.userService.setCurrentUser(user);
         this.currentUser['authenticated'] = this.userid;
@@ -1125,6 +1129,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editProfileForm = new FormGroup({
       forename: this.forename,
       surname: this.surname,
+      displayName: this.displayName,
       password: this.password,
       emailNotification: this.emailNotification,
       theme: this.theme,
@@ -1148,6 +1153,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       Validators.required,
       Validators.minLength(1)
     ]);
+    this.displayName = new FormControl();
     this.password = new FormControl();
     this.emailNotification = new FormControl();
     this.theme = new FormControl(); 
@@ -1183,6 +1189,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.formProfileData['surname'] = surname;
         this.isEditProfileValid = this.isEditProfileFormValid();
+      });
+      this.displayName.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe(displayName => {
+        if(this.debug) {
+          console.log('profile.component: displayName: ',displayName);
+        }
+        this.formProfileData['displayName'] = displayName;
       });
       this.password.valueChanges
       .pipe(

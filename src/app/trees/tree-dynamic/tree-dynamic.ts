@@ -371,6 +371,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   forename: FormControl;
   surname: FormControl;
+  displayName: FormControl;
   email: FormControl;
   password: FormControl;
   captcha:  FormControl;
@@ -811,6 +812,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     const body = {
       forename: this.forename.value,
       surname: this.surname.value,
+      displayName: this.displayName.value,
       email: this.email.value,
       password: this.password.value,
       userToken: this.userToken
@@ -1001,7 +1003,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           createdAt: data['createdat'],
           submitArticleNotification: 1,
           cookieAcceptance: data['cookieAcceptance'],
-          roleid: data['roleid']
+          roleid: data['roleid'],
+          displayName: data['displayName']
         });
         this.userService.setCurrentUser(user);
         this.openSnackBar('Please check your e-mail to validate your sign up', 'Success');
@@ -1048,7 +1051,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
           theme: data['theme'],
-          roleid: data['roleid']
+          roleid: data['roleid'],
+          displayName: data['displayName']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {
@@ -1118,6 +1122,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
             this.signUpForm = new FormGroup({
               forename: this.forename,
               surname: this.surname,
+              displayName: this.displayName,
               email: this.email,
               password: this.password,
               captcha: this.captcha
@@ -1127,6 +1132,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
             this.signUpForm = new FormGroup({
               forename: this.forename,
               surname: this.surname,
+              displayName: this.displayName,
               email: this.email,
               password: this.password
             });
@@ -1213,6 +1219,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
             Validators.required,
             Validators.minLength(1)
           ]);
+          this.displayName = new FormControl();
           if(this.debug) {
             console.log('tree-dynamic: createFormControls: 2');
           }
@@ -1398,6 +1405,17 @@ export class TreeDynamic implements OnInit, OnDestroy {
           else{
             this.loginFormDisabledState();
           }
+        });
+        this.displayName.valueChanges
+        .pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        )
+        .subscribe(displayName => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: displayName: ',displayName);
+          }
+          this.formData['displayName'] = displayName;
         });
       }
       if(this.signUpForm || this.loginForm) {

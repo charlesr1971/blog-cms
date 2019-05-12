@@ -7,9 +7,11 @@
 <cfparam name="endrow" default="#request.filebatch#" />
 
 <cfparam name="userid" default="0" />
+<cfparam name="type" default="" />
 
 <cfparam name="uploadfolder" default="#request.uploadfolder#" />
 <cfparam name="timestamp" default="#DateFormat(Now(),'yyyymmdd')##TimeFormat(Now(),'HHmmss')#" />
+<cfparam name="authorName" default="" />
 <cfparam name="userToken" default="" />
 <cfparam name="_userid" default="0" />
 <cfparam name="data" default="" />
@@ -24,6 +26,26 @@
 	<cfset endrow = (startrow + request.filebatch) - 1>
   </cfif>
 </cfif>
+
+<cfset requestBody = toString(getHttpRequestData().content)>
+<cfset requestBody = Trim(requestBody)>
+<cftry>
+  <cfset requestBody = DeserializeJSON(requestBody)>
+  <cfif StructKeyExists(requestBody,"authorName")>
+	<cfset authorName = requestBody['authorName']>
+  </cfif>
+  <cfcatch>
+    <cftry>
+      <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
+      <cfset requestBody = DeserializeJSON(requestBody)>
+      <cfif StructKeyExists(requestBody,"authorName")>
+		<cfset authorName = requestBody['authorName']>
+      </cfif>
+      <cfcatch>
+      </cfcatch>
+    </cftry>
+  </cfcatch>
+</cftry>
 
 <cfset requestBody = getHttpRequestData().headers>
 <cftry>
@@ -48,7 +70,7 @@
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
   FROM tblFile 
-  WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#"> AND (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(_userid)> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#_userid#">)</cfif>)
+  WHERE<cfif CompareNoCase(type,"author") EQ 0> Author = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Trim(authorName)#"> AND</cfif> User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#userid#"> AND (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"><cfif Val(_userid)> OR (Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="0"> AND User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#_userid#">)</cfif>)
   ORDER BY Submission_date DESC
 </CFQUERY>
 

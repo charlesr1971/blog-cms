@@ -34,6 +34,7 @@ export class HttpService {
   subscribeurl: string = '';
   subscribeFormId: string = '';
   subscribeTaskKey: string = '';
+  sectionauthortype: string = '';
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -227,6 +228,12 @@ export class HttpService {
     if(subscribeTaskKey !== '0' || subscribeTaskKey !== '') {
       this.subscribeTaskKey = subscribeTaskKey;
     }
+    const sectionauthortype = getUrlParameter('sectionauthortype');
+    if(sectionauthortype !== '0' || sectionauthortype !== '') {
+      this.sectionauthortype = sectionauthortype;
+    }
+
+    
 
     if(this.debug || this.debugForgottenPasswordLoginWithToken) {
       console.log('http.service: this.port ',this.port);
@@ -481,6 +488,7 @@ export class HttpService {
         headers: new HttpHeaders({
           'forename': formData['forename'] || '',
           'surname': formData['surname'] || '',
+          'displayName': formData['displayName'] || '',
           'email': formData['email'] || '',
           'password': formData['password'] || '',
           'cfid': '' + this.cfid + '' || '0',
@@ -499,6 +507,7 @@ export class HttpService {
       const body = {
         forename: formData['forename'],
         surname: formData['surname'],
+        displayName: formData['displayName'],
         email: formData['email'],
         password: formData['password'],
         userToken: formData['userToken'],
@@ -587,6 +596,7 @@ export class HttpService {
         headers: new HttpHeaders({
           'forename': formData['forename'] || '',
           'surname': formData['surname'] || '',
+          'displayName': formData['displayName'] || '',
           'password': formData['password'] || '',
           'emailNotification': '' + formData['emailNotification'] + '' || '0',
           'theme': formData['theme'] || '',
@@ -604,6 +614,7 @@ export class HttpService {
       const body = {
         forename: formData['forename'],
         surname: formData['surname'],
+        displayName: formData['displayName'],
         password: formData['password'],
         emailNotification: formData['emailNotification'],
         theme: formData['theme'],
@@ -1269,8 +1280,36 @@ export class HttpService {
     );
   }
 
-  fetchImagesByUserid(userid: number = 0, page: number = 1): Observable<any> {
-    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/images/userid/' + userid + '/' + page) : new HttpRequest('GET', this.apiUrl + '/images-by-userid.cfm?userid=' + userid + '&page=' + page);
+  fetchImagesByUserid(userid: number = 0, page: number = 1,authorName: string = ''): Observable<any> {
+    let req = null;
+    let headers = null;
+    if(this.useRestApi) {
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'authorName': authorName || '',
+        })
+      };
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/images/userid/' + userid + '/' + page + '/' + this.sectionauthortype, '', headers);
+      if(this.debug) {
+        console.log('http.service: fetchImagesByUserid: headers ',headers);
+      }
+    }
+    else{
+      const body = {
+        authorName: authorName
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('GET', this.apiUrl + '/images-by-userid.cfm?userid=' + userid + '&page=' + page + '&type=' + this.sectionauthortype, body, headers);
+      if(this.debug) {
+        console.log('http.service: fetchUsersAdmin: body ',body);
+        console.log('http.service: fetchUsersAdmin: headers ',headers);
+      }
+    }
+
     return this.http.request(req)
     .map( (data) => {
       return 'body' in data ? data['body'] : null;
@@ -1438,7 +1477,7 @@ export class HttpService {
   }
 
   fetchAuthors(): Observable<any> {
-    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/authors') : new HttpRequest('GET', this.apiUrl + '/authors.cfm');
+    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/authors/' + this.sectionauthortype) : new HttpRequest('GET', this.apiUrl + '/authors.cfm?type=' + this.sectionauthortype);
     return this.http.request(req)
     .map( (data) => {
       return 'body' in data ? data['body'] : null;

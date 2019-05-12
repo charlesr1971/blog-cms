@@ -24,6 +24,7 @@ export class User {
   roleid: number;
   forgottenPasswordToken: string;
   forgottenPasswordValidated: number;
+  displayName: string;
 
   constructor(obj?: any) {
 
@@ -47,6 +48,7 @@ export class User {
     this.roleid = obj && obj.roleid || 2;
     this.forgottenPasswordToken = obj && obj.forgottenPasswordToken || null;
     this.forgottenPasswordValidated = obj && obj.forgottenPasswordValidated || 0;
+    this.displayName = obj && obj.displayName || null;
 
   }
   

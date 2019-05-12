@@ -30,6 +30,7 @@
 <cfset data['signUpValidated'] = 0>
 <cfset data['roleid'] = 2>
 <cfset data['cookieAcceptance'] = 0>
+<cfset data['displayName'] = "">
 <cfset data['createdat'] = "">
 <cfset data['error'] = "">
 
@@ -61,6 +62,9 @@
   <cfif StructKeyExists(requestBody,"cookieAcceptance")>
   	<cfset data['cookieAcceptance'] = Trim(requestBody['cookieAcceptance'])>
   </cfif>
+  <cfif StructKeyExists(requestBody,"displayName")>
+  	<cfset data['displayName'] = Trim(requestBody['displayName'])>
+  </cfif>
   <cfcatch>
     <cftry>
       <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
@@ -88,6 +92,9 @@
       </cfif>
       <cfif StructKeyExists(requestBody,"cookieAcceptance")>
 		<cfset data['cookieAcceptance'] = Trim(requestBody['cookieAcceptance'])>
+      </cfif>
+      <cfif StructKeyExists(requestBody,"displayName")>
+		<cfset data['displayName'] = Trim(requestBody['displayName'])>
       </cfif>
       <cfcatch>
 		<cfset data['error'] = cfcatch.message>
@@ -139,8 +146,8 @@
   <cfset forename = CapFirst(data['forename'])>
   <cfset surname = CapFirst(data['surname'])>
   <CFQUERY DATASOURCE="#request.domain_dsn#" result="queryInsertResult">
-	INSERT INTO tblUser (Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,Cookie_acceptance) 
-	VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['salt']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['password']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['email']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#forename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#surname#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['signuptoken']#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['cookieAcceptance']#">)
+	INSERT INTO tblUser (Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,Cookie_acceptance,DisplayName) 
+	VALUES (<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['salt']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['password']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['email']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#forename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#surname#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['signuptoken']#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['cookieAcceptance']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['displayName']#">)
   </CFQUERY>
   <cfset data['userid'] = queryInsertResult.generatedkey>
   <CFQUERY NAME="qGetUserID" DATASOURCE="#request.domain_dsn#">

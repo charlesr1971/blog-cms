@@ -28,6 +28,7 @@
 <cfset data['keeploggedin'] = 0>
 <cfset data['submitArticleNotification'] = 1>
 <cfset data['cookieAcceptance'] = 0>
+<cfset data['displayName'] = "">
 <cfset data['createdAt'] = "">
 <cfset data['error'] = "">
 
@@ -53,6 +54,9 @@
   <cfif StructKeyExists(requestBody,"userid")>
  	<cfset data['userid'] = Trim(requestBody['userid'])>
   </cfif>
+  <cfif StructKeyExists(requestBody,"displayName")>
+ 	<cfset data['displayName'] = Trim(requestBody['displayName'])>
+  </cfif>
   <cfcatch>
     <cftry>
       <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
@@ -74,6 +78,9 @@
       </cfif>
       <cfif StructKeyExists(requestBody,"userid")>
         <cfset data['userid'] = Trim(requestBody['userid'])>
+      </cfif>
+      <cfif StructKeyExists(requestBody,"displayName")>
+		<cfset data['displayName'] = Trim(requestBody['displayName'])>
       </cfif>
       <cfcatch>
 		<cfset data['error'] = cfcatch.message>
@@ -105,7 +112,7 @@
   </cfif>
   <CFQUERY NAME="qUpdateUser" DATASOURCE="#request.domain_dsn#">
     UPDATE tblUser
-    SET <cfif Len(Trim(data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['emailNotification']#">,Theme =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(data['theme'],'-')#">
+    SET <cfif Len(Trim(data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['emailNotification']#">,Theme =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(data['theme'],'-')#">,DisplayName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['displayName']#"> 
     WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['userid']#">
   </CFQUERY>
   <cfset data['password'] = qGetUser.Password>
@@ -120,6 +127,7 @@
   <cfset data['keeploggedin'] = qGetUser.Keep_logged_in>
   <cfset data['submitArticleNotification'] = qGetUser.Submit_article_notification>
   <cfset data['cookieAcceptance'] = qGetUser.Cookie_acceptance>
+  <cfset data['displayName'] = qGetUser.DisplayName>
   <cfset data['createdAt'] = qGetUser.Submission_date>
   <cfset data['error'] = "">
 <cfelse>

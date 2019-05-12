@@ -202,7 +202,8 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
           submitArticleNotification: data['submitArticleNotification'],
           cookieAcceptance: data['cookieAcceptance'],
           theme: data['theme'],
-          roleid: data['roleid']
+          roleid: data['roleid'],
+          displayName: data['displayName']
         });
         this.user.next(user);
       }

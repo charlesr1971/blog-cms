@@ -128,6 +128,7 @@
 	<cfset author = REReplaceNoCase(author,"[\s]+"," ","ALL")>
     <cfset author = Trim(author)>
     <cfset author = FormatTitle(author)>
+    <cfset author = Trim(author)>
     <cfset title = REReplaceNoCase(data['title'],"#punctuationSubsetPattern#","","ALL")>
 	<cfset title = REReplaceNoCase(title,"[\s]+"," ","ALL")>
     <cfset title = Trim(title)>
