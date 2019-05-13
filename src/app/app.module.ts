@@ -16,6 +16,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TagInputModule } from 'ngx-chips';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
+import { HighlightModule } from 'ngx-highlightjs';
+import json from 'highlight.js/lib/languages/json';
 
 import { AppComponent } from './app.component';
 import { MyNavComponent } from './my-nav/my-nav.component';
@@ -82,6 +84,12 @@ import { FormatFileTitleRenderer } from './ag-grid/cell-renderer/format-file-tit
 import { ConvertImageNameSuffixPipe } from './pipes/convert-image-name-suffix/convert-image-name-suffix.pipe';
 import { WebsiteHelpComponent } from './help/dialogs/website-help/website-help.component';
 import { SubscribeComponent } from './help/dialogs/subscribe/subscribe.component';
+
+export function hljsLanguages() {
+  return [
+    {name: 'json', func: json}
+  ];
+}
 
 
 const appRoutes: Routes = [
@@ -161,10 +169,7 @@ const appRoutes: Routes = [
     MatPaginatorModule,
     MatSortModule,
     RouterModule.forRoot(
-      appRoutes/* ,
-      {onSameUrlNavigation: "reload"} *//* ,
-      { enableTracing: true }
-      ,{  onSameUrlNavigation: 'reload' } */
+      appRoutes
     ),
     CdkTreeModule,
     MatTreeModule,
@@ -191,9 +196,12 @@ const appRoutes: Routes = [
     EditorModule,
     OverlayModule,
     NgbModule,
-    AgGridModule.withComponents([FormatEmailRenderer,FormatFileTitleRenderer,CustomEditHeader])
+    AgGridModule.withComponents([FormatEmailRenderer,FormatFileTitleRenderer,CustomEditHeader]),
+    HighlightModule.forRoot({
+      languages: hljsLanguages
+    })
   ],
-  entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent,WebsiteHelpComponent,SubscribeComponent], // Add the DialogComponent as entry component
+  entryComponents: [DialogComponent,DialogAccountDeleteComponent,CookiePolicyComponent,CategoryEditComponent,WebsiteHelpComponent,SubscribeComponent], 
   providers: [
     Title,
     HttpService,

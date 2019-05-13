@@ -48,12 +48,14 @@
     <cfset forename = "">
     <cfset surname = "">
     <cfset avatarSrc = "">
+    <cfset displayName = "">
     <cfif qGetUser.RecordCount>
       <cfset forename = qGetUser.Forename>
       <cfset surname = qGetUser.Surname>
       <cfif Len(Trim(qGetUser.Filename))>
         <cfset avatarSrc = request.avatarbasesrc & qGetUser.Filename>
       </cfif>
+      <cfset displayName = qGetUser.DisplayName>
     </cfif>
     <cfset obj = StructNew()>
     <cfset obj['commentid'] = qGetComment.Comment_ID>
@@ -66,6 +68,7 @@
     <cfset obj['avatarSrc'] = avatarSrc>
     <cfset obj['token'] = qGetComment.Token>
     <cfset obj['replyToCommentid'] = qGetComment.Reply_to_comment_ID>
+    <cfset obj['displayName'] = displayName>
     <cfset obj['createdAt'] = qGetComment.Submission_date>
     <cfset ArrayAppend(data['comments'],obj)>
   </cfloop>

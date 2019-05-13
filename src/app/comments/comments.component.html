@@ -25,7 +25,8 @@
         <div class="avatar-scale-container" *ngIf="comment.avatarSrc == '' || comment.avatarSrc == null"><mat-icon>person</mat-icon></div>
       </div>
       <div class="comment-container">
-        <div class="comment-author">{{ comment.forename }} {{ comment.surname }}</div>
+        <div class="comment-author" *ngIf="comment.displayName == ''">{{ comment.forename }} {{ comment.surname }}</div>
+        <div class="comment-author" *ngIf="comment.displayName != ''">{{ comment.displayName }}</div>
         <span [innerHTML]="comment.comment | keepHtml"></span>
       </div>
       <div style="clear:both;"></div>

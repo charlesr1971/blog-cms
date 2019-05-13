@@ -120,6 +120,18 @@ export enum userAdminUnselectedChangesOptionsStatus {
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
+    trigger('profileSystemUserEditFadeInOutAnimation', [
+      state('in', style({
+        opacity: 1,
+        display: 'block'
+      })),
+      state('out', style({
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('out => in', animate('250ms ease-in')),
+      transition('in => out', animate('250ms ease-out'))
+    ]),
   ],
   providers: [SafePipe]
 })
@@ -136,6 +148,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('userArchivePagesSelect') userArchivePagesSelect;
   @ViewChild('userSuspendPagesSelect') userSuspendPagesSelect;
   @ViewChild('userApprovedPagesSelect') userApprovedPagesSelect;
+  @ViewChild('systemUserSelect') systemUserSelect;
   @ViewChild('agGridUserArchive') agGridUserArchive: AgGridNg2;
   @ViewChild('agGridUserSuspend') agGridUserSuspend: AgGridNg2;
   @ViewChild('agGridUserPassword') agGridUserPassword: AgGridNg2;
@@ -148,10 +161,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() profileApiDashboardState: string = 'out';
   @Input() profileCategoryEditState: string = 'out';
-  @Input() profileUserArchiveEditState: string = 'in';
-  @Input() profileUserSuspendEditState: string = 'in';
-  @Input() profileUserPasswordEditState: string = 'in';
-  @Input() profileUserApprovedEditState: string = 'in';
+
+  @Input() profileUserArchiveEditState: string = 'out';
+  @Input() profileUserSuspendEditState: string = 'out';
+  @Input() profileUserPasswordEditState: string = 'out';
+  @Input() profileUserApprovedEditState: string = 'out';
+  
+  @Input() profileSystemUserEditState: string = 'out';
 
 
   themeObj = {};
@@ -211,6 +227,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   usersSuspendGetSubscription: Subscription;
   usersPasswordGetSubscription: Subscription;
   usersApprovedGetSubscription: Subscription;
+  systemUserGetSubscription: Subscription;
   usersArchivePostSubscription: Subscription;
   usersSuspendPostSubscription: Subscription;
   usersPasswordPostSubscription: Subscription;
@@ -298,6 +315,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   userPasswordSubmitDisabled: boolean = true;
 
   userApprovedHasNoData: boolean = false;
+  systemUserHasNoData: boolean = false;
+  systemUserData: string = '';
+  systemUserDataLang:string[] = ['json'];
   contextUserApproved;
   frameworkComponentsUserApproved;
   gridApiUserApproved;
@@ -905,6 +925,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private processSystemUserGetData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: processSystemUserGetData: data',data);
+    }
+    if(data) {
+      if('error' in data && data['error'] === '' && 'systemUsers' in data && Array.isArray(data['systemUsers']) && data['systemUsers'].length > 0) {
+        this.systemUserHasNoData = false;
+        this.systemUserData = JSON.stringify(data['systemUsers'],undefined,2);
+      }
+      else{
+        if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
+          this.httpService.jwtHandler(data['jwtObj']);
+        }
+        else{
+          this.systemUserHasNoData = true;
+        }
+      }
+    }
+  }
+
   private processUsersApprovedPostData = (data) => {
     if(this.debug) {
       console.log('profile.component: processUsersApprovedPostData: data',data);
@@ -1364,6 +1404,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved',this.currentUserApprovedPage).do(this.processUsersApprovedGetData).subscribe();
   }
 
+  onSystemUserChange(event): void {
+    let quantity = event.value;
+    if(this.debug) {
+      console.log('onSystemUserChange: quantity: ', quantity);
+    }
+    this.systemUserGetSubscription = this.httpService.addSystemUser(quantity).do(this.processSystemUserGetData).subscribe();
+  }
+
   onMatSidenavContentScroll(): void {
     if(this.pagesUnapproved.length > 0) {
       this.unapprovedImagesSelect.close();
@@ -1537,6 +1585,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openProfileUserApprovedEdit(event: any): void {
     this.profileUserApprovedEditState = this.profileUserApprovedEditState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openSystemUserEdit(event: any): void {
+    this.profileSystemUserEditState = this.profileSystemUserEditState === 'in' ? 'out' : 'in';
     event.stopPropagation();
   }
 
@@ -2356,6 +2409,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  refreshGrid(event: any, type: string = ''): void {
+    switch(type) {
+      case 'userSuspend':
+        this.usersSuspendGetSubscription = this.httpService.fetchUsersAdmin('suspend',1).do(this.processUsersSuspendGetData).subscribe();
+        break;
+      case 'userPassword':
+        this.usersPasswordGetSubscription = this.httpService.fetchUsersAdmin('password',1).do(this.processUsersPasswordGetData).subscribe();
+        break;  
+      default:
+        // code block
+    }
+  }
+
   editFile(id: string): void {
     if(this.debug) {
       console.log('profile.component: editFile: this.currentUser[\'userid\']: ', this.currentUser['userid']);
@@ -2364,6 +2430,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+
 
     if (this.editProfileSubscription) {
       this.editProfileSubscription.unsubscribe();
@@ -2389,12 +2456,32 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.usersSuspendGetSubscription.unsubscribe();
     }
 
+    if(this.usersPasswordGetSubscription) {
+      this.usersPasswordGetSubscription.unsubscribe();
+    }
+
+    if(this.usersApprovedGetSubscription) {
+      this.usersApprovedGetSubscription.unsubscribe();
+    }
+
+    if(this.systemUserGetSubscription) {
+      this.systemUserGetSubscription.unsubscribe();
+    }
+
     if(this.usersArchivePostSubscription) {
       this.usersArchivePostSubscription.unsubscribe();
     }
 
     if(this.usersSuspendPostSubscription) {
       this.usersSuspendPostSubscription.unsubscribe();
+    }
+
+    if(this.usersPasswordPostSubscription) {
+      this.usersPasswordPostSubscription.unsubscribe();
+    }
+
+    if(this.usersApprovedPostSubscription) {
+      this.usersApprovedPostSubscription.unsubscribe();
     }
 
     if(this.usersEmailPostSubscription) {

@@ -217,7 +217,8 @@ export class CommentsComponent implements OnInit, OnDestroy {
             avatarSrc: item['avatarSrc'],
             token: item['token'],
             replyToCommentid: item['replyToCommentid'],
-            createdAt: item['createdAt']
+            createdAt: item['createdAt'],
+            displayName: item['displayName']
           });
           this.comments.push(comment);
         });

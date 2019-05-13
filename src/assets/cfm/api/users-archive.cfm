@@ -37,12 +37,12 @@
   </cfcatch>
 </cftry>
 
-<cfset columnOrder = "Surname,Forename,E_mail,User_ID,Submission_date">
+<cfset columnOrder = "Surname,Forename,E_mail,User_ID,SystemUser,Submission_date">
 <cfset columnOrderTemp = "">
 <cfset temp = ArrayNew(1)>
 <cfset counter = 1>
 <CFQUERY NAME="qGetUserArchive" DATASOURCE="#request.domain_dsn#">
-  SELECT Surname, Forename ,E_mail, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date   
+  SELECT Surname, Forename ,E_mail, User_ID, SystemUser, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date   
   FROM tblUserArchive 
   ORDER BY Surname ASC
 </CFQUERY>

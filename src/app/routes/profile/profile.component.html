@@ -144,7 +144,7 @@
 
         <div class="panel" *ngIf="currentUser.roleid >= 6">
           <h2 class="panel-legend">
-            <span>Edit Suspended User Grid</span><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserSuspendEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
+            <span>Edit Suspended User Grid</span><mat-icon (click)="refreshGrid($event,'userSuspend')" class="refresh" ngbTooltip="Refresh" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">refresh</mat-icon><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserSuspendEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileUserSuspendEditFadeInOutAnimation]="{value: profileUserSuspendEditState}" style="padding-bottom:0px;">
             <div class="panel-inner user-suspend-pages" *ngIf="userSuspendPages.length > 0">
@@ -167,7 +167,7 @@
 
         <div class="panel" *ngIf="currentUser.roleid >= 6">
           <h2 class="panel-legend">
-            <span>Edit User Password Grid</span><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserPasswordEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
+            <span>Edit User Password Grid</span><mat-icon (click)="refreshGrid($event,'userPassword')" class="refresh" ngbTooltip="Refresh" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">refresh</mat-icon><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserPasswordEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
           </h2>
           <div class="panel-content" [@profileUserPasswordEditFadeInOutAnimation]="{value: profileUserPasswordEditState}" style="padding-bottom:0px;">
             <div class="panel-inner user-password-pages" *ngIf="userPasswordPages.length > 0">
@@ -207,6 +207,28 @@
             </div>
             <div class="custom-ag-grid-no-data-container" *ngIf="userApprovedHasNoData">
               No records found
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" *ngIf="currentUser.roleid >= 6">
+          <h2 class="panel-legend">
+            <span>Add System Users</span><mat-icon (click)="openSystemUserEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileSystemUserEditFadeInOutAnimation]="{value: profileSystemUserEditState}" style="padding-bottom:0px;">
+            <div class="panel-inner system-user-pages">
+              <mat-select #systemUserSelect class="panel-legend" placeholder="Quantity" floatLabel="never" (selectionChange)="onSystemUserChange($event)">
+                <mat-select-trigger>Quantity</mat-select-trigger>
+                <mat-option *ngFor="let number of [1,2,3,4,5,6,7,8,9,10]" [value]="number">
+                  {{ number }}
+                </mat-option>
+              </mat-select>
+            </div>
+            <div class="custom-system-user-no-data-container" *ngIf="systemUserHasNoData">
+              No records found
+            </div>
+            <div class="custom-system-user-data-container" *ngIf="systemUserData != ''">
+              <pre><code [highlight]="systemUserData" [languages]="systemUserDataLang"></code></pre>
             </div>
           </div>
         </div>

@@ -51,6 +51,64 @@ $dark-background-palette: map-get($dark-theme, background);
 
     $darkColors: mat-color($dark-primary, 100), mat-color($dark-primary, lighter), mat-color($dark-accent, 300), mat-color($dark-accent, 500), mat-color($dark-accent, A100), mat-color($dark-accent, lighter);
 
+    .hljs {
+        display: block;
+        overflow-x: auto;
+        padding: 0.5em;
+        background: #444;
+    }
+    
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-literal,
+    .hljs-section,
+    .hljs-link {
+        color: white;
+    }
+    
+    .hljs,
+    .hljs-subst {
+        color: #ddd;
+    }
+    
+    .hljs-string,
+    .hljs-title,
+    .hljs-name,
+    .hljs-type,
+    .hljs-attribute,
+    .hljs-symbol,
+    .hljs-bullet,
+    .hljs-built_in,
+    .hljs-addition,
+    .hljs-variable,
+    .hljs-template-tag,
+    .hljs-template-variable {
+        color: #d88;
+    }
+    
+    .hljs-comment,
+    .hljs-quote,
+    .hljs-deletion,
+    .hljs-meta {
+        color: #777;
+    }
+    
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-literal,
+    .hljs-title,
+    .hljs-section,
+    .hljs-doctag,
+    .hljs-type,
+    .hljs-name,
+    .hljs-strong {
+        font-weight: bold;
+    }
+    
+    .hljs-emphasis {
+        font-style: italic;
+    }
+
     .mat-card.mat-card-unapproved {
         background: mat-color($dark-primary, 800, 0.5);
     }
@@ -142,6 +200,7 @@ $dark-background-palette: map-get($dark-theme, background);
 
     .form-field-container .form-field-text div.panel div.panel-inner mat-select.panel-legend {
         background: mat-color($dark-foreground-palette, text, 0.03);
+        /* background: mat-color($dark-primary, 800, 0.5); */
     }
 
     .form-field-container .form-field-text div.panel mat-select.panel-legend .mat-select-placeholder {
@@ -176,11 +235,12 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text);
     }
 
-    .category-edit-tree-container, .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+    .category-edit-tree-container, .custom-ag-grid-data-container, .custom-ag-grid-no-data-container, .custom-system-user-no-data-container, .custom-system-user-data-container {
         background: mat-color($dark-foreground-palette, text, 0.02);
+        /* background: mat-color($dark-primary, 500, 0.25); */
     }
 
-    .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+    .custom-ag-grid-data-container, .custom-ag-grid-no-data-container, .custom-system-user-no-data-container, .custom-system-user-data-container {
         color: mat-color($dark-foreground-palette, text, 0.5); 
     }
 
@@ -542,6 +602,100 @@ $light-background-palette: map-get($light-theme, background);
 
     $lightColors: mat-color($light-primary, 100), mat-color($light-primary, lighter), mat-color($light-accent, 300), mat-color($light-accent, 500), mat-color($light-accent, A100), mat-color($light-accent, lighter);
 
+    .hljs {
+        display: block;
+        overflow-x: auto;
+        padding: 0.5em;
+        color: #333;
+        background: #f8f8f8;
+    }
+    
+    .hljs-comment,
+    .hljs-quote {
+        color: #998;
+        font-style: italic;
+    }
+    
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-subst {
+        color: #333;
+        font-weight: bold;
+    }
+    
+    .hljs-number,
+    .hljs-literal,
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-tag .hljs-attr {
+        color: #008080;
+    }
+    
+    .hljs-string,
+    .hljs-doctag {
+        color: #d14;
+    }
+    
+    .hljs-title,
+    .hljs-section,
+    .hljs-selector-id {
+        color: #900;
+        font-weight: bold;
+    }
+    
+    .hljs-subst {
+        font-weight: normal;
+    }
+    
+    .hljs-type,
+    .hljs-class .hljs-title {
+        color: #458;
+        font-weight: bold;
+    }
+    
+    .hljs-tag,
+    .hljs-name,
+    .hljs-attribute {
+        color: #000080;
+        font-weight: normal;
+    }
+    
+    .hljs-regexp,
+    .hljs-link {
+        color: #009926;
+    }
+    
+    .hljs-symbol,
+    .hljs-bullet {
+        color: #990073;
+    }
+    
+    .hljs-built_in,
+    .hljs-builtin-name {
+        color: #0086b3;
+    }
+    
+    .hljs-meta {
+        color: #999;
+        font-weight: bold;
+    }
+    
+    .hljs-deletion {
+        background: #fdd;
+    }
+    
+    .hljs-addition {
+        background: #dfd;
+    }
+    
+    .hljs-emphasis {
+        font-style: italic;
+    }
+    
+    .hljs-strong {
+        font-weight: bold;
+    }
+
     .mat-card.mat-card-unapproved {
         background: mat-color($light-primary, lighter, 0.25);
     }
@@ -649,6 +803,7 @@ $light-background-palette: map-get($light-theme, background);
 
     .form-field-container .form-field-text div.panel div.panel-inner mat-select.panel-legend {
         background: mat-color($light-foreground-palette, text, 0.03);
+        /* background: mat-color($light-primary, 800, 0.5); */
     }
 
     .form-field-container .form-field-text div.panel mat-select.panel-legend .mat-select-placeholder {
@@ -683,11 +838,12 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text);
     }
 
-    .category-edit-tree-container, .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+    .category-edit-tree-container, .custom-ag-grid-data-container, .custom-ag-grid-no-data-container, .custom-system-user-no-data-container, .custom-system-user-data-container {
         background: mat-color($light-foreground-palette, text, 0.02);
+        /* background: mat-color($light-primary, 500, 0.25); */
     }
 
-    .custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+    .custom-ag-grid-data-container, .custom-ag-grid-no-data-container, .custom-system-user-no-data-container, .custom-system-user-data-container {
         color: mat-color($light-foreground-palette, text, 0.5); 
     }
 

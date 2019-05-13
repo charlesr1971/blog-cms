@@ -19,6 +19,7 @@ export class Comment {
     replyToCommentid: number;
     replies: any;
     createdAt: string;
+    displayName: string;
 
     constructor(obj?: any) {
 
@@ -35,6 +36,7 @@ export class Comment {
         this.replyToCommentid = obj && obj.replyToCommentid || 0;
         this.replies = obj && obj.replies || null;
         this.createdAt = obj && obj.createdAt || null;
+        this.displayName = obj && obj.displayName || '';
 
     }
 

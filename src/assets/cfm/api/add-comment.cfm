@@ -26,6 +26,7 @@
 <cfset data['token'] = "">
 <cfset data['replyToCommentid'] = 0>
 <cfset data['createdAt'] = "">
+<cfset data['displayName'] = "">
 <cfset data['emailSent'] = 0>
 <cfset data['error'] = "">
 
@@ -112,6 +113,7 @@
 	<cfelse>  
 	  <cfset data['avatarSrc'] = "">
 	</cfif>
+    <cfset data['displayName'] = qGetUser.DisplayName>
 	<cfset data['token'] = token>
 	<cfset data['createdAt'] = submissiondate>
 	<CFQUERY NAME="qGetFileAuthor" DATASOURCE="#request.domain_dsn#">

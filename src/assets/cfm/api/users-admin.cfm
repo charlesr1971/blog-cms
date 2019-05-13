@@ -61,12 +61,12 @@
 
 <cfswitch expression="#data['task']#">
   <cfcase value="suspend">
-	<cfset columnOrder = "Surname,Forename,E_mail,Suspend,User_ID,Submission_date">
+	<cfset columnOrder = "Surname,Forename,E_mail,Suspend,User_ID,SystemUser,Submission_date">
     <cfset columnOrderTemp = "">
     <cfset temp = ArrayNew(1)>
     <cfset counter = 1>
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
-      SELECT Surname, Forename ,E_mail, Suspend, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
+      SELECT Surname, Forename ,E_mail, Suspend, User_ID, SystemUser, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
       FROM tblUser 
       ORDER BY Surname ASC
     </CFQUERY>
@@ -110,12 +110,12 @@
     </cfif>
   </cfcase>
   <cfcase value="password">
-	<cfset columnOrder = "Surname,Forename,E_mail,Password,User_ID,Submission_date">
+	<cfset columnOrder = "Surname,Forename,E_mail,Password,User_ID,SystemUser,Submission_date">
     <cfset columnOrderTemp = "">
     <cfset temp = ArrayNew(1)>
     <cfset counter = 1>
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
-      SELECT Surname, Forename ,E_mail, '' As Password, User_ID, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
+      SELECT Surname, Forename ,E_mail, '' As Password, User_ID, SystemUser, DATE_FORMAT(Submission_date,"%Y-%m-%d") AS Submission_date 
       FROM tblUser 
       ORDER BY Surname ASC
     </CFQUERY>
@@ -158,12 +158,12 @@
     </cfif>
   </cfcase>
   <cfcase value="approved">
-	<cfset columnOrder = "Surname,Forename,E_mail,Title,Approved,User_ID,File_ID,File_uuid,Submission_date">
+	<cfset columnOrder = "Surname,Forename,E_mail,Title,Approved,User_ID,File_ID,File_uuid,SystemUser,Submission_date">
     <cfset columnOrderTemp = "">
     <cfset temp = ArrayNew(1)>
     <cfset counter = 1>
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
-      SELECT Surname, Forename ,E_mail, Title, Approved, tblUser.User_ID, File_ID, File_uuid, DATE_FORMAT(tblFile.Submission_date,"%Y-%m-%d") AS Submission_date 
+      SELECT Surname, Forename ,E_mail, Title, Approved, tblUser.User_ID, File_ID, File_uuid, SystemUser, DATE_FORMAT(tblFile.Submission_date,"%Y-%m-%d") AS Submission_date 
       FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
       ORDER BY Surname ASC, Title ASC
     </CFQUERY>

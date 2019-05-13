@@ -96,6 +96,7 @@ export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
   imageMediumSuffix: string = environment.imageMediumSuffix;
   imageMediumEnabled: boolean = environment.imageMediumEnabled;
   lazyLoadImages: boolean = environment.lazyLoadImages;
+  cardShowAvatar: boolean = environment.cardShowAvatar;
 
   debug: boolean = false;
 

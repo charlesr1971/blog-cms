@@ -446,11 +446,15 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
     display: none;
 }
 
-.custom-ag-grid-data-container, .custom-ag-grid-no-data-container {
+.custom-ag-grid-data-container, .custom-ag-grid-no-data-container, .custom-system-user-no-data-container, .custom-system-user-data-container {
     position: relative;
     padding: 20px;
     font-weight: normal !important;
 }
+
+/* .custom-system-user-data-container {
+    word-break: break-all;
+} */
 
 .custom-ag-grid-data-container .mat-icon.check_circle {
     position: absolute;

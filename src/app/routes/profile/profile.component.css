@@ -101,6 +101,10 @@
     cursor: pointer;
 }
 
+.form-field-container .form-field-text div.panel h2.panel-legend .mat-icon.refresh {
+    right: 80px;
+}
+
 .form-field-container .form-field-text div.panel h2.panel-legend .mat-icon.fullscreen {
     right: 50px;
 }

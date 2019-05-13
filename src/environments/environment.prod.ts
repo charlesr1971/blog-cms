@@ -35,5 +35,6 @@ export const environment = {
   imageMediumSuffix: 'preview',
   imageMediumEnabled: true,
   lazyLoadImages: true,
-  addRemoveHighlightWaypoints: false
+  addRemoveHighlightWaypoints: false,
+  cardShowAvatar: false
 };

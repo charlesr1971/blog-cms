@@ -18,7 +18,15 @@
   request.domain_dsn = "community-establishmindfulness";
   request.websiteRootDirectory = "";
   request.localHost = "community.establishmindfulness/material/ngMat02";
-  request.remoteHost = "community.establishmindfulness.com";
+  request.remoteDomain = "establishmindfulness.com";
+  request.remoteSubDomain = "community";
+  if(Len(Trim(request.remoteSubDomain))){
+	request.remoteHost = request.remoteSubDomain & "." & request.remoteDomain;
+  }
+  else{
+	request.remoteHost = request.remoteDomain;
+  }
+  request.remoteEmailPrefix = "admin+";
   
   request.twitterCardType = "summary";
   request.twitterSite = "@charlesr1971";
@@ -51,6 +59,8 @@
   }
   
   request.sectionauthortype = "author"; //author, user
+  
+  
 
 
 </cfscript>

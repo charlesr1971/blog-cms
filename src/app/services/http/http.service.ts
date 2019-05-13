@@ -1256,6 +1256,34 @@ export class HttpService {
     );
   }
 
+  addSystemUser(quantity: number = 1): Observable<any> {
+    let req = null;
+    let headers = null;
+    if(this.useRestApi) {
+      req = new HttpRequest('POST', this.restApiUrl + this.restApiUrlEndpoint + '/system/user/' + quantity, '', headers);
+      if(this.debug) {
+        console.log('http.service: addSystemUser: headers ',headers);
+      }
+    }
+    else{
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('POST', this.apiUrl + '/add-system-user.cfm?quantity=' + quantity, '', headers);
+      if(this.debug) {
+        console.log('http.service: addSystemUser: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // GET
 
   fetchDirectoryTree(addEmptyFlag = false, formatWithKeys = false, flattenParentArray = false): Observable<any> {
