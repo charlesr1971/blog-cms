@@ -500,10 +500,27 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
 
 
 
-<cfset taskname = "subscribe">
+<!---<cfset taskname = "subscribe">
 
 
 #Hash(taskname)#
 
+
+--->
+
+
+
+<CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
+  SELECT * 
+  FROM tblFile 
+  WHERE Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
+  ORDER BY Submission_date DESC
+</CFQUERY>
+
+<cfif qGetFile.RecordCount AND ( NOT IsDate(qGetFile.Publish_article_date) OR ( IsDate(qGetFile.Publish_article_date) AND DateCompare(Now(),qGetFile.Publish_article_date) EQ 1 )) AND Len(Trim(qGetFile.Article))>
+  <cfloop query="qGetFile">
+    #qGetFile.File_uuid#<br />
+  </cfloop>
+</cfif>
 
 </cfoutput>

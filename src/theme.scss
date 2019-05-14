@@ -453,6 +453,19 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-foreground-palette, text, 0.025);
     }
 
+    div.image-related-content-container {
+        background: mat-color($dark-foreground-palette, text, 0.025);
+    }
+
+    div.image-related-content-inner-container {
+        background: mat-color($dark-foreground-palette, text, 0.025);
+        box-shadow: 5px 0px 100px 0px mat-color($dark-background-palette, status-bar, 0.75), -5px 0px 100px 0px mat-color($dark-background-palette, status-bar, 0.75);
+    }
+
+    div.image-related-content-container ul.image-related-content-list li {
+        border: 5px solid mat-color($dark-foreground-palette, text, 0.075);
+    }
+
     app-images .mat-progress-spinner circle, app-images .mat-spinner circle {
         stroke: mat-color($dark-foreground-palette, text, 0.5) !important;
     }
@@ -1050,6 +1063,19 @@ $light-background-palette: map-get($light-theme, background);
 
     div.image-thumbnail-container ul.image-thumbnail-list li div.image-thumbnail-list-item-title {
         background: mat-color($light-foreground-palette, text, 0.025);
+    }
+
+    div.image-related-content-container {
+        background: mat-color($light-foreground-palette, text, 0.025);
+    }
+
+    div.image-related-content-inner-container {
+        background: mat-color($light-foreground-palette, text, 0.025);
+        //box-shadow: 5px 0px 100px 0px mat-color($light-background-palette, status-bar, 0.75), -5px 0px 100px 0px mat-color($light-background-palette, status-bar, 0.75);
+    }
+
+    div.image-related-content-container ul.image-related-content-list li {
+        border: 5px solid mat-color($light-foreground-palette, text, 0.075);;
     }
 
     app-images .mat-progress-spinner circle, app-images .mat-spinner circle{

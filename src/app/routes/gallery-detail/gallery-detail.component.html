@@ -46,6 +46,9 @@
     </div>
     <div class="gallery-detail-divider"><span>...</span></div>
     <div class="gallery-detail-article" [innerHTML]="image.article | keepHtml"></div>
+
+    <app-image-related-content [image]="image" [currentImageId]="image.id"></app-image-related-content>
+
     <div *ngIf="isMobile || isTablet">
       <div *ngIf="(currentUser | async) as currentUser">
         <div class="gallery-detail-comments-container" id="gallery-detail-comments-container-{{ image.id }}">

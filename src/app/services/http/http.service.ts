@@ -1436,6 +1436,17 @@ export class HttpService {
     );
   }
 
+  fetchImageRelatedContent(id: string, quantity: number = 0): Observable<any> {
+    const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/image/related/' + id + '/' + quantity) : new HttpRequest('GET', this.apiUrl + '/image-related-content.cfm?fileUuid=' + id + '&quantity=' + quantity);
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   fetchPages(): Observable<any> {
     const req = this.useRestApi ? new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/pages') : new HttpRequest('GET', this.apiUrl + '/pages.cfm');
     return this.http.request(req)

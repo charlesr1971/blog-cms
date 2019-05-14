@@ -1,0 +1,26 @@
+
+<div id="image-related-content-container" class="image-related-content-container" *ngIf="images.length > 0" style="display:block;">
+  <div id="image-related-content-inner-container" class="image-related-content-inner-container">
+    <ul class="image-related-content-list">
+      <li *ngFor="let image of images; let i = index" class="image-related-content-list-item" [ngClass]="{'image-related-content-list-item-current': currentImageId === image.id}">
+        <div class="image-related-content-list-item-image">
+          <ng-template #tipContent>
+            <div class="image-related-content-list-item-tooltip-image">
+              <img src="{{ image.src }}" />
+              <div class="information">
+                <span class="title">{{ image.title }}</span>
+                <span class="author">{{ image.author }}</span>
+                <span class="createdAt">{{ image.createdAt | date:'mediumDate' }}</span>
+                <span class="category">{{ image.category }}</span>
+              </div>
+              <div style="clear:both;"></div>
+            </div>
+          </ng-template>
+          <mat-icon class="add_circle" [ngbTooltip]="tipContent" [container]="'body'" *ngIf="currentImageId !== image.id">add_circle</mat-icon>
+          <img class="image-related-content-list-item-image-img" src="{{ image.src }}" (click)="navigateToArticle($event,image.fileid,image.title)" *ngIf="currentImageId !== image.id" />
+          <img class="image-related-content-list-item-image-img" src="{{ image.src }}" *ngIf="currentImageId === image.id" />
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

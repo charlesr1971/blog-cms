@@ -94,7 +94,11 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
       }
 
       if(environment.openToolbarCommentsPanel && this.isMobile) {
-        this.commentsState = 'in';
+        /* setTimeout( () => {
+          if(this.commentsTotal !== 0 || (this.currentUser && this.currentUser.value['authenticated'] !== 0)) {
+            this.commentsState = 'in';
+          }
+        }); */
       }
       else {
         this.scrollToCommentsPanel = true;
@@ -116,6 +120,14 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
     this.currentUserid = this.currentUser['userid'];
     if(this.debug) {
       console.log('gallery-detail.component: this.currentUserid: ',this.currentUserid);
+    }
+
+    if(environment.openToolbarCommentsPanel && this.isMobile) {
+      setTimeout( () => {
+        if(this.commentsTotal !== 0 || (this.currentUser && this.currentUser['authenticated'] !== 0)) {
+          this.commentsState = 'in';
+        }
+      });
     }
 
   }

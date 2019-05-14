@@ -84,6 +84,7 @@ import { FormatFileTitleRenderer } from './ag-grid/cell-renderer/format-file-tit
 import { ConvertImageNameSuffixPipe } from './pipes/convert-image-name-suffix/convert-image-name-suffix.pipe';
 import { WebsiteHelpComponent } from './help/dialogs/website-help/website-help.component';
 import { SubscribeComponent } from './help/dialogs/subscribe/subscribe.component';
+import { ImageRelatedContentComponent } from './image-related-content/image-related-content.component';
 
 export function hljsLanguages() {
   return [
@@ -148,7 +149,8 @@ const appRoutes: Routes = [
     FormatFileTitleRenderer,
     ConvertImageNameSuffixPipe,
     WebsiteHelpComponent,
-    SubscribeComponent
+    SubscribeComponent,
+    ImageRelatedContentComponent
   ],
   imports: [
     BrowserModule,
