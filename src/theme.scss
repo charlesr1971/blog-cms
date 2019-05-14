@@ -459,7 +459,6 @@ $dark-background-palette: map-get($dark-theme, background);
 
     div.image-related-content-inner-container {
         background: mat-color($dark-foreground-palette, text, 0.025);
-        box-shadow: 5px 0px 100px 0px mat-color($dark-background-palette, status-bar, 0.75), -5px 0px 100px 0px mat-color($dark-background-palette, status-bar, 0.75);
     }
 
     div.image-related-content-container ul.image-related-content-list li {
@@ -1071,7 +1070,6 @@ $light-background-palette: map-get($light-theme, background);
 
     div.image-related-content-inner-container {
         background: mat-color($light-foreground-palette, text, 0.025);
-        //box-shadow: 5px 0px 100px 0px mat-color($light-background-palette, status-bar, 0.75), -5px 0px 100px 0px mat-color($light-background-palette, status-bar, 0.75);
     }
 
     div.image-related-content-container ul.image-related-content-list li {

@@ -23,6 +23,7 @@ export class ImageRelatedContentComponent implements OnInit, OnDestroy {
 
   @Input() image: Image;
   @Input() currentImageId: string;
+  @Input() currentFileId: string;
 
   isMobile: boolean = false;
   images: Array<any> = [];
@@ -88,16 +89,27 @@ export class ImageRelatedContentComponent implements OnInit, OnDestroy {
       });
       this.sortImages();
       setTimeout( () => {
-        const imagerelatedcontentinnercontainer = this.documentBody.querySelector('#image-related-content-inner-container');
-        if(this.debug) {
-          console.log('imageRelatedContentComponent.component: processRelatedContentData: imagerelatedcontentinnercontainer: ', imagerelatedcontentinnercontainer);
-        }
-        if(imagerelatedcontentinnercontainer && this.images.length) {
-          let width = this.images.length * 75;
+        if(this.isMobile) {
+          const imagerelatedcontentlist = this.documentBody.querySelector('#image-related-content-list');
           if(this.debug) {
-            console.log('imageRelatedContentComponent.component: processRelatedContentData: width: ', width);
+            console.log('imageRelatedContentComponent.component: processRelatedContentData: imagerelatedcontentlist: ', imagerelatedcontentlist);
           }
-          this.renderer.setStyle(imagerelatedcontentinnercontainer,'width',width + 'px')
+          if(imagerelatedcontentlist && this.images.length) {
+            let width = this.images.length * 75;
+            if(this.debug) {
+              console.log('imageRelatedContentComponent.component: processRelatedContentData: width: ', width);
+            }
+            if(this.debug) {
+              console.log('imageRelatedContentComponent.component: processRelatedContentData: window.innerWidth: ', window.innerWidth);
+            }
+            if(width > window.innerWidth) {
+              this.renderer.setStyle(imagerelatedcontentlist,'width',width + 'px');
+              const imagerelatedcontentlistitemimageimg = this.documentBody.querySelector('#image-related-content-list-item-image-img-' + this.currentFileId);
+              if(imagerelatedcontentlistitemimageimg) {
+                imagerelatedcontentlistitemimageimg.scrollIntoView();
+              }
+            }
+          }
         }
       });
       if(this.debug) {

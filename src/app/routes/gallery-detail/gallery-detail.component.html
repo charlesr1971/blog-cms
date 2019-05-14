@@ -47,7 +47,7 @@
     <div class="gallery-detail-divider"><span>...</span></div>
     <div class="gallery-detail-article" [innerHTML]="image.article | keepHtml"></div>
 
-    <app-image-related-content [image]="image" [currentImageId]="image.id"></app-image-related-content>
+    <app-image-related-content [image]="image" [currentImageId]="image.id" [currentFileId]="image.fileid"></app-image-related-content>
 
     <div *ngIf="isMobile || isTablet">
       <div *ngIf="(currentUser | async) as currentUser">

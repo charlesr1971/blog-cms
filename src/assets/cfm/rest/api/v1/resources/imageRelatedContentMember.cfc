@@ -1,5 +1,5 @@
 
-<cfcomponent extends="taffy.core.resource" taffy_uri="/image/related/{fileUuid}/{quantity}">
+<cfcomponent extends="taffy.core.resource" taffy_uri="/image/related/{fileUuid}/{quantity}" taffy_docs_hide>
 
   <cffunction name="get">
     <cfargument name="fileUuid" type="string" required="yes" />

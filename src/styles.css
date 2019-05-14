@@ -563,6 +563,10 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
     margin: 0px !important;
 }
 
+.image-related-content-list-item-tooltip .tooltip-inner {
+    width: 300px !important;
+}
+
 /* media queries */
 
 /* smart phones */
