@@ -37,11 +37,39 @@
       <div class="form-field-legend">How to use this page?</div>
       <div class="form-field-text" id="dialogArticleHelpNotificationText" #dialogArticleHelpNotificationText>
         <ol>
-          <li>Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. The 'Image Description' field has a maximum length of {{ articledescriptionmaxcharcount }} characters. Then choose a 'Category' &amp; an 'Image'. Images must be less than {{ maxcontentlengthInMb }}MB in memory size.</li>
+          <li value="1">Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. The 'Image Description' field has a maximum length of {{ articledescriptionmaxcharcount }} characters. Then choose a 'Category' &amp; an 'Image'.</li>
           <li>'Tags', 'Image Accreditation' and 'Image Orientation' are optional features.</li>
           <li>The 'Image Orientation' select control has two options. The first option is 'auto'. This will automatically calculate the width to height ratio of an image. If the image is determined to be of 'square' or 'portrait' proportions, it will be displayed without having its aspect ratio, altered. If the image is determined to be of 'landscape' proportions or the 'landscape' option is chosen, the image will be stretched to fit the entire width of the article image panel. For the most optimum viewing experience, please upload images that are either of 'landscape' proportions or have a standalone landscape section within the central part of the image. By default, if neither option is chosen, the image will use the 'landscape' layout feature.</li>
           <li>New data can only be submitted from within the 'Choose Image' modal dialog panel. Once an image has been selected, press the 'Submit' button to upload data from all the form fields.<br /><img src="assets/images/help/upload-image/choose-image-dialog-help-image-{{ themeSuffix }}.png" /></li>
-          <li>After submission of your image details, the 'Write Article' &amp; 'Article Publish Date' features will become available.</li>
+          <li>Images must be less than {{ maxcontentlengthInMb }}MB in memory size.</li>
+          <li class="list-item-hide-ordinal important">
+            <div>
+              <div>Summary</div>
+              <div>
+                <p>
+                  Data submission is a two part process.<br /><br />The first part involves the submission of the following fields:
+                </p>
+                <ol>
+                  <li>Author <em>required</em></li>
+                  <li>Image Title <em>required</em></li>
+                  <li>Image Description <em>required</em></li>
+                  <li>Tags <em>optional</em></li>
+                  <li>Category <em>required</em></li>
+                  <li>Image Accreditation <em>optional</em></li>
+                  <li>Image Orientation <em>optional</em></li>
+                  <li>Image <em>required</em></li>
+                </ol>
+                <p style="margin-top:16px;">
+                  The second part involves the submission of the following fields:
+                </p>
+                <ol>
+                  <li>Article <em>optional</em></li>
+                  <li>Article Publish Date <em>optional</em></li>
+                </ol> 
+              </div>
+            </div>
+          </li>
+          <li value="1">After submission of your image details, the 'Write Article' &amp; 'Article Publish Date' features will become available.</li>
           <li>Add an article by pressing on the 'Write Article' button. This will open up a modal dialog, containing a fully featured WYSIWYG text editor. Make sure that you do not exceed the {{ tinyMceArticleMaxWordCount }} word limit. A maximimum of {{ tinymcearticlemaximages }} images can be added to each article, using the text editor's upload feature. Article content can either be published from within the text editor dialog or by pressing the 'Submit' button at the bottom of this page.<br /><img src="assets/images/help/upload-image/tinymce-editor-help-image-{{ themeSuffix }}.png" /></li>
           <li>Then choose an optional 'Article Publish Date'.</li>
           <li class="list-item-hide-ordinal important">
@@ -52,7 +80,7 @@
               </div>
             </div>
           </li>
-          <li>New submissions and updates are subject to moderation. Please be patient whilst our moderation team assess your submission. We endeavour to approve submissions within 24 hours.</li>
+          <li value="1">New submissions and updates are subject to moderation. Please be patient whilst our moderation team assess your submission. We endeavour to approve submissions within 24 hours.</li>
           <li>Immediately after submission, you will be able to see it in the '{{ catalogRouterAliasTitle }}' section. Other users will be unable to see your submission, during the approval phase. You can also edit your submission whilst approval is pending.</li>
           <li>After approval has been granted, you may prevent other users from seeing your submission, by using the 'Article Publish Date' feature. Other users will be unable to see your submission until the 'Article Publish Date' has passed.</li>
           <li>Please note that submissions, containing offensive language or imagery, will be rejected.</li>

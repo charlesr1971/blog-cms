@@ -286,6 +286,11 @@ button[data-role='submit'] {
   border-bottom-right-radius: 4px;
 }
 
+.dialog-help .form-field-text li.important > div > div:nth-of-type(2) em {
+  opacity: 0.25;
+  font-style: normal;
+}
+
 /* media queries */
 
 /* smart phones */
