@@ -553,7 +553,9 @@ export class ImagesComponent implements OnInit, OnDestroy {
             publishArticleDate: item['publishArticleDate'], 
             approved: item['approved'],
             createdAt: item['createdAt'],
-            avatarSrc: item['avatarSrc']
+            avatarSrc: item['avatarSrc'],
+            imageAccreditation: item['imageAccreditation'],
+            imageOrientation: item['imageOrientation']
           });
           this.images.push(image);
         });
@@ -597,7 +599,9 @@ export class ImagesComponent implements OnInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.images.push(image);
       });
@@ -640,7 +644,9 @@ export class ImagesComponent implements OnInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.images.push(image);
       });
@@ -677,7 +683,9 @@ export class ImagesComponent implements OnInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.images.push(image);
       });
@@ -714,7 +722,9 @@ export class ImagesComponent implements OnInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.images.push(image);
       });
@@ -751,7 +761,9 @@ export class ImagesComponent implements OnInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.images.push(image);
       });

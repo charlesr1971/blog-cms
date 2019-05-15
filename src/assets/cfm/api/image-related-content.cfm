@@ -50,6 +50,8 @@
     <cfset targetObj['tags'] = qGetTargetFile.Tags>
     <cfset targetObj['publishArticleDate'] = qGetTargetFile.Publish_article_date>
     <cfset targetObj['approved'] = qGetTargetFile.Approved>
+    <cfset targetObj['imageAccreditation'] = qGetTargetFile.ImageAccreditation>
+    <cfset targetObj['imageOrientation'] = qGetTargetFile.ImageOrientation>
     <cfset targetObj['createdAt'] = qGetTargetFile.Submission_date>
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
       SELECT * 
@@ -106,6 +108,8 @@
               <cfset obj['tags'] = qGetFile['Tags'][row]>
               <cfset obj['publishArticleDate'] = qGetFile['Publish_article_date'][row]>
               <cfset obj['approved'] = qGetFile['Approved'][row]>
+              <cfset obj['imageAccreditation'] = qGetFile['ImageAccreditation'][local.row]>
+              <cfset obj['imageOrientation'] = qGetFile['ImageOrientation'][local.row]>
               <cfset obj['createdAt'] = qGetFile['Submission_date'][row]>
               <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
                 SELECT * 

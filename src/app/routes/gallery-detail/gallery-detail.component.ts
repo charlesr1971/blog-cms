@@ -33,6 +33,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
   commentsTotal: number = 0;
   fileid: any = 0;
   commentsState: string = 'out';
+  commentSource: string = 'gallery detail';
   scrollToCommentsPanel: boolean = false;
   currentUser: BehaviorSubject<User> = new BehaviorSubject<User>(null);
   currentUserid: number = 0;
@@ -47,6 +48,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
     refchildClose: '#gallery-detail-comments-ref-'
   };
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
+  backgroundSize: string = 'cover';
 
   debug: boolean = false;
 
@@ -66,7 +68,7 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
 
       if(this.httpService.currentUserAuthenticated > 0) {
         this.httpService.fetchJwtData();
-      }
+      }      
 
       this.isMobile = this.deviceDetectorService.isMobile();
       this.isTablet = this.deviceDetectorService.isTablet();
@@ -122,13 +124,13 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
       console.log('gallery-detail.component: this.currentUserid: ',this.currentUserid);
     }
 
-    if(environment.openToolbarCommentsPanel && this.isMobile) {
+    /* if(environment.openToolbarCommentsPanel && this.isMobile) {
       setTimeout( () => {
         if(this.commentsTotal !== 0 || (this.currentUser && this.currentUser['authenticated'] !== 0)) {
           this.commentsState = 'in';
         }
       });
-    }
+    } */
 
   }
 
@@ -177,8 +179,36 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
             publishArticleDate: data['publishArticleDate'],
             approved: data['approved'],
             createdAt: data['createdAt'],
-            avatarSrc: data['avatarSrc']
+            avatarSrc: data['avatarSrc'],
+            imageAccreditation: data['imageAccreditation'],
+            imageOrientation: data['imageOrientation']
           });
+          if(!this.isMobile) {
+            if(data['imageOrientation'] === 'auto') {
+              if('imageData' in data && !this.utilsService.isEmpty(data['imageData'])) {
+                const orientation = data['imageData']['width'] === data['imageData']['height'] ? 'square' : (data['imageData']['width'] > data['imageData']['height'] ? 'landscape' : 'portrait');
+                if(this.debug) {
+                  console.log('gallery-detail.component: processImageData: data[\'imageData\']: ', data['imageData']);
+                }
+                switch(orientation) {
+                  case 'square':
+                    this.backgroundSize = 'contain';
+                    break;
+                  case 'landscape':
+                    this.backgroundSize = 'cover';
+                    break;
+                  default:
+                    this.backgroundSize = 'contain';
+                }
+              }
+            }
+            else{
+              this.backgroundSize = 'cover';
+            }
+          }
+          else{
+            this.backgroundSize = 'cover';
+          }
           this.image.next(image);
           if(this.image.value['userid'] > 0) {
             const body = {

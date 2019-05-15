@@ -401,6 +401,15 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text, 0.5);
     }
 
+    .gallery-detail-image {
+        background-color: mat-color($dark-foreground-palette, text, 0.05);
+    }
+    
+    .gallery-detail-image-accreditation {
+        color: mat-color($dark-foreground-palette, text, 0.25);
+        background: mat-color($dark-foreground-palette, text, 0.0125);
+    }
+
     .gallery-detail-description {
         color: mat-color($dark-foreground-palette, text);
     }
@@ -533,6 +542,14 @@ $dark-background-palette: map-get($dark-theme, background);
 
     .image-description-charcount-text.warn {
         color: mat-color($dark-warn, default);
+    }
+
+    .dialog-help .form-field-text li.important > div > div:nth-last-of-type(1) {
+        background: mat-color($dark-primary, 800);
+    }
+      
+    .dialog-help .form-field-text li.important > div > div:nth-last-of-type(2) {
+        background: mat-color($dark-primary, 500);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
@@ -1012,6 +1029,15 @@ $light-background-palette: map-get($light-theme, background);
         color: mat-color($light-foreground-palette, text, 0.35);
     }
 
+    .gallery-detail-image {
+        background-color: mat-color($light-foreground-palette, text, 0.05);
+    }
+    
+    .gallery-detail-image-accreditation {
+        color: mat-color($light-foreground-palette, text, 0.25);
+        background: mat-color($light-foreground-palette, text, 0.0125);
+    }
+
     .gallery-detail-description {
         color: mat-color($light-foreground-palette, text, 0.85);
     }
@@ -1144,6 +1170,14 @@ $light-background-palette: map-get($light-theme, background);
 
     .image-description-charcount-text.warn {
         color: mat-color($light-warn, default);
+    }
+
+    .dialog-help .form-field-text li.important > div > div:nth-last-of-type(1) {
+        background: mat-color($light-primary, 800);
+    }
+      
+    .dialog-help .form-field-text li.important > div > div:nth-last-of-type(2) {
+        background: mat-color($light-primary, 500);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

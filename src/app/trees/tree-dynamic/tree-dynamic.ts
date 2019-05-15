@@ -365,6 +365,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
   publishArticleDate: FormControl;
   maxDescriptionLength: number = 140;
   tags: FormControl;
+  imageAccreditation: FormControl;
+  imageOrientation: FormControl;
   maxTagsLength: number = 20;
   maxcontentlengthInMb: string = '0';
   htmlStr: string = '';
@@ -412,6 +414,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
   tinymceArticleImages = [];
   themeRemove: string = '';
   themeAdd: string = '';
+  themeSuffix: string = '';
   hasUnsavedChanges: boolean = false;
   userid: number = 0;
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
@@ -465,6 +468,7 @@ export class TreeDynamic implements OnInit, OnDestroy {
     const themeObj = this.httpService.themeObj;
     this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
     this.themeAdd = this.themeRemove === themeObj['light'] ? themeObj['dark'] : themeObj['light'];
+    this.themeSuffix = this.cookieService.check('theme') && this.cookieService.get('theme') === themeObj['light'] ? 'light' : 'dark';
 
     this.apiUrl = this.httpService.apiUrl;
     this.categoryImagesUrl = this.httpService.categoryImagesUrl;
@@ -769,7 +773,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
       tags: this.formData['tags'],
       publishArticleDate: '_d' in this.formData['publishArticleDate'] ? new Date(this.formData['publishArticleDate']['_d']) : '',
       tinymceArticleDeletedImages: this.formData['tinymceArticleDeletedImages'] || [],
-      submitArticleNotification: this.formData['submitArticleNotification'] || 0
+      submitArticleNotification: this.formData['submitArticleNotification'] || 0,
+      imageAccreditation: this.formData['imageAccreditation'],
+      imageOrientation: this.formData['imageOrientation']
     };
     if(this.debug) {
       console.log('tree-dynamic: editImage: body',body);
@@ -871,6 +877,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
         this.tinyMceArticleContent = data['article'];
         this.formData['article'] = data['article'];
         this.publishArticleDate.patchValue(moment(new Date(data['publishArticleDate']),'MMMM DD, YYYY'));
+        this.imageAccreditation.patchValue(data['imageAccreditation']);
+        this.imageOrientation.patchValue(data['imageOrientation']);
         this.fileImageId = data['fileid'];
         this.userid = this.adminUserId > 0 ? data['userid'] : this.userid;
         this.adminApprovedText = data['approved'] === 1 ? 'Unapprove' : 'Approve';
@@ -1113,7 +1121,9 @@ export class TreeDynamic implements OnInit, OnDestroy {
           title: this.title,
           description: this.description,
           publishArticleDate: this.publishArticleDate,
-          tags: this.tags
+          tags: this.tags,
+          imageAccreditation: this.imageAccreditation,
+          imageOrientation: this.imageOrientation
         });
       }
       else{
@@ -1205,6 +1215,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
         ]);
         this.publishArticleDate = new FormControl(moment());
         this.submitArticleNotification = new FormControl();
+        this.imageAccreditation = new FormControl();
+        this.imageOrientation = new FormControl();
         if(this.debug) {
           console.log('tree-dynamic: createFormControls: 1');
         }
@@ -1368,6 +1380,22 @@ export class TreeDynamic implements OnInit, OnDestroy {
           if(this.debug) {
             console.log('tree-dynamic: monitorFormValueChanges: this.formData["publishArticleDate"]: ', this.formData['publishArticleDate']);
           }
+          this.httpService.subjectImagePath.next(this.formData);
+        });
+        this.imageAccreditation.valueChanges
+        .subscribe(imageAccreditation => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: imageAccreditation: ',imageAccreditation);
+          }
+          this.formData['imageAccreditation'] = imageAccreditation;
+          this.httpService.subjectImagePath.next(this.formData);
+        });
+        this.imageOrientation.valueChanges
+        .subscribe(imageOrientation => {
+          if(this.debug) {
+            console.log('tree-dynamic: monitorFormValueChanges: imageOrientation: ',imageOrientation);
+          }
+          this.formData['imageOrientation'] = imageOrientation;
           this.httpService.subjectImagePath.next(this.formData);
         });
       }

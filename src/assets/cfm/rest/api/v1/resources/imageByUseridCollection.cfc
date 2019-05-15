@@ -77,6 +77,8 @@
         <cfelse>
 		  <cfset local.obj['avatarSrc'] = "">
         </cfif>
+        <cfset local.obj['imageAccreditation'] = local.qGetFile.ImageAccreditation>
+        <cfset local.obj['imageOrientation'] = local.qGetFile.ImageOrientation>
         <cfset ArrayAppend(local.data,local.obj)>
       </cfloop>
     </cfif>

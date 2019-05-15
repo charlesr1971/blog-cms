@@ -82,6 +82,8 @@
     <cfelse>
       <cfset data['avatarSrc'] = "">
     </cfif>
+    <cfset data['imageAccreditation'] = qGetFile.ImageAccreditation>
+    <cfset data['imageOrientation'] = qGetFile.ImageOrientation>
     <cfset ArrayAppend(temp,data)>
   </cfloop>
 </cfif>

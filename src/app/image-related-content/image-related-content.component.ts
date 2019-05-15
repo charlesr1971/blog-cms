@@ -83,7 +83,10 @@ export class ImageRelatedContentComponent implements OnInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
+          
         });
         this.images.push(image);
       });

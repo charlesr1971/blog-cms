@@ -95,7 +95,15 @@
 	<cfset data['submitArticleNotification'] = 1>
     <cfset data['avatarSrc'] = "">
   </cfif>
+  <cfset data['imageAccreditation'] = qGetFile.ImageAccreditation>
+  <cfset data['imageOrientation'] = qGetFile.ImageOrientation>
   <cfset data['createdAt'] = qGetFile.Submission_date>
+  <cfset data['imageData'] = StructNew()>
+  <cfset filepath = uploadfolder & "/" & qGetFile.ImagePath>
+  <cfif FileExists(filepath)>
+    <cfimage source="#filepath#" name="image"> 
+    <cfset data['imageData'] = ImageInfo(image)> 
+  </cfif>
 <cfelse>
 	<cfset data['error'] = "Record could not be found">
 </cfif>

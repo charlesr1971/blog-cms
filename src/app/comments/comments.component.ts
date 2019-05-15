@@ -51,8 +51,10 @@ export class CommentsComponent implements OnInit, OnDestroy {
   @Output() sendCommentsTotal: EventEmitter<any> = new EventEmitter();
   @Output() sendDisableCommentTooltip: EventEmitter<any> = new EventEmitter();
   @Output() sendHideCommentInput: EventEmitter<any> = new EventEmitter();
+  @Output() sendCommentsState: EventEmitter<any> = new EventEmitter();
   @Input() image: Image;
   @Input() commentsState: string = 'out';
+  @Input() commentSource: string = 'image';
   @Input() scrollToCommentsPanel: boolean = false;
   @Input() currentUser: User;
   @Input() disableCommentTooltip: boolean = true;
@@ -480,6 +482,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   }
 
   closeCommentsDialog(): void {
+    this.sendCommentsState.emit('out');
     this.dialog.closeAll();
   }
 

@@ -8,7 +8,7 @@
     <cfset local['userToken'] = "">
     <cfset local['userid'] = 0>
     <cfset local.data = ArrayNew(1)>
-    <cfset local.query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date,Avartar_src")>
+    <cfset local.query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date,Avartar_src,ImageAccreditation,ImageOrientation")>
     <cfset local.startrow = 1>
     <cfset local.endrow = request.filebatch>
     <cfif Val(arguments.page) AND Val(request.filebatch)>
@@ -75,6 +75,8 @@
           <cfelse>
             <cfset QuerySetCell(local.query,"Avartar_src","")>
           </cfif>
+          <cfset QuerySetCell(local.query,"ImageAccreditation",local.qGetFile.ImageAccreditation)>
+          <cfset QuerySetCell(local.query,"ImageOrientation",local.qGetFile.ImageOrientation)>
         </cfif>
       </cfloop>
     </cfif>
@@ -98,6 +100,8 @@
         <cfset local.obj['approved'] = local.qGetFile.Approved>
         <cfset local.obj['createdAt'] = local.qGetFile.Submission_date>
 		<cfset local.obj['avatarSrc'] = local.qGetFile.Avartar_src>
+        <cfset local.obj['imageAccreditation'] = local.qGetFile.ImageAccreditation>
+        <cfset local.obj['imageOrientation'] = local.qGetFile.ImageOrientation>
         <cfset ArrayAppend(local.data,local.obj)>
       </cfloop>
     </cfif>

@@ -982,6 +982,8 @@ export class HttpService {
           'tinymceArticleDeletedImages': JSON.stringify(data['tinymceArticleDeletedImages']) || '',
           'submitArticleNotification': '' + data['submitArticleNotification'] + '' || '0',
           'userToken': this.cookieService.get('userToken') || '',
+          'imageAccreditation': data['imageAccreditation'] || '',
+          'imageOrientation': data['imageOrientation'] || 'landscape',
           'X-HTTP-METHOD-OVERRIDE': 'PUT'
         })
       };
@@ -1002,7 +1004,9 @@ export class HttpService {
         tags: JSON.stringify(data['tags']),
         publishArticleDate: data['publishArticleDate'],
         tinymceArticleDeletedImages: JSON.stringify(data['tinymceArticleDeletedImages']),
-        submitArticleNotification: data['submitArticleNotification']
+        submitArticleNotification: data['submitArticleNotification'],
+        imageAccreditation: data['imageAccreditation'],
+        imageOrientation: data['imageOrientation'],
       };
       const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
       headers = {

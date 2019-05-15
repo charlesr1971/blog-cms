@@ -56,6 +56,8 @@
         <cfset local.obj['tags'] = local.qGetFile.Tags>
         <cfset local.obj['publishArticleDate'] = local.qGetFile.Publish_article_date>
         <cfset local.obj['approved'] = local.qGetFile.Approved>
+        <cfset local.obj['imageAccreditation'] = local.qGetFile.ImageAccreditation>
+        <cfset local.obj['imageOrientation'] = local.qGetFile.ImageOrientation>
         <cfset local.obj['createdAt'] = local.qGetFile.Submission_date>
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
           SELECT * 

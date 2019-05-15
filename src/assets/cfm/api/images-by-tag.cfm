@@ -44,7 +44,7 @@
 </cfif>
 
 <cfset temp = ArrayNew(1)>
-<cfset query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date,Avartar_src")>
+<cfset query = QueryNew("User_ID,File_ID,Category,ImagePath,File_uuid,Author,Title,Description,Article,Size,Likes,Tags,Publish_article_date,Approved,Submission_date,Avartar_src,ImageAccreditation,ImageOrientation")>
 
 <CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
@@ -89,6 +89,8 @@
       <cfelse>
         <cfset QuerySetCell(query,"Avartar_src","")>
       </cfif>
+      <cfset QuerySetCell(query,"ImageAccreditation",qGetFile.ImageAccreditation)>
+      <cfset QuerySetCell(query,"ImageOrientation",qGetFile.ImageOrientation)>
     </cfif>
   </cfloop>
 </cfif>
@@ -114,6 +116,8 @@
     <cfset data['approved'] = qGetFile.Approved>
     <cfset data['createdAt'] = qGetFile.Submission_date>
 	<cfset data['avatarSrc'] = qGetFile.Avartar_src>
+    <cfset data['imageAccreditation'] = qGetFile.ImageAccreditation>
+    <cfset data['imageOrientation'] = qGetFile.ImageOrientation>
     <cfset ArrayAppend(temp,data)>
   </cfloop>
 </cfif>

@@ -20,6 +20,8 @@ export class UploadService {
   publishArticleDate: any;
   tinymceArticleDeletedImages: any;
   userToken: string = '';
+  imageAccreditation: string = '';
+  imageOrientation: string = 'landscape';
   cfid: string = '';
   cftoken: string = '';
   uploadType: string = '';
@@ -66,6 +68,8 @@ export class UploadService {
       this.uploadType = data['uploadType'];
       this.mode = data['mode'];
       this.fileUuid = data['fileUuid'];
+      this.imageAccreditation = data['imageAccreditation'];
+      this.imageOrientation = data['imageOrientation'];
     });
 
     this.cfid = '' + this.httpService.cfid + '';
@@ -103,6 +107,8 @@ export class UploadService {
         console.log('upload: this.uploadType ',this.uploadType);
         console.log('upload: this.mode ',this.mode);
         console.log('upload: this.fileUuid ',this.fileUuid);
+        console.log('upload: this.imageAccreditation ',this.imageAccreditation);
+        console.log('upload: this.imageOrientation ',this.imageOrientation);
       }
 
       console.log('upload: this.article ',this.article);
@@ -127,6 +133,8 @@ export class UploadService {
             'Cfid': this.cfid || '',
             'Cftoken': this.cftoken || '',
             'Upload-Type': this.uploadType || '',
+            'imageAccreditation': this.imageAccreditation || '',
+            'imageOrientation': this.imageOrientation || '',
             'X-HTTP-METHOD-OVERRIDE': 'PUT'
           })
         };
@@ -149,7 +157,9 @@ export class UploadService {
             'User-Token': this.userToken || '',
             'Cfid': this.cfid || '',
             'Cftoken': this.cftoken || '',
-            'Upload-Type': this.uploadType || ''
+            'Upload-Type': this.uploadType || '',
+            'imageAccreditation': this.imageAccreditation || '',
+            'imageOrientation': this.imageOrientation || ''
           })
         };
       }
@@ -170,7 +180,9 @@ export class UploadService {
             'User-Token': this.userToken || '',
             'Cfid': this.cfid || '',
             'Cftoken': this.cftoken || '',
-            'Upload-Type': this.uploadType || ''
+            'Upload-Type': this.uploadType || '',
+            'imageAccreditation': this.imageAccreditation || '',
+            'imageOrientation': this.imageOrientation || ''
           })
         };
       }

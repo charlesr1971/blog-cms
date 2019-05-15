@@ -86,7 +86,15 @@
 		<cfset local.data['submitArticleNotification'] = 1>
         <cfset local.data['avatarSrc'] = "">
       </cfif>
+      <cfset local.data['imageAccreditation'] = local.qGetFile.ImageAccreditation>
+      <cfset local.data['imageOrientation'] = local.qGetFile.ImageOrientation>
       <cfset local.data['createdAt'] = local.qGetFile.Submission_date>
+      <cfset local.data['imageData'] = StructNew()>
+      <cfset local.filepath = request.uploadfolder & "/" & local.qGetFile.ImagePath>
+      <cfif FileExists(local.filepath)>
+        <cfimage source="#local.filepath#" name="local.image"> 
+        <cfset local.data['imageData'] = ImageInfo(local.image)> 
+      </cfif>
     <cfelse>
 	  <cfset local.data['error'] = "Record could not be found">
     </cfif>
@@ -135,6 +143,8 @@
     <cfset local.data['cftoken'] = "">
     <cfset local.data['uploadType'] = "">
     <cfset local.data['avatarSrc'] = "">
+    <cfset local.data['imageAccreditation'] = "">
+    <cfset local.data['imageOrientation'] = "landscape">
     <cfset local.data['emailSent'] = 0>
     <cfset local.data['userToken'] = "">
     <cfset local.data['jwtObj'] = StructNew()>
@@ -186,6 +196,12 @@
       </cfif>
       <cfif StructKeyExists(local.requestBody,"upload-type")>
       	<cfset local.data['uploadType'] = Trim(local.requestBody['upload-type'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"imageAccreditation")>
+      	<cfset local.data['imageAccreditation'] = Trim(local.requestBody['imageAccreditation'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"imageOrientation")>
+      	<cfset local.data['imageOrientation'] = Trim(local.requestBody['imageOrientation'])>
       </cfif>
       <cfif StructKeyExists(local.requestBody,"Authorization")>
 		<cfset local.jwtString = request.utils.GetJwtString(Trim(local.requestBody['Authorization']))>
@@ -286,8 +302,8 @@
 		  <cfset local.article = REReplaceNoCase(local.article,"#local.spaceInsideParagraphPattern#","","ALL")>
           <cfset local.approved = ListFindNoCase("6,7",local.roleid) ? 1 : 0> 
           <CFQUERY DATASOURCE="#request.domain_dsn#" result="local.queryInsertResult">
-            INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-            VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(local.fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(local.data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.submissiondate#">)
+            INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,ImageAccreditation,ImageOrientation,Submission_date) 
+            VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(local.fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(local.data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imageAccreditation']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imageOrientation']#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.submissiondate#">)
           </CFQUERY>
           <cfset local.data['fileid'] = local.queryInsertResult.generatedkey>
           <cfif IsArray(local.data['tinymceArticleDeletedImages'])>
@@ -489,6 +505,8 @@
     <cfset local.data['tinymceArticleImageCount'] = 0>
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['uploadType'] = "">
+    <cfset local.data['imageAccreditation'] = "">
+    <cfset local.data['imageOrientation'] = "landscape">
     <cfset local.data['emailSent'] = 0>
     <cfset local.data['userToken'] = "">
     <cfset local.data['jwtObj'] = StructNew()>
@@ -546,6 +564,12 @@
       </cfif>
       <cfif StructKeyExists(local.requestBody,"upload-type")>
       	<cfset local.data['uploadType'] = Trim(local.requestBody['upload-type'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"imageAccreditation")>
+      	<cfset local.data['imageAccreditation'] = Trim(local.requestBody['imageAccreditation'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"imageOrientation")>
+      	<cfset local.data['imageOrientation'] = Trim(local.requestBody['imageOrientation'])>
       </cfif>
       <cfif StructKeyExists(local.requestBody,"user-token")>
       	<cfset local.data['userToken'] = Trim(local.requestBody['user-token'])>
@@ -641,7 +665,7 @@
       <cfset local.approved = ListFindNoCase("6,7",local.roleid) OR local.isAdmin ? 1 : 0> 
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblFile
-        SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.imagePath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">
+        SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.imagePath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.author#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#request.utils.CapFirstSentence(local.data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#local.article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#local.publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.filetoken#">,ImageAccreditation = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imageAccreditation']#">,ImageOrientation = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['imageOrientation']#">
         WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['fileUuid']#"> 
       </CFQUERY>
       <cfif IsjSON(local.data['tinymceArticleDeletedImages'])>

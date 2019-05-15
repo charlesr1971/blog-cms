@@ -20,6 +20,8 @@ import { Image } from './image.model';
 import { HttpService } from '../services/http/http.service';
 import { environment } from '../../environments/environment';
 
+import { CommentsComponent } from '../comments/comments.component';
+
 declare var TweenMax: any, Elastic: any, Back: any;
 
 const moment = _moment;
@@ -51,6 +53,7 @@ interface CommentElementsPrefix {
 export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('imageTagsSelect') imageTagsSelect;
+  @ViewChild(CommentsComponent) comments: CommentsComponent;
 
   private allowMultipleLikesPerUser: number = environment.allowMultipleLikesPerUser;
 
@@ -71,6 +74,7 @@ export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
   likeColor: string = '#b88be3';
   shareState: string = 'out';
   commentsState: string = 'out';
+  commentSource: string = 'image';
   scrollToCommentsPanel: boolean = false;
   fbIcon = faFacebookSquare;
   tbrIcon = faTumblrSquare;
@@ -294,6 +298,7 @@ export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openComments(event: any): void {
     this.commentsState = this.commentsState === 'in' ? 'out' : 'in';
+    this.comments.openCommentsDialog();
     event.stopPropagation();
   }
 
@@ -374,6 +379,10 @@ export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendHideCommentInput(event: any): void {
     this.hideCommentInput = event;
+  }
+
+  sendCommentsState(event: any): void {
+    this.commentsState = event;
   }
 
   openLightbox(idx: number= 0): void {

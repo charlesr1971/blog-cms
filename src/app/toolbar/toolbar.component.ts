@@ -82,7 +82,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
       if(this.isMobile) {
         this.disableFavouriteTooltip = true;
-        this.commentsState = 'in';
+        // this.commentsState = 'in';
       }
 
   }

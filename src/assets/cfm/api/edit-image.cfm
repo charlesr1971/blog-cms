@@ -1,7 +1,7 @@
 
 <cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />
 <cfif StructKeyExists(getHttpRequestData().headers,"upload-type")>
-  <cfheader name="Access-Control-Allow-Headers" value="fileUuid,file-name,image-path,name,title,description,article,tags,publish-article-date,tinymce-article-deleted-images,file-extension,user-token,content-type,cfid,cftoken,upload-type,Authorization,userToken" />
+  <cfheader name="Access-Control-Allow-Headers" value="fileUuid,file-name,image-path,name,title,description,article,tags,publish-article-date,tinymce-article-deleted-images,file-extension,user-token,content-type,cfid,cftoken,upload-type,imageAccreditation,imageOrientation,Authorization,userToken" />
 <cfelse>
   <cfheader name="Access-Control-Allow-Headers" value="content-type,Authorization,userToken" />
 </cfif>
@@ -51,6 +51,8 @@
 <cfset data['tinymceArticleImageCount'] = 0>
 <cfset data['submitArticleNotification'] = 1>
 <cfset data['uploadType'] = "">
+<cfset data['imageAccreditation'] = "">
+<cfset data['imageOrientation'] = "landscape">
 <cfset data['emailSent'] = 0>
 <cfset data['error'] = "">
 
@@ -106,6 +108,12 @@
     <cfif StructKeyExists(getHttpRequestData().headers,"upload-type")>
       <cfset data['uploadType'] = getHttpRequestData().headers['upload-type']>
     </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"imageAccreditation")>
+      <cfset data['imageAccreditation'] = getHttpRequestData().headers['imageAccreditation']>
+    </cfif>
+    <cfif StructKeyExists(getHttpRequestData().headers,"imageOrientation")>
+      <cfset data['imageOrientation'] = getHttpRequestData().headers['imageOrientation']>
+    </cfif>
     <cfcatch>
       <cfset data['error'] = cfcatch.message>
     </cfcatch>
@@ -147,6 +155,12 @@
     <cfif StructKeyExists(requestBody,"submitArticleNotification")>
       <cfset data['submitArticleNotification'] =  Trim(requestBody['submitArticleNotification'])>
     </cfif>
+    <cfif StructKeyExists(requestBody,"imageAccreditation")>
+      <cfset data['imageAccreditation'] =  Trim(requestBody['imageAccreditation'])>
+    </cfif>
+    <cfif StructKeyExists(requestBody,"imageOrientation")>
+      <cfset data['imageOrientation'] =  Trim(requestBody['imageOrientation'])>
+    </cfif>
     <cfcatch>
       <cftry>
         <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
@@ -180,6 +194,12 @@
         </cfif>
         <cfif StructKeyExists(requestBody,"submitArticleNotification")>
           <cfset data['submitArticleNotification'] =  Trim(requestBody['submitArticleNotification'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"imageAccreditation")>
+		  <cfset data['imageAccreditation'] =  Trim(requestBody['imageAccreditation'])>
+        </cfif>
+        <cfif StructKeyExists(requestBody,"imageOrientation")>
+		  <cfset data['imageOrientation'] =  Trim(requestBody['imageOrientation'])>
         </cfif>
         <cfcatch>
           <cfset data['error'] = cfcatch.message>
@@ -268,7 +288,7 @@
   <cfset approved = ListFindNoCase("6,7",roleid) OR isAdmin ? 1 : 0> 
   <CFQUERY NAME="qUpdateFile" DATASOURCE="#request.domain_dsn#">
     UPDATE tblFile
-    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">
+    SET Category = <cfqueryparam cfsqltype="cf_sql_varchar" value="#category#">,ImagePath = <cfqueryparam cfsqltype="cf_sql_varchar" value="#imagepath#">,Author =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,Title =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,Description =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,Tags =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#tags#">,Article =  <cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,Publish_article_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,FileToken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,ImageAccreditation = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imageAccreditation']#">,ImageOrientation = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imageOrientation']#">
     WHERE File_uuid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['fileUuid']#"> 
   </CFQUERY>
   <cfif IsjSON(data['tinymceArticleDeletedImages'])>

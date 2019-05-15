@@ -1110,7 +1110,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.imagesUnapproved.push(image);
       });
@@ -1148,7 +1150,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           publishArticleDate: item['publishArticleDate'],
           approved: item['approved'],
           createdAt: item['createdAt'],
-          avatarSrc: item['avatarSrc']
+          avatarSrc: item['avatarSrc'],
+          imageAccreditation: item['imageAccreditation'],
+          imageOrientation: item['imageOrientation']
         });
         this.imagesApproved.push(image);
       });

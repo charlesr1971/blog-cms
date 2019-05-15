@@ -23,6 +23,8 @@ export class Image {
     approved: number;
     createdAt: string;
     avatarSrc: string;
+    imageAccreditation: string;
+    imageOrientation: string;
 
     constructor(obj?: any) {
 
@@ -43,6 +45,9 @@ export class Image {
         this.approved = obj && obj.approved || 0;
         this.createdAt = obj && obj.createdAt || null;
         this.avatarSrc = obj && obj.avatarSrc || '';
+        this.imageAccreditation = obj && obj.imageAccreditation || '';
+        this.imageOrientation = obj && obj.imageOrientation || 'landscape';
+
 
     }
 

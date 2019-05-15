@@ -1,6 +1,6 @@
 
 <cfheader name="Access-Control-Allow-Origin" value="#request.ngAccessControlAllowOrigin#" />
-<cfheader name="Access-Control-Allow-Headers" value="file-name,image-path,name,title,description,article,tags,publish-article-date,tinymce-article-deleted-images,file-extension,user-token,content-type,cfid,cftoken,upload-type,Authorization,userToken" />
+<cfheader name="Access-Control-Allow-Headers" value="file-name,image-path,name,title,description,article,tags,publish-article-date,tinymce-article-deleted-images,file-extension,user-token,content-type,cfid,cftoken,upload-type,imageAccreditation,imageOrientation,Authorization,userToken" />
 
 <cfparam name="uploadfolder" default="#request.uploadfolder#" />
 <cfparam name="extensions" default="gif,png,jpg,jpeg" />
@@ -45,6 +45,8 @@
 <cfset data['cftoken'] = cookie.cftoken>
 <cfset data['uploadType'] = "">
 <cfset data['avatarSrc'] = "">
+<cfset data['imageAccreditation'] = "">
+<cfset data['imageOrientation'] = "landscape">
 <cfset data['emailSent'] = 0>
 
 <cftry>
@@ -93,6 +95,12 @@
   </cfif>
   <cfif StructKeyExists(getHttpRequestData().headers,"upload-type")>
   	<cfset data['uploadType'] = getHttpRequestData().headers['upload-type']>
+  </cfif>
+  <cfif StructKeyExists(getHttpRequestData().headers,"imageAccreditation")>
+  	<cfset data['imageAccreditation'] = getHttpRequestData().headers['imageAccreditation']>
+  </cfif>
+  <cfif StructKeyExists(getHttpRequestData().headers,"imageOrientation")>
+  	<cfset data['imageOrientation'] = getHttpRequestData().headers['imageOrientation']>
   </cfif>
   <cfcatch>
 	<cfset data['error'] = cfcatch.message>
@@ -190,8 +198,8 @@
 	  <cfset article = REReplaceNoCase(article,"#spaceInsideParagraphPattern#","","ALL")>
       <cfset approved = ListFindNoCase("6,7",roleid) ? 1 : 0> 
       <CFQUERY DATASOURCE="#request.domain_dsn#" result="queryInsertResult">
-        INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,Submission_date) 
-        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
+        INSERT INTO tblFile (User_ID,File_uuid,Category,Clientfilename,Filename,ImagePath,Author,Title,Description,Article,Size,Cfid,Cftoken,Tags,Publish_article_date,Approved,FileToken,ImageAccreditation,ImageOrientation,Submission_date) 
+        VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#data['userId']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(fileid)#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(imagePath,'/')#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['clientfileName']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#filename#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imagePath']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#author#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#title#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#CapFirstSentence(data['description'],true)#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#article#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#Val(data['content_length'])#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cfid']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['cftoken']#">,<cfqueryparam cfsqltype="cf_sql_longvarchar" value="#tags#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#publishArticleDate#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#approved#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#filetoken#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imageAccreditation']#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#data['imageOrientation']#">,<cfqueryparam cfsqltype="cf_sql_timestamp" value="#submissiondate#">)
       </CFQUERY>
       <cfset data['fileid'] = queryInsertResult.generatedkey>
       <cfif IsArray(data['tinymceArticleDeletedImages'])>

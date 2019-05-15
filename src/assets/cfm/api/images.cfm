@@ -67,6 +67,8 @@
     <cfset data['tags'] = qGetFile.Tags>
     <cfset data['publishArticleDate'] = qGetFile.Publish_article_date>
     <cfset data['approved'] = qGetFile.Approved>
+    <cfset data['imageAccreditation'] = qGetFile.ImageAccreditation>
+    <cfset data['imageOrientation'] = qGetFile.ImageOrientation>
     <cfset data['createdAt'] = qGetFile.Submission_date>
     <CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
       SELECT * 

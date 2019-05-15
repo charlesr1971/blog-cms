@@ -44,6 +44,8 @@
         <cfset local.targetObj['tags'] = local.qGetTargetFile.Tags>
         <cfset local.targetObj['publishArticleDate'] = local.qGetTargetFile.Publish_article_date>
         <cfset local.targetObj['approved'] = local.qGetTargetFile.Approved>
+        <cfset local.targetObj['imageAccreditation'] = local.qGetTargetFile.ImageAccreditation>
+        <cfset local.targetObj['imageOrientation'] = local.qGetTargetFile.ImageOrientation>
         <cfset local.targetObj['createdAt'] = local.qGetTargetFile.Submission_date>
         <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
           SELECT * 
@@ -100,6 +102,8 @@
                   <cfset local.obj['tags'] = local.qGetFile['Tags'][local.row]>
                   <cfset local.obj['publishArticleDate'] = local.qGetFile['Publish_article_date'][local.row]>
                   <cfset local.obj['approved'] = local.qGetFile['Approved'][local.row]>
+                  <cfset local.obj['imageAccreditation'] = local.qGetFile['ImageAccreditation'][local.row]>
+                  <cfset local.obj['imageOrientation'] = local.qGetFile['ImageOrientation'][local.row]>
                   <cfset local.obj['createdAt'] = local.qGetFile['Submission_date'][local.row]>
                   <CFQUERY NAME="local.qGetUser" DATASOURCE="#request.domain_dsn#">
                     SELECT * 
