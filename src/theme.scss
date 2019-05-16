@@ -357,6 +357,10 @@ $dark-background-palette: map-get($dark-theme, background);
         color: mat-color($dark-foreground-palette, text);
     }
 
+    div.comment-parent i.comment-roleid, div.comment-child i.comment-roleid {
+        color: mat-color($dark-accent, A100);
+    }
+
     .mat-icon.favorite {
         color: mat-color($dark-foreground-palette, text) !important;
     }
@@ -983,6 +987,10 @@ $light-background-palette: map-get($light-theme, background);
 
     div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid {
         color: mat-color($light-foreground-palette, text, 0.75);
+    }
+
+    div.comment-parent i.comment-roleid, div.comment-child i.comment-roleid {
+        color: mat-color($light-accent, A100);
     }
 
     .mat-icon.favorite {

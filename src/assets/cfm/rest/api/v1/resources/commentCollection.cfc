@@ -36,6 +36,7 @@
         <cfset local.surname = "">
         <cfset local.avatarSrc = "">
         <cfset local.displayName = "">
+        <cfset local.roleid = 2>
         <cfif local.qGetUser.RecordCount>
           <cfset local.forename = local.qGetUser.Forename>
           <cfset local.surname = local.qGetUser.Surname>
@@ -43,6 +44,7 @@
             <cfset local.avatarSrc = request.avatarbasesrc & local.qGetUser.Filename>
           </cfif>
           <cfset local.displayName = local.qGetUser.DisplayName>
+          <cfset local.roleid = local.qGetUser.Role_ID>
         </cfif>
         <cfset local.obj = StructNew()>
         <cfset local.obj['commentid'] = local.qGetComment.Comment_ID>
@@ -56,6 +58,7 @@
         <cfset local.obj['token'] = local.qGetComment.Token>
         <cfset local.obj['replyToCommentid'] = local.qGetComment.Reply_to_comment_ID>
         <cfset local.obj['displayName'] = local.displayName>
+        <cfset local.obj['roleid'] = local.roleid>
         <cfset local.obj['createdAt'] = local.qGetComment.Submission_date>
         <cfset ArrayAppend(local.data['comments'],local.obj)>
       </cfloop>

@@ -19,6 +19,7 @@
   <div class="comments" id="infinite-scroller-comments-{{ image.id }}" #infiniteScrollerCommentsContainer infiniteScroller scrollPerecnt="70" immediateCallback="true" [scrollCallback]="scrollCallbackComments" style="height:250px;" [ngStyle]="{'display': !commentsArrayIsEmpty ? 'block' : 'none'}">
     <div *ngFor="let comment of image.comments" id="comment-{{ comment.commentid }}" [ngClass]="{'comment-parent': comment.commentid == comment.replyToCommentid,'comment-child': comment.commentid != comment.replyToCommentid}" class="comment-replytocommentid-{{ comment.replyToCommentid }}">
       <mat-icon class="comment-deletecommentid" id="comment-deletecommentid-{{ comment.commentid }}" (click)="deleteComment($event,comment.commentid)" *ngIf="comment.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput" ngbTooltip="Delete Comment" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">delete_outline</mat-icon>
+      <i class="fa fa-shield comment-roleid" *ngIf="comment.roleid > 5" ngbTooltip="Admin" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'"></i>
       <div class="comment-date">{{ comment.createdAt | date:'medium' }}</div>
       <div class="avatar-container">
         <div class="avatar-scale-container" [ngStyle]="{'background-image':'url(' + comment.avatarSrc + ')'}" *ngIf="comment.avatarSrc != '' && comment.avatarSrc != null"></div>

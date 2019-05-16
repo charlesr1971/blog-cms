@@ -20,6 +20,7 @@ export class Comment {
     replies: any;
     createdAt: string;
     displayName: string;
+    roleid: number;
 
     constructor(obj?: any) {
 
@@ -37,6 +38,7 @@ export class Comment {
         this.replies = obj && obj.replies || null;
         this.createdAt = obj && obj.createdAt || null;
         this.displayName = obj && obj.displayName || '';
+        this.roleid = obj && obj.roleid || 2;
 
     }
 

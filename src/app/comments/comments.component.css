@@ -57,6 +57,14 @@ div.comment-parent .mat-icon.comment-deletecommentid {
     cursor: pointer;
 }
 
+div.comment-parent i.comment-roleid {
+    position: absolute;
+    right: 40px;
+    top: 12px;
+    cursor: default;
+    font-size: 21px;
+}
+
 div.comment-parent div.comment-date {
     margin-bottom: 10px;
     font-size: 12px;
@@ -105,8 +113,6 @@ div.comment-parent div.comment-container span {
 
 div.comment-child {
     position: relative;
-    /* border-top: 5px solid rgba(255,255,255,0.025); */
-    /* border-top: 5px solid rgba(0,0,0,0); */
     padding: 10px;
     margin-top: 10px;
 }
@@ -116,6 +122,14 @@ div.comment-child .mat-icon.comment-deletecommentid {
     left: 10px;
     top: 10px;
     cursor: pointer;
+}
+
+div.comment-child i.comment-roleid {
+    position: absolute;
+    left: 40px;
+    top: 12px;
+    cursor: default;
+    font-size: 21px;
 }
 
 div.comment-child .mat-icon.comment-replytocommentid {

@@ -27,6 +27,7 @@
 <cfset data['replyToCommentid'] = 0>
 <cfset data['createdAt'] = "">
 <cfset data['displayName'] = "">
+<cfset data['roleid'] = 2>
 <cfset data['emailSent'] = 0>
 <cfset data['error'] = "">
 
@@ -89,6 +90,7 @@
 	</CFQUERY>
 	<cfset data['error'] = "">
 	<cfset data['commentid'] = queryInsertResult.generatedkey>
+    <cfset data['roleid'] = qGetUser.Role_ID>
 	<cfif NOT Val(data['replyToCommentid'])>
 	  <CFQUERY NAME="qUpdateComment" DATASOURCE="#request.domain_dsn#">
 		UPDATE tblComment

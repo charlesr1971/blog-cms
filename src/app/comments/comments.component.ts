@@ -220,7 +220,8 @@ export class CommentsComponent implements OnInit, OnDestroy {
             token: item['token'],
             replyToCommentid: item['replyToCommentid'],
             createdAt: item['createdAt'],
-            displayName: item['displayName']
+            displayName: item['displayName'],
+            roleid: item['roleid']
           });
           this.comments.push(comment);
         });
