@@ -9,7 +9,7 @@
       </div>
     </mat-card-header>
     <div class="image-category">
-        {{ image.category | titlecase }}<mat-icon (click)="deleteFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput">delete_outline</mat-icon><mat-icon (click)="editFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput">create</mat-icon>
+        {{ image.category | titlecase }}<mat-icon (click)="deleteFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput" class="image-deleteimageid">delete_outline</mat-icon><mat-icon (click)="editFile(image.id)" *ngIf="image.userid == currentUser.userid && currentUser.authenticated != 0 && !hideCommentInput">create</mat-icon>
     </div>
     <div class="image-container">
       <img id="image-img-{{ image.id }}" class="image" appLazyLoad mat-card-image src="{{ image.src | convertImageNameSuffix:imageMediumSuffix }}" alt="{{ image.title }}" (click)="openLightbox(imageCount)" style="opacity:0;" *ngIf="lazyLoadImages && imageMediumEnabled" />

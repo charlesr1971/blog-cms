@@ -353,8 +353,8 @@ $dark-background-palette: map-get($dark-theme, background);
         background: none;
     }
 
-    div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid {
-        color: mat-color($dark-foreground-palette, text);
+    div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid, div.image-category .mat-icon.image-deleteimageid {
+        color: mat-color($dark-warn, default) !important;
     }
 
     div.comment-parent i.comment-roleid, div.comment-child i.comment-roleid {
@@ -985,8 +985,8 @@ $light-background-palette: map-get($light-theme, background);
         background: none !important;
     }
 
-    div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid {
-        color: mat-color($light-foreground-palette, text, 0.75);
+    div.comment-parent .mat-icon.comment-deletecommentid, div.comment-child .mat-icon.comment-deletecommentid, div.image-category .mat-icon.image-deleteimageid {
+        color: mat-color($light-warn, default) !important;
     }
 
     div.comment-parent i.comment-roleid, div.comment-child i.comment-roleid {
