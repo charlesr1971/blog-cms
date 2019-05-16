@@ -192,6 +192,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   displayName: FormControl;
   password: FormControl;
   emailNotification: FormControl;
+  replyNotification: FormControl;
   theme: FormControl;
   jwtToken: FormControl;
   userToken: FormControl;
@@ -203,6 +204,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   message: FormControl;
 
   emailNotificationChecked = false;
+  replyNotificationChecked = false;
   themeChecked = false;
   
   formProfileData = {};
@@ -401,6 +403,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           this.surname.patchValue(this.currentUser['surname']);
           this.displayName.patchValue(this.currentUser['displayName']);
           this.emailNotification.patchValue(!!+this.currentUser['emailNotification']);
+          this.replyNotification.patchValue(!!+this.currentUser['replyNotification']);
           this.theme.patchValue(this.currentUser['theme'] === this.themeObj['dark'] ? false : true);
           if(this.debug) {
             console.log('profile.component: this.currentUser["theme"]: ',this.currentUser['theme']);
@@ -765,6 +768,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       displayName: this.displayName.value,
       password: this.password.value ? this.password.value : '',
       emailNotification: this.emailNotification.value,
+      replyNotification: this.replyNotification.value,
       theme: this.theme.value ? this.themeObj['light'] : this.themeObj['dark'],
       userid: this.userid
     };
@@ -1011,11 +1015,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           cookieAcceptance: data['cookieAcceptance'],
           theme: data['theme'],
           roleid: data['roleid'],
-          displayName: data['displayName']
+          displayName: data['displayName'],
+          replyNotification: data['replyNotification']
         });
         this.userService.setCurrentUser(user);
         this.currentUser['authenticated'] = this.userid;
         this.emailNotificationChecked = !!+this.currentUser['emailNotification'];
+        this.replyNotificationChecked = !!+this.currentUser['replyNotification'];
         this.themeChecked = this.currentUser['theme'] === this.themeObj['dark'] ? false : true;
         const themeType = data['theme'] === this.themeObj['light'] ? this.themeObj['light'] : this.themeObj['dark'];
         this.httpService.themeType.next(themeType);
@@ -1176,6 +1182,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       displayName: this.displayName,
       password: this.password,
       emailNotification: this.emailNotification,
+      replyNotification: this.replyNotification,
       theme: this.theme,
       jwtToken: this.jwtToken,
       userToken: this.userToken,
@@ -1200,6 +1207,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.displayName = new FormControl();
     this.password = new FormControl();
     this.emailNotification = new FormControl();
+    this.replyNotification = new FormControl();
     this.theme = new FormControl(); 
     this.jwtToken = new FormControl();
     this.userToken = new FormControl();
@@ -1267,6 +1275,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: emailNotification: ',emailNotification);
         }
         this.formProfileData['emailNotification'] = emailNotification ? 1 : 0;
+      });
+      this.replyNotification.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe(replyNotification => {
+        if(this.debug) {
+          console.log('profile.component: replyNotification: ',replyNotification);
+        }
+        this.formProfileData['replyNotification'] = replyNotification ? 1 : 0;
       });
       this.theme.valueChanges
       .pipe(

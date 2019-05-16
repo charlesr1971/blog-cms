@@ -1,7 +1,7 @@
 <div id="dialog-subscribe-notification-container" class="mat-app-background basic-container" style="opacity:0;">
   <div class="form-field-container">
     <div class="form-field-legend">Join our mailing list</div>
-    <div class="form-field-text" id="dialogSubscribeNotificationText" #dialogSubscribeNotificationText>
+    <div class="form-field-text dialogText" id="dialogSubscribeNotificationText" #dialogSubscribeNotificationText>
       <form novalidate [formGroup]="subscribeForm">
         <mat-form-field class="example-full-width">
           <input matInput placeholder="E-mail" value="" formControlName="email" type="email" id="email" required>

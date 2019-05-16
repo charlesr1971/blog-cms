@@ -58,6 +58,7 @@ body.upload-photo .mat-checkbox label {
 
 .mat-dialog-container {
     position: relative;
+    overflow: hidden !important;
 }
 
 .mat-dialog-actions {
@@ -566,6 +567,10 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
 .image-related-content-list-item-tooltip .tooltip-inner {
     width: 300px !important;
 }
+
+.dialogText {
+    -webkit-overflow-scrolling: touch;
+}    
 
 /* media queries */
 

@@ -482,7 +482,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           roleid: data['roleid'],
           forgottenPasswordToken: data['forgottenPasswordToken'],
           forgottenPasswordValidated: data['forgottenPasswordValidated'],
-          displayName: data['displayName']
+          displayName: data['displayName'],
+          replyNotification: data['replyNotification']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {

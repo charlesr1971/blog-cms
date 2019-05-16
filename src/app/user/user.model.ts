@@ -25,6 +25,7 @@ export class User {
   forgottenPasswordToken: string;
   forgottenPasswordValidated: number;
   displayName: string;
+  replyNotification: number;
 
   constructor(obj?: any) {
 
@@ -49,6 +50,7 @@ export class User {
     this.forgottenPasswordToken = obj && obj.forgottenPasswordToken || null;
     this.forgottenPasswordValidated = obj && obj.forgottenPasswordValidated || 0;
     this.displayName = obj && obj.displayName || '';
+    this.replyNotification = obj && obj.replyNotification || 0;
 
   }
   

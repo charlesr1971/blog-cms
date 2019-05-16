@@ -1,4 +1,3 @@
-
 <div id="infinite-scroller-images" appAdZone appAdZoneParentElementId="infinite-scroller-images" [appAdZoneSingleImageId]="singleImageId" [appAdZoneSearchDo]="searchDo" [appAdZoneTagsDo]="tagsDo" [appAdZoneIsSection]="isSection" #infiniteScrollerImagesContainer infiniteScroller scrollPerecnt="70" immediateCallback="true" [scrollCallback]="scrollCallbackImages" style="overflow:auto;">
     <form novalidate [formGroup]="searchForm" [ngStyle]="{'display': searchDo ? 'block' : 'none'}" #searchFormContainer>
         <div class="form-field-container">
@@ -44,3 +43,4 @@
 <ng-container *ngIf="images.length === 0 && !searchDo && !tagsDo">
     <mat-spinner [diameter]="100"></mat-spinner>
 </ng-container>
+

@@ -40,6 +40,7 @@
 <cfset data['forgottenPasswordValidated'] = 0>
 <cfset data['isForgottenPasswordValidated'] = 0>
 <cfset data['displayName'] = "">
+<cfset data['replyNotification'] = 1>
 <cfset data['createdAt'] = "">
 <cfset data['error'] = "">
 
@@ -197,6 +198,7 @@
         <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
         <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
         <cfset data['displayName'] = qGetUser.DisplayName>
+        <cfset data['replyNotification'] = qGetUser.Reply_notification>
         <cfset data['createdAt'] = qGetUser.Submission_date>
       </cfif>
     </cfif>
@@ -295,6 +297,7 @@
         <cfset data['forgottenPasswordToken'] = qGetUser.ForgottenPasswordToken>
         <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
         <cfset data['displayName'] = qGetUser.DisplayName>
+        <cfset data['replyNotification'] = qGetUser.Reply_notification>
         <cfset data['createdAt'] = qGetUser.Submission_date>
         <cfset data['error'] = "">
       </cfif>
@@ -378,6 +381,7 @@
         <cfset data['forgottenPasswordValidated'] = qGetUser.ForgottenPasswordValidated>
         <cfset data['isForgottenPasswordValidated'] = 1>
         <cfset data['displayName'] = qGetUser.DisplayName>
+        <cfset data['replyNotification'] = qGetUser.Reply_notification>
         <cfset data['createdAt'] = qGetUser.Submission_date>
         <cfset data['error'] = "">
       </cfif>

@@ -1,7 +1,7 @@
 <div appMatDialogDraggableTitle id="dialog-edit-categories-help-notification-container" class="mat-app-background basic-container" style="opacity:0;">
   <div class="form-field-container">
     <div class="form-field-legend">How to edit categories?<mat-icon ngbTooltip="Draggable Panel" [disableTooltip]="disableEditCategoriesTooltip" [container]="'body'" *ngIf="!isMobile">drag_indicator</mat-icon></div>
-    <div class="form-field-text" id="dialogEditCategoriesHelpNotificationText" #dialogEditCategoriesHelpNotificationText>
+    <div class="form-field-text dialogText" id="dialogEditCategoriesHelpNotificationText" #dialogEditCategoriesHelpNotificationText>
       <ol>
         <li>An existing category can be renamed or deleted, as long as one or more image and/or article is not already associated with it.</li>
         <li>New categories can be added by pressing the <mat-icon inline="true">add</mat-icon> icon. This will create a new text field below the last existing category in a node. Fill in the text field and press the <mat-icon inline="true">update</mat-icon> icon. Category names must be less than {{ maxcategoryeditnamelength }} and cannot contain punctuation marks and/or numbers. Disallowed characters will be removed. Spaces and/or hyphens are allowed.</li>

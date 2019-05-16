@@ -98,7 +98,7 @@ export class ImageRelatedContentComponent implements OnInit, OnDestroy {
             console.log('imageRelatedContentComponent.component: processRelatedContentData: imagerelatedcontentlist: ', imagerelatedcontentlist);
           }
           if(imagerelatedcontentlist && this.images.length) {
-            let width = this.images.length * 75;
+            const width = this.images.length * 75;
             if(this.debug) {
               console.log('imageRelatedContentComponent.component: processRelatedContentData: width: ', width);
             }
@@ -107,10 +107,7 @@ export class ImageRelatedContentComponent implements OnInit, OnDestroy {
             }
             if(width > window.innerWidth) {
               this.renderer.setStyle(imagerelatedcontentlist,'width',width + 'px');
-              const imagerelatedcontentlistitemimageimg = this.documentBody.querySelector('#image-related-content-list-item-image-img-' + this.currentFileId);
-              if(imagerelatedcontentlistitemimageimg) {
-                imagerelatedcontentlistitemimageimg.scrollIntoView();
-              }
+              this.scrollToCurrentImage();
             }
           }
         }
@@ -119,6 +116,39 @@ export class ImageRelatedContentComponent implements OnInit, OnDestroy {
         console.log('imageRelatedContentComponent.component: processRelatedContentData: this.images: ', this.images);
       }
     }
+  }
+
+  scrollPageToCurrentImage(): void {
+    const imagerelatedcontentlistitemimageimg = this.documentBody.querySelector('#image-related-content-list-item-image-img-' + this.currentFileId);
+    if(imagerelatedcontentlistitemimageimg) {
+      imagerelatedcontentlistitemimageimg.scrollIntoView();
+    }
+  }
+
+  scrollToCurrentImage(): void {
+    const imagerelatedcontentcontainer = this.documentBody.querySelector('#image-related-content-container');
+    const imagerelatedcontentlistitemimageimg: HTMLElement = this.documentBody.querySelector('#image-related-content-list-item-image-img-' + this.currentFileId);
+    if(imagerelatedcontentlistitemimageimg) {
+      const rect = imagerelatedcontentlistitemimageimg.getBoundingClientRect();
+      const leftPos = rect.left;
+      if(imagerelatedcontentcontainer) {
+        if(this.debug) {
+          console.log('imageRelatedContentComponent.component: scrollToCurrentImage: leftPos: ', leftPos);
+        }
+        //imagerelatedcontentcontainer.scrollTo(leftPos,0);
+        imagerelatedcontentcontainer.scrollLeft = leftPos;
+      }
+    }
+  }
+
+  scrollToCentre(width: number): void {
+    const imagerelatedcontentcontainer = this.documentBody.querySelector('#image-related-content-container');
+    const imagerelatedcontentcontainerRect = imagerelatedcontentcontainer.getBoundingClientRect();
+    const middle = ((width-imagerelatedcontentcontainerRect.width)/2);
+    if(this.debug) {
+      console.log('imageRelatedContentComponent.component: scrollToCentre: middle: ', middle);
+    }
+    imagerelatedcontentcontainer.scrollTo(middle,0);
   }
 
   sortImages(): void {

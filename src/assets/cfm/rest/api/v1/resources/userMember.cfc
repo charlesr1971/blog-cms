@@ -26,6 +26,7 @@
     <cfset local.data['forgottenPasswordToken'] = "">
     <cfset local.data['forgottenPasswordValidated'] = 0>
     <cfset local.data['displayName'] = "">
+    <cfset local.data['replyNotification'] = 1>
     <cfset local.data['createdat'] = "">
     <cfset local.data['error'] = "">
     <CFQUERY NAME="local.qGetUserID" DATASOURCE="#request.domain_dsn#">
@@ -58,6 +59,7 @@
         <cfset local.data['forgottenPasswordToken'] = local.qGetUser.ForgottenPasswordToken>
         <cfset local.data['forgottenPasswordValidated'] = local.qGetUser.ForgottenPasswordValidated>
         <cfset local.data['displayName'] = local.qGetUser.DisplayName>
+        <cfset local.data['replyNotification'] = local.qGetUser.Reply_notification>
         <cfset local.data['createdat'] = local.qGetUser.Submission_date>
       </cfif>
       <cfset local.data['error'] = "">
@@ -239,6 +241,7 @@
     <cfset local.data['submitArticleNotification'] = 1>
     <cfset local.data['cookieAcceptance'] = 0>
     <cfset local.data['displayName'] = "">
+    <cfset local.data['replyNotification'] = 1>
     <cfset local.data['createdAt'] = "">
     <cfset local.data['jwtObj'] = StructNew()>
     <cfset local.data['error'] = "">
@@ -265,6 +268,10 @@
       </cfif>
       <cfif StructKeyExists(local.requestBody,"displayName")>
       	<cfset local.data['displayName'] = Trim(local.requestBody['displayName'])>
+      </cfif>
+      <cfif StructKeyExists(local.requestBody,"replyNotification")>
+      	<cfset local.data['replyNotification'] = Trim(local.requestBody['replyNotification'])>
+        <cfset local.data['replyNotification'] = local.data['replyNotification'] ? 1 : 0>
       </cfif>
       <cfif StructKeyExists(local.requestBody,"Authorization")>
         <cfset local.jwtString = request.utils.GetJwtString(Trim(local.requestBody['Authorization']))>
@@ -310,7 +317,7 @@
       </cfif>
       <CFQUERY DATASOURCE="#request.domain_dsn#">
         UPDATE tblUser
-        SET <cfif Len(Trim(local.data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['emailNotification']#">,Theme = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.data['theme'],'-')#">,DisplayName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['displayName']#"> 
+        SET <cfif Len(Trim(local.data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#request.utils.CapFirst(local.data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['emailNotification']#">,Theme = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(local.data['theme'],'-')#">,DisplayName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.data['displayName']#">,Reply_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.data['replyNotification']#"> 
         WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['userid']#">
       </CFQUERY>
       <cfset local.data['password'] = local.qGetUser.Password>
@@ -457,8 +464,8 @@
 		<cfif local.qGetUser.RecordCount>
           <cftransaction>
             <CFQUERY DATASOURCE="#request.domain_dsn#">
-              INSERT INTO tblUserArchive (User_ID,Role_ID,Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,SignUpValidated,Clientfilename,Filename,Email_notification,Keep_logged_in,Submit_article_notification,Cookie_acceptance,Theme,ForgottenPasswordToken,ForgottenPasswordValidated,Suspend,DisplayName,SystemUser) 
-              VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.Role_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Salt#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Salt)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Password#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Password)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.E_mail#" null="#yesNoFormat(NOT len(trim(local.qGetUser.E_mail)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Forename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Forename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Surname#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Surname)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Cfid#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Cftoken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.SignUpToken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SignUpToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SignUpValidated#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Clientfilename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Filename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Email_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Keep_logged_in#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Submit_article_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Cookie_acceptance#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Theme#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Theme)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.ForgottenPasswordToken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.ForgottenPasswordToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.ForgottenPasswordValidated#" null="#yesNoFormat(NOT len(trim(local.qGetUser.ForgottenPasswordValidated)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Suspend#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Suspend)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.DisplayName#" null="#yesNoFormat(NOT len(trim(local.qGetUser.DisplayName)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SystemUser#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SystemUser)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.DisplayName#" null="#yesNoFormat(NOT len(trim(local.qGetUser.DisplayName)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SystemUser#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SystemUser)))#">)
+              INSERT INTO tblUserArchive (User_ID,Role_ID,Salt,Password,E_mail,Forename,Surname,Cfid,Cftoken,SignUpToken,SignUpValidated,Clientfilename,Filename,Email_notification,Keep_logged_in,Submit_article_notification,Cookie_acceptance,Theme,ForgottenPasswordToken,ForgottenPasswordValidated,Suspend,DisplayName,SystemUser,Reply_notification) 
+              VALUES (<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.User_ID#">,<cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetUser.Role_ID#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Salt#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Salt)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Password#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Password)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.E_mail#" null="#yesNoFormat(NOT len(trim(local.qGetUser.E_mail)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Forename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Forename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Surname#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Surname)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Cfid#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Cfid)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Cftoken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Cftoken)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.SignUpToken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SignUpToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SignUpValidated#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Clientfilename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Clientfilename)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Filename#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Filename)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Email_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Keep_logged_in#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Submit_article_notification#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Cookie_acceptance#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.Theme#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Theme)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.ForgottenPasswordToken#" null="#yesNoFormat(NOT len(trim(local.qGetUser.ForgottenPasswordToken)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.ForgottenPasswordValidated#" null="#yesNoFormat(NOT len(trim(local.qGetUser.ForgottenPasswordValidated)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Suspend#" null="#yesNoFormat(NOT len(trim(local.qGetUser.Suspend)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.DisplayName#" null="#yesNoFormat(NOT len(trim(local.qGetUser.DisplayName)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SystemUser#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SystemUser)))#">,<cfqueryparam cfsqltype="cf_sql_varchar" value="#local.qGetUser.DisplayName#" null="#yesNoFormat(NOT len(trim(local.qGetUser.DisplayName)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.SystemUser#" null="#yesNoFormat(NOT len(trim(local.qGetUser.SystemUser)))#">,<cfqueryparam cfsqltype="cf_sql_tinyint" value="#local.qGetUser.Reply_notification#">)
             </CFQUERY>
             <CFQUERY NAME="local.qGetFile" DATASOURCE="#request.domain_dsn#">
               SELECT * 

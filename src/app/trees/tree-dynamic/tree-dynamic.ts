@@ -1060,7 +1060,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           cookieAcceptance: data['cookieAcceptance'],
           theme: data['theme'],
           roleid: data['roleid'],
-          displayName: data['displayName']
+          displayName: data['displayName'],
+          replyNotification: data['replyNotification']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {

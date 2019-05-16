@@ -1,6 +1,6 @@
 import { Directive, Inject, ElementRef, Input, Renderer2, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 import { HttpService } from '../../services/http/http.service';

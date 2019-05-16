@@ -129,7 +129,9 @@
             </CFQUERY>
             <cfset local.data['error'] = "">
             <cfset local.data['commentid'] = local.queryInsertResult.generatedkey>
+            <cfset local.isCommentReply = true>
             <cfif NOT Val(local.data['replyToCommentid'])>
+			  <cfset local.isCommentReply = false>
               <CFQUERY NAME="local.qUpdateComment" DATASOURCE="#request.domain_dsn#">
                 UPDATE tblComment
                 SET Reply_to_comment_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['commentid']#"> 
@@ -161,40 +163,86 @@
               FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID
               WHERE tblUser.User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetFile.User_ID#">
             </CFQUERY>
+            <cfset local.commentOriginUserId = 0>
+            <cfif local.isCommentReply>
+              <CFQUERY NAME="local.qGetCommentOrigin" DATASOURCE="#request.domain_dsn#">
+                SELECT tblComment.User_ID, Forename, E_mail, Reply_notification 
+                FROM tblComment INNER JOIN tblUser ON tblComment.User_ID = tblUser.User_ID
+                WHERE Comment_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.data['replyToCommentid']#">
+              </CFQUERY>
+              <cfif local.qGetCommentOrigin.RecordCount AND local.qGetCommentOrigin.Reply_notification AND Len(Trim(local.qGetCommentOrigin.E_mail)) AND FindNoCase("@",local.qGetCommentOrigin.E_mail)>
+				<cfset local.commentOriginUserId = local.qGetCommentOrigin.User_ID>
+                <cfset local.salutation = request.utils.CapFirst(LCase(local.qGetCommentOrigin.Forename))>
+                <cfsavecontent variable="emailtemplatemessage">
+                  <cfoutput>
+                    <h1>Hi<cfif Len(Trim(local.salutation))> #local.salutation#</cfif></h1>
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr valign="middle">
+                        <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
+                        <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
+                        <td style="font-size:16px;">
+                          <strong>The following reply has been made to a comment you posted about the article entitled '#local.qGetFileAuthor.Title#'</strong><br /><br />
+                          #request.utils.CapFirstSentence(local.data['comment'],true)#
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <p><strong>Comment author:</strong></p>
+                          #request.utils.CapFirst(LCase(local.qGetUser.Forename))# #request.utils.CapFirst(LCase(local.qGetUser.Surname))#<br />
+                          <em>#DateFormat(local.submissiondate,"medium")# #TimeFormat(local.submissiondate,"medium")#</em>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <p><strong>To view the comment, please follow the link below</strong></p>
+                          <a href="#local.uploadfolder#/index.cfm">View Comment</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </cfoutput>
+                </cfsavecontent>
+                <cfmail to="#local.qGetCommentOrigin.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#local.emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#local.emailsubject#" type="html">
+                  <cfinclude template="../../../../email-template.cfm">
+                </cfmail>
+                <cfset local.data['emailSent'] = 1>
+              </cfif>
+            </cfif>
             <cfif local.qGetFileAuthor.RecordCount AND local.qGetUser.Email_notification AND Len(Trim(local.qGetFileAuthor.E_mail)) AND FindNoCase("@",local.qGetFileAuthor.E_mail)>
-              <cfset local.salutation = request.utils.CapFirst(LCase(local.qGetFileAuthor.Forename))>
-              <cfsavecontent variable="emailtemplatemessage">
-                <cfoutput>
-                  <h1>Hi<cfif Len(Trim(local.salutation))> #local.salutation#</cfif></h1>
-                  <table cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tr valign="middle">
-                      <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
-                      <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
-                      <td style="font-size:16px;">
-                        <strong>The following comment has been made about the photo entitled '#local.qGetFileAuthor.Title#'</strong><br /><br />
-                        #request.utils.CapFirstSentence(local.data['comment'],true)#
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="3">
-                        <p><strong>Comment author:</strong></p>
-                        #request.utils.CapFirst(LCase(local.qGetUser.Forename))# #request.utils.CapFirst(LCase(local.qGetUser.Surname))#<br />
-                        <em>#DateFormat(local.submissiondate,"medium")# #TimeFormat(local.submissiondate,"medium")#</em>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="3">
-                        <p><strong>To view the comment, please follow the link below</strong></p>
-                        <a href="#local.uploadfolder#/index.cfm?commentToken=#local.data['token']#">View Comment</a>
-                      </td>
-                    </tr>
-                  </table>
-                </cfoutput>
-              </cfsavecontent>
-              <cfmail to="#local.qGetFileAuthor.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#local.emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#local.emailsubject#" type="html">
-                <cfinclude template="../../../../email-template.cfm">
-              </cfmail>
-              <cfset local.data['emailSent'] = 1>
+              <cfif local.commentOriginUserId NEQ local.qGetFileAuthor.User_ID>
+                <cfset local.salutation = request.utils.CapFirst(LCase(local.qGetFileAuthor.Forename))>
+                <cfsavecontent variable="emailtemplatemessage">
+                  <cfoutput>
+                    <h1>Hi<cfif Len(Trim(local.salutation))> #local.salutation#</cfif></h1>
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr valign="middle">
+                        <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
+                        <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
+                        <td style="font-size:16px;">
+                          <strong>The following comment has been made about the article entitled '#local.qGetFileAuthor.Title#'</strong><br /><br />
+                          #request.utils.CapFirstSentence(local.data['comment'],true)#
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <p><strong>Comment author:</strong></p>
+                          #request.utils.CapFirst(LCase(local.qGetUser.Forename))# #request.utils.CapFirst(LCase(local.qGetUser.Surname))#<br />
+                          <em>#DateFormat(local.submissiondate,"medium")# #TimeFormat(local.submissiondate,"medium")#</em>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">
+                          <p><strong>To view the comment, please follow the link below</strong></p>
+                          <a href="#local.uploadfolder#/index.cfm?commentToken=#local.data['token']#">View Comment</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </cfoutput>
+                </cfsavecontent>
+                <cfmail to="#local.qGetFileAuthor.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#local.emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#local.emailsubject#" type="html">
+                  <cfinclude template="../../../../email-template.cfm">
+                </cfmail>
+                <cfset local.data['emailSent'] = 1>
+              </cfif>
             </cfif>
           <cfelse>
             <cfset local.data['error'] = "The user associated with this comment cannot be found">

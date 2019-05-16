@@ -31,6 +31,7 @@ div.comment-parent {
     position: relative;
     margin-top: 10px;
     padding: 10px 10px 40px 10px;
+    /* margin-bottom: 5px; */
 }
 
 div.comment-parent:nth-of-type(1) {
@@ -105,8 +106,9 @@ div.comment-parent div.comment-container span {
 div.comment-child {
     position: relative;
     /* border-top: 5px solid rgba(255,255,255,0.025); */
-    border-top: 5px solid rgba(0,0,0,0);
+    /* border-top: 5px solid rgba(0,0,0,0); */
     padding: 10px;
+    margin-top: 10px;
 }
 
 div.comment-child .mat-icon.comment-deletecommentid {
@@ -202,6 +204,7 @@ div.comment-child div.comment-container span {
 
     .mat-card-content.comments > div.comments {
         padding-right: 10px;
+        -webkit-overflow-scrolling: touch;
     }
 
 }
@@ -212,6 +215,7 @@ div.comment-child div.comment-container span {
 
     .mat-card-content.comments > div.comments {
         padding-right: 10px;
+        -webkit-overflow-scrolling: touch;
     }
 
 }
@@ -220,6 +224,7 @@ div.comment-child div.comment-container span {
 
     .mat-card-content.comments > div.comments {
         padding-right: 10px;
+        -webkit-overflow-scrolling: touch;
     }
   
 }

@@ -35,11 +35,11 @@
   <div id="dialog-article-help-notification-container" class="mat-app-background basic-container dialog-help" style="opacity:0;">
     <div class="form-field-container">
       <div class="form-field-legend">How to use this page?</div>
-      <div class="form-field-text" id="dialogArticleHelpNotificationText" #dialogArticleHelpNotificationText>
+      <div class="form-field-text dialogText" id="dialogArticleHelpNotificationText" #dialogArticleHelpNotificationText>
         <ol>
           <li value="1">Upload a photo, making sure you fill in 'Author', 'Image Title' &amp; 'Image Description' fields. The 'Image Description' field has a maximum length of {{ articledescriptionmaxcharcount }} characters. Then choose a 'Category' &amp; an 'Image'.</li>
           <li>'Tags', 'Image Accreditation' and 'Image Orientation' are optional features.</li>
-          <li>The 'Image Orientation' select control has two options. The first option is 'auto'. This will automatically calculate the width to height ratio of an image. If the image is determined to be of 'square' or 'portrait' proportions, it will be displayed without having its aspect ratio, altered. If the image is determined to be of 'landscape' proportions or the 'landscape' option is chosen, the image will be stretched to fit the entire width of the article image panel. For the most optimum viewing experience, please upload images that are either of 'landscape' proportions or have a standalone landscape section within the central part of the image. By default, if neither option is chosen, the image will use the 'landscape' layout feature.</li>
+          <li>The 'Image Orientation' select control has two options. The first option is 'auto'. This will automatically calculate the width to height ratio of an image. If the image is determined to be of 'square' or 'portrait' proportions, it will be displayed without having it's aspect ratio, altered. If the image is determined to be of 'landscape' proportions or the 'landscape' option is chosen, the image will be stretched to fit the entire width of the article image panel. For the most optimum viewing experience, please upload images that are either of 'landscape' proportions or have a standalone landscape section within the central part of the image. By default, if neither option is chosen, the image will use the 'landscape' feature.</li>
           <li>New data can only be submitted from within the 'Choose Image' modal dialog panel. Once an image has been selected, press the 'Submit' button to upload data from all the form fields.<br /><img src="assets/images/help/upload-image/choose-image-dialog-help-image-{{ themeSuffix }}.png" /></li>
           <li>Images must be less than {{ maxcontentlengthInMb }}MB in memory size.</li>
           <li class="list-item-hide-ordinal important">
@@ -139,7 +139,7 @@
       </div><br />
 
       <mat-form-field class="example-full-width">
-        <textarea matInput placeholder="Image Description" formControlName="description" id="description" [maxlength]="articledescriptionmaxcharcount"></textarea>
+        <textarea matInput placeholder="Image Description" formControlName="description" id="description" [maxlength]="articledescriptionmaxcharcount" required></textarea>
       </mat-form-field>
 
       <div class="image-description-charcount-container">

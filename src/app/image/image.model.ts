@@ -48,7 +48,6 @@ export class Image {
         this.imageAccreditation = obj && obj.imageAccreditation || '';
         this.imageOrientation = obj && obj.imageOrientation || 'landscape';
 
-
     }
 
 }
