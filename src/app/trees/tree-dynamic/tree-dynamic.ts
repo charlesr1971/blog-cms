@@ -329,7 +329,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
   @ViewChild('dialogArticleHelpNotification') private dialogArticleHelpNotificationTpl: TemplateRef<any>;
   @ViewChild('dialogArticleHelpNotificationText') dialogArticleHelpNotificationText: ElementRef;
   @ViewChild(CustomRecaptchaDirective) customRecaptchaDirective;
-
+  @ViewChild('dp3') dp3;
+  @ViewChild('imageOrientationSelect') imageOrientationSelect;
 
   public tinyMceSettings = {
     skin_url: '/assets/tinymce/skins/lightgray',
@@ -745,6 +746,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
       console.log('tree-dynamic: ngOnInit loaded...');
     }
 
+    this.documentBody.querySelector('#mat-sidenav-content').addEventListener('scroll', this.onMatSidenavContentScroll.bind(this));
+
   }
 
   next(): void {
@@ -1061,7 +1064,8 @@ export class TreeDynamic implements OnInit, OnDestroy {
           theme: data['theme'],
           roleid: data['roleid'],
           displayName: data['displayName'],
-          replyNotification: data['replyNotification']
+          replyNotification: data['replyNotification'],
+          threadNotification: data['threadNotification']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {
@@ -1796,6 +1800,15 @@ export class TreeDynamic implements OnInit, OnDestroy {
 
   closeArticleDialog(): void {
     this.dialog.closeAll();
+  }
+
+  onMatSidenavContentScroll(): void {
+    if(this.dp3) {
+      this.dp3.close();
+    }
+    if(this.imageOrientationSelect) {
+      this.imageOrientationSelect.close();
+    }
   }
 
   openArticleDialog(): void {

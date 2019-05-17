@@ -346,7 +346,8 @@ export class HttpService {
           roleid: data['roleid'],
           forgottenPasswordToken: data['forgottenPasswordToken'],
           forgottenPasswordValidated: data['forgottenPasswordValidated'],
-          replyNotification: data['replyNotification']
+          replyNotification: data['replyNotification'],
+          threadNotification: data['threadNotification']
         });
         if(this.commentToken === '' && data['keeploggedin'] === 1 && data['userid'] > 0) {
           user['authenticated'] = data['userid'];
@@ -601,6 +602,7 @@ export class HttpService {
           'password': formData['password'] || '',
           'emailNotification': '' + formData['emailNotification'] + '' || '0',
           'replyNotification': '' + formData['replyNotification'] + '' || '0',
+          'threadNotification': '' + formData['threadNotification'] + '' || '0',
           'theme': formData['theme'] || '',
           'userid': '' + formData['userid'] + '' || '0',
           'X-HTTP-METHOD-OVERRIDE': 'PUT'
@@ -620,6 +622,7 @@ export class HttpService {
         password: formData['password'],
         emailNotification: formData['emailNotification'],
         replyNotification: formData['replyNotification'],
+        threadNotification: formData['threadNotification'],
         theme: formData['theme'],
         userid: formData['userid']
       };

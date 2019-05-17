@@ -36,6 +36,7 @@
     <cfset local.data['isForgottenPasswordValidated'] = 0>
     <cfset local.data['displayName'] = "">
     <cfset local.data['replyNotification'] = 1>
+    <cfset local.data['threadNotification'] = 1>
     <cfset local.data['createdAt'] = "">
     <cfset local.data['jwtToken'] = "">
     <cfset local.data['error'] = "">
@@ -168,6 +169,7 @@
 			<cfset local.data['forgottenPasswordValidated'] = local.qGetUser.ForgottenPasswordValidated>
             <cfset local.data['displayName'] = local.qGetUser.DisplayName>
             <cfset local.data['replyNotification'] = local.qGetUser.Reply_notification>
+            <cfset local.data['threadNotification'] = local.qGetUser.Thread_notification>
             <cfset local.data['createdAt'] = local.qGetUser.Submission_date>
           </cfif>
         </cfif>
@@ -269,6 +271,7 @@
 			<cfset local.data['forgottenPasswordValidated'] = local.qGetUser.ForgottenPasswordValidated>
             <cfset local.data['displayName'] = local.qGetUser.DisplayName>
             <cfset local.data['replyNotification'] = local.qGetUser.Reply_notification>
+            <cfset local.data['threadNotification'] = local.qGetUser.Thread_notification>
             <cfset local.data['createdAt'] = local.qGetUser.Submission_date>
             <cfset local.data['error'] = "">
           </cfif>
@@ -351,6 +354,7 @@
             <cfset local.data['isForgottenPasswordValidated'] = 1>
             <cfset local.data['displayName'] = local.qGetUser.DisplayName>
             <cfset local.data['replyNotification'] = local.qGetUser.Reply_notification>
+            <cfset local.data['threadNotification'] = local.qGetUser.Thread_notification>
             <cfset local.data['createdAt'] = local.qGetUser.Submission_date>
             <cfset local.data['error'] = "">
           </cfif>

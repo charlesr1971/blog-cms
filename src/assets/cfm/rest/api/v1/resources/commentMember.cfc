@@ -212,6 +212,54 @@
                 <cfset local.data['emailSent'] = 1>
               </cfif>
             </cfif>
+            <cfif local.qGetComment.RecordCount>
+              <CFQUERY NAME="local.qGetThreadUsers" DATASOURCE="#request.domain_dsn#">
+                SELECT tblUser.User_ID, Forename, E_mail, Thread_notification  
+                FROM tblComment INNER JOIN tblUser ON tblComment.User_ID = tblUser.User_ID
+                WHERE File_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#local.qGetComment.File_ID#">
+              </CFQUERY>
+              <cfif local.qGetThreadUsers.RecordCount>
+                <cfloop query="qGetThreadUsers">
+				  <cfif local.qGetThreadUsers.Thread_notification AND local.commentOriginUserId NEQ local.qGetThreadUsers.User_ID AND local.qGetFileAuthor.RecordCount AND local.qGetFileAuthor.User_ID NEQ local.qGetThreadUsers.User_ID>
+					<cfif Len(Trim(local.qGetThreadUsers.E_mail)) AND FindNoCase("@",local.qGetThreadUsers.E_mail)>
+					  <cfset local.salutation = request.utils.CapFirst(LCase(local.qGetThreadUsers.Forename))>
+                      <cfsavecontent variable="emailtemplatemessage">
+                        <cfoutput>
+                          <h1>Hi<cfif Len(Trim(local.salutation))> #local.salutation#</cfif></h1>
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr valign="middle">
+                              <td width="10" bgcolor="##DDDDDD"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="10" height="1" /></td>
+                              <td width="20"><img src="#request.emailimagesrc#/pixel_100.gif" border="0" width="20" height="1" /></td>
+                              <td style="font-size:16px;">
+                                <strong>The following comment, related to a thread, you belong to, has been made about the article entitled '#local.qGetFileAuthor.Title#'</strong><br /><br />
+                                #request.utils.CapFirstSentence(local.data['comment'],true)#
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="3">
+                                <p><strong>Comment author:</strong></p>
+                                #request.utils.CapFirst(LCase(local.qGetUser.Forename))# #request.utils.CapFirst(LCase(local.qGetUser.Surname))#<br />
+                                <em>#DateFormat(local.submissiondate,"medium")# #TimeFormat(local.submissiondate,"medium")#</em>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="3">
+                                <p><strong>To view the comment, please follow the link below</strong></p>
+                                <a href="#local.uploadfolder#/index.cfm">View Comment</a>
+                              </td>
+                            </tr>
+                          </table>
+                        </cfoutput>
+                      </cfsavecontent>
+                      <cfmail to="#local.qGetThreadUsers.E_mail#" from="#request.email#" server="#request.emailServer#" username="#request.emailUsername#" password="#local.emailpassword#" port="#request.emailPort#" useSSL="#request.emailUseSsl#" useTLS="#request.emailUseTls#" subject="#local.emailsubject#" type="html">
+                        <cfinclude template="../../../../email-template.cfm">
+                      </cfmail>
+                      <cfset local.data['emailSent'] = 1>
+                    </cfif>
+                  </cfif>
+                </cfloop>
+              </cfif>
+            </cfif>
             <cfif local.qGetFileAuthor.RecordCount AND local.qGetUser.Email_notification AND Len(Trim(local.qGetFileAuthor.E_mail)) AND FindNoCase("@",local.qGetFileAuthor.E_mail)>
               <cfif local.commentOriginUserId NEQ local.qGetFileAuthor.User_ID>
                 <cfset local.salutation = request.utils.CapFirst(LCase(local.qGetFileAuthor.Forename))>

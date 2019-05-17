@@ -246,7 +246,8 @@ export class GalleryDetailComponent implements OnInit, OnDestroy {
           theme: data['theme'],
           roleid: data['roleid'],
           displayName: data['displayName'],
-          replyNotification: data['replyNotification']
+          replyNotification: data['replyNotification'],
+          threadNotification: data['threadNotification']
         });
         this.user.next(user);
       }

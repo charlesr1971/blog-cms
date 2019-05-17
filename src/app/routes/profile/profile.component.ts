@@ -193,6 +193,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   password: FormControl;
   emailNotification: FormControl;
   replyNotification: FormControl;
+  threadNotification: FormControl;
   theme: FormControl;
   jwtToken: FormControl;
   userToken: FormControl;
@@ -205,6 +206,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   emailNotificationChecked = false;
   replyNotificationChecked = false;
+  threadNotificationChecked = false;
   themeChecked = false;
   
   formProfileData = {};
@@ -404,6 +406,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           this.displayName.patchValue(this.currentUser['displayName']);
           this.emailNotification.patchValue(!!+this.currentUser['emailNotification']);
           this.replyNotification.patchValue(!!+this.currentUser['replyNotification']);
+          this.threadNotification.patchValue(!!+this.currentUser['threadNotification']);
           this.theme.patchValue(this.currentUser['theme'] === this.themeObj['dark'] ? false : true);
           if(this.debug) {
             console.log('profile.component: this.currentUser["theme"]: ',this.currentUser['theme']);
@@ -769,6 +772,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       password: this.password.value ? this.password.value : '',
       emailNotification: this.emailNotification.value,
       replyNotification: this.replyNotification.value,
+      threadNotification: this.threadNotification.value,
       theme: this.theme.value ? this.themeObj['light'] : this.themeObj['dark'],
       userid: this.userid
     };
@@ -1016,12 +1020,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           theme: data['theme'],
           roleid: data['roleid'],
           displayName: data['displayName'],
-          replyNotification: data['replyNotification']
+          replyNotification: data['replyNotification'],
+          threadNotification: data['threadNotification']
         });
         this.userService.setCurrentUser(user);
         this.currentUser['authenticated'] = this.userid;
         this.emailNotificationChecked = !!+this.currentUser['emailNotification'];
         this.replyNotificationChecked = !!+this.currentUser['replyNotification'];
+        this.threadNotificationChecked = !!+this.currentUser['threadNotification'];
         this.themeChecked = this.currentUser['theme'] === this.themeObj['dark'] ? false : true;
         const themeType = data['theme'] === this.themeObj['light'] ? this.themeObj['light'] : this.themeObj['dark'];
         this.httpService.themeType.next(themeType);
@@ -1183,6 +1189,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       password: this.password,
       emailNotification: this.emailNotification,
       replyNotification: this.replyNotification,
+      threadNotification: this.threadNotification,
       theme: this.theme,
       jwtToken: this.jwtToken,
       userToken: this.userToken,
@@ -1208,6 +1215,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.password = new FormControl();
     this.emailNotification = new FormControl();
     this.replyNotification = new FormControl();
+    this.threadNotification = new FormControl();
     this.theme = new FormControl(); 
     this.jwtToken = new FormControl();
     this.userToken = new FormControl();
@@ -1286,6 +1294,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('profile.component: replyNotification: ',replyNotification);
         }
         this.formProfileData['replyNotification'] = replyNotification ? 1 : 0;
+      });
+      this.threadNotification.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe(threadNotification => {
+        if(this.debug) {
+          console.log('profile.component: threadNotification: ',threadNotification);
+        }
+        this.formProfileData['threadNotification'] = threadNotification ? 1 : 0;
       });
       this.theme.valueChanges
       .pipe(

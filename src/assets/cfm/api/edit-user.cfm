@@ -30,6 +30,7 @@
 <cfset data['cookieAcceptance'] = 0>
 <cfset data['displayName'] = "">
 <cfset data['replyNotification'] = 1>
+<cfset data['threadNotification'] = 1>
 <cfset data['createdAt'] = "">
 <cfset data['error'] = "">
 
@@ -61,6 +62,9 @@
   <cfif StructKeyExists(requestBody,"replyNotification")>
   	<cfset data['replyNotification'] = Trim(requestBody['replyNotification'])>
   </cfif>
+  <cfif StructKeyExists(requestBody,"threadNotification")>
+  	<cfset data['threadNotification'] = Trim(requestBody['threadNotification'])>
+  </cfif>
   <cfcatch>
     <cftry>
       <cfset requestBody = REReplaceNoCase(requestBody,"[\s+]"," ","ALL")>
@@ -88,6 +92,9 @@
       </cfif>
       <cfif StructKeyExists(requestBody,"replyNotification")>
 		<cfset data['replyNotification'] = Trim(requestBody['replyNotification'])>
+      </cfif>
+      <cfif StructKeyExists(requestBody,"threadNotification")>
+		<cfset data['threadNotification'] = Trim(requestBody['threadNotification'])>
       </cfif>
       <cfcatch>
 		<cfset data['error'] = cfcatch.message>
@@ -119,7 +126,7 @@
   </cfif>
   <CFQUERY NAME="qUpdateUser" DATASOURCE="#request.domain_dsn#">
     UPDATE tblUser
-    SET <cfif Len(Trim(data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['emailNotification']#">,Theme =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(data['theme'],'-')#">,DisplayName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['displayName']#">,Reply_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['replyNotification']#"> 
+    SET <cfif Len(Trim(data['password']))>Password = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['password']#">,</cfif>Forename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['forename'])#">,Surname =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#CapFirst(data['surname'])#">,Email_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['emailNotification']#">,Theme =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#ListLast(data['theme'],'-')#">,DisplayName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#data['displayName']#">,Reply_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['replyNotification']#">,Thread_notification =  <cfqueryparam cfsqltype="cf_sql_tinyint" value="#data['threadNotification']#"> 
     WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#data['userid']#">
   </CFQUERY>
   <cfset data['password'] = qGetUser.Password>

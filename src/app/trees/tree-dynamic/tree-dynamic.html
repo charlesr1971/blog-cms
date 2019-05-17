@@ -162,7 +162,7 @@
         <mat-form-field>
           <input matInput [matDatepicker]="dp3" placeholder="Article Publish Date" readonly formControlName="publishArticleDate">
           <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-          <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+          <mat-datepicker #dp3 disabled="false" id="dp3"></mat-datepicker>
         </mat-form-field><br />
       </p>
 
@@ -210,7 +210,7 @@
         </mat-form-field><br />
 
         <div id="imageOrientationContainer" class="panel">
-          <mat-select formControlName="imageOrientation" class="panel-legend" placeholder="Image Orientation" floatLabel="never">
+          <mat-select #imageOrientationSelect formControlName="imageOrientation" class="panel-legend" placeholder="Image Orientation" floatLabel="never">
             <mat-select-trigger>Image Orientation</mat-select-trigger>
             <mat-option value="auto">
               auto

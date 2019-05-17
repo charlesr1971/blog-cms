@@ -483,7 +483,8 @@ export class ImagesComponent implements OnInit, OnDestroy {
           forgottenPasswordToken: data['forgottenPasswordToken'],
           forgottenPasswordValidated: data['forgottenPasswordValidated'],
           displayName: data['displayName'],
-          replyNotification: data['replyNotification']
+          replyNotification: data['replyNotification'],
+          threadNotification: data['threadNotification']
         });
         this.cookieService.set('userToken', data['userToken']);
         if(this.debug) {
