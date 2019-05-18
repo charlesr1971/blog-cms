@@ -596,10 +596,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved',this.currentUserApprovedPage).do(this.processUsersApprovedGetData).subscribe();
 
-      // amchart user file
-
-      this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
-
   }
 
   ngOnInit() {
@@ -618,14 +614,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.createWaypoints();
     }
 
+    // amchart user file
+
     this.createThemeSwatch();
 
-    setTimeout( () => {
-      if(!this.utilsService.isEmpty(this.themeSwatch)) {
-        this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme) : am4core.useTheme(this.am4themes_darkTheme);
-      }
-    });
-
+    this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
+    
+    this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme) : am4core.useTheme(this.am4themes_darkTheme);
+    
   }
 
   // waypoint methods
@@ -1078,6 +1074,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.userPasswordThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.userApprovedThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.openSnackBar('Changes have been submitted', 'Success');
+        this.themeType = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? 'light' : 'dark';
+        this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme) : am4core.useTheme(this.am4themes_darkTheme);
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -1220,6 +1218,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   am4themes_lightTheme(target): void {
+    const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
+    const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
+    const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#ffffff"));
       target.setFor("grid", am4core.color("#000000"));
@@ -1227,13 +1229,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (target instanceof am4core.ColorSet) {
       target.list = [
-        am4core.color(this.themeSwatch['matColorSwatchPrimary2']),
-        am4core.color(this.themeSwatch['matColorSwatchAccent1'])
+        am4core.color(rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2]))),
+        am4core.color(rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])))
       ];
     }
   }
 
   am4themes_darkTheme(target): void {
+    const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
+    const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
+    const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#000000"));
       target.setFor("grid", am4core.color("#ffffff"));
@@ -1241,8 +1247,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (target instanceof am4core.ColorSet) {
       target.list = [
-        am4core.color(this.themeSwatch['matColorSwatchPrimary2']),
-        am4core.color(this.themeSwatch['matColorSwatchAccent1'])
+        am4core.color(rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2]))),
+        am4core.color(rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])))
       ];
     }
   }
