@@ -92,7 +92,6 @@ export function hljsLanguages() {
   ];
 }
 
-
 const appRoutes: Routes = [
   { path: environment.catalogRouterAlias, component: GalleryComponent },
   { path: environment.catalogRouterAlias + '/:id/:title', component: GalleryDetailComponent },

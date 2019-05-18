@@ -121,6 +121,24 @@
           </div>
         </div>
 
+        <div class="panel">
+          <h2 class="panel-legend">
+            <span>Admin Dashboard</span><mat-icon (click)="openProfileAdminDashboard($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 
+          </h2>
+          <div class="panel-content" [@profileAdminDashboardFadeInOutAnimation]="{value: profileAdminDashboardState}" style="padding-bottom:0px;">
+            <div id="admin-dashboard-amchart-userfile" class="admin-dashboard-amchart"></div>
+          </div>
+          <div id="mat-color-swatch">
+            <span id="mat-color-swatch-primary-1"></span>
+            <span id="mat-color-swatch-primary-2"></span>
+            <span id="mat-color-swatch-primary-3"></span>
+            <span id="mat-color-swatch-accent-1"></span>
+            <span id="mat-color-swatch-accent-2"></span>
+            <span id="mat-color-swatch-accent-3"></span>
+            <span id="mat-color-swatch-warn-1"></span>
+          </div>
+        </div>
+
         <div class="panel" *ngIf="currentUser.roleid >= 6">
           <h2 class="panel-legend">
             <span>Unarchive Users Grid</span><mat-icon (click)="togglePanelWidth($event)" class="fullscreen" ngbTooltip="{{ tooltipFullscreenIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">fullscreen</mat-icon><mat-icon (click)="openProfileUserArchiveEdit($event)" ngbTooltip="{{ tooltipAddIcon }}" [disableTooltip]="disableCommentGeneralTooltip" [container]="'body'">add</mat-icon> 

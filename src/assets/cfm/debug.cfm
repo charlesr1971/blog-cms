@@ -510,7 +510,7 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
 
 
 
-<CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
+<!---<CFQUERY NAME="qGetFile" DATASOURCE="#request.domain_dsn#">
   SELECT * 
   FROM tblFile 
   WHERE Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1"> 
@@ -521,6 +521,33 @@ Access the thread name by passing it in, using the 'attributes' scope. By storin
   <cfloop query="qGetFile">
     #qGetFile.File_uuid#<br />
   </cfloop>
-</cfif>
+</cfif>--->
+
+
+
+<CFQUERY NAME="qGetUser" DATASOURCE="#request.domain_dsn#">
+  SELECT COUNT(Approved) AS Approved, Surname, Forename, tblUser.User_ID 
+  FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID 
+  GROUP BY tblUser.User_ID 
+  ORDER BY Approved DESC
+  LIMIT 10
+</CFQUERY>
+
+<cfloop query="qGetUser">
+  <CFQUERY NAME="qGetApprovedCount" DATASOURCE="#request.domain_dsn#">
+    SELECT COUNT(Approved) AS Approved  
+    FROM tblUser INNER JOIN tblFile ON tblUser.User_ID = tblFile.User_ID 
+    WHERE tblUser.User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#"> AND Approved = <cfqueryparam cfsqltype="cf_sql_tinyint" value="1">
+  </CFQUERY>
+  <cfdump var="#qGetApprovedCount#" label="qGetApprovedCount" />
+  <CFQUERY NAME="qGetFileCount" DATASOURCE="#request.domain_dsn#">
+    SELECT * 
+    FROM tblFile 
+    WHERE User_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetUser.User_ID#"> 
+  </CFQUERY>
+  
+</cfloop>
+
+
 
 </cfoutput>

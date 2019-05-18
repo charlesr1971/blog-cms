@@ -1667,6 +1667,44 @@ export class HttpService {
     );
   }
 
+  fetchAmCharts(task: any, page: number = 1): Observable<any> {
+    let req = null;
+    let headers = null;
+    if(this.useRestApi) {
+      headers = {
+        reportProgress: false,
+        headers: new HttpHeaders({
+          'task': task || '',
+        })
+      };
+      req = new HttpRequest('GET', this.restApiUrl + this.restApiUrlEndpoint + '/amcharts/' + page, '', headers);
+      if(this.debug) {
+        console.log('http.service: fetchAmCharts: headers ',headers);
+      }
+    }
+    else{
+      const body = {
+        task: task
+      };
+      const requestHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+      headers = {
+        headers: requestHeaders
+      };
+      req = new HttpRequest('GET', this.apiUrl + '/amcharts.cfm?page' + page, body, headers);
+      if(this.debug) {
+        console.log('http.service: fetchAmCharts: body ',body);
+        console.log('http.service: fetchAmCharts: headers ',headers);
+      }
+    }
+    return this.http.request(req)
+    .map( (data) => {
+      return 'body' in data ? data['body'] : null;
+    })
+    .pipe(
+      catchError(this.handleError)
+    );
+  }
+
   // error handling
 
   private handleError(error: HttpErrorResponse) {

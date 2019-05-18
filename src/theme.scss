@@ -556,6 +556,34 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-primary, 500);
     }
 
+    #mat-color-swatch-primary-1 {
+        background: mat-color($dark-primary, 500);
+    }
+
+    #mat-color-swatch-primary-2 {
+        background: mat-color($dark-primary, 100);
+    }
+
+    #mat-color-swatch-primary-3 {
+        background: mat-color($dark-primary, 800);
+    }
+
+    #mat-color-swatch-accent-1 {
+        background: mat-color($dark-accent, 300);
+    }
+
+    #mat-color-swatch-accent-2 {
+        background: mat-color($dark-accent, 500);
+    }
+
+    #mat-color-swatch-accent-3 {
+        background: mat-color($dark-accent, A100);
+    }
+    
+    #mat-color-swatch-warn-1 {
+        background: mat-color($dark-warn, default);
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -1186,6 +1214,34 @@ $light-background-palette: map-get($light-theme, background);
       
     .dialog-help .form-field-text li.important > div > div:nth-last-of-type(2) {
         background: mat-color($light-primary, 500);
+    }
+
+    #mat-color-swatch-primary-1 {
+        background: mat-color($light-primary, 500);
+    }
+
+    #mat-color-swatch-primary-2 {
+        background: mat-color($light-primary, 100);
+    }
+
+    #mat-color-swatch-primary-3 {
+        background: mat-color($light-primary, 800);
+    }
+
+    #mat-color-swatch-accent-1 {
+        background: mat-color($light-accent, 300);
+    }
+
+    #mat-color-swatch-accent-2 {
+        background: mat-color($light-accent, 500);
+    }
+
+    #mat-color-swatch-accent-3 {
+        background: mat-color($light-accent, A100);
+    }
+    
+    #mat-color-swatch-warn-1 {
+        background: mat-color($light-warn, default);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

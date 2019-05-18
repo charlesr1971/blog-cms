@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Renderer2, Input, Inject, TemplateRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Renderer2, Input, Inject, TemplateRef, NgZone } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -22,6 +22,11 @@ import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-re
 import { FormatFileTitleRenderer } from '../../ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
 import { CustomEditHeader } from '../../ag-grid/header/custom-edit-header/custom-edit-header.component';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import { styler } from '../../util/styler';
+import { rgbToHex } from '../../util/colorUtils';
 
 import { UploadService } from '../../upload/upload.service';
 import { HttpService } from '../../services/http/http.service';
@@ -42,6 +47,8 @@ export enum userAdminUnselectedChangesOptionsStatus {
   'Let the system select the rows where the changes were made and allow you to make the submission manually?' = 2,
   'Continue with the submission?' = 3
 }
+
+am4core.useTheme(am4themes_animated);
 
 @Component({
   selector: 'app-profile',
@@ -132,6 +139,18 @@ export enum userAdminUnselectedChangesOptionsStatus {
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
     ]),
+    trigger('profileAdminDashboardFadeInOutAnimation', [
+      state('in', style({
+        opacity: 1,
+        display: 'block'
+      })),
+      state('out', style({
+        opacity: 0,
+        display: 'none'
+      })),
+      transition('out => in', animate('250ms ease-in')),
+      transition('in => out', animate('250ms ease-out'))
+    ]),,
   ],
   providers: [SafePipe]
 })
@@ -160,6 +179,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('ngbTooltipUserApprovedRemoveHighlight') ngbTooltipUserApprovedRemoveHighlight: NgbTooltip;
 
   @Input() profileApiDashboardState: string = 'out';
+  @Input() profileAdminDashboardState: string = 'in';
   @Input() profileCategoryEditState: string = 'out';
 
   @Input() profileUserArchiveEditState: string = 'out';
@@ -169,10 +189,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   
   @Input() profileSystemUserEditState: string = 'out';
 
-
   themeObj = {};
   themeRemove: string = '';
   themeAdd: string = '';
+  themeType: string = '';
+
+  themeSwatch = {};
 
   imagesUnapproved: Array<any> = [];
   pageCacheUnapproved = {};
@@ -237,6 +259,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   usersPasswordPostSubscription: Subscription;
   usersApprovedPostSubscription: Subscription;
   usersEmailPostSubscription: Subscription;
+  adminDashboardAmchartUserfileGetSubscription: Subscription;
   currentUser: User;
   closeResult: string;
   categoryImagesUrl: string = '';
@@ -338,6 +361,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   userApprovedSubmitDisabled: boolean = true;
 
   components;
+
+  adminDashboardAmchartUserfile: am4charts.XYChart;
   
   debug: boolean = false;
 
@@ -355,6 +380,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     public matSnackBar: MatSnackBar,
     private utilsService: UtilsService,
     private safePipe: SafePipe,
+    private zone: NgZone,
     public dialog: MatDialog) { 
 
       if(environment.debugComponentLoadingOrder) {
@@ -366,6 +392,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.themeObj = this.httpService.themeObj;
       this.themeRemove = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
       this.themeAdd = this.themeRemove === this.themeObj['light'] ? this.themeObj['dark'] : this.themeObj['light'];
+
+      this.themeType = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? 'light' : 'dark';
 
       this.userArchiveThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
 
@@ -568,6 +596,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.usersApprovedGetSubscription = this.httpService.fetchUsersAdmin('approved',this.currentUserApprovedPage).do(this.processUsersApprovedGetData).subscribe();
 
+      // amchart user file
+
+      this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
+
   }
 
   ngOnInit() {
@@ -585,6 +617,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if(this.isMobile && this.addRemoveHighlightWaypoints) {
       this.createWaypoints();
     }
+
+    this.createThemeSwatch();
+
+    setTimeout( () => {
+      if(!this.utilsService.isEmpty(this.themeSwatch)) {
+        this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme) : am4core.useTheme(this.am4themes_darkTheme);
+      }
+    });
 
   }
 
@@ -1179,6 +1219,72 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  am4themes_lightTheme(target): void {
+    if (target instanceof am4core.InterfaceColorSet) {
+      target.setFor("background", am4core.color("#ffffff"));
+      target.setFor("grid", am4core.color("#000000"));
+      target.setFor("text", am4core.color("#000000"));
+    }
+    if (target instanceof am4core.ColorSet) {
+      target.list = [
+        am4core.color(this.themeSwatch['matColorSwatchPrimary2']),
+        am4core.color(this.themeSwatch['matColorSwatchAccent1'])
+      ];
+    }
+  }
+
+  am4themes_darkTheme(target): void {
+    if (target instanceof am4core.InterfaceColorSet) {
+      target.setFor("background", am4core.color("#000000"));
+      target.setFor("grid", am4core.color("#ffffff"));
+      target.setFor("text", am4core.color("#ffffff"));
+    }
+    if (target instanceof am4core.ColorSet) {
+      target.list = [
+        am4core.color(this.themeSwatch['matColorSwatchPrimary2']),
+        am4core.color(this.themeSwatch['matColorSwatchAccent1'])
+      ];
+    }
+  }
+
+  private adminDashboardAmchartUserfileGetData = (data) => {
+    if(this.debug) {
+      console.log('profile.component: adminDashboardAmchartUserfileGetData: data',data);
+    }
+    if(data && 'rowData' in data) {
+      this.zone.runOutsideAngular(() => {
+        const chart = am4core.create("admin-dashboard-amchart-userfile", am4charts.XYChart);
+        // Add data
+        chart.data = data['rowData'];
+        // Create axes
+        const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "name";
+        categoryAxis.title.text = "Approved/unapproved articles";
+        categoryAxis.renderer.grid.template.location = 0;
+        categoryAxis.renderer.minGridDistance = 20;
+        categoryAxis.renderer.cellStartLocation = 0.1;
+        categoryAxis.renderer.cellEndLocation = 0.9;
+        const  valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.min = 0;
+        valueAxis.title.text = "Number of images";
+        // Create series
+        function createSeries(field, name, stacked) {
+          const series = chart.series.push(new am4charts.ColumnSeries());
+          series.dataFields.valueY = field;
+          series.dataFields.categoryX = "name";
+          series.name = name;
+          series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
+          series.stacked = stacked;
+          series.columns.template.width = am4core.percent(95);
+        }
+        createSeries("approved", "Approved", true);
+        createSeries("unapproved", "Unapproved", true);
+        // Add legend
+        chart.legend = new am4charts.Legend();
+      });
+    }
+  }
+
   // form methods
 
   createProfileForm(): void {
@@ -1461,6 +1567,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if(this.pagesApproved.length > 0) {
       this.approvedImagesSelect.close();
     }
+    this.systemUserSelect.close();
   }
 
   onChangeUnapproved(event): void {
@@ -1602,6 +1709,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openProfileApiDashboard(event: any): void {
     this.profileApiDashboardState = this.profileApiDashboardState === 'in' ? 'out' : 'in';
+    event.stopPropagation();
+  }
+
+  openProfileAdminDashboard(event: any): void {
+    this.profileAdminDashboardState = this.profileAdminDashboardState === 'in' ? 'out' : 'in';
     event.stopPropagation();
   }
 
@@ -2439,6 +2551,35 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // other methods
 
+  createThemeSwatch(): void {
+    const matColorSwatchPrimary1 = styler('#mat-color-swatch-primary-1').get(['background']);
+    const colorSwatchPrimary1 = matColorSwatchPrimary1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
+    const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchPrimary3 = styler('#mat-color-swatch-primary-3').get(['background']);
+    const colorSwatchPrimary3 = matColorSwatchPrimary3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
+    const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchAccent2 = styler('#mat-color-swatch-accent-2').get(['background']);
+    const colorSwatchAccent2 = matColorSwatchAccent2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchAccent3 = styler('#mat-color-swatch-accent-3').get(['background']);
+    const colorSwatchAccent3 = matColorSwatchAccent3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    const matColorSwatchWarn1 = styler('#mat-color-swatch-warn-1').get(['background']);
+    const colorSwatchWarn1 = matColorSwatchWarn1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+    this.themeSwatch = {
+      matColorSwatchPrimary1: rgbToHex(parseInt(colorSwatchPrimary1[0]),parseInt(colorSwatchPrimary1[1]),parseInt(colorSwatchPrimary1[2])),
+      matColorSwatchPrimary2: rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2])),
+      matColorSwatchPrimary3: rgbToHex(parseInt(colorSwatchPrimary3[0]),parseInt(colorSwatchPrimary3[1]),parseInt(colorSwatchPrimary3[2])),
+      matColorSwatchAccent1: rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])),
+      matColorSwatchAccent2: rgbToHex(parseInt(colorSwatchAccent2[0]),parseInt(colorSwatchAccent2[1]),parseInt(colorSwatchAccent2[2])),
+      matColorSwatchAccent3: rgbToHex(parseInt(colorSwatchAccent3[0]),parseInt(colorSwatchAccent3[1]),parseInt(colorSwatchAccent3[2])),
+      matColorSwatchWarn1: rgbToHex(parseInt(colorSwatchWarn1[0]),parseInt(colorSwatchWarn1[1]),parseInt(colorSwatchWarn1[2]))
+    };
+    //if(this.debug) {
+      console.log('profile.component: createThemeSwatch: this.themeSwatch: ', this.themeSwatch);
+    //}
+  }
+
   togglePanelWidth(event: any): void {
     const target = event.target.parentElement.parentElement;
     if(this.debug) {
@@ -2473,6 +2614,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
 
+    this.zone.runOutsideAngular(() => {
+      if (this.adminDashboardAmchartUserfile) {
+        this.adminDashboardAmchartUserfile.dispose();
+      }
+    });
 
     if (this.editProfileSubscription) {
       this.editProfileSubscription.unsubscribe();
