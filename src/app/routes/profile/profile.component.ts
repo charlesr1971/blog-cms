@@ -22,9 +22,6 @@ import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-re
 import { FormatFileTitleRenderer } from '../../ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
 import { CustomEditHeader } from '../../ag-grid/header/custom-edit-header/custom-edit-header.component';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-/* import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated"; */
 import { styler } from '../../util/styler';
 import { rgbToHex } from '../../util/colorUtils';
 
@@ -273,7 +270,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   dialogEditCategoriesHeight: number = 0;
   dialogEmailHeight: number = 0;
-  emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+  emailPattern: string = '^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$';
   emailFormDisabled: boolean = false;
   emailTemplateStartSalutation: string = '';
   emailTemplateEndSalutation: string = '';
@@ -365,6 +362,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   components;
 
   adminDashboardAmchartUserfile: any;
+  adminDashboardWaypointsEnabled: boolean = environment.adminDashboardWaypointsEnabled;
   
   debug: boolean = false;
 
@@ -439,8 +437,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           this.threadNotification.patchValue(!!+this.currentUser['threadNotification']);
           this.theme.patchValue(this.currentUser['theme'] === this.themeObj['dark'] ? false : true);
           if(this.debug) {
-            console.log('profile.component: this.currentUser["theme"]: ',this.currentUser['theme']);
-            console.log('profile.component: this.themeObj["dark"]: ',this.themeObj['dark']);
+            console.log('profile.component: this.currentUser[\'theme\']: ',this.currentUser['theme']);
+            console.log('profile.component: this.themeObj[\'dark\']: ',this.themeObj['dark']);
             console.log('profile.component: this.theme.value: ',this.theme.value);
           }
           this.jwtToken.patchValue(this.jwtService.getJwtToken());
@@ -493,6 +491,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.httpService.chooseImageButtonText.next('Choose Avatar');
 
       });
+
+      if(!this.adminDashboardWaypointsEnabled) {
+        this.profileAdminDashboardState = 'out';
+      }
 
       // ag-grid user archive
 
@@ -622,7 +624,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
 
-    this.createWaypoints2();
+    if(this.adminDashboardWaypointsEnabled) {
+      this.createWaypoints2();
+    }
     
   }
 
@@ -1246,9 +1250,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   am4themes_lightTheme(target): void {
     if (target instanceof am4core.InterfaceColorSet) {
-      target.setFor("background", am4core.color("#ffffff"));
-      target.setFor("grid", am4core.color("#000000"));
-      target.setFor("text", am4core.color("#000000"));
+      target.setFor('background', am4core.color('#ffffff'));
+      target.setFor('grid', am4core.color('#000000'));
+      target.setFor('text', am4core.color('#000000'));
     }
     if (target instanceof am4core.ColorSet) {
       target.list = [
@@ -1260,9 +1264,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   am4themes_darkTheme(target): void {
     if (target instanceof am4core.InterfaceColorSet) {
-      target.setFor("background", am4core.color("#000000"));
-      target.setFor("grid", am4core.color("#ffffff"));
-      target.setFor("text", am4core.color("#ffffff"));
+      target.setFor('background', am4core.color('#000000'));
+      target.setFor('grid', am4core.color('#ffffff'));
+      target.setFor('text', am4core.color('#ffffff'));
     }
     if (target instanceof am4core.ColorSet) {
       target.list = [
@@ -1277,13 +1281,21 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('profile.component: adminDashboardAmchartUserfileGetData: data',data);
     }
     if(data && 'rowData' in data) {
-      this.adminDashboardAmchartUserfile = am4core.create("admin-dashboard-amchart-userfile", am4charts.XYChart);
+      this.adminDashboardAmchartUserfile = am4core.create('admin-dashboard-amchart-userfile', am4charts.XYChart);
       this.adminDashboardAmchartUserfile.data = data['rowData'];
       const categoryAxis = this.adminDashboardAmchartUserfile.xAxes.push(new am4charts.CategoryAxis());
-      categoryAxis.dataFields.category = "name";
-      categoryAxis.title.text = "Approved/unapproved articles";
-      categoryAxis.renderer.labels.template.horizontalCenter = "right";
-      categoryAxis.renderer.labels.template.verticalCenter = "middle";
+      categoryAxis.dataFields.category = 'name';
+      categoryAxis.title.text = 'Approved/unapproved articles';
+      if(this.isMobile) {
+        this.adminDashboardAmchartUserfile.tapToActivate = true;
+        this.adminDashboardAmchartUserfile.tapTimeout = 3000;
+        this.adminDashboardAmchartUserfile.dragGrip.disabled = true;
+        this.adminDashboardAmchartUserfile.dragGrip.autoHideDelay = 3000;
+        this.adminDashboardAmchartUserfile.dragGrip.position = 'top';
+        this.adminDashboardAmchartUserfile.dragGrip.height = am4core.percent(50);
+      }
+      categoryAxis.renderer.labels.template.horizontalCenter = 'right';
+      categoryAxis.renderer.labels.template.verticalCenter = 'middle';
       categoryAxis.renderer.labels.template.rotation = 270;
       categoryAxis.renderer.grid.template.location = 0;
       categoryAxis.renderer.minGridDistance = 20;
@@ -1294,23 +1306,36 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       categoryAxis.title.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchAccent3']) : am4core.color(this.themeSwatch['matColorSwatchAccent1']);
       const  valueAxis = this.adminDashboardAmchartUserfile.yAxes.push(new am4charts.ValueAxis());
       valueAxis.min = 0;
-      valueAxis.title.text = "Number of images";
+      valueAxis.title.text = 'Number of images';
       valueAxis.renderer.labels.template.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchPrimary2']) : am4core.color(this.themeSwatch['matColorSwatchPrimary1']);
       valueAxis.title.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchAccent3']) : am4core.color(this.themeSwatch['matColorSwatchAccent1']);
-      this.createSeriesUserfile("approved", "Approved", true);
-      this.createSeriesUserfile("unapproved", "Unapproved", true);
-      this.adminDashboardAmchartUserfile.cursor = new am4charts.XYCursor();
-      this.adminDashboardAmchartUserfile.cursor.xAxis = categoryAxis;
-      this.adminDashboardAmchartUserfile.cursor.fullWidthLineX = true;
-      this.adminDashboardAmchartUserfile.cursor.lineX.strokeWidth = 0;
-      this.adminDashboardAmchartUserfile.cursor.lineX.fill = am4core.color("#8F3985");
-      this.adminDashboardAmchartUserfile.cursor.lineX.fillOpacity = 0.1;
+      this.createSeriesUserfile('approved', 'Approved', true);
+      this.createSeriesUserfile('unapproved', 'Unapproved', true);
+      //if(!this.isMobile) {
+        this.adminDashboardAmchartUserfile.cursor = new am4charts.XYCursor();
+        this.adminDashboardAmchartUserfile.cursor.xAxis = categoryAxis;
+        this.adminDashboardAmchartUserfile.cursor.fullWidthLineX = true;
+        this.adminDashboardAmchartUserfile.cursor.lineX.strokeWidth = 0;
+        this.adminDashboardAmchartUserfile.cursor.lineX.fill = am4core.color('#8F3985');
+        this.adminDashboardAmchartUserfile.cursor.lineX.fillOpacity = 0.1;
+      //}
       this.adminDashboardAmchartUserfile.legend = new am4charts.Legend();
       this.adminDashboardAmchartUserfile.legend.useDefaultMarker = true;
       this.adminDashboardAmchartUserfile.legend.width = am4core.percent(113);
       this.adminDashboardAmchartUserfile.legend.marginTop = 20;
-      this.adminDashboardAmchartUserfile.legend.position = "bottom";
-      this.adminDashboardAmchartUserfile.legend.contentAlign = "center";
+      this.adminDashboardAmchartUserfile.legend.position = 'bottom';
+      this.adminDashboardAmchartUserfile.legend.contentAlign = 'center';
+      if(this.isMobile) {
+        const resizesensorArray = Array.prototype.slice.call(this.documentBody.querySelectorAll('.resize-sensor'));
+        if(Array.isArray(resizesensorArray) && resizesensorArray.length) {
+          if(this.debug) {
+            console.log('profile.component: adminDashboardAmchartUserfileGetData: resizesensorArray.length: ', resizesensorArray.length);
+          }
+          resizesensorArray.map( (element) => {
+            element.remove();
+          });
+        }
+      }
     }
   }
 
@@ -1469,7 +1494,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createEmailFormControls(): void {
-    const emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$";
+    const emailPattern = '^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$';
     this.email = new FormControl('', [
       Validators.required,
       Validators.pattern(emailPattern),
@@ -1743,6 +1768,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openProfileAdminDashboard(event: any): void {
     this.profileAdminDashboardState = this.profileAdminDashboardState === 'in' ? 'out' : 'in';
+    if(!this.adminDashboardWaypointsEnabled) {
+      this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
+    }
     event.stopPropagation();
   }
 
@@ -1890,7 +1918,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onUserArchiveGridReady(params): void {
     this.gridApiUserArchive = params.api;
     this.gridColumnApiUserArchive = params.columnApi;
-    this.gridApiUserArchive.setDomLayout("autoHeight");
+    this.gridApiUserArchive.setDomLayout('autoHeight');
     setTimeout( () => {
       this.userArchiveAutoSizeAll();
     });
@@ -1929,7 +1957,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onUserSuspendGridReady(params): void {
     this.gridApiUserSuspend = params.api;
     this.gridColumnApiUserSuspend = params.columnApi;
-    this.gridApiUserSuspend.setDomLayout("autoHeight");
+    this.gridApiUserSuspend.setDomLayout('autoHeight');
     if(this.debug) {
       console.log('profile.component: onUserSuspendGridReady');
     }
@@ -2009,7 +2037,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onUserPasswordGridReady(params): void {
     this.gridApiUserPassword = params.api;
     this.gridColumnApiUserPassword = params.columnApi;
-    this.gridApiUserPassword.setDomLayout("autoHeight");
+    this.gridApiUserPassword.setDomLayout('autoHeight');
     if(this.debug) {
       console.log('profile.component: onUserPasswordGridReady');
     }
@@ -2089,7 +2117,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onUserApprovedGridReady(params): void {
     this.gridApiUserApproved = params.api;
     this.gridColumnApiUserApproved = params.columnApi;
-    this.gridApiUserApproved.setDomLayout("autoHeight");
+    this.gridApiUserApproved.setDomLayout('autoHeight');
     if(this.debug) {
       console.log('profile.component: onUserApprovedGridReady');
     }
@@ -2169,17 +2197,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     function getCharCodeFromEvent(event) {
       event = event || window.event;
-      return typeof event.which === "undefined" ? event.keyCode : event.which;
+      return typeof event.which === 'undefined' ? event.keyCode : event.which;
     }
     function NumericCellEditor() {}
     NumericCellEditor.prototype.init = function(params) {
       this.focusAfterAttached = params.cellStartedEdit;
-      this.eInput = document.createElement("input");
-      this.eInput.style.width = "100%";
-      this.eInput.style.height = "100%";
+      this.eInput = document.createElement('input');
+      this.eInput.style.width = '100%';
+      this.eInput.style.height = '100%';
       this.eInput.value = isCharNumeric(params.charPress) ? params.charPress : params.value;
       var that = this;
-      this.eInput.addEventListener("keypress", function(event) {
+      this.eInput.addEventListener('keypress', function(event) {
         if (!isKeyPressedNumeric(event)) {
           that.eInput.focus();
           if (event.preventDefault) event.preventDefault();
@@ -2206,10 +2234,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       var eInput = this.getGui();
       eInput.focus();
       eInput.select();
-      console.log("NumericCellEditor.focusIn()");
+      console.log('NumericCellEditor.focusIn()');
     };
     NumericCellEditor.prototype.focusOut = function() {
-      console.log("NumericCellEditor.focusOut()");
+      console.log('NumericCellEditor.focusOut()');
     };
     return NumericCellEditor;
   }
@@ -2583,9 +2611,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   createSeriesUserfile(field, name, stacked): void {
     const series = this.adminDashboardAmchartUserfile.series.push(new am4charts.ColumnSeries());
     series.dataFields.valueY = field;
-    series.dataFields.categoryX = "name";
+    series.dataFields.categoryX = 'name';
     series.name = name;
-    series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
+    series.columns.template.tooltipText = '{name}: [bold]{valueY}[/]';
     series.stacked = stacked;
     series.columns.template.width = am4core.percent(95);
     series.defaultState.transitionDuration = 1000;  

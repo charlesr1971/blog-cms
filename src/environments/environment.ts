@@ -40,7 +40,8 @@ export const environment = {
   imageMediumEnabled: true,
   lazyLoadImages: true,
   addRemoveHighlightWaypoints: false,
-  cardShowAvatar: false
+  cardShowAvatar: false,
+  adminDashboardWaypointsEnabled: false
 };
 
 /*
