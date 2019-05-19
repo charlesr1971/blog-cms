@@ -22,9 +22,9 @@ import { FormatEmailRenderer } from '../../ag-grid/cell-renderer/format-email-re
 import { FormatFileTitleRenderer } from '../../ag-grid/cell-renderer/format-file-title-renderer/format-file-title-renderer.component';
 import { CustomEditHeader } from '../../ag-grid/header/custom-edit-header/custom-edit-header.component';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import * as am4core from "@amcharts/amcharts4/core";
+/* import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated"; */
 import { styler } from '../../util/styler';
 import { rgbToHex } from '../../util/colorUtils';
 
@@ -48,7 +48,7 @@ export enum userAdminUnselectedChangesOptionsStatus {
   'Continue with the submission?' = 3
 }
 
-am4core.useTheme(am4themes_animated);
+//am4core.useTheme(am4themes_animated);
 
 @Component({
   selector: 'app-profile',
@@ -150,7 +150,7 @@ am4core.useTheme(am4themes_animated);
       })),
       transition('out => in', animate('250ms ease-in')),
       transition('in => out', animate('250ms ease-out'))
-    ]),,
+    ]),
   ],
   providers: [SafePipe]
 })
@@ -362,7 +362,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   components;
 
-  adminDashboardAmchartUserfile: am4charts.XYChart;
+  //adminDashboardAmchartUserfile: am4charts.XYChart;
   
   debug: boolean = false;
 
@@ -616,13 +616,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // amchart user file
 
-    this.createThemeSwatch();
-
-    /* this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe(); */
+    /* this.createThemeSwatch();
     
     this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
 
-    this.createWaypoints2();
+    this.createWaypoints2(); */
     
   }
 
@@ -708,7 +706,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: adminDashboardAmchartUserfileWaypoint: waypoint detected');
         }
-        that.adminDashboardAmchartUserfileGetSubscription = that.httpService.fetchAmCharts('userFile',1).do(that.adminDashboardAmchartUserfileGetData).subscribe();
+        /* that.adminDashboardAmchartUserfileGetSubscription = that.httpService.fetchAmCharts('userFile',1).do(that.adminDashboardAmchartUserfileGetData).subscribe(); */
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
@@ -1099,10 +1097,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: processEditProfileData: this.themeType',this.themeType);
         }
-        this.createThemeSwatch();
+        /* this.createThemeSwatch();
         this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
         this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
-        this.adminDashboardAmchartUserfile.invalidateData();
+        this.adminDashboardAmchartUserfile.invalidateData(); */
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -1244,7 +1242,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  am4themes_lightTheme(target): void {
+  /* am4themes_lightTheme(target): void {
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#ffffff"));
       target.setFor("grid", am4core.color("#000000"));
@@ -1256,9 +1254,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         am4core.color(this.themeSwatch['matColorSwatchAccent1'])
       ];
     }
-  }
+  } */
 
-  am4themes_darkTheme(target): void {
+  /* am4themes_darkTheme(target): void {
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#000000"));
       target.setFor("grid", am4core.color("#ffffff"));
@@ -1270,21 +1268,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         am4core.color(this.themeSwatch['matColorSwatchAccent1'])
       ];
     }
-  }
+  } */
 
-  private adminDashboardAmchartUserfileGetData = (data) => {
+  /* private adminDashboardAmchartUserfileGetData = (data) => {
     if(this.debug) {
       console.log('profile.component: adminDashboardAmchartUserfileGetData: data',data);
     }
     if(data && 'rowData' in data) {
       this.adminDashboardAmchartUserfile = am4core.create("admin-dashboard-amchart-userfile", am4charts.XYChart);
       this.adminDashboardAmchartUserfile.data = data['rowData'];
-      /* this.adminDashboardAmchartUserfile.defaultState.transitionDuration = 100;  
-      this.adminDashboardAmchartUserfile.hiddenState.transitionDuration = 100; 
-      this.adminDashboardAmchartUserfile.defaultState.transitionEasing = am4core.ease.elasticOut;  
-      this.adminDashboardAmchartUserfile.hiddenState.transitionEasing = am4core.ease.elasticOut; */ 
-      /* this.adminDashboardAmchartUserfile.defaultState.transitionEasing = am4core.ease.elasticOut;  
-      this.adminDashboardAmchartUserfile.getPropertyValue('height').hiddenState.transitionEasing = am4core.ease.elasticOut;  */
       const categoryAxis = this.adminDashboardAmchartUserfile.xAxes.push(new am4charts.CategoryAxis());
       categoryAxis.dataFields.category = "name";
       categoryAxis.title.text = "Approved/unapproved articles";
@@ -1314,7 +1306,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.adminDashboardAmchartUserfile.legend.position = "bottom";
       this.adminDashboardAmchartUserfile.legend.contentAlign = "center";
     }
-  }
+  } */
 
   // form methods
 
@@ -2582,7 +2574,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // amchart methods
 
-  createSeriesUserfile(field, name, stacked): void {
+  /* createSeriesUserfile(field, name, stacked): void {
     const series = this.adminDashboardAmchartUserfile.series.push(new am4charts.ColumnSeries());
     series.dataFields.valueY = field;
     series.dataFields.categoryX = "name";
@@ -2590,15 +2582,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
     series.stacked = stacked;
     series.columns.template.width = am4core.percent(95);
-    /* series.columns.template.defaultState.transitionDuration = 100;  
-    series.columns.template.hiddenState.transitionDuration = 100; 
-    series.columns.template.defaultState.transitionEasing = am4core.ease.elasticOut;  
-    series.columns.template.hiddenState.transitionEasing = am4core.ease.elasticOut;  */
     series.defaultState.transitionDuration = 1000;  
     series.hiddenState.transitionDuration = 1000; 
     series.defaultState.transitionEasing = am4core.ease.elasticOut;  
     series.hiddenState.transitionEasing = am4core.ease.elasticOut;
-  }
+  } */
 
   // other methods
 
@@ -2665,11 +2653,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
 
-    this.zone.runOutsideAngular(() => {
+    /* this.zone.runOutsideAngular(() => {
       if (this.adminDashboardAmchartUserfile) {
         this.adminDashboardAmchartUserfile.dispose();
       }
-    });
+    }); */
 
     if (this.editProfileSubscription) {
       this.editProfileSubscription.unsubscribe();
