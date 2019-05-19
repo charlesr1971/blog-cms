@@ -60,6 +60,8 @@
   
   request.sectionauthortype = "author"; //author, user
   
+  request.externalUrls = SerializeJson([{'title':'Blog','url':'https://www.establishmindfulness.com'},{'title':'Learning Centre','url':'https://app.establishmindfulness.com'}]);
+  
   
 
 

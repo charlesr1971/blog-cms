@@ -453,10 +453,6 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
     font-weight: normal !important;
 }
 
-/* .custom-system-user-data-container {
-    word-break: break-all;
-} */
-
 .custom-ag-grid-data-container .mat-icon.check_circle {
     position: absolute;
     right: 32px;
@@ -570,7 +566,11 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
 
 .dialogText {
     -webkit-overflow-scrolling: touch;
-}    
+}   
+
+g[aria-labelledby='id-65-title'], g[aria-labelledby='id-602-title'] {
+    display: none !important;
+}
 
 /* media queries */
 

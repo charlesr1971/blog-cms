@@ -35,6 +35,7 @@ export class HttpService {
   subscribeFormId: string = '';
   subscribeTaskKey: string = '';
   sectionauthortype: string = '';
+  externalUrls: any;
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -232,8 +233,10 @@ export class HttpService {
     if(sectionauthortype !== '0' || sectionauthortype !== '') {
       this.sectionauthortype = sectionauthortype;
     }
-
-    
+    const externalUrls = getUrlParameter('externalUrls');
+    if(externalUrls !== '0' || externalUrls !== '') {
+      this.externalUrls = JSON.parse(externalUrls);
+    }
 
     if(this.debug || this.debugForgottenPasswordLoginWithToken) {
       console.log('http.service: this.port ',this.port);
@@ -247,6 +250,11 @@ export class HttpService {
       console.log('http.service: this.forgottenPasswordValidated ',this.forgottenPasswordValidated);
       console.log('http.service: this.isForgottenPasswordValidated ',this.isForgottenPasswordValidated);
       console.log('http.service: this.imageMediumSuffix ',this.imageMediumSuffix);
+      console.log('http.service: this.subscribeurl ',this.subscribeurl);
+      console.log('http.service: this.subscribeFormId ',this.subscribeFormId);
+      console.log('http.service: this.subscribeTaskKey ',this.subscribeTaskKey);
+      console.log('http.service: this.sectionauthortype ',this.sectionauthortype);
+      console.log('http.service: this.externalUrls ',this.externalUrls);
     }
     this.userService.currentUser.subscribe( (user: User) => {
       if(user){

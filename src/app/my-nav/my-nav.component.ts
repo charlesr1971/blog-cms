@@ -66,6 +66,7 @@ export class MyNavComponent implements OnInit, OnDestroy {
   uploadRouterAliasLower: string = environment.uploadRouterAlias;
   uploadRouterAliasTitle: string = titleFromAlias(environment.uploadRouterAlias);
   dialogWebsiteHeight: number = 0;
+  externalUrls = [];
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
   .pipe(
@@ -120,6 +121,8 @@ export class MyNavComponent implements OnInit, OnDestroy {
       this.isTablet = this.deviceDetectorService.isTablet(); 
 
       this.title = this.httpService.websiteTitle !== '' ? this.httpService.websiteTitle : this.title;
+
+      this.externalUrls = this.httpService.externalUrls;
 
       this.fetchData();
       this.fetchAuthors();

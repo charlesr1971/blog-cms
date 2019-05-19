@@ -584,6 +584,10 @@ $dark-background-palette: map-get($dark-theme, background);
         background: mat-color($dark-warn, default);
     }
 
+    a.external-url mat-icon {
+        color: mat-color($dark-accent, A100);
+    }
+
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
         @include dark-mat-nav-list-after;
@@ -1242,6 +1246,10 @@ $light-background-palette: map-get($light-theme, background);
     
     #mat-color-swatch-warn-1 {
         background: mat-color($light-warn, default);
+    }
+
+    a.external-url mat-icon {
+        color: mat-color($light-accent, A100);
     }
 
     @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {

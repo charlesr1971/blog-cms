@@ -105,6 +105,10 @@
   overflow: auto;
 }
 
+a.external-url mat-icon {
+  margin-right: 10px;
+}
+
 /* media queries */
 
 /* smart phones */

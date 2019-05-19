@@ -611,22 +611,24 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
 
     if(this.isMobile && this.addRemoveHighlightWaypoints) {
-      this.createWaypoints();
+      this.createWaypoints1();
     }
 
     // amchart user file
 
     this.createThemeSwatch();
 
-    this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
+    /* this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe(); */
     
-    this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme) : am4core.useTheme(this.am4themes_darkTheme);
+    this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
+
+    this.createWaypoints2();
     
   }
 
   // waypoint methods
 
-  createWaypoints(): void {
+  createWaypoints1(): void {
 
     var that = this;
 
@@ -692,6 +694,25 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
       offset: '50%'
+    });
+
+  }
+
+  createWaypoints2(): void {
+
+    var that = this;
+
+    const adminDashboardAmchartUserfileWaypoint = new Waypoint({
+      element: document.getElementById('admin-dashboard-amchart-userfile'),
+      handler: function (direction) {
+        if(this.debug) {
+          console.log('profile.component: adminDashboardAmchartUserfileWaypoint: waypoint detected');
+        }
+        that.adminDashboardAmchartUserfileGetSubscription = that.httpService.fetchAmCharts('userFile',1).do(that.adminDashboardAmchartUserfileGetData).subscribe();
+        this.destroy();
+      },
+      context: this.documentBody.getElementById('mat-sidenav-content'),
+      offset: '100%'
     });
 
   }
@@ -1075,7 +1096,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.userApprovedThemeIsLight = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? true : false;
         this.openSnackBar('Changes have been submitted', 'Success');
         this.themeType = this.cookieService.check('theme') && this.cookieService.get('theme') === this.themeObj['light'] ? 'light' : 'dark';
-        this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme) : am4core.useTheme(this.am4themes_darkTheme);
+        if(this.debug) {
+          console.log('profile.component: processEditProfileData: this.themeType',this.themeType);
+        }
+        this.createThemeSwatch();
+        this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
+        this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
+        this.adminDashboardAmchartUserfile.invalidateData();
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -1218,10 +1245,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   am4themes_lightTheme(target): void {
-    const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
-    const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
-    const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#ffffff"));
       target.setFor("grid", am4core.color("#000000"));
@@ -1229,17 +1252,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (target instanceof am4core.ColorSet) {
       target.list = [
-        am4core.color(rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2]))),
-        am4core.color(rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])))
+        am4core.color(this.themeSwatch['matColorSwatchPrimary2']),
+        am4core.color(this.themeSwatch['matColorSwatchAccent1'])
       ];
     }
   }
 
   am4themes_darkTheme(target): void {
-    const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
-    const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
-    const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#000000"));
       target.setFor("grid", am4core.color("#ffffff"));
@@ -1247,8 +1266,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (target instanceof am4core.ColorSet) {
       target.list = [
-        am4core.color(rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2]))),
-        am4core.color(rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])))
+        am4core.color(this.themeSwatch['matColorSwatchPrimary2']),
+        am4core.color(this.themeSwatch['matColorSwatchAccent1'])
       ];
     }
   }
@@ -1258,36 +1277,42 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('profile.component: adminDashboardAmchartUserfileGetData: data',data);
     }
     if(data && 'rowData' in data) {
-      this.zone.runOutsideAngular(() => {
-        const chart = am4core.create("admin-dashboard-amchart-userfile", am4charts.XYChart);
-        // Add data
-        chart.data = data['rowData'];
-        // Create axes
-        const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-        categoryAxis.dataFields.category = "name";
-        categoryAxis.title.text = "Approved/unapproved articles";
-        categoryAxis.renderer.grid.template.location = 0;
-        categoryAxis.renderer.minGridDistance = 20;
-        categoryAxis.renderer.cellStartLocation = 0.1;
-        categoryAxis.renderer.cellEndLocation = 0.9;
-        const  valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-        valueAxis.min = 0;
-        valueAxis.title.text = "Number of images";
-        // Create series
-        function createSeries(field, name, stacked) {
-          const series = chart.series.push(new am4charts.ColumnSeries());
-          series.dataFields.valueY = field;
-          series.dataFields.categoryX = "name";
-          series.name = name;
-          series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
-          series.stacked = stacked;
-          series.columns.template.width = am4core.percent(95);
-        }
-        createSeries("approved", "Approved", true);
-        createSeries("unapproved", "Unapproved", true);
-        // Add legend
-        chart.legend = new am4charts.Legend();
-      });
+      this.adminDashboardAmchartUserfile = am4core.create("admin-dashboard-amchart-userfile", am4charts.XYChart);
+      this.adminDashboardAmchartUserfile.data = data['rowData'];
+      /* this.adminDashboardAmchartUserfile.defaultState.transitionDuration = 100;  
+      this.adminDashboardAmchartUserfile.hiddenState.transitionDuration = 100; 
+      this.adminDashboardAmchartUserfile.defaultState.transitionEasing = am4core.ease.elasticOut;  
+      this.adminDashboardAmchartUserfile.hiddenState.transitionEasing = am4core.ease.elasticOut; */ 
+      /* this.adminDashboardAmchartUserfile.defaultState.transitionEasing = am4core.ease.elasticOut;  
+      this.adminDashboardAmchartUserfile.getPropertyValue('height').hiddenState.transitionEasing = am4core.ease.elasticOut;  */
+      const categoryAxis = this.adminDashboardAmchartUserfile.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = "name";
+      categoryAxis.title.text = "Approved/unapproved articles";
+      categoryAxis.renderer.grid.template.location = 0;
+      categoryAxis.renderer.minGridDistance = 20;
+      categoryAxis.renderer.cellStartLocation = 0.1;
+      categoryAxis.renderer.cellEndLocation = 0.9;
+      categoryAxis.renderer.labels.template.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchPrimary2']) : am4core.color(this.themeSwatch['matColorSwatchPrimary1']);
+      categoryAxis.title.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchAccent3']) : am4core.color(this.themeSwatch['matColorSwatchAccent1']);
+      const  valueAxis = this.adminDashboardAmchartUserfile.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.min = 0;
+      valueAxis.title.text = "Number of images";
+      valueAxis.renderer.labels.template.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchPrimary2']) : am4core.color(this.themeSwatch['matColorSwatchPrimary1']);
+      valueAxis.title.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchAccent3']) : am4core.color(this.themeSwatch['matColorSwatchAccent1']);
+      this.createSeriesUserfile("approved", "Approved", true);
+      this.createSeriesUserfile("unapproved", "Unapproved", true);
+      this.adminDashboardAmchartUserfile.cursor = new am4charts.XYCursor();
+      this.adminDashboardAmchartUserfile.cursor.xAxis = categoryAxis;
+      this.adminDashboardAmchartUserfile.cursor.fullWidthLineX = true;
+      this.adminDashboardAmchartUserfile.cursor.lineX.strokeWidth = 0;
+      this.adminDashboardAmchartUserfile.cursor.lineX.fill = am4core.color("#8F3985");
+      this.adminDashboardAmchartUserfile.cursor.lineX.fillOpacity = 0.1;
+      this.adminDashboardAmchartUserfile.legend = new am4charts.Legend();
+      this.adminDashboardAmchartUserfile.legend.useDefaultMarker = true;
+      this.adminDashboardAmchartUserfile.legend.width = am4core.percent(113);
+      this.adminDashboardAmchartUserfile.legend.marginTop = 20;
+      this.adminDashboardAmchartUserfile.legend.position = "bottom";
+      this.adminDashboardAmchartUserfile.legend.contentAlign = "center";
     }
   }
 
@@ -2555,6 +2580,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.usersEmailPostSubscription = this.httpService.editUserAdmin(obj).do(this.processUsersEmailPostData).subscribe();
   }
 
+  // amchart methods
+
+  createSeriesUserfile(field, name, stacked): void {
+    const series = this.adminDashboardAmchartUserfile.series.push(new am4charts.ColumnSeries());
+    series.dataFields.valueY = field;
+    series.dataFields.categoryX = "name";
+    series.name = name;
+    series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
+    series.stacked = stacked;
+    series.columns.template.width = am4core.percent(95);
+    /* series.columns.template.defaultState.transitionDuration = 100;  
+    series.columns.template.hiddenState.transitionDuration = 100; 
+    series.columns.template.defaultState.transitionEasing = am4core.ease.elasticOut;  
+    series.columns.template.hiddenState.transitionEasing = am4core.ease.elasticOut;  */
+    series.defaultState.transitionDuration = 1000;  
+    series.hiddenState.transitionDuration = 1000; 
+    series.defaultState.transitionEasing = am4core.ease.elasticOut;  
+    series.hiddenState.transitionEasing = am4core.ease.elasticOut;
+  }
+
   // other methods
 
   createThemeSwatch(): void {
@@ -2581,9 +2626,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       matColorSwatchAccent3: rgbToHex(parseInt(colorSwatchAccent3[0]),parseInt(colorSwatchAccent3[1]),parseInt(colorSwatchAccent3[2])),
       matColorSwatchWarn1: rgbToHex(parseInt(colorSwatchWarn1[0]),parseInt(colorSwatchWarn1[1]),parseInt(colorSwatchWarn1[2]))
     };
-    //if(this.debug) {
+    if(this.debug) {
       console.log('profile.component: createThemeSwatch: this.themeSwatch: ', this.themeSwatch);
-    //}
+    }
   }
 
   togglePanelWidth(event: any): void {
