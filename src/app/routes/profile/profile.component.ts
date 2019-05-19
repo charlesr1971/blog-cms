@@ -1282,10 +1282,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       const categoryAxis = this.adminDashboardAmchartUserfile.xAxes.push(new am4charts.CategoryAxis());
       categoryAxis.dataFields.category = "name";
       categoryAxis.title.text = "Approved/unapproved articles";
+      categoryAxis.renderer.labels.template.horizontalCenter = "right";
+      categoryAxis.renderer.labels.template.verticalCenter = "middle";
+      categoryAxis.renderer.labels.template.rotation = 270;
       categoryAxis.renderer.grid.template.location = 0;
       categoryAxis.renderer.minGridDistance = 20;
       categoryAxis.renderer.cellStartLocation = 0.1;
       categoryAxis.renderer.cellEndLocation = 0.9;
+      categoryAxis.title.marginTop = 20;
       categoryAxis.renderer.labels.template.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchPrimary2']) : am4core.color(this.themeSwatch['matColorSwatchPrimary1']);
       categoryAxis.title.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchAccent3']) : am4core.color(this.themeSwatch['matColorSwatchAccent1']);
       const  valueAxis = this.adminDashboardAmchartUserfile.yAxes.push(new am4charts.ValueAxis());
