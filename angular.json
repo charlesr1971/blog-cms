@@ -37,7 +37,10 @@
               "src/assets/js/tinymce/themes/modern/theme.js",
               "src/assets/js/tinymce/themes/mobile/theme.js",
               "src/assets/js/tinymce/plugins/fullscreen/plugin.js",
-              "node_modules/waypoints/lib/noframework.waypoints.min.js"
+              "node_modules/waypoints/lib/noframework.waypoints.min.js",
+              "node_modules/amcharts4/core.js",
+              "node_modules/amcharts4/charts.js",
+              "node_modules/amcharts4/themes/animated.js"
             ]
           },
           "configurations": {

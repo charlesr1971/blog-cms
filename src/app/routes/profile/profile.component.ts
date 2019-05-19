@@ -48,7 +48,9 @@ export enum userAdminUnselectedChangesOptionsStatus {
   'Continue with the submission?' = 3
 }
 
-//am4core.useTheme(am4themes_animated);
+declare var am4core: any, am4themes_animated: any, am4charts: any;
+
+am4core.useTheme(am4themes_animated);
 
 @Component({
   selector: 'app-profile',
@@ -362,7 +364,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   components;
 
-  //adminDashboardAmchartUserfile: am4charts.XYChart;
+  adminDashboardAmchartUserfile: any;
   
   debug: boolean = false;
 
@@ -616,11 +618,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // amchart user file
 
-    /* this.createThemeSwatch();
+    this.createThemeSwatch();
     
     this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
 
-    this.createWaypoints2(); */
+    this.createWaypoints2();
     
   }
 
@@ -706,7 +708,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: adminDashboardAmchartUserfileWaypoint: waypoint detected');
         }
-        /* that.adminDashboardAmchartUserfileGetSubscription = that.httpService.fetchAmCharts('userFile',1).do(that.adminDashboardAmchartUserfileGetData).subscribe(); */
+        that.adminDashboardAmchartUserfileGetSubscription = that.httpService.fetchAmCharts('userFile',1).do(that.adminDashboardAmchartUserfileGetData).subscribe();
         this.destroy();
       },
       context: this.documentBody.getElementById('mat-sidenav-content'),
@@ -1097,10 +1099,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         if(this.debug) {
           console.log('profile.component: processEditProfileData: this.themeType',this.themeType);
         }
-        /* this.createThemeSwatch();
+        this.createThemeSwatch();
         this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
         this.themeType === 'light' ? am4core.useTheme(this.am4themes_lightTheme.bind(this)) : am4core.useTheme(this.am4themes_darkTheme.bind(this));
-        this.adminDashboardAmchartUserfile.invalidateData(); */
+        this.adminDashboardAmchartUserfile.invalidateData();
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -1242,7 +1244,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  /* am4themes_lightTheme(target): void {
+  am4themes_lightTheme(target): void {
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#ffffff"));
       target.setFor("grid", am4core.color("#000000"));
@@ -1254,9 +1256,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         am4core.color(this.themeSwatch['matColorSwatchAccent1'])
       ];
     }
-  } */
+  }
 
-  /* am4themes_darkTheme(target): void {
+  am4themes_darkTheme(target): void {
     if (target instanceof am4core.InterfaceColorSet) {
       target.setFor("background", am4core.color("#000000"));
       target.setFor("grid", am4core.color("#ffffff"));
@@ -1268,9 +1270,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         am4core.color(this.themeSwatch['matColorSwatchAccent1'])
       ];
     }
-  } */
+  }
 
-  /* private adminDashboardAmchartUserfileGetData = (data) => {
+  private adminDashboardAmchartUserfileGetData = (data) => {
     if(this.debug) {
       console.log('profile.component: adminDashboardAmchartUserfileGetData: data',data);
     }
@@ -1306,7 +1308,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.adminDashboardAmchartUserfile.legend.position = "bottom";
       this.adminDashboardAmchartUserfile.legend.contentAlign = "center";
     }
-  } */
+  }
 
   // form methods
 
@@ -2574,7 +2576,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // amchart methods
 
-  /* createSeriesUserfile(field, name, stacked): void {
+  createSeriesUserfile(field, name, stacked): void {
     const series = this.adminDashboardAmchartUserfile.series.push(new am4charts.ColumnSeries());
     series.dataFields.valueY = field;
     series.dataFields.categoryX = "name";
@@ -2586,34 +2588,43 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     series.hiddenState.transitionDuration = 1000; 
     series.defaultState.transitionEasing = am4core.ease.elasticOut;  
     series.hiddenState.transitionEasing = am4core.ease.elasticOut;
-  } */
+  }
 
   // other methods
 
   createThemeSwatch(): void {
-    const matColorSwatchPrimary1 = styler('#mat-color-swatch-primary-1').get(['background']);
-    const colorSwatchPrimary1 = matColorSwatchPrimary1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
-    const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchPrimary3 = styler('#mat-color-swatch-primary-3').get(['background']);
-    const colorSwatchPrimary3 = matColorSwatchPrimary3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
-    const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchAccent2 = styler('#mat-color-swatch-accent-2').get(['background']);
-    const colorSwatchAccent2 = matColorSwatchAccent2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchAccent3 = styler('#mat-color-swatch-accent-3').get(['background']);
-    const colorSwatchAccent3 = matColorSwatchAccent3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    const matColorSwatchWarn1 = styler('#mat-color-swatch-warn-1').get(['background']);
-    const colorSwatchWarn1 = matColorSwatchWarn1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-    this.themeSwatch = {
-      matColorSwatchPrimary1: rgbToHex(parseInt(colorSwatchPrimary1[0]),parseInt(colorSwatchPrimary1[1]),parseInt(colorSwatchPrimary1[2])),
-      matColorSwatchPrimary2: rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2])),
-      matColorSwatchPrimary3: rgbToHex(parseInt(colorSwatchPrimary3[0]),parseInt(colorSwatchPrimary3[1]),parseInt(colorSwatchPrimary3[2])),
-      matColorSwatchAccent1: rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])),
-      matColorSwatchAccent2: rgbToHex(parseInt(colorSwatchAccent2[0]),parseInt(colorSwatchAccent2[1]),parseInt(colorSwatchAccent2[2])),
-      matColorSwatchAccent3: rgbToHex(parseInt(colorSwatchAccent3[0]),parseInt(colorSwatchAccent3[1]),parseInt(colorSwatchAccent3[2])),
-      matColorSwatchWarn1: rgbToHex(parseInt(colorSwatchWarn1[0]),parseInt(colorSwatchWarn1[1]),parseInt(colorSwatchWarn1[2]))
-    };
+    const matColorSwatchPrimary1El = this.documentBody.getElementById('mat-color-swatch-primary-1');
+    const matColorSwatchPrimary2El = this.documentBody.getElementById('mat-color-swatch-primary-2');
+    const matColorSwatchPrimary3El = this.documentBody.getElementById('mat-color-swatch-primary-3');
+    const matColorSwatchAccent1El = this.documentBody.getElementById('mat-color-swatch-accent-1');
+    const matColorSwatchAccent2El = this.documentBody.getElementById('mat-color-swatch-accent-2');
+    const matColorSwatchAccent3El = this.documentBody.getElementById('mat-color-swatch-accent-3');
+    const matColorSwatchWarn1El = this.documentBody.getElementById('mat-color-swatch-warn-1');
+    if(matColorSwatchPrimary1El && matColorSwatchPrimary2El && matColorSwatchPrimary3El && matColorSwatchAccent1El && matColorSwatchAccent2El && matColorSwatchAccent3El && matColorSwatchWarn1El) {
+      const matColorSwatchPrimary1 = styler('#mat-color-swatch-primary-1').get(['background']);
+      const colorSwatchPrimary1 = matColorSwatchPrimary1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
+      const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchPrimary3 = styler('#mat-color-swatch-primary-3').get(['background']);
+      const colorSwatchPrimary3 = matColorSwatchPrimary3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
+      const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchAccent2 = styler('#mat-color-swatch-accent-2').get(['background']);
+      const colorSwatchAccent2 = matColorSwatchAccent2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchAccent3 = styler('#mat-color-swatch-accent-3').get(['background']);
+      const colorSwatchAccent3 = matColorSwatchAccent3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchWarn1 = styler('#mat-color-swatch-warn-1').get(['background']);
+      const colorSwatchWarn1 = matColorSwatchWarn1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      this.themeSwatch = {
+        matColorSwatchPrimary1: rgbToHex(parseInt(colorSwatchPrimary1[0]),parseInt(colorSwatchPrimary1[1]),parseInt(colorSwatchPrimary1[2])),
+        matColorSwatchPrimary2: rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2])),
+        matColorSwatchPrimary3: rgbToHex(parseInt(colorSwatchPrimary3[0]),parseInt(colorSwatchPrimary3[1]),parseInt(colorSwatchPrimary3[2])),
+        matColorSwatchAccent1: rgbToHex(parseInt(colorSwatchAccent1[0]),parseInt(colorSwatchAccent1[1]),parseInt(colorSwatchAccent1[2])),
+        matColorSwatchAccent2: rgbToHex(parseInt(colorSwatchAccent2[0]),parseInt(colorSwatchAccent2[1]),parseInt(colorSwatchAccent2[2])),
+        matColorSwatchAccent3: rgbToHex(parseInt(colorSwatchAccent3[0]),parseInt(colorSwatchAccent3[1]),parseInt(colorSwatchAccent3[2])),
+        matColorSwatchWarn1: rgbToHex(parseInt(colorSwatchWarn1[0]),parseInt(colorSwatchWarn1[1]),parseInt(colorSwatchWarn1[2]))
+      };
+    }
     if(this.debug) {
       console.log('profile.component: createThemeSwatch: this.themeSwatch: ', this.themeSwatch);
     }
@@ -2653,11 +2664,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
 
-    /* this.zone.runOutsideAngular(() => {
+    this.zone.runOutsideAngular(() => {
       if (this.adminDashboardAmchartUserfile) {
         this.adminDashboardAmchartUserfile.dispose();
       }
-    }); */
+    });
 
     if (this.editProfileSubscription) {
       this.editProfileSubscription.unsubscribe();
