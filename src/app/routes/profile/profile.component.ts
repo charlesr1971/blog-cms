@@ -1025,6 +1025,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.userApprovedRowData = data['rowData'];
         this.refreshAgGrid(this.gridApiUserApproved,'ag-grid-user-approved-updated-icon','ag-grid-user-approved-remove-highlight-icon');
         this.userApprovedSubmitDisabled = true;
+        this.adminDashboardAmchartUserfileGetSubscription = this.httpService.fetchAmCharts('userFile',1).do(this.adminDashboardAmchartUserfileGetData).subscribe();
+        this.adminDashboardAmchartUserfile.invalidateData();
       }
       else{
         if('jwtObj' in data && !data['jwtObj']['jwtAuthenticated']) {
@@ -1311,17 +1313,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       valueAxis.title.fill = this.themeType === 'dark' ? am4core.color(this.themeSwatch['matColorSwatchAccent3']) : am4core.color(this.themeSwatch['matColorSwatchAccent1']);
       this.createSeriesUserfile('approved', 'Approved', true);
       this.createSeriesUserfile('unapproved', 'Unapproved', true);
-      //if(!this.isMobile) {
-        this.adminDashboardAmchartUserfile.cursor = new am4charts.XYCursor();
-        this.adminDashboardAmchartUserfile.cursor.xAxis = categoryAxis;
-        this.adminDashboardAmchartUserfile.cursor.fullWidthLineX = true;
-        this.adminDashboardAmchartUserfile.cursor.lineX.strokeWidth = 0;
-        this.adminDashboardAmchartUserfile.cursor.lineX.fill = am4core.color('#8F3985');
-        this.adminDashboardAmchartUserfile.cursor.lineX.fillOpacity = 0.1;
-      //}
+      this.adminDashboardAmchartUserfile.cursor = new am4charts.XYCursor();
+      this.adminDashboardAmchartUserfile.cursor.xAxis = categoryAxis;
+      this.adminDashboardAmchartUserfile.cursor.fullWidthLineX = true;
+      this.adminDashboardAmchartUserfile.cursor.lineX.strokeWidth = 0;
+      this.adminDashboardAmchartUserfile.cursor.lineX.fill = am4core.color('#8F3985');
+      this.adminDashboardAmchartUserfile.cursor.lineX.fillOpacity = 0.1;
       this.adminDashboardAmchartUserfile.legend = new am4charts.Legend();
       this.adminDashboardAmchartUserfile.legend.useDefaultMarker = true;
-      this.adminDashboardAmchartUserfile.legend.width = am4core.percent(113);
+      this.adminDashboardAmchartUserfile.legend.width = this.isMobile ? am4core.percent(125) : am4core.percent(113);
       this.adminDashboardAmchartUserfile.legend.marginTop = 20;
       this.adminDashboardAmchartUserfile.legend.position = 'bottom';
       this.adminDashboardAmchartUserfile.legend.contentAlign = 'center';
@@ -1335,6 +1335,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             element.remove();
           });
         }
+        var that = this;
+        window.addEventListener('resize', function() {
+          //that.adminDashboardAmchartUserfile.handleResize();
+          that.adminDashboardAmchartUserfileGetSubscription = that.httpService.fetchAmCharts('userFile',1).do(that.adminDashboardAmchartUserfileGetData).subscribe();
+          that.adminDashboardAmchartUserfile.invalidateData();
+        }, false);
       }
     }
   }

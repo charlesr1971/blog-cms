@@ -568,7 +568,11 @@ body .adzone-tooltiptext .adzone-tooltiptext-inner {
     -webkit-overflow-scrolling: touch;
 }   
 
-g[aria-labelledby='id-65-title'], g[aria-labelledby='id-602-title'] {
+/* g[aria-labelledby='id-65-title'], g[aria-labelledby='id-602-title'], g[aria-labelledby='id-617-title'], g[aria-labelledby='id-1547-title'] {
+    display: none !important;
+} */
+
+g[aria-labelledby$='title'] {
     display: none !important;
 }
 
