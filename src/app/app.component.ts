@@ -65,6 +65,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.meta.addTag({property:'og:title',content:this.httpService.ogTitle});
     this.meta.addTag({property:'og:description',content:this.httpService.ogDescription});
     this.meta.addTag({property:'og:image',content:this.httpService.ogImage});
+    this.meta.addTag({name:'description',content:this.httpService.metadescription});
+    this.meta.addTag({name:'keywords',content:this.httpService.metakeywords});
 
     if(!this.cookieService.check('userToken') || (this.cookieService.check('userToken') && this.cookieService.get('userToken') === '')) {
       this.httpService.browserCacheCleared = true;

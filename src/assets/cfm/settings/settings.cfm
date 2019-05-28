@@ -65,6 +65,9 @@
   request.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]";
   request.sitemapmaxlinks = 1000;
   
+  request.metadescription = "Join Paul Meek and the meditation community at Establish Mindfulness online. Contribute mindfulness stories to help others find the right balance in everyday life.";
+  request.metakeywords = "meditation for everyday life, mindfulness for everyday life, meditation for life, mindfulness for life, establish mindfulness, Paul Meek, meditation community";
+  
   
 
 

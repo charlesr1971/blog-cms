@@ -36,6 +36,8 @@ export class HttpService {
   subscribeTaskKey: string = '';
   sectionauthortype: string = '';
   externalUrls: any;
+  metadescription: string = '';
+  metakeywords: string = '';
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -236,6 +238,14 @@ export class HttpService {
     const externalUrls = getUrlParameter('externalUrls');
     if(externalUrls !== '0' || externalUrls !== '') {
       this.externalUrls = JSON.parse(externalUrls);
+    }
+    const metadescription = getUrlParameter('metadescription');
+    if(metadescription !== '0' || metadescription !== '') {
+      this.metadescription = metadescription;
+    }
+    const metakeywords = getUrlParameter('metakeywords');
+    if(metakeywords !== '0' || metakeywords !== '') {
+      this.metakeywords = metakeywords;
     }
 
     if(this.debug || this.debugForgottenPasswordLoginWithToken) {
