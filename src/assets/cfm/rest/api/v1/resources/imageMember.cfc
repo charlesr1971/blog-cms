@@ -119,7 +119,7 @@
     <cfset local.submissiondate = Now()>
     <cfset local.emailsubject = "Image post creation notification e-mail from " & request.title>
     <cfset local.jwtString = "">
-    <cfset local.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+    <cfset local.punctuationSubsetPattern = request.punctuationSubsetPattern>
     <cfset local.styleAttributePattern = '[\s]*style=".*?"'>
     <cfset local.spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
     <cfset local.data = StructNew()>
@@ -483,7 +483,7 @@
     <cfset local.jwtString = "">
     <cfset local.authorized = true>
     <cfset local.isAdmin = false>
-    <cfset local.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+    <cfset local.punctuationSubsetPattern = request.punctuationSubsetPattern>
     <cfset local.styleAttributePattern = '[\s]*style=".*?"'>
     <cfset local.spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
     <cfset local.data = StructNew()>

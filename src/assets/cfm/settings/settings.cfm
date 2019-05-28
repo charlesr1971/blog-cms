@@ -62,6 +62,9 @@
   
   request.externalUrls = SerializeJson([{'title':'Blog','url':'https://www.establishmindfulness.com'},{'title':'Learning Centre','url':'https://app.establishmindfulness.com'}]);
   
+  request.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]";
+  request.sitemapmaxlinks = 1000;
+  
   
 
 

@@ -19,7 +19,7 @@
 <cfset emailtemplateheaderbackground = getMaterialThemePrimaryColour(theme=request.theme)>
 <cfset emailtemplatemessage = "">
 
-<cfset punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]">
+<cfset punctuationSubsetPattern = request.punctuationSubsetPattern>
 <cfset styleAttributePattern = '[\s]*style=".*?"'>
 <cfset spaceInsideParagraphPattern = "<p>&nbsp;<\/p>">
 

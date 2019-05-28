@@ -1214,10 +1214,12 @@
 	  var local = {};
 	  local.result = "";
 	  local.timestamp = DateFormat(Now(),'yyyymmdd') & TimeFormat(Now(),'HHmmss');
+	  local.lastMod = DateFormat(Now(),"yyyy-mm-dd") & "T" & TimeFormat(Now(),"HH:mm:ss") & "+00:00";
 	  local.newline = Chr(13) & Chr(10);
 	  local.onetab = Chr(9);
 	  local.twotab = Chr(9) & Chr(9);
 	  local.threetab = Chr(9) & Chr(9) & Chr(9);
+	  local.priorityStruct = AddSitemapPriority(unapproved=arguments.unapproved);
 	  local.queryObj = new Query();	 
 	  local.queryObj.setDatasource(request.domain_dsn);
 	  if(arguments.unapproved){
@@ -1236,9 +1238,13 @@
 	  local.queryObj = local.queryObj.getResult(); 
 	  if(local.queryObj.RecordCount) {
 		savecontent variable="local.result" { 
-		  WriteOutput('<?xml version="1.0" encoding="UTF-8"?>' & local.newline & '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' & local.newline & local.onetab & '<url>' & local.newline & local.twotab & '<loc>' & request.remotedomainurl & '</loc>' & local.newline & local.onetab & '</url>' & local.newline & ''); 
+		  WriteOutput('<?xml version="1.0" encoding="UTF-8"?>' & local.newline & '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' & local.newline & local.onetab & '<url>' & local.newline & local.twotab & '<loc>' & request.remotedomainurl & '</loc>' & local.newline & local.twotab & '<lastmod>' & local.lastMod & '</lastmod>' & local.newline & local.twotab & '<priority>1.0000</priority>' & local.newline & local.onetab & '</url>' & local.newline & ''); 
 		  for(local.row in local.queryObj){
-			  WriteOutput(local.onetab & '<url>' & local.newline & local.twotab & '<loc>' & request.remotedomainurl & '/' & request.catalogRouterAlias & '/' & local.row['File_ID']  & '/' & SeoTitleFormat(title=local.row['Title']) & '</loc>' & local.newline & local.onetab & '</url>' & local.newline & ''); 
+			local.priority = 0.1000;
+			if(NOT StructIsEmpty(local.priorityStruct) AND StructKeyExists(local.priorityStruct,local.row['File_ID'])){
+			  local.priority = local.priorityStruct[local.row['File_ID']]['priority'];
+			}
+			WriteOutput(local.onetab & '<url>' & local.newline & local.twotab & '<loc>' & request.remotedomainurl & '/' & request.catalogRouterAlias & '/' & local.row['File_ID']  & '/' & SeoTitleFormat(title=local.row['Title']) & '</loc>' & local.newline & local.twotab & '<lastmod>' & local.lastMod & '</lastmod>' & local.newline & local.twotab & '<priority>' & local.priority & '</priority>' & local.newline & local.onetab & '</url>' & local.newline & ''); 
 		  }
 		  WriteOutput('</urlset>'); 
 		}
@@ -1251,15 +1257,131 @@
 	  return local.result;
   }
   
+  public struct function AddSitemapPriority(boolean unapproved = false) output="false" {
+	var local = {};
+	local.result = {};
+	local.urlArray = [];
+	local.hrefTotal = 0;
+	local.hrefList = "";
+	local.maxLink = request.sitemapmaxlinks;
+	local.directoryCounter = 1;
+	local.counter = 1;
+	local.queryObj = new Query();	 
+	local.queryObj.setDatasource(request.domain_dsn);
+	if(arguments.unapproved){
+	  local.queryObj.addParam(name="Approved",value="1,0",cfsqltype="cf_sql_tinyint",list="yes"); 
+	}
+	else{
+	  local.queryObj.addParam(name="Approved",value=1,cfsqltype="cf_sql_tinyint"); 
+	}
+	local.queryObj.addParam(name="Article",value="",cfsqltype="cf_sql_longvarchar"); 
+	if(arguments.unapproved){
+	  local.queryObj = local.queryObj.execute(sql="SELECT * FROM tblFile WHERE Approved IN (:Approved) AND Article <> :Article");
+	}
+	else{
+	  local.queryObj = local.queryObj.execute(sql="SELECT * FROM tblFile WHERE Approved = :Approved AND Article <> :Article");
+	}
+	local.queryObj = local.queryObj.getResult(); 
+	if(local.queryObj.RecordCount) {
+	  for(local.row in local.queryObj){  
+		local.directory = request.remotedomainurl & '/' & request.catalogRouterAlias & '/' & local.row['File_ID']  & '/' & SeoTitleFormat(title=local.row['Title']);
+		if(local.counter LTE local.maxLink){
+		  local.obj = {};
+		  local.obj['fileid'] = local.row['File_ID'];
+		  local.obj['loc'] = local.directory;
+		  local.obj['links'] = 0;
+		  local.obj['range'] = {"to":0,"from":0};
+		  local.obj['priority'] = 0.1000;
+		  if(Trim(Len(local.row['Article']))){
+			local.content = local.row['Article'];
+			local.hrefs = REMatch("[\s]+href=",local.content);
+			if(IsArray(local.hrefs) AND ArrayLen(local.hrefs)){
+			  local.hrefTotal = local.hrefTotal + ArrayLen(local.hrefs);
+			  local.hrefList = ListAppend(local.hrefList,ArrayLen(local.hrefs));
+			  local.obj['links'] = ArrayLen(local.hrefs);
+			}
+			ArrayAppend(local.urlArray,local.obj);
+			local.directoryCounter = local.directoryCounter + 1;
+		  }
+		}
+		else{
+		  local.obj = {};
+		  local.obj['loc'] = local.directory;
+		  local.obj['links'] = 0;
+		  local.obj['range'] = {"to":0,"from":0};
+		  local.obj['priority'] = 0.1000;
+		  ArrayAppend(local.urlArray,local.obj);
+		}
+		local.counter = local.counter + 1;
+	  }
+	}
+	local.urlArray = ArrayOfStructSort(local.urlArray,"numeric","desc","links");
+	local.priorityTicks = 10;
+	local.rangeStep = Ceiling(ListLen(local.directoryCounter)/local.priorityTicks);
+	local.rangeFrom = 0;
+	local.rangeTo = 0;
+	if(local.rangeStep LTE 0){
+	  local.rangeStep = 1;
+	}
+	for(var local.i = 1;local.i LTE ArrayLen(local.urlArray);local.i++){
+	  if(NOT (local.i + 1) MOD local.rangeStep){
+		local.rangeFrom = local.urlArray[local.i]['links'];
+		if(ArrayIsDefined(local.urlArray,local.i + local.rangeStep)){
+		  local.rangeTo = local.urlArray[local.i + local.rangeStep]['links'];
+		}
+	  }
+	  local.urlArray[local.i]['range']['from'] = local.rangeFrom;
+	  local.urlArray[local.i]['range']['to'] = local.rangeTo;
+	}
+	local.previousRange = {"to":0,"from":0};
+	local.priorityBase = 10;
+	local.counter = 1;
+	for(var local.i = 1;local.i LTE ArrayLen(local.urlArray);local.i++){
+	  if(local.i EQ 1){
+		local.priority = 10;
+	  }
+	  else{
+		if(local.previousRange['from'] NEQ local.urlArray[local.i]['range']['from'] OR local.previousRange['to'] NEQ local.urlArray[local.i]['range']['to']){
+		  local.priority = local.priorityBase - local.counter;
+		  local.counter = local.counter + 1;  
+		}
+		if(local.priority LT 0){
+		  local.priority = 1;
+		}
+	  }
+	  local.urlArray[local.i]['priority'] = NumberFormat((local.priority/10),".____");
+	  local.previousRange = local.urlArray[local.i]['range'];
+	}
+	for(var local.i = 1;local.i LTE ArrayLen(local.urlArray);local.i++){
+	  local.result[local.urlArray[local.i]['fileid']] =  local.urlArray[local.i];
+	}
+	return local.result;
+  }
+  
+  public array function ArrayOfStructSort(array base = [], string sortType = 'text', string sortOrder = 'ASC', string pathToSubElement = '') output="false" {	
+	var local = {};
+    local.tmpStruct = {};
+    local.returnVal = [];
+    local.keys = '';
+	for(var local.i = 1;local.i LTE ArrayLen(arguments.base);local.i++){
+      local.tmpStruct[local.i] = arguments.base[local.i];
+	}
+    local.keys = StructSort(local.tmpStruct,arguments.sortType,arguments.sortOrder,arguments.pathToSubElement);
+	for(var local.i = 1;local.i LTE ArrayLen(local.keys);local.i++){
+      local.returnVal[local.i] = local.tmpStruct[local.keys[local.i]];
+	}
+    return local.returnVal;
+  }
+  
   
   public array function QueryToArray(query query = QueryNew(""), boolean isColumnNameUpperCase = false, numeric startrow = 0, numeric endrow = 0) output="false" {
 	var local = {};
 	var rows = [];
-	if(arguments.startrow EQ 0 AND arguments.endrow EQ 0) {
-	  for(local.obj in arguments.query) {
+	if(arguments.startrow EQ 0 AND arguments.endrow EQ 0){
+	  for(local.obj in arguments.query){
 		local.temp = {};
-		for(local.key in local.obj) {
-		  if(NOT arguments.isColumnNameUpperCase) {	
+		for(local.key in local.obj){
+		  if(NOT arguments.isColumnNameUpperCase){	
 			local.temp[LCase(local.key)] = local.obj[local.key];
 		  }
 		  else{
@@ -1271,17 +1393,17 @@
 	}
 	else{
 	  local.counter = 1;
-	  for(local.obj in arguments.query) {
+	  for(local.obj in arguments.query){
 		local.temp = {};
-		for(local.key in local.obj) {
-		  if(NOT arguments.isColumnNameUpperCase) {	
+		for(local.key in local.obj){
+		  if(NOT arguments.isColumnNameUpperCase){	
 			local.temp[LCase(local.key)] = local.obj[local.key];
 		  }
 		  else{
 			local.temp[UCase(local.key)] = local.obj[local.key];
 		  }
 		}
-		if(local.counter GTE arguments.startrow AND local.counter LTE arguments.endrow) {
+		if(local.counter GTE arguments.startrow AND local.counter LTE arguments.endrow){
 		  ArrayAppend(rows,local.temp);
 		}
 		local.counter = local.counter + 1;

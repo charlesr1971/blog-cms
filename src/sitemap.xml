@@ -2,14 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://community.establishmindfulness.com</loc>
+		<lastmod>2019-05-28T13:21:27+00:00</lastmod>
+		<priority>1.0000</priority>
 	</url>
 	<url>
 		<loc>https://community.establishmindfulness.com/stories/38/port-vell</loc>
+		<lastmod>2019-05-28T13:21:27+00:00</lastmod>
+		<priority>0.9000</priority>
 	</url>
 	<url>
 		<loc>https://community.establishmindfulness.com/stories/39/lone-seagullx</loc>
+		<lastmod>2019-05-28T13:21:27+00:00</lastmod>
+		<priority>0.9000</priority>
 	</url>
 	<url>
 		<loc>https://community.establishmindfulness.com/stories/47/oak-tree-skeleton</loc>
+		<lastmod>2019-05-28T13:21:27+00:00</lastmod>
+		<priority>1.0000</priority>
+	</url>
+	<url>
+		<loc>https://community.establishmindfulness.com/stories/54/clearing-the-mind:-pt-1</loc>
+		<lastmod>2019-05-28T13:21:27+00:00</lastmod>
+		<priority>0.9000</priority>
+	</url>
+	<url>
+		<loc>https://community.establishmindfulness.com/stories/55/bolt-head</loc>
+		<lastmod>2019-05-28T13:21:27+00:00</lastmod>
+		<priority>0.9000</priority>
 	</url>
 </urlset>
