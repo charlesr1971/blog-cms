@@ -1207,6 +1207,8 @@
 	local.result = arguments.title;
     local.result = Trim(LCase(local.result));
 	local.result = REReplaceNoCase(local.result,"[\s]+","-","ALL");
+	local.result = REReplaceNoCase(local.result,"[:]+","-","ALL");
+	local.result = REReplaceNoCase(local.result,"[-]+","-","ALL");
     return local.result;
   }
   
