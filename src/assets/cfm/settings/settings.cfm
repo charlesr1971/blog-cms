@@ -1,7 +1,7 @@
 <cfscript>
 
   request.title = "Establish Mindfulness";
-  request.htmlTitle = request.title & " S.P.A";
+  request.htmlTitle = request.title & ": Community";
   request.cfport = 0;
   request.maxcontentlength = 500000;
   request.tinymcearticlemaximages = 2;

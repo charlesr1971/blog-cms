@@ -5,7 +5,7 @@ export const environment = {
   cf_dir: 'assets/cfm',
   allowMultipleLikesPerUser: 0,
   title: 'Establish Mindfulness',
-  htmlTitle: 'Establish Mindfulness S.P.A',
+  htmlTitle: 'Establish Mindfulness: Community',
   logoSrc: 'assets/images/logo.png',
   debugComponentLoadingOrder: false,
   port: '',

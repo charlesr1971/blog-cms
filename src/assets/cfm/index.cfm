@@ -85,7 +85,7 @@
       <meta property="og:image" content="#request.twittercard#" />
       <meta name="description" content="#request.metadescription#">
       <meta name="keywords" content="#request.metakeywords#">
-      <title>#request.title# S.P.A</title>
+      <title>#request.htmlTitle#</title>
       <link rel="shortcut icon" href="../../favicon.png">
       <cfif NOT request.appreloadValidated>
 		<script type="text/javascript">
