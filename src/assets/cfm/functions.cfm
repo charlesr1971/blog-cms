@@ -963,9 +963,11 @@
 	local.query1 = DirectoryList(request.filepath & "\categories\",true,"query","*.png|*.gif|*.jpg|*.jpeg","asc");
 	if(local.query1.RecordCount){
 	  for(local.row in local.query1){ 
-		QueryAddRow(local.query);
-		QuerySetCell(local.query,"Name",local.row.Name);
-		QuerySetCell(local.query,"Directory",local.row.Directory);
+		if(NOT FindNoCase("-preview",local.row.Name)){
+		  QueryAddRow(local.query);
+		  QuerySetCell(local.query,"Name",local.row.Name);
+		  QuerySetCell(local.query,"Directory",local.row.Directory);
+		}
 	  }
 	}
 	local.query2 = DirectoryList(request.filepath & "\twitter-cards\",true,"query","*.png|*.gif|*.jpg|*.jpeg","asc");

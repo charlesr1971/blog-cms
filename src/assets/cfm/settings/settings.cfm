@@ -15,6 +15,10 @@
   if(request.useSSL){
 	request.remoteprotocol = "https";
   }
+  if(StructKeyExists(url,"useSSL") AND NOT url.useSSL){
+	request.protocol = "http";
+	request.remoteprotocol = "http";
+  }
   request.domain_dsn = "community-establishmindfulness";
   request.websiteRootDirectory = "";
   request.localHost = "community.establishmindfulness/material/ngMat02";

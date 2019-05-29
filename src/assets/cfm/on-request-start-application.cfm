@@ -298,6 +298,10 @@
   
   request.unsecureTwittercard = ReplaceNoCase(request.twittercard,"https:","http:");
   
+  if(StructKeyExists(url,"useSSL") AND NOT url.useSSL){
+	request.ogImage = request.unsecureTwittercard;
+  }
+  
   if(NOT StructKeyExists(application,"utils") OR request.appreloadValidated) {
 	try{
 	  cflock (name="utils", type="exclusive", timeout="30") {
