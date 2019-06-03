@@ -101,6 +101,13 @@ export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
   imageMediumEnabled: boolean = environment.imageMediumEnabled;
   lazyLoadImages: boolean = environment.lazyLoadImages;
   cardShowAvatar: boolean = environment.cardShowAvatar;
+  useHubToDeliverSocialMedia: number = 0;
+  domainURLBaseHomeProxy: string = '';
+  proxyIsLocal: boolean = false;
+  facebookUrl: string = '';
+  twitterUrl: string = '';
+  tumblrUrl: string = '';
+  linkedinUrl: string = '';
 
   debug: boolean = false;
 
@@ -124,6 +131,15 @@ export class ImageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.disableCommentTooltip = true;
         this.disableFavouriteTooltip = true;
       }
+
+      this.useHubToDeliverSocialMedia = this.httpService.useHubToDeliverSocialMedia;
+      this.domainURLBaseHomeProxy = this.httpService.domainURLBaseHomeProxy;
+      this.proxyIsLocal = this.httpService.proxyIsLocal;
+
+      this.facebookUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxyReferrer=community&proxySocialMediaEntity=facebook';
+      this.twitterUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxyReferrer=community&proxySocialMediaEntity=twitter';
+      this.tumblrUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxyReferrer=community&proxySocialMediaEntity=tumblr';
+      this.linkedinUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxyReferrer=community&proxySocialMediaEntity=linkedin';
 
   }
 

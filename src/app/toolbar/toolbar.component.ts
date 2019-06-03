@@ -7,6 +7,7 @@ import { faFacebookSquare } from '@fortawesome/free-brands-svg-icons/faFacebookS
 import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons/faTwitterSquare';
 import { faTumblrSquare } from '@fortawesome/free-brands-svg-icons/faTumblrSquare';
 import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
+import { SeoTitleFormatPipe } from '../pipes/seo-title-format/seo-title-format.pipe';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { sortTags } from '../util/sortTags';
@@ -36,6 +37,9 @@ declare var TweenMax: any, Elastic: any;
         transition('out => in', animate('250ms ease-in')),
         transition('in => out', animate('250ms ease-out'))
     ]),
+  ],
+  providers: [
+    SeoTitleFormatPipe,
   ]
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
@@ -65,12 +69,22 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   tags = [];
   tagDisplay: boolean = false;
   catalogRouterAliasLower: string = environment.catalogRouterAlias;
+  ngAccessControlAllowOrigin: string = '';
+
+  useHubToDeliverSocialMedia: number = 0;
+  domainURLBaseHomeProxy: string = '';
+  proxyIsLocal: boolean = false;
+  facebookUrl: string = '';
+  twitterUrl: string = '';
+  tumblrUrl: string = '';
+  linkedinUrl: string = '';
 
   debug: boolean = false;
 
   constructor(@Inject(DOCUMENT) private documentBody: Document,
     private httpService: HttpService,
     private deviceDetectorService: DeviceDetectorService,
+    private seoTitleFormatPipe: SeoTitleFormatPipe,
     private cookieService: CookieService,
     private router: Router) {
 
@@ -82,8 +96,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
       if(this.isMobile) {
         this.disableFavouriteTooltip = true;
-        // this.commentsState = 'in';
       }
+
+      this.useHubToDeliverSocialMedia = this.httpService.useHubToDeliverSocialMedia;
+      this.domainURLBaseHomeProxy = this.httpService.domainURLBaseHomeProxy;
+      this.proxyIsLocal = this.httpService.proxyIsLocal;
+      this.ngAccessControlAllowOrigin = this.httpService.ngAccessControlAllowOrigin;
 
   }
 
@@ -92,6 +110,18 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     if(environment.debugComponentLoadingOrder) {
       console.log('gallery-detail.component init');
     } 
+
+    setTimeout( () => {
+
+      const title = this.image['title'];
+      const link = this.ngAccessControlAllowOrigin + '/' + this.catalogRouterAliasLower + '/' + this.image['fileid'] + '/' + this.seoTitleFormatPipe.transform(this.image['title']);
+
+      this.facebookUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxySubtitle=' + encodeURIComponent(title) + '&proxyReferrer=community&proxyUrl=' + encodeURIComponent(link) + '&proxySocialMediaEntity=facebook';
+      this.twitterUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxySubtitle=' + encodeURIComponent(title) + '&proxyReferrer=community&proxyUrl=' + encodeURIComponent(link) + '&proxySocialMediaEntity=twitter';
+      this.tumblrUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxySubtitle=' + encodeURIComponent(title) + '&proxyReferrer=community&proxyUrl=' + encodeURIComponent(link) + '&proxySocialMediaEntity=tumblr';
+      this.linkedinUrl = this.domainURLBaseHomeProxy + '?proxyIsLocal=' + this.proxyIsLocal + '&proxySubtitle=' + encodeURIComponent(title) + '&proxyReferrer=community&proxyUrl=' + encodeURIComponent(link) + '&proxySocialMediaEntity=linkedin';
+
+    });
 
     this.likesSubscription = this.httpService.fetchLikes(this.image['id']).subscribe( (data: any) => {
       if(this.debug) {

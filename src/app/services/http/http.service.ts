@@ -38,6 +38,10 @@ export class HttpService {
   externalUrls: any;
   metadescription: string = '';
   metakeywords: string = '';
+  useHubToDeliverSocialMedia: number = 0;
+  domainURLBaseHomeProxy: string = '';
+  proxyIsLocal: boolean = false;
+  ngAccessControlAllowOrigin: string = '';
   viewCommentid: number = 0;
   cfid: number = 0;
   cftoken: string = '';
@@ -246,6 +250,22 @@ export class HttpService {
     const metakeywords = getUrlParameter('metakeywords');
     if(metakeywords !== '0' || metakeywords !== '') {
       this.metakeywords = metakeywords;
+    }
+    const useHubToDeliverSocialMedia = getUrlParameter('useHubToDeliverSocialMedia');
+    if(useHubToDeliverSocialMedia !== '0' || useHubToDeliverSocialMedia !== '') {
+      this.useHubToDeliverSocialMedia = useHubToDeliverSocialMedia;
+    }
+    const domainURLBaseHomeProxy = getUrlParameter('domainURLBaseHomeProxy');
+    if(domainURLBaseHomeProxy !== '0' || domainURLBaseHomeProxy !== '') {
+      this.domainURLBaseHomeProxy = domainURLBaseHomeProxy;
+    }
+    const proxyIsLocal = getUrlParameter('proxyIsLocal');
+    if(proxyIsLocal !== '0' || proxyIsLocal !== '') {
+      this.proxyIsLocal = proxyIsLocal;
+    }
+    const ngAccessControlAllowOrigin = getUrlParameter('ngAccessControlAllowOrigin');
+    if(ngAccessControlAllowOrigin !== '0' || ngAccessControlAllowOrigin !== '') {
+      this.ngAccessControlAllowOrigin = ngAccessControlAllowOrigin;
     }
 
     if(this.debug || this.debugForgottenPasswordLoginWithToken) {

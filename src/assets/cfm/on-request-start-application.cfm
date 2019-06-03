@@ -641,7 +641,7 @@
   
   if(REFindNoCase("/debug.cfm",CGI.SCRIPT_NAME)){
 	if(NOT isLocalhost(CGI.REMOTE_ADDR)){
-	  if(NOT ISDEFINED("url.appReload") OR (ISDEFINED("url.appReload") AND url.appReload NEQ request.appreloadkey)){
+	  if(appreloadValidated){
 		cflocation(url="index.cfm",addtoken="no");
 	  }
 	}

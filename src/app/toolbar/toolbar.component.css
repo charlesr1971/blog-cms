@@ -62,7 +62,6 @@ mat-icon.close {
 }
 
 .mat-select:hover {
-    /* background: #434343; */
     background: rgba(0,0,0,0.12);
 }
 
@@ -70,6 +69,45 @@ mat-icon.close {
     font-family: Roboto,Helvetica,sans-serif !important;
     font-size: 14px !important;
     font-weight: 500 !important;
+}
+
+.social-media-icon {
+    position: relative;
+    display: inline-block;
+    width: 57px;
+    height: 35px;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+.social-media-icon:nth-of-type(1) {
+    margin-left: 0px;
+}
+
+.social-media-icon.facebook {
+    background: #4267B2;
+}
+
+.social-media-icon.twitter {
+    background: #00acee;
+}
+
+.social-media-icon.tumblr {
+    background: #36465D;
+}
+
+.social-media-icon.linkedin {
+    background: #006fa6;
+}
+
+.social-media-icon i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 18px;
 }
 
 /* media queries */

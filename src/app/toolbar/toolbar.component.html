@@ -3,9 +3,14 @@
     <mat-icon class="mat-icon-rtl-mirror close" id="close-{{ image.id }}"  (click)="share($event,image.id)">
       clear
     </mat-icon>
-    <share-button button="facebook" [icon]="fbIcon"></share-button>
-    <share-button button="twitter" [icon]="tweetIcon"></share-button>
-    <share-button button="tumblr" [icon]="tbrIcon"></share-button>
+    <share-button button="facebook" [icon]="fbIcon" *ngIf="useHubToDeliverSocialMedia == 0"></share-button>
+    <share-button button="twitter" [icon]="tweetIcon" *ngIf="useHubToDeliverSocialMedia == 0"></share-button>
+    <share-button button="tumblr" [icon]="tbrIcon" *ngIf="useHubToDeliverSocialMedia == 0"></share-button>
+    <share-button button="linkedin" [icon]="linkedinInIcon" *ngIf="useHubToDeliverSocialMedia == 0"></share-button>
+    <a class="social-media-icon facebook" href="{{ facebookUrl }}" *ngIf="useHubToDeliverSocialMedia == 1" target="_blank"><i class="fa fa-facebook-square"></i></a>
+    <a class="social-media-icon twitter" href="{{ twitterUrl }}" *ngIf="useHubToDeliverSocialMedia == 1" target="_blank"><i class="fa fa-twitter-square"></i></a>
+    <a class="social-media-icon tumblr" href="{{ tumblrUrl }}" *ngIf="useHubToDeliverSocialMedia == 1" target="_blank"><i class="fa fa-tumblr-square"></i></a>
+    <a class="social-media-icon linkedin" href="{{ linkedinUrl }}" *ngIf="useHubToDeliverSocialMedia == 1" target="_blank"><i class="fa fa-linkedin"></i></a>
   </div>
   <button mat-button (click)="addLike()" placement="top" ngbTooltip="{{ image.likes }}" [disableTooltip]="disableFavouriteTooltip" *ngIf="currentUser.authenticated != 0">
     <mat-icon class="favorite" id="favourite-{{ image.id }}" [style.color]="likeColorDefault">favorite</mat-icon><span class="favorite">{{ image.likes }}</span>
