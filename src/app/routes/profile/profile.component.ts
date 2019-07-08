@@ -240,6 +240,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   userApprovedPages = [];
 
   isMobile: boolean = false;
+  isFirefox: boolean = false;
   hasError: boolean = false;
   safeHtml: SafeHtml;
   isEditProfileValid: boolean = false;
@@ -408,6 +409,21 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.isMobile = this.deviceDetectorService.isMobile();
+
+      if(this.deviceDetectorService.userAgent.indexOf('Firefox') !== -1){
+        this.isFirefox = true;
+      }
+
+      if(this.debug) {
+        console.log('profile.component: this.isFirefox: ',this.isFirefox);
+      }
+
+      if(this.isFirefox){
+        this.profileUserArchiveEditState = 'in';
+        this.profileUserSuspendEditState = 'in';
+        this.profileUserPasswordEditState = 'in';
+        this.profileUserApprovedEditState = 'in';
+      }
 
       this.fetchPagesUserArchive();
       this.fetchPagesUserSuspend();
@@ -2639,20 +2655,27 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     const matColorSwatchAccent3El = this.documentBody.getElementById('mat-color-swatch-accent-3');
     const matColorSwatchWarn1El = this.documentBody.getElementById('mat-color-swatch-warn-1');
     if(matColorSwatchPrimary1El && matColorSwatchPrimary2El && matColorSwatchPrimary3El && matColorSwatchAccent1El && matColorSwatchAccent2El && matColorSwatchAccent3El && matColorSwatchWarn1El) {
-      const matColorSwatchPrimary1 = styler('#mat-color-swatch-primary-1').get(['background']);
-      const colorSwatchPrimary1 = matColorSwatchPrimary1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-      const matColorSwatchPrimary2 = styler('#mat-color-swatch-primary-2').get(['background']);
-      const colorSwatchPrimary2 = matColorSwatchPrimary2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-      const matColorSwatchPrimary3 = styler('#mat-color-swatch-primary-3').get(['background']);
-      const colorSwatchPrimary3 = matColorSwatchPrimary3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-      const matColorSwatchAccent1 = styler('#mat-color-swatch-accent-1').get(['background']);
-      const colorSwatchAccent1 = matColorSwatchAccent1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-      const matColorSwatchAccent2 = styler('#mat-color-swatch-accent-2').get(['background']);
-      const colorSwatchAccent2 = matColorSwatchAccent2['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-      const matColorSwatchAccent3 = styler('#mat-color-swatch-accent-3').get(['background']);
-      const colorSwatchAccent3 = matColorSwatchAccent3['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
-      const matColorSwatchWarn1 = styler('#mat-color-swatch-warn-1').get(['background']);
-      const colorSwatchWarn1 = matColorSwatchWarn1['background'].replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchPrimary1Obj = styler('#mat-color-swatch-primary-1').get(['background','background-color']);
+      const matColorSwatchPrimary1 = matColorSwatchPrimary1Obj['background'] !== '' ? matColorSwatchPrimary1Obj['background'] : matColorSwatchPrimary1Obj['background-color'];
+      const colorSwatchPrimary1 = matColorSwatchPrimary1.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchPrimary2Obj = styler('#mat-color-swatch-primary-2').get(['background','background-color']);
+      const matColorSwatchPrimary2 = matColorSwatchPrimary2Obj['background'] !== '' ? matColorSwatchPrimary2Obj['background'] : matColorSwatchPrimary2Obj['background-color'];
+      const colorSwatchPrimary2 = matColorSwatchPrimary2.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchPrimary3Obj = styler('#mat-color-swatch-primary-3').get(['background','background-color']);
+      const matColorSwatchPrimary3 = matColorSwatchPrimary3Obj['background'] !== '' ? matColorSwatchPrimary3Obj['background'] : matColorSwatchPrimary3Obj['background-color'];
+      const colorSwatchPrimary3 = matColorSwatchPrimary3.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchAccent1Obj = styler('#mat-color-swatch-accent-1').get(['background','background-color']);
+      const matColorSwatchAccent1 = matColorSwatchAccent1Obj['background'] !== '' ? matColorSwatchAccent1Obj['background'] : matColorSwatchAccent1Obj['background-color'];
+      const colorSwatchAccent1 = matColorSwatchAccent1.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchAccent2Obj = styler('#mat-color-swatch-accent-2').get(['background','background-color']);
+      const matColorSwatchAccent2 = matColorSwatchAccent2Obj['background'] !== '' ? matColorSwatchAccent2Obj['background'] : matColorSwatchAccent2Obj['background-color'];
+      const colorSwatchAccent2 = matColorSwatchAccent2.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchAccent3Obj = styler('#mat-color-swatch-accent-3').get(['background','background-color']);
+      const matColorSwatchAccent3 = matColorSwatchAccent3Obj['background'] !== '' ? matColorSwatchAccent3Obj['background'] : matColorSwatchAccent3Obj['background-color'];
+      const colorSwatchAccent3 = matColorSwatchAccent3.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
+      const matColorSwatchWarn1Obj = styler('#mat-color-swatch-warn-1').get(['background','background-color']);
+      const matColorSwatchWarn1 = matColorSwatchWarn1Obj['background'] !== '' ? matColorSwatchWarn1Obj['background'] : matColorSwatchWarn1Obj['background-color'];
+      const colorSwatchWarn1 = matColorSwatchWarn1.replace(/rgb\(/ig,'').replace(/\).*/g,'').replace(/[\s]+/g,'').split(',');
       this.themeSwatch = {
         matColorSwatchPrimary1: rgbToHex(parseInt(colorSwatchPrimary1[0]),parseInt(colorSwatchPrimary1[1]),parseInt(colorSwatchPrimary1[2])),
         matColorSwatchPrimary2: rgbToHex(parseInt(colorSwatchPrimary2[0]),parseInt(colorSwatchPrimary2[1]),parseInt(colorSwatchPrimary2[2])),
