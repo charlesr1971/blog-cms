@@ -37,3 +37,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+/src/assets/cfm/archive
+/dist/ngMat02/assets/cfm/archive
