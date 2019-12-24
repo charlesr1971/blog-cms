@@ -1,7 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
 /tmp
 /out-tsc
 
@@ -40,3 +39,8 @@ Thumbs.db
 
 /src/assets/cfm/archive
 /dist/ngMat02/assets/cfm/archive
+/dist/ngMat02/assets/cfm/article-images
+/dist/ngMat02/assets/cfm/categories
+/dist/ngMat02/assets/cfm/user-avatars
+
+/WEB-INF
