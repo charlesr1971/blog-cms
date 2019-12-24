@@ -63,9 +63,9 @@
 	request.subscribeTaskKey = "4F893EE24950069DD823E083338A456D";
   }
   
-  request.sectionauthortype = "author"; //author, user
-  
   request.externalUrls = SerializeJson([{'title':'Blog','url':'https://www.establishmindfulness.com'},{'title':'Learning Centre','url':'https://app.establishmindfulness.com'}]);
+
+  request.sectionauthortype = "author"; //author, user
   
   request.punctuationSubsetPattern = "[.\/\\##!$%\^&\*;{}=_""`~()]";
   request.sitemapmaxlinks = 1000;
