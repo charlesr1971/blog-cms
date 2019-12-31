@@ -19,6 +19,8 @@ import { HttpService } from '../services/http/http.service';
 import { UtilsService } from '../services/utils/utils.service';
 import { MatSidenav } from '@angular/material/sidenav';
 
+import { PerfectScrollbarConfigInterface, PerfectScrollbarComponent, PerfectScrollbarDirective } from 'ngx-perfect-scrollbar';
+
 import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { environment } from '../../environments/environment';
@@ -67,6 +69,8 @@ export class MyNavComponent implements OnInit, OnDestroy {
   uploadRouterAliasTitle: string = titleFromAlias(environment.uploadRouterAlias);
   dialogWebsiteHeight: number = 0;
   externalUrls = [];
+  config: PerfectScrollbarConfigInterface = {};
+  creditsVisibility: string = 'visible';
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
   .pipe(
@@ -566,6 +570,14 @@ export class MyNavComponent implements OnInit, OnDestroy {
         console.log('my-nav.component: dialog subscribe notification: this.dialogWebsiteHeight: ', this.dialogWebsiteHeight);
       }
     });
+  }
+
+  isOverlapping(bool: boolean = false): void{ 
+    /* const el: HTMLElement = this.documentBody.querySelector('#credits');
+    if(bool && el) {
+
+    } */
+    this.creditsVisibility = bool ? 'hidden' : 'visible';
   }
 
   ngOnDestroy() {

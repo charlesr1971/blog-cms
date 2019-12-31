@@ -10,7 +10,7 @@
     [opened]="!(isHandset$ || isTablet$ || isMedium$ || isLarge$ | async)">
     <mat-toolbar color="primary"><!-- Menu --></mat-toolbar>
     <div class="mat-nav-list-container">
-      <mat-nav-list id="mat-nav-list">
+      <mat-nav-list class="ps" id="mat-nav-list" [perfectScrollbar]="config" elementsOverlap [elementOverlapperId]="'credits'" (isOverlapping)="isOverlapping($event)">
         <a mat-list-item routerLink="" [ngClass]="{'gallery-is-active': galleryIsActive}" (click)="toGallery()">{{ catalogRouterAliasUpper }}</a>
         <a class="gallery-sections" mat-list-item routerLink="" (click)="toggleGallerySections()">{{ catalogRouterAliasUpper }} Sections</a>
         <mat-select #select1 class="gallery-sections" placeholder="{{ catalogRouterAliasUpper }} by Pages" floatLabel="never" (selectionChange)="onChange($event)" *ngIf="gallerySectionsIsActive">
@@ -59,7 +59,7 @@
         <a class="external-url" mat-list-item *ngFor="let data of externalUrls" href="{{ data.url }}" target="_blank"><mat-icon>share</mat-icon>{{ data.title }}</a>
       </mat-nav-list>
     </div>
-    <div class="credits">
+    <div id="credits" class="credits" [ngStyle]="{'visibility': creditsVisibility}">
       Written in Angular 7x
       <div>
           <img class="angular-logos" src="assets/images/angular-logo.png" />

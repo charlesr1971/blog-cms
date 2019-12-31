@@ -86,6 +86,15 @@ import { WebsiteHelpComponent } from './help/dialogs/website-help/website-help.c
 import { SubscribeComponent } from './help/dialogs/subscribe/subscribe.component';
 import { ImageRelatedContentComponent } from './image-related-content/image-related-content.component';
 
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { ElementsOverlapDirective } from './directives/elements-overlap/elements-overlap.directive';
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true
+};
+
 export function hljsLanguages() {
   return [
     {name: 'json', func: json}
@@ -149,7 +158,8 @@ const appRoutes: Routes = [
     ConvertImageNameSuffixPipe,
     WebsiteHelpComponent,
     SubscribeComponent,
-    ImageRelatedContentComponent
+    ImageRelatedContentComponent,
+    ElementsOverlapDirective
   ],
   imports: [
     BrowserModule,
@@ -197,6 +207,7 @@ const appRoutes: Routes = [
     EditorModule,
     OverlayModule,
     NgbModule,
+    PerfectScrollbarModule,
     AgGridModule.withComponents([FormatEmailRenderer,FormatFileTitleRenderer,CustomEditHeader]),
     HighlightModule.forRoot({
       languages: hljsLanguages
@@ -213,7 +224,8 @@ const appRoutes: Routes = [
     HttpInterceptorProviders,
     ConvertIdToPathPipe,
     ModalPositionCache,
-    {provide: LocationStrategy, useClass: PathLocationStrategy}
+    {provide: LocationStrategy, useClass: PathLocationStrategy},
+    {provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG}
   ],
   bootstrap: [AppComponent]
 })

@@ -18,7 +18,7 @@
 
 .mat-nav-list {
   overflow: auto;
-  height: 700px;
+  height: 500px;
 }
 
 .mat-select {
@@ -107,6 +107,10 @@
 
 a.external-url mat-icon {
   margin-right: 10px;
+}
+
+.mat-sidenav.mat-drawer {
+  overflow-y: hidden !important;
 }
 
 /* media queries */
