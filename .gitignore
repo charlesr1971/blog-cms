@@ -41,6 +41,23 @@ Thumbs.db
 /dist/ngMat02/assets/cfm/archive
 /dist/ngMat02/assets/cfm/article-images
 /dist/ngMat02/assets/cfm/categories
+/dist/ngMat02/assets/cfm/components/javaloader
+/dist/ngMat02/assets/cfm/components/jwt
+/dist/ngMat02/assets/cfm/lib/jBCrypt-0.4
 /dist/ngMat02/assets/cfm/user-avatars
+/dist/ngMat02/assets/cfm/rest/api/v1/taffy 
+/dist/ngMat02/assets/font
+/dist/ngMat02/assets/js/greensock-js
+/dist/ngMat02/assets/js/highlight.js
+/dist/ngMat02/assets/js/jquery-ui-1.10.3.custom
+/dist/ngMat02/assets/js/js-cookie
+/dist/ngMat02/assets/js/lightgallery.js
+/dist/ngMat02/assets/js/mobile-detect
+/dist/ngMat02/assets/js/perfect-scrollbar
+/dist/ngMat02/assets/js/tagify
+/dist/ngMat02/assets/js/tinymce
+/dist/ngMat02/assets/js/jquery.js
+/dist/ngMat02/assets/audio
+/dist/ngMat02/assets/tinymce
 
 /WEB-INF
