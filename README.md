@@ -1,4 +1,6 @@
-# NgMat02
+# Blog CMS
+
+[Establish Mindfulness Community website](https://community.establishmindfulness.com/)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.2.
 
